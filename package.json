@@ -4,7 +4,11 @@
   "description": "A start boiler template for typescript projects",
   "main": "src/app/index.ts",
   "scripts": {
-    "test": "We are live!"
+    "test": "we are live!",
+    "tsc": "tsc",
+    "tsc:w": "tsc -w",
+    "lite": "lite-server",
+    "start": "concurrently \"npm run tsc:w\" \"npm run lite\" "
   },
   "repository": {
     "type": "git",
@@ -15,5 +19,10 @@
   "bugs": {
     "url": "https://github.com/thdk/typescript-start/issues"
   },
-  "homepage": "https://github.com/thdk/typescript-start#readme"
+  "homepage": "https://github.com/thdk/typescript-start#readme",
+  "devDependencies": {
+    "concurrently": "^3.5.1",
+    "lite-server": "^2.3.0",
+    "typescript": "^2.8.3"
+  }
 }

@@ -1,0 +1,19 @@
+{
+  "name": "typescript-start",
+  "version": "1.0.0",
+  "description": "A start boiler template for typescript projects",
+  "main": "src/app/index.ts",
+  "scripts": {
+    "test": "We are live!"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/thdk/typescript-start.git"
+  },
+  "author": "thdk",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/thdk/typescript-start/issues"
+  },
+  "homepage": "https://github.com/thdk/typescript-start#readme"
+}

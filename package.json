@@ -2,12 +2,12 @@
   "name": "typescript-start",
   "version": "1.0.0",
   "description": "A start boiler template for typescript projects",
-  "main": "src/app/index.ts",
+  "main": "src/js/app.ts",
   "scripts": {
     "test": "we are live!",
     "tsc": "tsc",
     "tsc:w": "tsc -w",
-    "lite": "lite-server",
+    "lite": "lite-server --baseDir ./dist",
     "start": "concurrently \"npm run tsc:w\" \"npm run lite\" "
   },
   "repository": {

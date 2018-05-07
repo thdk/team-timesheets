@@ -8,7 +8,7 @@
     "tsc": "tsc",
     "tsc:w": "tsc -w",
     "lite": "lite-server --baseDir ./dist",
-    "start": "concurrently \"npm run tsc:w\" \"npm run lite\" "
+    "start": "concurrently \"gulp\" \"npm run lite\" "
   },
   "repository": {
     "type": "git",
@@ -24,5 +24,9 @@
     "concurrently": "^3.5.1",
     "lite-server": "^2.3.0",
     "typescript": "^2.8.3"
+  },
+  "dependencies": {
+    "gulp": "^3.9.1",
+    "gulp-typescript": "^4.0.2"
   }
 }

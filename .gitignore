@@ -60,4 +60,4 @@ typings/
 # vs code
 .vscode
 
-dist/js/*.js
+dist/

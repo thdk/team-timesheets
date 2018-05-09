@@ -2,7 +2,7 @@
 // Add our dependencies
 var gulp = require('gulp');
 var ts = require('gulp-typescript');
-// var concat = require('gulp-concat'); // Gulp File concatenation plugin
+var sass = require('gulp-sass'); // Gulp File concatenation plugin
 
 // Configuration
 var configuration = {
@@ -10,8 +10,7 @@ var configuration = {
         src: {
             html: './src/*.html',
             css: [
-                './src/css/bootstrap.min.css',
-                './src/css/main.css'
+                './src/css/*.scss'
             ],
             js: '/src/js/*.ts'
         },
@@ -25,12 +24,16 @@ gulp.task('html', function() {
         .pipe(gulp.dest(configuration.paths.dist));
 });
 
-// Gulp task to concatenate our css files
-gulp.task('css', function () {
+// Gulp task to concatenate our scss files
+gulp.task('scss', function () {
    gulp.src(configuration.paths.src.css)
-       .pipe(concat('site.css'))
+       .pipe(sass().on('error', sass.logError))
        .pipe(gulp.dest(configuration.paths.dist + '/css'))
 });
+
+gulp.task('scss:watch', function() {
+    gulp.watch('./src/css/**/*.scss', ['scss']);
+})
 
 // get the typescript settings from tsconfig.json file
 var tsProject = ts.createProject('tsconfig.json');
@@ -44,5 +47,11 @@ gulp.task('tsc', function () {
         .pipe(gulp.dest('dist/js'));
 });
 
+gulp.task('tsc:watch', function () {
+    gulp.watch('./src/js/**/*.ts', ['tsc']);
+});
+
 // Gulp default task
-gulp.task('default', ['html', 'tsc']);
+gulp.task('default', ['html', 'tsc', 'scss']);
+
+gulp.task('watch', ['tsc:watch', 'scss:watch']);

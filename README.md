@@ -5,16 +5,20 @@ It installs the following npm packages:
 * concurrently
 * lite-server
 * gulp
-* gulp-typescript
 * gulp-sass
+* rollup
+* rollup-plugin-typescript
 
-It makes and src folder with the following subfolders:
-* js (contains two dummy ts files app.ts and lib.ts)
-* css (contains two dummy scss files styles.scss and _vars.scss)
+It makes and src folder with the following:
+* app.ts (entry file for the app)
+* utils/foo.ts (dummy module)
+* style (contains two dummy scss files styles.scss and _vars.scss)
 
 The src folder also contains an index.html file which will be the container for this app.
 
 A gulpfile.js contains tasks to compile typescript and scss files and copy the combined files in the dist folder.
+Rollup will bundle the ES bundles into iife format in a single js file which can be understood by a browser
+.
 The index.html file from src folder is also copied into the dist folder.
 
 The default gulp task will compile and copy all folders as well as watch the typescript and scss files for changes.

@@ -1,8 +1,10 @@
 
-// Add our dependencies
+// Add dependencies
 var gulp = require('gulp');
-var ts = require('gulp-typescript');
-var sass = require('gulp-sass'); // Gulp File concatenation plugin
+const rollup = require('rollup');
+const typescript = require('rollup-plugin-typescript');
+
+var sass = require('gulp-sass');
 
 // Configuration
 var configuration = {
@@ -10,45 +12,48 @@ var configuration = {
         src: {
             html: './src/*.html',
             css: [
-                './src/css/*.scss'
+                './src/style/*.scss'
             ],
-            js: '/src/js/*.ts'
+            js: 'src/app.ts'
         },
         dist: './dist'
     }
 };
 
 // Gulp task to copy HTML files to output directory
-gulp.task('html', function() {
+gulp.task('html', function () {
     gulp.src(configuration.paths.src.html)
         .pipe(gulp.dest(configuration.paths.dist));
 });
 
 // Gulp task to concatenate our scss files
 gulp.task('scss', function () {
-   gulp.src(configuration.paths.src.css)
-       .pipe(sass().on('error', sass.logError))
-       .pipe(gulp.dest(configuration.paths.dist + '/css'))
+    gulp.src(configuration.paths.src.css)
+        .pipe(sass().on('error', sass.logError))
+        .pipe(gulp.dest(configuration.paths.dist + '/css'))
 });
 
-gulp.task('scss:watch', function() {
-    gulp.watch('./src/css/**/*.scss', ['scss']);
+gulp.task('scss:watch', function () {
+    gulp.watch('./src/style/**/*.scss', ['scss']);
 })
 
-// get the typescript settings from tsconfig.json file
-var tsProject = ts.createProject('tsconfig.json');
-
-// uncomment next line to overwrite / add settings from tsconfig.json
-// var tsProject = ts.createProject('tsconfig.json', { noImplicitAny: true });
-
-gulp.task('tsc', function () {
-    return gulp.src('src/**/*.ts')
-        .pipe(tsProject())
-        .pipe(gulp.dest('dist/js'));
+gulp.task('tsc', () => {
+    return rollup.rollup({
+        input: configuration.paths.src.js,
+        plugins: [
+            typescript() // uses tsconfig.json, overwrite using: typescript({lib: ["es5", "es6", "dom"], target: "es5"})
+        ]
+    }).then(bundle => {
+        return bundle.write({
+            file: 'dist/js/app.js',
+            format: 'iife',
+            name: 'rollupBundle'
+        });
+    });
 });
 
 gulp.task('tsc:watch', function () {
-    gulp.watch('./src/js/**/*.ts', ['tsc']);
+    gulp.watch('./src/**/*.ts', ['tsc']);
 });
 
 // Gulp default task

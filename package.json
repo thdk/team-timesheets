@@ -21,15 +21,15 @@
   },
   "homepage": "https://github.com/thdk/typescript-start#readme",
   "devDependencies": {
-    "concurrently": "^3.5.1",
+    "concurrently": "^4.0.1",
     "gulp-sass": "^4.0.1",
     "lite-server": "^2.3.0",
-    "rollup": "^0.66.2",
+    "rollup": "^0.67.1",
     "rollup-plugin-commonjs": "^9.2.0",
     "rollup-plugin-node-resolve": "^3.4.0",
     "rollup-plugin-typescript": "^1.0.0",
     "tslib": "^1.9.3",
-    "typescript": "^2.8.3"
+    "typescript": "^3.1.6"
   },
   "dependencies": {
     "gulp": "^3.9.1"

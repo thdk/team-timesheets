@@ -1,13 +1,14 @@
 
 // Add dependencies
-var gulp = require('gulp');
+const gulp = require('gulp');
 const rollup = require('rollup');
 const typescript = require('rollup-plugin-typescript');
-
-var sass = require('gulp-sass');
+const sass = require('gulp-sass');
+const resolve = require('rollup-plugin-node-resolve');
+const commonJS = require('rollup-plugin-commonjs');
 
 // Configuration
-var configuration = {
+const configuration = {
     paths: {
         src: {
             html: './src/*.html',
@@ -37,9 +38,11 @@ gulp.task('scss:watch', function () {
     gulp.watch('./src/style/**/*.scss', ['scss']);
 })
 
+// based on example from https://rollupjs.org/guide/en (See Gulp section)
 gulp.task('tsc', () => {
     return rollup.rollup({
         input: configuration.paths.src.js,
+        // external: ['firebase', 'pubsub-js'],
         plugins: [
             typescript() // uses tsconfig.json, overwrite using: typescript({lib: ["es5", "es6", "dom"], target: "es5"})
         ]
@@ -47,7 +50,17 @@ gulp.task('tsc', () => {
         return bundle.write({
             file: 'dist/js/app.js',
             format: 'iife',
-            name: 'rollupBundle'
+            name: 'rollupBundle',
+            plugins: [
+                resolve(),
+                commonJS({
+                    include: 'node_modules/**'
+                })
+            ],
+            //   globals: {
+            //     'firebase': 'firebase',
+            //     'pubsub-js': 'PubSub'
+            //   }
         });
     });
 });

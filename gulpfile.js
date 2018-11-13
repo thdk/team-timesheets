@@ -30,7 +30,9 @@ gulp.task('html', function () {
 // Gulp task to concatenate our scss files
 gulp.task('scss', function () {
     gulp.src(configuration.paths.src.css)
-        .pipe(sass().on('error', sass.logError))
+        .pipe(sass({
+            includePaths: ['node_modules/'] // added includePaths to resolve scss partials from node modules
+          }).on('error', sass.logError))
         .pipe(gulp.dest(configuration.paths.dist + '/css'))
 });
 

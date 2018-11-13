@@ -22,22 +22,24 @@ const configuration = {
 };
 
 // Gulp task to copy HTML files to output directory
-gulp.task('html', function () {
+gulp.task('html', gulp.series(function (done) {
     gulp.src(configuration.paths.src.html)
         .pipe(gulp.dest(configuration.paths.dist));
-});
+    done();
+}));
 
 // Gulp task to concatenate our scss files
-gulp.task('scss', function () {
+gulp.task('scss', gulp.series(function (done) {
     gulp.src(configuration.paths.src.css)
         .pipe(sass({
             includePaths: ['node_modules/'] // added includePaths to resolve scss partials from node modules
           }).on('error', sass.logError))
         .pipe(gulp.dest(configuration.paths.dist + '/css'))
-});
+    done();
+}));
 
 gulp.task('scss:watch', function () {
-    gulp.watch('./src/style/**/*.scss', ['scss']);
+    gulp.watch('./src/style/**/*.scss', gulp.series('scss'));
 })
 
 // based on example from https://rollupjs.org/guide/en (See Gulp section)
@@ -67,11 +69,12 @@ gulp.task('tsc', () => {
     });
 });
 
-gulp.task('tsc:watch', function () {
-    gulp.watch('./src/**/*.ts', ['tsc']);
-});
+gulp.task('tsc:watch', gulp.series(function (done) {
+    gulp.watch('./src/**/*.ts', gulp.series('tsc'));
+    done();
+}));
 
 // Gulp default task
-gulp.task('default', ['html', 'tsc', 'scss']);
+gulp.task('default', gulp.series(['html', 'tsc', 'scss']));
 
-gulp.task('watch', ['tsc:watch', 'scss:watch']);
+gulp.task('watch', gulp.series(['tsc:watch', 'scss:watch']));

@@ -21,6 +21,7 @@
   },
   "homepage": "https://github.com/thdk/typescript-start#readme",
   "devDependencies": {
+    "gulp": "^4.0.0",
     "concurrently": "^4.0.1",
     "gulp-sass": "^4.0.1",
     "lite-server": "^2.3.0",
@@ -32,6 +33,8 @@
     "typescript": "^3.1.6"
   },
   "dependencies": {
-    "gulp": "^4.0.0"
+    "firebase": "^5.5.8",
+    "firestorter": "^1.0.1",
+    "mobx": "^5.5.0"
   }
 }

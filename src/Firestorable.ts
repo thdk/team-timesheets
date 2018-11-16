@@ -4,8 +4,10 @@ import { typeSnapshot, updateAsync } from "./FirestoreUtils";
 import { updateObjectInArray, insertItem } from "./immutable";
 import { CollectionMap} from "./app";
 import { config } from "./config";
+import { observable } from "mobx";
 
 export interface ICollection<T extends IDocument> {
+    docs: T[];
     getAsync: () => Promise<T[]>;
     updateAsync: (data: T) => Promise<void>;
     addAsync: (data: T) => Promise<void>;
@@ -25,7 +27,7 @@ export class Doc implements IDocument {
 }
 
 export class Collection<T extends IDocument> implements ICollection<T> {
-    private docs: T[] = [];
+    @observable public docs: T[] = [];
     public readonly name: keyof CollectionMap;
     private readonly collectionRef: firebase.firestore.CollectionReference;
 
@@ -53,7 +55,7 @@ export class Collection<T extends IDocument> implements ICollection<T> {
 
     public addAsync(data: T) {
         return this.collectionRef.add(data).then(() => {
-            insertItem(this.docs, data);
+            this.docs = insertItem(this.docs, data);
         });
     }
 }

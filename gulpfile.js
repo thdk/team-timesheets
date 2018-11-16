@@ -33,7 +33,7 @@ gulp.task('scss', gulp.series(function (done) {
     gulp.src(configuration.paths.src.css)
         .pipe(sass({
             includePaths: ['node_modules/'] // added includePaths to resolve scss partials from node modules
-          }).on('error', sass.logError))
+        }).on('error', sass.logError))
         .pipe(gulp.dest(configuration.paths.dist + '/css'))
     done();
 }));
@@ -46,25 +46,23 @@ gulp.task('scss:watch', function () {
 gulp.task('tsc', () => {
     return rollup.rollup({
         input: configuration.paths.src.js,
-        // external: ['firebase', 'pubsub-js'],
+        external: ["firebase/app"],
         plugins: [
-            typescript() // uses tsconfig.json, overwrite using: typescript({lib: ["es5", "es6", "dom"], target: "es5"})
+            resolve(),
+            commonJS({
+                include: 'node_modules/**',
+                namedExports: {
+                  'node_modules/react/index.js': ['Component', 'PureComponent', 'Fragment', 'Children', 'createElement'],
+                  'node_modules/react-dom/index.js': ['findDOMNode', 'unstable_batchedUpdates']
+                }
+              }),
+            typescript(), // uses tsconfig.json, overwrite using: typescript({lib: ["es5", "es6", "dom"], target: "es5"}))
         ]
     }).then(bundle => {
         return bundle.write({
             file: 'dist/js/app.js',
             format: 'iife',
-            name: 'rollupBundle',
-            plugins: [
-                resolve(),
-                commonJS({
-                    include: 'node_modules/**'
-                })
-            ],
-            //   globals: {
-            //     'firebase': 'firebase',
-            //     'pubsub-js': 'PubSub'
-            //   }
+            name: 'rollupBundle'
         });
     });
 });

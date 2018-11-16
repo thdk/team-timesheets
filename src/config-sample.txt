@@ -1,0 +1,8 @@
+// rename this file with correct values to config.ts
+export interface IAppConfig {
+    apiKey: string;
+}
+
+export const config: IAppConfig = {
+    apiKey: "google api key"
+}

@@ -1,12 +1,21 @@
-import bar, { getTheTime } from './utils/foo';
+import { IDocument, Firestorable } from "./Firestorable";
 
-console.log(bar.x);
-console.log(bar.y);
-
-const bodyEl = document.querySelector("body");
-
-if (bodyEl) {
-    const pEl = document.createElement('p');
-    pEl.insertAdjacentHTML("beforeend", `Hello world! It's ${getTheTime()}.`);
-    bodyEl.appendChild(pEl);
+export interface CollectionMap {
+    "books": IBook;
 }
+
+interface IBook extends IDocument {
+    author: string;
+    title: string;
+}
+const firestorable = new Firestorable();
+
+firestorable.addAsync("books", { author: "test", title: "title" })
+    .then(() => firestorable.getAsync("books").then(books => {
+        books.forEach(book => {
+            console.log(`${book.author} - ${book.title}`);
+        });
+    })
+    );
+
+(window as any)["firestorable"] = firestorable;

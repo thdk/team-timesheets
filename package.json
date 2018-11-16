@@ -35,6 +35,6 @@
   "dependencies": {
     "firebase": "^5.5.8",
     "firestorter": "^1.0.1",
-    "mobx": "^5.5.0"
+    "mobx": "^5.6.0"
   }
 }

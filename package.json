@@ -8,7 +8,7 @@
     "tsc": "tsc",
     "tsc:w": "tsc -w",
     "lite": "lite-server --baseDir ./dist",
-    "start": "concurrently \"gulp\" \"gulp watch\" \"npm run lite\" "
+    "start": "gulp && gulp watch && npm run lite"
   },
   "repository": {
     "type": "git",

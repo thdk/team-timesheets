@@ -38,9 +38,10 @@ gulp.task('scss', gulp.series(function (done) {
     done();
 }));
 
-gulp.task('scss:watch', function () {
+gulp.task('scss:watch', gulp.series(function (done) {
     gulp.watch('./src/style/**/*.scss', gulp.series('scss'));
-})
+    done();
+}));
 
 // based on example from https://rollupjs.org/guide/en (See Gulp section)
 gulp.task('tsc', () => {
@@ -68,11 +69,11 @@ gulp.task('tsc', () => {
 });
 
 gulp.task('tsc:watch', gulp.series(function (done) {
-    gulp.watch('./src/**/*.ts', gulp.series('tsc'));
+    gulp.watch(['./src/**/*.ts','./src/**/*.tsx'] , gulp.series('tsc'));
     done();
 }));
 
 // Gulp default task
-gulp.task('default', gulp.series(['html', 'tsc', 'scss']));
+gulp.task('default', gulp.parallel(['html', 'tsc', 'scss']));
 
-gulp.task('watch', gulp.series(['tsc:watch', 'scss:watch']));
+gulp.task('watch', gulp.parallel(['tsc:watch', 'scss:watch']));

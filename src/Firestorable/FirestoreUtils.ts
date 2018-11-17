@@ -1,3 +1,5 @@
+import { OptionalId } from "./types";
+
 export function typeSnapshot<T extends firebase.firestore.DocumentData>(snapshot: firebase.firestore.QueryDocumentSnapshot): T;
 export function typeSnapshot<T extends firebase.firestore.DocumentData>(snapshot: firebase.firestore.DocumentSnapshot): T | undefined;
 export function typeSnapshot<T extends firebase.firestore.DocumentData>(snapshot: firebase.firestore.DocumentSnapshot | firebase.firestore.QueryDocumentSnapshot): T | undefined {
@@ -10,4 +12,10 @@ export const updateAsync = <T extends firebase.firestore.UpdateData>(collectionR
     return collectionRef
         .doc(data.id)
         .update(data);
+}
+
+export const addAsync = <T extends firebase.firestore.DocumentData>(collectionRef: firebase.firestore.CollectionReference, data: OptionalId<T>) => {
+    const docRef = data.id ? collectionRef.doc(data.id) : collectionRef.doc();
+    delete data.id;
+    return docRef.set(data).then(() => Object.assign(data, { id: docRef.id }) as unknown as T);
 }

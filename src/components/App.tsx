@@ -1,13 +1,11 @@
 import { IAppStore, IBook } from "../app";
 import React from "react";
 import { Library } from "./Library";
-import { OptionalId } from "../Firestorable";
+import { OptionalId } from "../Firestorable/types";
 import { BookInput } from "./BookInput";
 
 export class App extends React.Component<IAppStore> {
-    private isRendered = false;
     render() {
-        if (!this.isRendered) this.mount();
 
         const { books } = this.props;
         const actions = {
@@ -21,10 +19,5 @@ export class App extends React.Component<IAppStore> {
                 <BookInput add={actions.add}></BookInput>
             </div>
         )
-    }
-
-    mount() {
-        this.isRendered = true;
-        this.props.books.getAsync();
     }
 }

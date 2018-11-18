@@ -5,7 +5,9 @@ import { ICollection } from '../Firestorable/Collection';
 
 @observer
 export class Library extends React.Component<{ books: ICollection<IBook> } & { delete: (id: string) => Promise<void> }> {
+    private isRendered = false;
     render() {
+        if (!this.isRendered) this.mount();
         return (
             <div>
                 <ul>
@@ -18,6 +20,13 @@ export class Library extends React.Component<{ books: ICollection<IBook> } & { d
 
     remove(id: string) {
         this.props.delete(id);
+    }
+
+    mount() {
+        this.isRendered = true;
+        // to query the collection use:
+        // this.props.books.getAsync(ref => ref.where("author", "==", "thdk"));
+        this.props.books.getAsync();
     }
 };
 

@@ -1,7 +1,7 @@
 import { observer } from "mobx-react";
 import React from "react";
 import { OptionalId } from "../Firestorable/types";
-import { IBook } from "../app";
+import { IBook } from "../store";
 
 @observer
 export class BookInput extends React.Component<{ add: (book: OptionalId<IBook>) => void }, { title: string, author: string }> {

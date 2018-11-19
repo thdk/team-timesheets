@@ -1,17 +1,17 @@
 import React from 'react';
 import { observer } from "mobx-react";
-import { IBook } from "../app";
-import { ICollection } from '../Firestorable/Collection';
+import store, { IBook} from '../store';
+
 
 @observer
-export class Library extends React.Component<{ books: ICollection<IBook> } & { delete: (id: string) => Promise<void> }> {
+export class Library extends React.Component<{ delete: (id: string) => Promise<void> }> {
     private isRendered = false;
     render() {
         if (!this.isRendered) this.mount();
         return (
             <div>
                 <ul>
-                    {this.props.books.docs.map(
+                    {store.books.docs.map(
                         book => <BookView onclick={() => this.props.delete(book.id)} author={book.author} title={book.title} key={book.id} id={book.id} />
                     )}
                 </ul>
@@ -24,9 +24,7 @@ export class Library extends React.Component<{ books: ICollection<IBook> } & { d
 
     mount() {
         this.isRendered = true;
-        // to query the collection use:
-        // this.props.books.getAsync(ref => ref.where("author", "==", "thdk"));
-        this.props.books.getAsync();
+        store.books.getAsync();
     }
 };
 

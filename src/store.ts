@@ -1,15 +1,27 @@
 import {observable} from 'mobx';
+import { Firestorable } from './Firestorable/Firestorable';
+import { ICollection, Collection, IDocument } from './Firestorable/Collection';
 
-export interface ITodoStore {
-    todos: string[];
-    filter: string;
-}
-class TodoStore implements ITodoStore{
-    @observable todos = ["buy milk", "buy eggs"];
-    @observable filter = "";
+export interface CollectionMap {
+    "books": IBook;
 }
 
-const store = new TodoStore();
+export interface IBook extends IDocument {
+    author: string;
+    title: string;
+}
+
+const firestorable = new Firestorable();
+
+export interface IAppStore {
+    books: ICollection<IBook>;
+}
+
+class Store implements IAppStore {
+    @observable books = new Collection<IBook>("books", firestorable.firestore)
+};
+
+const store = (window as any)["store"] = new Store();
 
 export default store;
 

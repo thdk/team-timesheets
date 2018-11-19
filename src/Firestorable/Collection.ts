@@ -4,12 +4,13 @@ import 'firebase/firestore';
 
 import { updateAsync, addAsync, typeSnapshot } from "./FirestoreUtils";
 import { insertItem, updateObjectInArray } from "../immutable";
-import { CollectionMap } from "../app";
 import { observable, action, IObservableArray } from "mobx";
 import { OptionalId } from "./types";
+import { CollectionMap } from "../store";
 
 export interface ICollection<T extends IDocument> {
     readonly docs: T[];
+    query?: (ref: firestore.CollectionReference) => firestore.Query;
     getAsync: (query?: (ref: firestore.CollectionReference) => firestore.Query) => Promise<void>;
     updateAsync: (data: T) => Promise<void>;
     addAsync: (data: OptionalId<T>) => Promise<void>;
@@ -22,6 +23,7 @@ export interface IDocument {
 
 export class Collection<T extends IDocument> implements ICollection<T> {
     @observable public docs: IObservableArray<T> = observable([]);
+    @observable public query?: (ref: firestore.CollectionReference) => firestore.Query;
     private readonly name: keyof CollectionMap;
     private readonly collectionRef: firebase.firestore.CollectionReference;
 
@@ -31,8 +33,8 @@ export class Collection<T extends IDocument> implements ICollection<T> {
     }
 
     @action
-    public getAsync(query?: (ref: firestore.CollectionReference) => firestore.Query) {
-        return (query ? query(this.collectionRef) : this.collectionRef).get()
+    public getAsync() {
+        return (this.query ? this.query(this.collectionRef) : this.collectionRef).get()
             .then(
                 querySnapshot => {
                     const newDocs = querySnapshot.docs.map(doc => typeSnapshot<T>(doc));

@@ -6,6 +6,7 @@ const typescript = require('rollup-plugin-typescript');
 const sass = require('gulp-sass');
 const resolve = require('rollup-plugin-node-resolve');
 const commonJS = require('rollup-plugin-commonjs');
+const replace = require("rollup-plugin-replace");
 
 // Configuration
 const configuration = {
@@ -49,6 +50,9 @@ gulp.task('tsc', () => {
         input: configuration.paths.src.js,
         external: ["firebase/app"],
         plugins: [
+            replace({
+                'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV || "'development'")
+              }),
             resolve(),
             commonJS({
                 include: 'node_modules/**',

@@ -1,4 +1,4 @@
-import {observable} from 'mobx';
+import { observable } from 'mobx';
 import { Firestorable } from './Firestorable/Firestorable';
 import { ICollection, Collection, IDocument } from './Firestorable/Collection';
 
@@ -18,7 +18,7 @@ export interface IAppStore {
 }
 
 class Store implements IAppStore {
-    @observable books = new Collection<IBook>("books", firestorable.firestore)
+    @observable books = new Collection<IBook>("books", firestorable.firestore, { realtime: true })
 };
 
 const store = (window as any)["store"] = new Store();

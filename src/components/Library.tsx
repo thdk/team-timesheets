@@ -23,9 +23,9 @@ export class Library extends React.Component<{ delete: (id: string) => Promise<v
 
     mount() {
         this.isRendered = true;
-        store.books.getAsync();
+        store.books.getDocs();
 
-        window.setTimeout(() => store.books.query= ref => ref.where("author", "==", "thdk"), 5000);
+       // window.setTimeout(() => store.books.query= ref => ref.where("author", "==", "thdk"), 5000);
     }
 };
 

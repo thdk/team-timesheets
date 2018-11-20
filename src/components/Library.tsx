@@ -1,7 +1,6 @@
-import React from 'react';
-import { observer } from "mobx-react";
-import store, { IBook} from '../store';
-
+import {observer} from 'mobx-react';
+import * as React from 'react';
+import store, { IBook } from '../store';
 
 @observer
 export class Library extends React.Component<{ delete: (id: string) => Promise<void> }> {
@@ -12,7 +11,7 @@ export class Library extends React.Component<{ delete: (id: string) => Promise<v
             <div>
                 <ul>
                     {store.books.docs.map(
-                        book => <BookView onclick={() => this.props.delete(book.id)} author={book.author} title={book.title} key={book.id} id={book.id} />
+                        book => <BookView onclick={() => store.books.deleteAsync(book.id)} author={book.author} title={book.title} key={book.id} id={book.id} />
                     )}
                 </ul>
             </div>);
@@ -25,6 +24,8 @@ export class Library extends React.Component<{ delete: (id: string) => Promise<v
     mount() {
         this.isRendered = true;
         store.books.getAsync();
+
+        window.setTimeout(() => store.books.query= ref => ref.where("author", "==", "thdk"), 5000);
     }
 };
 

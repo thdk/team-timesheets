@@ -1,8 +1,8 @@
-import React from "react";
 import { Library } from "./Library";
 import { OptionalId } from "../Firestorable/types";
 import { BookInput } from "./BookInput";
 import store, { IBook } from "../store";
+import * as React from 'react';
 
 export class App extends React.Component {
     render() {

@@ -51,14 +51,14 @@ gulp.task('tsc', () => {
         external: ["firebase/app"],
         plugins: [
             replace({
-                'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV || "'development'")
+                'process.env.NODE_ENV': "'development'"
               }),
             resolve(),
             commonJS({
                 include: 'node_modules/**',
                 namedExports: {
-                  'node_modules/react/index.js': ['Component', 'PureComponent', 'Fragment', 'Children', 'createElement'],
-                  'node_modules/react-dom/index.js': ['findDOMNode', 'unstable_batchedUpdates']
+                  'node_modules/react/index.js': ['Component', 'PureComponent', 'Fragment', 'Children', 'createElement', 'forwardRef'],
+                  'node_modules/react-dom/index.js': ['findDOMNode', 'unstable_batchedUpdates', 'render']
                 }
               }),
             typescript(), // uses tsconfig.json, overwrite using: typescript({lib: ["es5", "es6", "dom"], target: "es5"}))

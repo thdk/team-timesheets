@@ -4,7 +4,7 @@ import 'firebase/firestore';
 
 import { updateAsync, addAsync, typeSnapshot } from "./FirestoreUtils";
 import { insertItem, updateObjectInArray } from "../immutable";
-import { observable, action, IObservableArray } from "mobx";
+import { observable, action, IObservableArray, computed } from "mobx";
 import { OptionalId } from "./types";
 import { CollectionMap } from "../store";
 
@@ -23,7 +23,7 @@ export interface IDocument {
 
 export class Collection<T extends IDocument> implements ICollection<T> {
     @observable public docs: IObservableArray<T> = observable([]);
-    @observable public query?: (ref: firestore.CollectionReference) => firestore.Query;
+    queryField?: (ref: firestore.CollectionReference) => firestore.Query;
     private readonly name: keyof CollectionMap;
     private readonly collectionRef: firebase.firestore.CollectionReference;
 
@@ -32,9 +32,8 @@ export class Collection<T extends IDocument> implements ICollection<T> {
         this.collectionRef = firestore.collection(this.name);
     }
 
-    @action
     public getAsync() {
-        return (this.query ? this.query(this.collectionRef) : this.collectionRef).get()
+        return (this.queryField ? this.queryField(this.collectionRef) : this.collectionRef).get()
             .then(
                 querySnapshot => {
                     const newDocs = querySnapshot.docs.map(doc => typeSnapshot<T>(doc));
@@ -42,25 +41,30 @@ export class Collection<T extends IDocument> implements ICollection<T> {
                 });
     }
 
-    @action
     public updateAsync(data: T) {
         return updateAsync(this.collectionRef, data).then(() => {
             this.docs.replace(updateObjectInArray(this.docs!, data));
         });
     }
 
-    @action
     public addAsync(data: OptionalId<T>) {
-        return addAsync(this.collectionRef, data).then(addedDoc => {
-            const newDocs = insertItem(this.docs, addedDoc, 0);
-            this.docs.replace(newDocs);
+        return addAsync(this.collectionRef, data).then(addedDoc => {            
+            this.docs.push(addedDoc);
         });
     }
 
-    @action
     public deleteAsync(id: string) {
         return this.collectionRef.doc(id).delete().then(() => {
             this.docs.replace(this.docs.filter(d => d.id !== id));
         })
+    }
+
+    public get query() {
+        return this.queryField;
+    }
+
+    public set query(query: ((ref: firebase.firestore.CollectionReference) => firebase.firestore.Query) | undefined) {
+        this.queryField = query;
+        this.getAsync();
     }
 }

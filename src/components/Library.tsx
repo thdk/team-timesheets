@@ -1,4 +1,4 @@
-import {observer} from 'mobx-react';
+import { observer } from 'mobx-react';
 import * as React from 'react';
 import store, { IBook } from '../store';
 
@@ -11,7 +11,7 @@ export class Library extends React.Component<{ delete: (id: string) => Promise<v
             <div>
                 <ul>
                     {Array.from(store.books.docs.values()).map(
-                        book => <BookView key={book.id} onclick={() => store.books.deleteAsync(book.id)} {...book}  />
+                        book => <BookView key={book.id} onclick={() => store.books.deleteAsync(book.id)} {...book} />
                     )}
                 </ul>
             </div>);
@@ -25,7 +25,7 @@ export class Library extends React.Component<{ delete: (id: string) => Promise<v
         this.isRendered = true;
         store.books.getDocs();
 
-       // window.setTimeout(() => store.books.query= ref => ref.where("author", "==", "thdk"), 5000);
+        window.setTimeout(() => store.books.query = ref => ref.where("author", "==", "thdk"), 5000);
     }
 };
 

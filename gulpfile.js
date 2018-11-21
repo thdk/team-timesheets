@@ -67,7 +67,10 @@ gulp.task('tsc', () => {
         return bundle.write({
             file: 'dist/js/app.js',
             format: 'iife',
-            name: 'rollupBundle'
+            name: 'rollupBundle',
+            globals: {
+                'firebase/app': 'firebase'
+            }
         });
     });
 });

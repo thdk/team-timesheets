@@ -4,7 +4,7 @@ import 'firebase/firestore';
 
 import { updateAsync, addAsync, typeSnapshot } from "./FirestoreUtils";
 import { updateObjectInArray } from "../immutable";
-import { observable, ObservableMap } from "mobx";
+import { observable, ObservableMap, reaction } from "mobx";
 import { OptionalId } from "./types";
 import { CollectionMap } from "../store";
 
@@ -27,11 +27,12 @@ export interface ICollectionOptions {
 
 export class Collection<T extends IDocument> implements ICollection<T> {
     public docs: ObservableMap<string, T> = observable(new Map);
-    queryField?: (ref: firestore.CollectionReference) => firestore.Query;
+    @observable public query?: (ref: firestore.CollectionReference) => firestore.Query;
     private readonly name: keyof CollectionMap;
     private readonly collectionRef: firebase.firestore.CollectionReference;
     private readonly isRealtime: boolean;
     private unsubscribeFirestore?: () => void;
+    private readonly queryReactionDisposable: () => void;
 
     constructor(name: keyof CollectionMap, firestore: firebase.firestore.Firestore, options: ICollectionOptions = {}) {
         const { realtime = false } = options;
@@ -39,12 +40,16 @@ export class Collection<T extends IDocument> implements ICollection<T> {
         this.isRealtime = realtime;
         this.name = name;
         this.collectionRef = firestore.collection(this.name);
+
+        this.queryReactionDisposable = reaction(() => this.query, this.getDocs.bind(this));
     }
 
     public getDocs() {
         if (this.unsubscribeFirestore) this.unsubscribeFirestore();
 
-        this.unsubscribeFirestore = (this.queryField ? this.queryField(this.collectionRef) : this.collectionRef)
+        if (this.docs.size) this.docs.clear();
+
+        this.unsubscribeFirestore = (this.query ? this.query(this.collectionRef) : this.collectionRef)
             .onSnapshot(snapshot => {
                 if (!this.isRealtime) this.unsubscribeFirestore!();
 
@@ -75,12 +80,9 @@ export class Collection<T extends IDocument> implements ICollection<T> {
         return this.collectionRef.doc(id).delete();
     }
 
-    public get query() {
-        return this.queryField;
-    }
+    public dispose() {
+        if (this.unsubscribeFirestore) this.unsubscribeFirestore();
 
-    public set query(query: ((ref: firebase.firestore.CollectionReference) => firebase.firestore.Query) | undefined) {
-        this.queryField = query;
-        this.getDocs();
+        this.queryReactionDisposable();
     }
 }

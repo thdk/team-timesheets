@@ -10,8 +10,8 @@ export class Library extends React.Component<{ delete: (id: string) => Promise<v
         return (
             <div>
                 <ul>
-                    {store.books.docs.map(
-                        book => <BookView onclick={() => store.books.deleteAsync(book.id)} author={book.author} title={book.title} key={book.id} id={book.id} />
+                    {Array.from(store.books.docs.values()).map(
+                        book => <BookView key={book.id} onclick={() => store.books.deleteAsync(book.id)} {...book}  />
                     )}
                 </ul>
             </div>);

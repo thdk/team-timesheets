@@ -1,15 +1,15 @@
 
-import {firestore} from "firebase";
+import { firestore } from "firebase";
 import 'firebase/firestore';
 
 import { updateAsync, addAsync, typeSnapshot } from "./FirestoreUtils";
 import { updateObjectInArray } from "../immutable";
-import { observable, IObservableArray } from "mobx";
+import { observable, ObservableMap } from "mobx";
 import { OptionalId } from "./types";
 import { CollectionMap } from "../store";
 
 export interface ICollection<T extends IDocument> {
-    readonly docs: T[];
+    readonly docs: ObservableMap<string, T>;
     query?: (ref: firestore.CollectionReference) => firestore.Query;
     getDocs: () => void;
     updateAsync: (data: T) => Promise<void>;
@@ -26,15 +26,15 @@ export interface ICollectionOptions {
 }
 
 export class Collection<T extends IDocument> implements ICollection<T> {
-    @observable public docs: IObservableArray<T> = observable([]);
+    public docs: ObservableMap<string, T> = observable(new Map);
     queryField?: (ref: firestore.CollectionReference) => firestore.Query;
     private readonly name: keyof CollectionMap;
     private readonly collectionRef: firebase.firestore.CollectionReference;
     private readonly isRealtime: boolean;
     private unsubscribeFirestore?: () => void;
 
-    constructor(name: keyof CollectionMap, firestore: firebase.firestore.Firestore, options: ICollectionOptions= {}) {
-        const {realtime = false} = options;
+    constructor(name: keyof CollectionMap, firestore: firebase.firestore.Firestore, options: ICollectionOptions = {}) {
+        const { realtime = false } = options;
 
         this.isRealtime = realtime;
         this.name = name;
@@ -52,9 +52,13 @@ export class Collection<T extends IDocument> implements ICollection<T> {
                     return;
 
                 snapshot.docChanges().forEach(change => {
-                    if (change.type === "added") this.docs.push(typeSnapshot(change.doc));
-                    else if (change.type === "modified") this.docs.replace(updateObjectInArray(this.docs, typeSnapshot(change.doc)));
-                    else if (change.type ==="removed") this.docs.replace(this.docs.filter(d => d.id !== change.doc.id));
+                    const { doc: { id }, doc } = change;
+                    if (change.type === "added" || change.type === "modified") {
+                        this.docs.set(id, typeSnapshot(doc));
+                    }
+                    else if (change.type === "removed") {
+                        this.docs.delete(id);
+                    }
                 });
             });
     }

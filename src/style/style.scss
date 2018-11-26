@@ -1,4 +1,6 @@
 @import '_vars';
+
+@import "@material/fab/mdc-fab";
 body {
     font: 100% $font-stack;
     color: $primary-color;

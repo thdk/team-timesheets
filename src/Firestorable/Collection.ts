@@ -3,7 +3,6 @@ import { firestore } from "firebase";
 import 'firebase/firestore';
 
 import { updateAsync, addAsync, typeSnapshot } from "./FirestoreUtils";
-import { updateObjectInArray } from "../immutable";
 import { observable, ObservableMap, reaction } from "mobx";
 import { OptionalId } from "./types";
 import { CollectionMap } from "../store";

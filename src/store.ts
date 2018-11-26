@@ -4,11 +4,18 @@ import { ICollection, Collection, IDocument } from './Firestorable/Collection';
 
 export interface CollectionMap {
     "books": IBook;
+    "registrations": IRegistration;
 }
 
 export interface IBook extends IDocument {
     author: string;
     title: string;
+}
+
+export interface IRegistration extends IDocument {
+    description: string;
+    time: number;
+    project: string;
 }
 
 const firestorable = new Firestorable();
@@ -18,7 +25,8 @@ export interface IAppStore {
 }
 
 class Store implements IAppStore {
-    @observable books = new Collection<IBook>("books", firestorable.firestore, { realtime: true })
+    @observable books = new Collection<IBook>("books", firestorable.firestore, { realtime: true });
+    @observable registrations = new Collection<IRegistration>("registrations", firestorable.firestore, { realtime: true })
 };
 
 const store = (window as any)["store"] = new Store();

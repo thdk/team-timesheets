@@ -3,7 +3,7 @@ import * as React from 'react';
 import store, { IBook } from '../store';
 
 @observer
-export class Library extends React.Component<{ delete: (id: string) => Promise<void> }> {
+export class Library extends React.Component {
     private isRendered = false;
     render() {
         if (!this.isRendered) this.mount();
@@ -11,14 +11,10 @@ export class Library extends React.Component<{ delete: (id: string) => Promise<v
             <div>
                 <ul>
                     {Array.from(store.books.docs.values()).map(
-                        book => <BookView key={book.id} onclick={() => store.books.deleteAsync(book.id)} {...book} />
+                        book => <BookView key={book.id} {...book} />
                     )}
                 </ul>
             </div>);
-    }
-
-    remove(id: string) {
-        this.props.delete(id);
     }
 
     mount() {
@@ -30,15 +26,17 @@ export class Library extends React.Component<{ delete: (id: string) => Promise<v
 };
 
 @observer
-class BookView extends React.Component<IBook & { onclick: (id: string) => void }> {
+class BookView extends React.Component<IBook> {
+
     render() {
-        const { author, title, id } = this.props;
+        const { author, title } = this.props;
         return (
-            <li onClick={() => this.click(id)}>{author} - {title}</li>
+            <li onClick={this.click}>{author} - {title}</li>
         );
     }
 
-    click(id: string) {
-        this.props.onclick(id);
+    click = () => {
+        store.books.deleteAsync(this.props.id);
+        return null;
     }
 }

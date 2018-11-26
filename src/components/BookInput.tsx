@@ -1,11 +1,11 @@
 import { observer } from "mobx-react";
-import { OptionalId } from "../Firestorable/types";
-import { IBook } from "../store";
+import store from "../store";
 import * as React from 'react';
+import Button from '@material-ui/core/Button';
 
 @observer
-export class BookInput extends React.Component<{ add: (book: OptionalId<IBook>) => void }, { title: string, author: string }> {
-    constructor(props: { add: (book: Overwrite<IBook, { id?: string }>) => void }) {
+export class BookInput extends React.Component<{}, { title: string, author: string }> {
+    constructor(props: {}) {
         super(props);
         this.state = { title: '', author: '' };
     }
@@ -13,26 +13,28 @@ export class BookInput extends React.Component<{ add: (book: OptionalId<IBook>) 
     render() {
         return (<div>
             <label>Title</label>
-            <input value={this.state.title} type="text" onChange={(e) => this.changeTitle(e)}></input>
+            <input value={this.state.title} type="text" onChange={this.changeTitle}></input>
 
             <label>Author</label>
-            <input value={this.state.author} type="text" onChange={(e) => this.changeAuthor(e)}></input>
-            <button onClick={() => this.click()}>Add book</button>
+            <input value={this.state.author} type="text" onChange={this.changeAuthor}></input>
+            <Button onClick={this.click} variant="contained" color="primary">
+                Add book
+             </Button>
         </div>
         );
     }
 
-    changeAuthor(e: React.ChangeEvent<HTMLInputElement>) {
+    changeAuthor = (e: React.ChangeEvent<HTMLInputElement>) => {
         this.setState({ author: e.target.value })
     }
 
-    changeTitle(e: React.ChangeEvent<HTMLInputElement>) {
+    changeTitle = (e: React.ChangeEvent<HTMLInputElement>) => {
         this.setState({ title: e.target.value })
     }
 
-    click() {
+    click = () => {
         const { author, title } = this.state;
-        this.props.add({ title, author });
+        store.books.addAsync({ title, author });
         this.setState({ author: "", title: "" });
     }
 }

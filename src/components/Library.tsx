@@ -6,7 +6,11 @@ import store, { IBook } from '../store';
 export class Library extends React.Component {
     private isRendered = false;
     render() {
-        if (!this.isRendered) this.mount();
+        if (!this.isRendered) {
+            this.mount();
+            this.isRendered = true;
+        }
+
         return (
             <div>
                 <ul>
@@ -14,12 +18,13 @@ export class Library extends React.Component {
                         book => <BookView key={book.id} {...book} />
                     )}
                 </ul>
-            </div>); 
+            </div>);
     }
 
     mount() {
-        this.isRendered = true;
         store.books.getDocs();
+
+        window.setTimeout(() => store.books.query = ref => ref.where("author", "==", "thdk"), 5000);
     }
 };
 

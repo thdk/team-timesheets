@@ -42,27 +42,18 @@ gulp.task('scss:watch', gulp.series(function (done) {
     done();
 }));
 
-var ts = require('gulp-typescript');  
-var tsProject = ts.createProject('./tsconfig.json');  
-
-gulp.task('transpile-it', function () {  
-    return tsProject.src()  
-        .pipe(tsProject())  
-        .pipe(gulp.dest('tmp'));  
-});  
-
-gulp.task('rollup', function() {
+gulp.task('bundle', function() {
     return rollup('rollup.config.js')
-      .pipe(source(configuration.paths.src.js))
-      .pipe(gulp.dest('dist/js'));
+      .pipe(source("app.js")) // name of the output file
+      .pipe(gulp.dest('dist/js')); // location to put the output file
   });
 
 gulp.task('tsc:watch', gulp.series(function (done) {
-    gulp.watch(['./src/**/*.ts','./src/**/*.tsx'] , gulp.series('rollup'));
+    gulp.watch(['./src/**/*.ts','./src/**/*.tsx'] , gulp.series('bundle'));
     done();
 }));
 
 // Gulp default task
-gulp.task('default', gulp.parallel('html', gulp.series("transpile-it", 'rollup'), 'scss'));
+gulp.task('default', gulp.parallel('html', 'bundle', 'scss'));
 
 gulp.task('watch', gulp.series('default', gulp.parallel('tsc:watch', 'scss:watch')));

@@ -5,7 +5,7 @@ import replace from 'rollup-plugin-replace';
 
 export default {
   external: ["firebase/app"],
-  input: 'tmp/js/app.js',
+  input: 'src/app.ts', // can be a typescript file if we have a rollup typescript plugin
   format: 'iife',
   globals: {
     'firebase/app': 'firebase'
@@ -21,7 +21,8 @@ export default {
         'node_modules/react/index.js': ['Component', 'PureComponent', 'Fragment', 'Children', 'createElement', 'forwardRef'],
         'node_modules/react-dom/index.js': ['findDOMNode', 'unstable_batchedUpdates', 'render']
       }
-    })
+    }),
+    typescript()
   ],
   onwarn: function (warning) {
     // Suppress this error message:

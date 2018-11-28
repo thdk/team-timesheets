@@ -1,4 +1,4 @@
-import React from "react";
+import * as React from 'react';
 import { observer } from "mobx-react";
 import store from "../store";
 
@@ -13,6 +13,7 @@ export class Registration extends React.Component {
         }
         return (
             <>
+            test
             </>
         );
     }

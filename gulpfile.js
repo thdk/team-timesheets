@@ -1,12 +1,10 @@
 
 // Add dependencies
 const gulp = require('gulp');
-const rollup = require('rollup');
-const typescript = require('rollup-plugin-typescript');
+const rollup = require('rollup-stream');
 const sass = require('gulp-sass');
-const resolve = require('rollup-plugin-node-resolve');
-const commonJS = require('rollup-plugin-commonjs');
-const replace = require("rollup-plugin-replace");
+
+const source = require('vinyl-source-stream');
 
 // Configuration
 const configuration = {
@@ -44,43 +42,27 @@ gulp.task('scss:watch', gulp.series(function (done) {
     done();
 }));
 
-// based on example from https://rollupjs.org/guide/en (See Gulp section)
-gulp.task('tsc', () => {
-    return rollup.rollup({
-        input: configuration.paths.src.js,
-        external: ["firebase/app"],
-        plugins: [
-            replace({
-                'process.env.NODE_ENV': "'development'"
-              }),
-            resolve(),
-            commonJS({
-                include: 'node_modules/**',
-                namedExports: {
-                  'node_modules/react/index.js': ['Component', 'PureComponent', 'Fragment', 'Children', 'createElement', 'forwardRef'],
-                  'node_modules/react-dom/index.js': ['findDOMNode', 'unstable_batchedUpdates', 'render']
-                }
-              }),
-            typescript(), // uses tsconfig.json, overwrite using: typescript({lib: ["es5", "es6", "dom"], target: "es5"}))
-        ]
-    }).then(bundle => {
-        return bundle.write({
-            file: 'dist/js/app.js',
-            format: 'iife',
-            name: 'rollupBundle',
-            globals: {
-                'firebase/app': 'firebase'
-            }
-        });
-    });
-});
+var ts = require('gulp-typescript');  
+var tsProject = ts.createProject('./tsconfig.json');  
+
+gulp.task('transpile-it', function () {  
+    return tsProject.src()  
+        .pipe(tsProject())  
+        .pipe(gulp.dest('tmp'));  
+});  
+
+gulp.task('rollup', function() {
+    return rollup('rollup.config.js')
+      .pipe(source(configuration.paths.src.js))
+      .pipe(gulp.dest('dist/js'));
+  });
 
 gulp.task('tsc:watch', gulp.series(function (done) {
-    gulp.watch(['./src/**/*.ts','./src/**/*.tsx'] , gulp.series('tsc'));
+    gulp.watch(['./src/**/*.ts','./src/**/*.tsx'] , gulp.series('rollup'));
     done();
 }));
 
 // Gulp default task
-gulp.task('default', gulp.parallel(['html', 'tsc', 'scss']));
+gulp.task('default', gulp.parallel('html', gulp.series("transpile-it", 'rollup'), 'scss'));
 
-gulp.task('watch', gulp.parallel(['tsc:watch', 'scss:watch']));
+gulp.task('watch', gulp.series('default', gulp.parallel('tsc:watch', 'scss:watch')));

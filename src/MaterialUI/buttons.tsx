@@ -1,4 +1,4 @@
-import React from "react";
+import * as React from 'react';
 
 export class Fab extends React.Component<{icon: string, name: string}> {
     render() {

@@ -8,7 +8,7 @@
     "tsc": "tsc",
     "tsc:w": "tsc -w",
     "lite": "lite-server --baseDir ./dist",
-    "start": "gulp && gulp watch && npm run lite"
+    "start": "npm run lite && gulp watch"
   },
   "repository": {
     "type": "git",
@@ -21,26 +21,29 @@
   },
   "homepage": "https://github.com/thdk/typescript-start#readme",
   "devDependencies": {
-    "concurrently": "^4.1.0",
-    "gulp-sass": "^4.0.2",
-    "lite-server": "^2.4.0",
-    "rollup": "^0.67.3",
-    "rollup-plugin-commonjs": "^9.2.0",
-    "rollup-plugin-dotenv": "^0.2.0",
-    "rollup-plugin-node-resolve": "^3.4.0",
-    "rollup-plugin-replace": "^2.1.0",
-    "rollup-plugin-typescript": "^1.0.0",
-    "tslib": "^1.9.3",
-    "typescript": "^3.1.6"
-  },
-  "dependencies": {
     "@material-ui/core": "^3.5.1",
     "@material-ui/icons": "^3.0.1",
     "@material/fab": "^0.41.0",
     "@types/react": "^16.7.6",
     "@types/react-dom": "^16.0.9",
-    "firebase": "^5.5.8",
+    "concurrently": "^4.1.0",
     "gulp": "^4.0.0",
+    "gulp-sass": "^4.0.2",
+    "gulp-typescript": "^5.0.0-alpha.3",
+    "lite-server": "^2.4.0",
+    "rollup": "^0.67.3",
+    "rollup-plugin-commonjs": "8.3.0",
+    "rollup-plugin-node-resolve": "^3.4.0",
+    "rollup-plugin-replace": "^2.1.0",
+    "rollup-plugin-typescript": "^1.0.0",
+    "rollup-plugin-typescript2": "^0.18.0",
+    "rollup-stream": "^1.24.1",
+    "tslib": "^1.9.3",
+    "typescript": "^3.1.6",
+    "vinyl-source-stream": "^2.0.0"
+  },
+  "dependencies": {
+    "firebase": "^5.5.8",
     "mobx": "^5.6.0",
     "mobx-react": "^5.4.2",
     "react": "^16.6.3",

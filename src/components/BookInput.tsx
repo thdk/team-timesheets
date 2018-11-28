@@ -1,7 +1,7 @@
 import { observer } from "mobx-react";
 import store from "../store";
 import * as React from 'react';
-import Button from '@material-ui/core/Button';
+
 
 @observer
 export class BookInput extends React.Component<{}, { title: string, author: string }> {
@@ -17,9 +17,9 @@ export class BookInput extends React.Component<{}, { title: string, author: stri
 
             <label>Author</label>
             <input value={this.state.author} type="text" onChange={this.changeAuthor}></input>
-            <Button onClick={this.click} variant="contained" color="primary">
+            <button onClick={this.click} color="primary">
                 Add book
-             </Button>
+             </button>
         </div>
         );
     }
@@ -36,5 +36,6 @@ export class BookInput extends React.Component<{}, { title: string, author: stri
         const { author, title } = this.state;
         store.books.addAsync({ title, author });
         this.setState({ author: "", title: "" });
+        console.log("new version");
     }
 }

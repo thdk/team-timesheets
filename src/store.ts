@@ -1,6 +1,7 @@
 import { observable } from 'mobx';
 import { Firestorable } from './Firestorable/Firestorable';
 import { ICollection, Collection, IDocument } from './Firestorable/Collection';
+import { RouterStore } from 'mobx-router';
 
 export interface CollectionMap {
     "books": IBook;
@@ -27,6 +28,7 @@ export interface IAppStore {
 class Store implements IAppStore {
     @observable books = new Collection<IBook>("books", firestorable.firestore, { realtime: true });
     @observable registrations = new Collection<IRegistration>("registrations", firestorable.firestore, { realtime: true })
+    router = new RouterStore();
 };
 
 const store = (window as any)["store"] = new Store();

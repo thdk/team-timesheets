@@ -10,7 +10,6 @@ import { App } from '../components/App';
 import { IAppStore } from '../store';
 
 const onEnter = (route: any, params: any, store: IAppStore) => {
-  console.log(`entering book with params`, params);
   if (store) store.view.title = route.title;
 };
 

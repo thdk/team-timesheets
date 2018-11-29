@@ -37,7 +37,7 @@ gulp.task('scss', gulp.series(function (done) {
     done();
 }));
 
-gulp.task('scss:watch', gulp.series(function (done) {
+gulp.task('scsswatch', gulp.series(function (done) {
     gulp.watch('./src/style/**/*.scss', gulp.series('scss'));
     done();
 }));
@@ -46,9 +46,10 @@ gulp.task('bundle', function() {
     return rollup('rollup.config.js')
       .pipe(source("app.js")) // name of the output file
       .pipe(gulp.dest('dist/js')); // location to put the output file
+
   });
 
-gulp.task('tsc:watch', gulp.series(function (done) {
+gulp.task('tswatch', gulp.series(function (done) {
     gulp.watch(['./src/**/*.ts','./src/**/*.tsx'] , gulp.series('bundle'));
     done();
 }));
@@ -56,4 +57,4 @@ gulp.task('tsc:watch', gulp.series(function (done) {
 // Gulp default task
 gulp.task('default', gulp.parallel('html', 'bundle', 'scss'));
 
-gulp.task('watch', gulp.series('default', gulp.parallel('tsc:watch', 'scss:watch')));
+gulp.task('watch', gulp.series('default', gulp.parallel('tswatch', 'scsswatch')));

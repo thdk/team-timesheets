@@ -23,8 +23,6 @@ export class Library extends React.Component {
 
     mount() {
         store.books.getDocs();
-
-        window.setTimeout(() => store.books.query = ref => ref.where("author", "==", "thdk"), 5000);
     }
 };
 

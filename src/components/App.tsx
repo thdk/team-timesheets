@@ -1,15 +1,14 @@
-import { BookInput } from "./BookInput";
-import { Library } from "./Library";
 import * as React from 'react';
-import { Timesheets } from "./Timesheets";
+import { TopAppBar } from '../MaterialUI/appbars';
 
 export class App extends React.Component {
     render() {
         return (
             <div>
-                <Library ></Library>
-                <BookInput></BookInput>
-                <Timesheets></Timesheets>
+                <TopAppBar showNavigationIcon={true}></TopAppBar>
+                <div className="mdc-top-app-bar--fixed-adjust">
+                    {this.props.children}
+                </div>
             </div>
         )
     }

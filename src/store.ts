@@ -23,11 +23,14 @@ const firestorable = new Firestorable();
 
 export interface IAppStore {
     books: ICollection<IBook>;
+    registrations: ICollection<IRegistration>;
+    view?: {title: string};
 }
 
 class Store implements IAppStore {
     @observable books = new Collection<IBook>("books", firestorable.firestore, { realtime: true });
     @observable registrations = new Collection<IRegistration>("registrations", firestorable.firestore, { realtime: true })
+    @observable view?: { title: string };
     router = new RouterStore();
 };
 

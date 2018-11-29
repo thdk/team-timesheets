@@ -1,8 +1,19 @@
 @import '_vars';
 
 @import "@material/fab/mdc-fab";
+@import "@material/top-app-bar/mdc-top-app-bar";
+
 body {
     font: 100% $font-stack;
     color: $primary-color;
     background: $secondary-color;
+
+    padding: 0;
+    margin: 0;
+  }
+
+  .app-fab--absolute {
+    position: fixed;
+    bottom: 1rem;
+    right: 1rem;
   }

@@ -9,10 +9,16 @@ export class TopAppBar extends React.Component<{ showNavigationIcon: boolean }, 
         this.state = { title: store.view ? store.view.title : "" };
     }
     private topAppBar: MDCTopAppBar;
+
+    clickMenu = () => {
+        if (store.view) {
+            store.view.isDrawerOpen = !store.view.isDrawerOpen;
+        }
+    }
     render() {
 
         const navigationIcon = this.props.showNavigationIcon ?
-            <a href="#" className="material-icons mdc-top-app-bar__navigation-icon">menu</a> :
+            <a href="#" onClick={this.clickMenu} className="material-icons mdc-top-app-bar__navigation-icon">menu</a> :
             "";
 
         return (

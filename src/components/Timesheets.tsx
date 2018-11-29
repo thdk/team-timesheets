@@ -11,12 +11,7 @@ import { Fab } from "../MaterialUI/buttons";
 
 @observer
 export class Timesheets extends React.Component {
-    private isRendered = false;
     render() {
-        if (!this.isRendered) {
-            this.mount();
-            this.isRendered = true;
-        }
 
         const rows = Array.from(store.registrations.docs.values()).map(r => {
             return (
@@ -45,9 +40,5 @@ export class Timesheets extends React.Component {
                 <Fab icon="add" name="Add new registration"></Fab>
             </>
         );
-    }
-
-    mount() {
-        store.registrations.getDocs();
     }
 }

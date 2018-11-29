@@ -11,14 +11,17 @@ import { IAppStore } from '../store';
 
 const onEnter = (route: any, params: any, store: IAppStore) => {
   console.log(`entering book with params`, params);
-  store.view = {title: route.title};
+  if (store) store.view.title = route.title;
 };
 
 const views = {
   home: new Route({
     path: '/',
     component: <App><Timesheets/></App>,
-    onEnter,
+    onEnter: (route: any, params: any, store: IAppStore, queryParams: any) => {
+      store.registrations.getDocs();
+      onEnter(route, params, store); 
+    },
     title: "Overview"
   }),
   new: new Route({

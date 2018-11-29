@@ -8,6 +8,8 @@ import store from './store';
 
 startRouter(views, store);
 
+(window as any)["views"] = views;
+
 ReactDOM.render(
     React.createElement(
         Provider, 

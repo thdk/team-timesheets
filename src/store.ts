@@ -1,7 +1,8 @@
-import { observable } from 'mobx';
+import { observable, computed } from 'mobx';
 import { Firestorable } from './Firestorable/Firestorable';
 import { ICollection, Collection, IDocument } from './Firestorable/Collection';
 import { RouterStore } from 'mobx-router';
+import moment from 'moment-es6';
 
 export interface CollectionMap {
     "books": IBook;
@@ -21,25 +22,39 @@ export interface IRegistration extends IDocument {
 
 const firestorable = new Firestorable();
 
-export interface IViewStore { title: string, isDrawerOpen: boolean }
+export interface IViewStore {
+    title: string;
+    isDrawerOpen: boolean;
+    day: number;
+    month: number;
+    year: number;
+}
 
 export interface IAppStore {
-    books: ICollection<IBook>;
     registrations: ICollection<IRegistration>;
-    view:IViewStore;
+    view: IViewStore;
+    router: RouterStore;
 }
 
 class Store implements IAppStore {
-    @observable readonly books = new Collection<IBook>("books", firestorable.firestore, { realtime: true });
     @observable readonly registrations = new Collection<IRegistration>("registrations", firestorable.firestore, { realtime: true })
     @observable readonly view: IViewStore;
     router = new RouterStore();
 
     constructor() {
-        this.view = {
+        const date = new Date();
+
+        this.view = observable({
             title: "",
-            isDrawerOpen: false
-        }
+            isDrawerOpen: false,
+            day: date.getDate(),
+            month: date.getMonth(),
+            year: date.getFullYear()
+        });
+    }
+
+    @computed get moment() {
+        return moment(new Date(this.view.year, this.view.month - 1, this.view.day));
     }
 };
 

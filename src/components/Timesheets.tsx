@@ -8,6 +8,7 @@ import TableCell from "@material-ui/core/es/TableCell";
 import TableHead from "@material-ui/core/es/TableHead";
 import TableBody from "@material-ui/core/es/TableBody";
 import { Fab } from "../MaterialUI/buttons";
+import routes from '../config/views';
 
 @observer
 export class Timesheets extends React.Component {
@@ -15,7 +16,7 @@ export class Timesheets extends React.Component {
 
         const rows = Array.from(store.registrations.docs.values()).map(r => {
             return (
-                <TableRow>
+                <TableRow key={r.id}>
                     <TableCell>{r.description}</TableCell>
                     <TableCell>{r.project}</TableCell>
                     <TableCell>{r.time}</TableCell>
@@ -36,9 +37,12 @@ export class Timesheets extends React.Component {
                         {rows}
                     </TableBody>
                 </Table>
-
-                <Fab icon="add" name="Add new registration"></Fab>
+                <Fab onClick={this.addRegistration} icon="add" name="Add new registration"></Fab>
             </>
         );
+    }
+
+    addRegistration = () => {
+        store.router.goTo(routes["new"]);
     }
 }

@@ -4,13 +4,8 @@ import { MDCTopAppBar } from '@material/top-app-bar/index';
 import store from '../store';
 
 export class TopAppBar extends React.Component<{ showNavigationIcon: boolean }, { title: string }> {
-    constructor(props: { showNavigationIcon: boolean }) {
-        super(props);
-        this.state = { title: store.view ? store.view.title : "" };
-    }
-    private topAppBar: MDCTopAppBar;
-
-    clickMenu = () => {
+    clickMenu = (e: React.MouseEvent) => {
+        e.preventDefault();
         if (store.view) {
             store.view.isDrawerOpen = !store.view.isDrawerOpen;
         }
@@ -26,7 +21,7 @@ export class TopAppBar extends React.Component<{ showNavigationIcon: boolean }, 
                 <div className="mdc-top-app-bar__row">
                     <section className="mdc-top-app-bar__section mdc-top-app-bar__section--align-start">
                         {navigationIcon}
-                        <span className="mdc-top-app-bar__title">{this.state.title}</span>
+                        <span className="mdc-top-app-bar__title">{store.view.title}</span>
                     </section>
                 </div>
             </header>
@@ -36,7 +31,7 @@ export class TopAppBar extends React.Component<{ showNavigationIcon: boolean }, 
     componentDidMount() {
         // Instantiation
         const topAppBarElement = document.querySelector('.mdc-top-app-bar');
-        this.topAppBar = new MDCTopAppBar(topAppBarElement);
+        MDCTopAppBar.attachTo(topAppBarElement);
     }
 
     componentWillUnmount() {

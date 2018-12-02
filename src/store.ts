@@ -5,13 +5,14 @@ import { RouterStore } from 'mobx-router';
 import moment from 'moment-es6';
 
 export interface CollectionMap {
-    "books": IBook;
     "registrations": IRegistration;
+    "tasks": ITask;
 }
 
-export interface IBook extends IDocument {
-    author: string;
-    title: string;
+export interface ITask extends IDocument {
+    name: string;
+    color?: string;
+    icon?: string;
 }
 
 export interface IRegistration extends IDocument {
@@ -37,7 +38,8 @@ export interface IAppStore {
 }
 
 class Store implements IAppStore {
-    @observable readonly registrations = new Collection<IRegistration>("registrations", firestorable.firestore, { realtime: true })
+    @observable readonly registrations = new Collection<IRegistration>("registrations", firestorable.firestore, { realtime: true });
+    @observable readonly tasks = new Collection<ITask>("tasks", firestorable.firestore, { realtime: true })
     @observable readonly view: IViewStore;
     router = new RouterStore();
 
@@ -51,6 +53,12 @@ class Store implements IAppStore {
             month: date.getMonth(),
             year: date.getFullYear()
         });
+
+        this.loadData();
+    }
+
+    loadData() {
+        this.tasks.getDocs();
     }
 
     @computed get moment() {

@@ -8,7 +8,7 @@ import TableCell from "@material-ui/core/es/TableCell";
 import TableHead from "@material-ui/core/es/TableHead";
 import TableBody from "@material-ui/core/es/TableBody";
 import { Fab } from "../MaterialUI/buttons";
-import routes from '../config/views';
+import routes from '../routes/index';
 
 @observer
 export class Timesheets extends React.Component {
@@ -43,6 +43,6 @@ export class Timesheets extends React.Component {
     }
 
     addRegistration = () => {
-        store.router.goTo(routes["new"]);
+        store.router.goTo(routes.registrationDetail);
     }
 }

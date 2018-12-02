@@ -8,8 +8,8 @@ export class Firestorable {
     constructor() {
         firebase.initializeApp({
             apiKey: config.apiKey,
-            authDomain: 'czech-subs-1520975638509.firebaseapp.com',
-            projectId: 'czech-subs-1520975638509'
+            authDomain: config.authDomain,
+            projectId: config.projectId
         });
         this.firestore = firebase.firestore();
         const settings = { timestampsInSnapshots: true };

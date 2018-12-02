@@ -39,6 +39,7 @@
     "vinyl-source-stream": "^2.0.0"
   },
   "dependencies": {
+    "@material/chips": "0.40.1",
     "@material/drawer": "0.40.1",
     "@material/textfield": "0.40.1",
     "@material/top-app-bar": "^0.41.0",

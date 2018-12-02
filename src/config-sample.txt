@@ -1,6 +1,8 @@
 // rename this file with correct values to config.ts
 export interface IAppConfig {
     apiKey: string;
+    authDomain: string;
+    projectId: string;
 }
 
 export const config: IAppConfig = {

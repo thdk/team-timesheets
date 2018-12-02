@@ -1,0 +1,6 @@
+@import "@material/chips/mdc-chips";
+
+.mdc-chip {
+    @include mdc-chip-outline(2px, solid, currentColor);
+    @include mdc-chip-fill-color-accessible(#f6f6f6);
+  }

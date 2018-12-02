@@ -1,10 +1,10 @@
-import { App } from '../../components/App';
 import * as React from 'react';
 import { Route } from 'mobx-router';
 import { Timesheets } from '../../components/Timesheets';
 import store, { IAppStore } from '../../store';
 import { transaction } from 'mobx';
 import { setTitleForRoute } from '../actions';
+import { App } from '../../internal';
 
 interface IDate {
     year: number;
@@ -14,17 +14,17 @@ interface IDate {
 
 export const path = "/timesheets";
 
-// export const goTo = (date?: IDate) => {
-//     if (!date) {
-//         const toDay = new Date();
-//         date = {
-//             year: toDay.getFullYear(),
-//             month: toDay.getMonth(),
-//             day: toDay.getDate()
-//         }
-//     }
-//     store.router.goTo(routes.overview, date, store)
-// }
+export const goTo = (date?: IDate) => {
+    if (!date) {
+        const toDay = new Date();
+        date = {
+            year: toDay.getFullYear(),
+            month: toDay.getMonth(),
+            day: toDay.getDate()
+        }
+    }
+    store.router.goTo(routes.overview, date, store)
+}
 
 const routes = {
     overview: new Route({

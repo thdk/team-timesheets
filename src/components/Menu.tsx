@@ -3,13 +3,13 @@ import {DatetimePicker} from 'rc-datetime-picker';
 import store from '../store';
 import moment from 'moment-es6';
 import { observer } from 'mobx-react';
-// import { goTo as goToOverview } from '../routes/timesheets/overview';
+import { goTo as goToOverview } from "../internal";
 
 @observer
 export class Menu extends React.Component {
 
     dateChanged = (moment: moment.Moment) => {
-        //goToOverview({year: moment.year(), day: moment.date(), month: moment.month() + 1});
+        goToOverview({year: moment.year(), day: moment.date(), month: moment.month() + 1});
     }
 
     render() {

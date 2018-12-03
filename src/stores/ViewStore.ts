@@ -10,7 +10,7 @@ export interface IViewAction {
 }
 
 export interface IViewStore {
-  readonly title: string;
+  title: string;
   isDrawerOpen: boolean;
   day: number;
   month: number;

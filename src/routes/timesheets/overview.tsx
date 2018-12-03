@@ -36,10 +36,9 @@ const routeChanged = (route: any, params: IDate, store: IRootStore) => {
 
     const endDate = store.view.moment.clone().add(1, "days").toDate();
     const startDate = store.view.moment.clone().toDate();
-
-    console.log(`start: ${startDate.toString()} - end: ${endDate.toString()}`)
     store.registrations.query = ref => ref.where("date", ">", startDate).where("date", "<=", endDate);
     store.registrations.getDocs();
+    setTitleForRoute(route);
 }
 
 const routes = {

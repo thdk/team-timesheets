@@ -65,3 +65,5 @@ dist/
 tmp/
 
 src/config.ts
+
+.firebaserc

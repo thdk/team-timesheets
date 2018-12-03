@@ -13,9 +13,10 @@ export class Menu extends React.Component {
     }
 
     render() {
+        console.log("menu render");
         return (
             <>
-                <DatetimePicker moment={store.moment} showTimePicker={false} onChange={this.dateChanged}></DatetimePicker>
+                <DatetimePicker moment={moment(store.view.moment)} showTimePicker={false} onChange={this.dateChanged}></DatetimePicker>
                 <div className="mdc-list">
                     <a className="mdc-list-item mdc-list-item--activated" href="#" aria-selected="true">
                         <i className="material-icons mdc-list-item__graphic" aria-hidden="true">inbox</i>

@@ -3,36 +3,46 @@ import { observer } from "mobx-react";
 import { TextField } from '../MaterialUI/textfield';
 import { Form } from '../MaterialUI/form';
 import store from '../store';
-import moment from 'moment-es6';
 import { Chip, ChipSet } from '../MaterialUI/chips';
 
-export interface IRegistrationProps {
-    moment: moment.Moment;
-}
+
+import * as firebase from "firebase/app";
+import "firebase/firestore";
+import moment from 'moment-es6';
+
 
 @observer
-export class Registration extends React.Component<{}, { moment: moment.Moment, task: string }> {
-    constructor(props: IRegistrationProps) {
+export class Registration extends React.Component {
+    constructor(props: {}) {
         super(props);
-        this.state = {
-            moment: store.moment,
-            task: "HIBd74BItKoURLdQJmLf"
-        }
+        store.registrationsStore.registration.date = firebase.firestore.Timestamp.fromDate(this.toUTC(
+            store.view.moment.toDate())
+        );
+    }
+
+    toUTC(date: Date) {
+        return new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate(), date.getHours(), date.getMinutes(), date.getSeconds()));
     }
 
     render() {
-
+        const { task, description, project, time, date} = store.registrationsStore.registration;
         const tasks = Array.from(store.tasks.docs.values()).map((t, i) => {
             return (
-                <Chip onClick={this.taskClicked} {...t} text={t.name} key={t.id} tabIndex={i} isSelected={t.id === this.state.task}></Chip>
+                <Chip onClick={this.taskClicked} {...t} text={t.name} key={t.id} tabIndex={i} isSelected={t.id === (task || store.user.defaultTask)}></Chip>
             );
         });
+
+        if (!date) return;
+
+        const realDate = date.toDate();
+
         return (
+            date &&
             <Form>
-                <TextField value={`${this.state.moment.year()}-${this.state.moment.month() + 1}-${this.state.moment.date()}`} id="date" hint="Date" leadingIcon="event" outlined={true}></TextField>
-                <TextField id="description" hint="Description" fullWidth={true}></TextField>
-                <TextField id="project" hint="Project" fullWidth={true}></TextField>
-                <TextField id="time" hint="Time" fullWidth={true}></TextField>
+                <TextField disabled={true} value={`${realDate.getFullYear()}-${realDate.getMonth() + 1}-${realDate.getDate()}`} id="date" hint="Date" leadingIcon="event" outlined={true}></TextField>
+                <TextField onChange={this.onDescriptionChange} value={description} id="description" hint="Description" fullWidth={true}></TextField>
+                <TextField onChange={this.onProjectChange} value={project} id="project" hint="Project" fullWidth={true}></TextField>
+                <TextField onChange={this.onTimeChange} value={(time || "").toString()} id="time" hint="Time" fullWidth={true}></TextField>
                 <ChipSet type="choice">
                     {tasks}
                 </ChipSet>
@@ -40,7 +50,19 @@ export class Registration extends React.Component<{}, { moment: moment.Moment, t
         );
     }
 
+    onDescriptionChange = (value: string) => {
+        store.registrationsStore.registration.description = value;
+    }
+
+    onTimeChange = (value: string) => {
+        store.registrationsStore.registration.time = +value;
+    }
+
+    onProjectChange = (value: string) => {
+        store.registrationsStore.registration.project = value;
+    }
+
     taskClicked = (taskId: string) => {
-        this.setState({task: taskId});
+        store.registrationsStore.registration.task = taskId;
     }
 }

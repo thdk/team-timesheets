@@ -1,11 +1,6 @@
-//components
-import { App } from '../internal'
 import * as React from 'react';
-
-//models
+import { App } from '../internal';
 import { Route, RoutesConfig } from 'mobx-router';
-
-// routes
 import timesheetsRoutes from './timesheets/index';
 import { goTo as goToOverview } from '../internal';
 

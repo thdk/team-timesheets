@@ -7,7 +7,9 @@ export interface ITextFieldProps {
     fullWidth?: boolean;
     leadingIcon?: string;
     outlined?: boolean;
+    disabled?: boolean;
     value?: string;
+    onChange?: (value: string) => void;
 }
 
 export class TextField extends React.Component<ITextFieldProps> {
@@ -19,7 +21,7 @@ export class TextField extends React.Component<ITextFieldProps> {
     }
 
     render() {
-        const { id, hint, fullWidth = false, leadingIcon, outlined = false, value = "" } = this.props;
+        const { id, hint, fullWidth = false, leadingIcon, outlined = false, value = "", disabled = false } = this.props;
         const leadingIconEl = leadingIcon ?
             <i className="material-icons mdc-text-field__icon">{leadingIcon}</i>
             :
@@ -29,6 +31,7 @@ export class TextField extends React.Component<ITextFieldProps> {
         if (fullWidth) className += " mdc-text-field--fullwidth";
         if (leadingIcon) className += " mdc-text-field--with-leading-icon";
         if (outlined) className += " text-field mdc-text-field--outlined";
+        if (disabled) className += " mdc-text-field--disabled";
 
         const lineEl = outlined ?
             <>
@@ -43,10 +46,10 @@ export class TextField extends React.Component<ITextFieldProps> {
             <div className="mdc-line-ripple"></div>;
 
         const input = fullWidth ?
-            <input type="text" id={id} placeholder={hint} className="mdc-text-field__input" />
+            <input type="text" id={id} placeholder={hint} className="mdc-text-field__input" onChange={this.onChange} value={value} />
             :
             <>
-                <input type="text" id={id} className="mdc-text-field__input" defaultValue={value} />
+                <input type="text" id={id} className="mdc-text-field__input" onChange={this.onChange} value={value} />
                 <label className="mdc-floating-label" htmlFor={id}>{hint}</label>
             </>;
         return (
@@ -61,13 +64,10 @@ export class TextField extends React.Component<ITextFieldProps> {
     }
 
     componentDidMount() {
-
-        // hack because of the outline not being rendered on the right side
-        if (this.props.outlined && this.mdcTextField.current)
-        {
-
-            this.mdcTextField.current.focus();
-        }
         MDCTextField.attachTo(this.mdcTextField.current);
+    }
+
+    onChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        this.props.onChange && this.props.onChange(event.target.value);
     }
 }

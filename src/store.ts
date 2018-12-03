@@ -3,6 +3,9 @@ import { Firestorable } from './Firestorable/Firestorable';
 import { ICollection, Collection, IDocument } from './Firestorable/Collection';
 import { RouterStore } from 'mobx-router';
 import moment from 'moment-es6';
+import { IViewStore, ViewStore } from './stores/ViewStore';
+import { IRegistration, IRegistrationsStore, RegistrationStore } from './stores/RegistrationStore';
+import { IUserStore, UserStore } from './stores/UserStore';
 
 export interface CollectionMap {
     "registrations": IRegistration;
@@ -15,54 +18,33 @@ export interface ITask extends IDocument {
     icon?: string;
 }
 
-export interface IRegistration extends IDocument {
-    description: string;
-    time: number;
-    project: string;
-}
-
 const firestorable = new Firestorable();
 
-export interface IViewStore {
-    title: string;
-    isDrawerOpen: boolean;
-    day: number;
-    month: number;
-    year: number;
-}
 
-export interface IAppStore {
+export interface IRootStore {
     registrations: ICollection<IRegistration>;
     view: IViewStore;
     router: RouterStore;
+    registrationsStore: IRegistrationsStore;
 }
 
-class Store implements IAppStore {
+class Store implements IRootStore {
     @observable readonly registrations = new Collection<IRegistration>("registrations", firestorable.firestore, { realtime: true });
     @observable readonly tasks = new Collection<ITask>("tasks", firestorable.firestore, { realtime: true })
-    @observable readonly view: IViewStore;
+    readonly registrationsStore: IRegistrationsStore;
+    readonly view: IViewStore;
+    readonly user: IUserStore;
     router = new RouterStore();
 
     constructor() {
-        const date = new Date();
-
-        this.view = observable({
-            title: "",
-            isDrawerOpen: false,
-            day: date.getDate(),
-            month: date.getMonth(),
-            year: date.getFullYear()
-        });
-
+        this.view = new ViewStore(this);
+        this.user = new UserStore(this);
+        this.registrationsStore = new RegistrationStore(this);
         this.loadData();
     }
 
     loadData() {
         this.tasks.getDocs();
-    }
-
-    @computed get moment() {
-        return moment(new Date(this.view.year, this.view.month - 1, this.view.day));
     }
 };
 

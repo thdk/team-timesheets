@@ -30,7 +30,7 @@ export class TopAppBar extends React.Component<TopAppBarProps, { title: string }
         });
 
         return (
-            <header className="mdc-top-app-bar">
+            <header className="mdc-top-app-bar app-bar">
                 <div className="mdc-top-app-bar__row">
                     <section className="mdc-top-app-bar__section mdc-top-app-bar__section--align-start">
                         {navigationIcon}

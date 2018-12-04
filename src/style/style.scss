@@ -19,9 +19,28 @@ body {
     margin: 0;
   }
 
+  .body-wrapper {
+    display: flex;
+    height: 100vh;
+  }
+
   .app-fab--absolute {
     position: fixed;
     bottom: 1rem;
     right: 1rem;
+  }
+
+  .mdc-top-app-bar {
+    position: absolute;
+  }
+
+  .mdc-drawer-app-content {
+    flex: auto;
+    overflow: auto;
+  }
+
+  .main-content {
+    overflow: auto;
+    height: 100%;
   }
 

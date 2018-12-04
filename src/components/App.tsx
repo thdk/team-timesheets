@@ -12,7 +12,7 @@ export class App extends React.Component {
 
     render() {
         return (
-            <>
+            <div className="body-wrapper">
                 <Drawer ref={drawerRef => { this.drawerRef = drawerRef; }}>
                     <Menu></Menu>
                 </Drawer>
@@ -27,7 +27,7 @@ export class App extends React.Component {
                     </main>
                 </div>
 
-            </>
+            </div>
         )
     }
 

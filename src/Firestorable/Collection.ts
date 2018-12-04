@@ -33,12 +33,12 @@ export class Collection<T extends IDocument> implements ICollection<T> {
     private unsubscribeFirestore?: () => void;
     private readonly queryReactionDisposable: () => void;
 
-    constructor(name: keyof CollectionMap, firestore: firebase.firestore.Firestore, options: ICollectionOptions = {}) {
+    constructor(name: keyof CollectionMap, getFirestoreCollection: (name: string) => firebase.firestore.CollectionReference, options: ICollectionOptions = {}) {
         const { realtime = false } = options;
 
         this.isRealtime = realtime;
         this.name = name;
-        this.collectionRef = firestore.collection(this.name);
+        this.collectionRef = getFirestoreCollection(this.name);
 
         this.queryReactionDisposable = reaction(() => this.query, this.getDocs.bind(this));
     }

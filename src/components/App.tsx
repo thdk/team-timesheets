@@ -2,8 +2,9 @@ import * as React from 'react';
 import { TopAppBar } from '../MaterialUI/appbars';
 import { Drawer } from '../MaterialUI/drawer';
 import { Menu } from './Menu';
-import store, { IViewStore } from '../store';
+import store from '../store';
 import { observe } from 'mobx';
+import { IViewStore } from '../stores/ViewStore';
 
 export class App extends React.Component {
     private drawerRef?: Drawer | null;

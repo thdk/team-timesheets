@@ -13,37 +13,22 @@ export class Menu extends React.Component {
     }
 
     render() {
-        console.log("menu render");
         return (
             <>
                 <DatetimePicker moment={moment(store.view.moment)} showTimePicker={false} onChange={this.dateChanged}></DatetimePicker>
                 <div className="mdc-list">
-                    <a className="mdc-list-item mdc-list-item--activated" href="#" aria-selected="true">
+                    <a className="mdc-list-item" href="/" aria-selected="true">
                         <i className="material-icons mdc-list-item__graphic" aria-hidden="true">inbox</i>
                         <span className="mdc-list-item__text">Overview</span>
                     </a>
-                    <a className="mdc-list-item" href="#">
-                        <i className="material-icons mdc-list-item__graphic" aria-hidden="true">send</i>
-                        <span className="mdc-list-item__text">Export</span>
-                    </a>
-                    <a className="mdc-list-item" href="#">
-                        <i className="material-icons mdc-list-item__graphic" aria-hidden="true">drafts</i>
-                        <span className="mdc-list-item__text">Messages</span>
-                    </a>
+
                     <hr className="mdc-list-divider" />
                     <h6 className="mdc-list-group__subheader">Planning</h6>
-                    <a className="mdc-list-item" href="#">
+                    <a className="mdc-list-item" href="/config/projects">
                         <i className="material-icons mdc-list-item__graphic" aria-hidden="true">bookmark</i>
                         <span className="mdc-list-item__text">Projects</span>
                     </a>
-                    <a className="mdc-list-item" href="#">
-                        <i className="material-icons mdc-list-item__graphic" aria-hidden="true">bookmark</i>
-                        <span className="mdc-list-item__text">Users</span>
-                    </a>
-                    <a className="mdc-list-item" href="#">
-                        <i className="material-icons mdc-list-item__graphic" aria-hidden="true">bookmark</i>
-                        <span className="mdc-list-item__text">Teams</span>
-                    </a>
+
                 </div>
             </>
         );

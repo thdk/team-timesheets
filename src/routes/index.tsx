@@ -10,7 +10,7 @@ const routes: RoutesConfig = {
     path: '/',
     component: <App></App>,
     onEnter: () => {
-      goToOverview();
+      goToOverview(store);
     },
     title: "Root"
   }),

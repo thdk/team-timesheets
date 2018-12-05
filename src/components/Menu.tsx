@@ -9,7 +9,9 @@ import { goTo as goToOverview } from "../internal";
 export class Menu extends React.Component {
 
     dateChanged = (moment: moment.Moment) => {
-        goToOverview({year: moment.year(), day: moment.date(), month: moment.month() + 1});
+        console.log("dateChanged");
+        console.log(moment);
+        goToOverview(store, {year: moment.year(), day: moment.date(), month: moment.month() + 1});
     }
 
     render() {

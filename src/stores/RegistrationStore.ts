@@ -11,14 +11,14 @@ export interface IRegistration extends IDocument {
 }
 
 export interface IRegistrationsStore {
-    readonly registration: Partial<IRegistration>;
+    registration: Partial<IRegistration>;
     save: () => void;
 }
 
 export class RegistrationStore implements IRegistrationsStore {
     private rootStore: IRootStore;
 
-    @observable readonly registration: Partial<IRegistration>;
+    @observable registration: Partial<IRegistration>;
 
     constructor(rootStore: IRootStore) {
         this.rootStore = rootStore;

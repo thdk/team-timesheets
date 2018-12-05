@@ -5,8 +5,9 @@ import { path as parentPath } from './overview';
 import { App } from '../../components/App';
 import { Registration } from '../../components/Registration';
 import { setTitleForRoute } from '../actions';
-import store from '../../store';
+import { IRootStore } from '../../store';
 import { goTo as goToOverview } from '../../internal';
+import { reaction } from '../../../node_modules/mobx';
 
 export const path = parentPath + "/detail";
 
@@ -15,18 +16,27 @@ export default {
         path,
         component: <App><Registration></Registration></App>,
         title: "New registration",
-        onEnter: (route: Route, _params: any) => {
-            store.view.setActions([
-                {
-                    action: () => {
-                        store.registrationsStore.save();
-                        goToOverview({ day: store.view.day, year: store.view.year, month: store.view.month });
-                    },
-                    icon: "save",
-                    isActive: false
-                }
+        onEnter: (route: Route, _params: any, s: IRootStore) => {
+            const action = {
+                action: () => {
+                    s.registrationsStore.save();
+                    goToOverview(s, { day: s.view.day, year: s.view.year, month: s.view.month });
+                },
+                icon: "save",
+                isActive: false
+            };
+            s.view.setActions([
+                action
             ]);
             setTitleForRoute(route);
+
+            // const u = reaction(() => store.registrationsStore.registration, reg => {
+            //     // store.view.removeAction(action);
+            //     // observable.array([])
+            //     u();
+            // });
+        }, beforeExit: () => {
+            console.log('exiting user profile!');
         }
     })
 } as RoutesConfig;

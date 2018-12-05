@@ -32,7 +32,7 @@ export class Registration extends React.Component {
             );
         });
 
-        if (!date) return;
+        if (!date) return <></>;
 
         const realDate = date.toDate();
 
@@ -40,9 +40,9 @@ export class Registration extends React.Component {
             date &&
             <Form>
                 <TextField disabled={true} value={`${realDate.getFullYear()}-${realDate.getMonth() + 1}-${realDate.getDate()}`} id="date" hint="Date" leadingIcon="event" outlined={true}></TextField>
-                <TextField onChange={this.onDescriptionChange} value={description} id="description" hint="Description" fullWidth={true}></TextField>
-                <TextField onChange={this.onProjectChange} value={project} id="project" hint="Project" fullWidth={true}></TextField>
-                <TextField onChange={this.onTimeChange} value={(time || "").toString()} id="time" hint="Time" fullWidth={true}></TextField>
+                <TextField onChange={this.onDescriptionChange} value={description} id="description" hint="Description" fullWidth={false}></TextField>
+                <TextField onChange={this.onProjectChange} value={project} id="project" hint="Project" fullWidth={false}></TextField>
+                <TextField onChange={this.onTimeChange} value={(time || "").toString()} id="time" hint="Time" fullWidth={false}></TextField>
                 <ChipSet type="choice">
                     {tasks}
                 </ChipSet>

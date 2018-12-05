@@ -45,6 +45,6 @@ export class Timesheets extends React.Component {
     }
 
     addRegistration = () => {
-        store.router.goTo(routes.registrationDetail);
+        store.router.goTo(routes.registrationDetail, {}, store);
     }
 }

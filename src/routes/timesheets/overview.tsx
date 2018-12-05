@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Route } from 'mobx-router';
 import { Timesheets } from '../../components/Timesheets';
-import store, { IRootStore } from '../../store';
+import { IRootStore } from '../../store';
 import { transaction } from 'mobx';
 import { setTitleForRoute } from '../actions';
 import { App } from '../../internal';
@@ -14,7 +14,7 @@ interface IDate {
 
 export const path = "/timesheets";
 
-export const goTo = (date?: IDate) => {
+export const goTo = (s: IRootStore, date?: IDate) => {
     if (!date) {
         const toDay = new Date();
         date = {
@@ -23,21 +23,24 @@ export const goTo = (date?: IDate) => {
             day: toDay.getDate()
         }
     }
-    store.router.goTo(routes.overview, date, store)
+    s.router.goTo(routes.overview, date, s);
 }
 
-const routeChanged = (route: any, params: IDate, store: IRootStore) => {
+const routeChanged = (route: any, params: IDate, s: IRootStore) => {
     // store.registrations.query = ref => ref.where()
+    console.log("routeChanged");
+        console.log(params);
     transaction(() => {
-        store.view.year = params.year;
-        store.view.month = params.month;
-        store.view.day = params.day;
+        console.log(params);
+        s.view.year = params.year;
+        s.view.month = params.month;
+        s.view.day = params.day;
     });
 
-    const endDate = store.view.moment.clone().add(1, "days").toDate();
-    const startDate = store.view.moment.clone().toDate();
-    store.registrations.query = ref => ref.where("date", ">", startDate).where("date", "<=", endDate);
-    store.registrations.getDocs();
+    const endDate = s.view.moment.clone().add(1, "days").toDate();
+    const startDate = s.view.moment.clone().toDate();
+    s.registrations.query = ref => ref.where("date", ">", startDate).where("date", "<=", endDate);
+    s.registrations.getDocs();
     setTitleForRoute(route);
 }
 

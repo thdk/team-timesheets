@@ -18,6 +18,7 @@ export interface IViewStore {
   moment: moment.Moment;
   readonly actions: IObservableArray<IViewAction>;
   setActions: (actions: IViewAction[]) => void;
+  removeAction: (action: IViewAction) => void;
 }
 
 export class ViewStore implements IViewStore {
@@ -42,10 +43,16 @@ export class ViewStore implements IViewStore {
   }
 
   @computed get moment() {
+    console.log("computer moment");
+    console.log(this.year);
     return moment(`${this.year}-${this.month}-${this.day}`, 'YYYY-MM-DD');
   }
 
   @action setActions(actions: IViewAction[]) {
     this.actions.replace(actions);
+  }
+
+  @action removeAction(action: IViewAction) {
+    this.actions.remove(action);
   }
 }

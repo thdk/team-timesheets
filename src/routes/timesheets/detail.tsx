@@ -30,13 +30,13 @@ export default {
             ]);
             setTitleForRoute(route);
 
-            // const u = reaction(() => store.registrationsStore.registration, reg => {
-            //     // store.view.removeAction(action);
-            //     // observable.array([])
-            //     u();
-            // });
-        }, beforeExit: () => {
-            console.log('exiting user profile!');
+            const u = reaction(() => s.registrationsStore.registration, () => {
+                // use icon as unique id of action
+                s.view.actions.replace(s.view.actions.filter(a => a.icon !== action.icon));
+                u();
+            });
+        }, beforeExit: (_route: Route, _params: any, s: IRootStore) => {
+            s.registrationsStore.registration = {};
         }
     })
 } as RoutesConfig;

@@ -1,0 +1,32 @@
+import * as React from 'react';
+import { observer } from '../../node_modules/mobx-react';
+import { TopAppBar } from '../MaterialUI/appbars';
+import store from '../store';
+import { goTo as goToOverview } from '../internal';
+
+// TODO: move to  MaterialUI/TopAppBar
+export interface ITopAppBarProps {
+    navigation: JSX.Element;
+}
+
+export enum NavigationType {
+    menu,
+    back,
+    up
+}
+
+@observer
+export class TopNavigation extends React.Component {
+    navigationClick = (e: React.MouseEvent) => {
+        e.preventDefault();
+        const action = store.view.navigationAction;
+        if (action) action.action();
+    }
+
+    render() {
+        const { icon: navigationIcon = "menu" } = store.view.navigationAction || {};
+        return (
+            <TopAppBar navigationIcon={navigationIcon} navigationClick={this.navigationClick} showNavigationIcon={true}></TopAppBar>
+        )
+    }
+}

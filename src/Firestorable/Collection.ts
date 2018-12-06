@@ -77,14 +77,17 @@ export class Collection<T extends IDocument> implements ICollection<T> {
         return new Doc<T>(this.collectionRef, data);
     }
 
+    // TODO: when realtime updates is disabled, we must manually update the docs!
     public updateAsync(data: T) {
         return updateAsync(this.collectionRef, data);
     }
 
+    // TODO: when realtime updates is disabled, we must manually update the docs!
     public addAsync(data: OptionalId<T>) {
         return addAsync(this.collectionRef, data);
     }
 
+    // TODO: when realtime updates is disabled, we must manually update the docs!
     public deleteAsync(id: string) {
         return this.collectionRef.doc(id).delete();
     }

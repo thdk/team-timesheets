@@ -27,16 +27,14 @@ export const goTo = (s: IRootStore, date?: IDate) => {
 }
 
 const routeChanged = (route: any, params: IDate, s: IRootStore) => {
+    // TODO: don't reload registrations every time
+    // they should only be reloaded if the query has been changed
     transaction(() => {
         s.view.year = params.year;
         s.view.month = params.month;
         s.view.day = params.day;
     });
-
-    const endDate = s.view.moment.clone().add(1, "days").toDate();
-    const startDate = s.view.moment.clone().toDate();
-    s.registrations.query = ref => ref.where("date", ">", startDate).where("date", "<=", endDate);
-    s.registrations.getDocs();
+   
     setTitleForRoute(route);
 }
 

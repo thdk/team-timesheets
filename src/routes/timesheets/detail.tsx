@@ -7,7 +7,8 @@ import { Registration } from '../../components/Registration';
 import { setTitleForRoute } from '../actions';
 import store, { IRootStore } from '../../store';
 import { goTo as goToOverview } from '../../internal';
-import { reaction } from '../../../node_modules/mobx';
+import { reaction, isObservable } from '../../../node_modules/mobx';
+import { Doc } from '../../Firestorable/Document';
 
 const path = parentPath + "/detail";
 
@@ -25,20 +26,42 @@ const onEnter = (route: Route, params: { id?: string }, s: IRootStore) => {
         icon: "save",
         isActive: false
     };
+
+    const deleteAction = {
+        action: () => {
+           s.registrationsStore.registration instanceof (Doc) && s.registrations.deleteAsync(s.registrationsStore.registration.data.id);
+           goToOverview(s, { day: s.view.day, year: s.view.year, month: s.view.month });
+        },
+        icon: "delete",
+        isActive: false
+    }
+
     s.view.setActions([
-        action
+        action,
+        deleteAction
     ]);
+
+    s.view.setNavigation({
+        action: () => {
+            s.registrationsStore.save();
+            goToOverview(s, { day: s.view.day, year: s.view.year, month: s.view.month });
+        },
+        icon: "arrow_back",
+        isActive: false,
+    });
+
     setTitleForRoute(route);
 
     const u = reaction(() => s.registrationsStore.registration, () => {
         // use icon as unique id of action
-        s.view.actions.replace(s.view.actions.filter(a => a.icon !== action.icon));
+        s.view.actions.replace([]);
         u();
     });
 };
 
 const beforeExit = (_route: Route, _params: any, s: IRootStore) => {
     s.registrationsStore.registration = {};
+    s.view.setNavigation("default");
 };
 
 const routes = {

@@ -1,10 +1,10 @@
 import * as React from 'react';
-import { TopAppBar } from '../MaterialUI/appbars';
 import { Drawer } from '../MaterialUI/drawer';
 import { Menu } from './Menu';
 import store from '../store';
 import { observe } from 'mobx';
 import { IViewStore } from '../stores/ViewStore';
+import { TopNavigation } from './TopNavigation';
 
 export class App extends React.Component {
     private drawerRef?: Drawer | null;
@@ -19,7 +19,7 @@ export class App extends React.Component {
                 </Drawer>
 
                 <div className="mdc-drawer-app-content">
-                    <TopAppBar showNavigationIcon={true}></TopAppBar>
+                    <TopNavigation></TopNavigation>
 
                     <main className="main-content" id="main-content">
                         <div className="mdc-top-app-bar--fixed-adjust">

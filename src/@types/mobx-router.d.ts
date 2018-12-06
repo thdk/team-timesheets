@@ -5,6 +5,8 @@ declare module 'mobx-router' {
     export class MobxRouter extends React.Component {};
 
     export class RouterStore extends object {
+        params: any;
+        currentPath: any;
         goTo: any;
     };
 

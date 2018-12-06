@@ -9,15 +9,21 @@ import TableHead from "@material-ui/core/es/TableHead";
 import TableBody from "@material-ui/core/es/TableBody";
 import { Fab } from "../MaterialUI/buttons";
 import routes from '../routes/index';
+import { goToRegistration } from '../internal';
 
 @observer
 export class Timesheets extends React.Component {
+
+    registrationClick = (id: string) => {
+        goToRegistration(id);
+    }
+
     render() {
 
         const rows = Array.from(store.registrations.docs.values()).map(r => {
             const {id, description, project, time, date} = r.data;
             return (
-                <TableRow key={id}>
+                <TableRow key={id} onClick={this.registrationClick.bind(this, id)}>
                     <TableCell>{description}</TableCell>
                     <TableCell>{project}</TableCell>
                     <TableCell>{time}</TableCell>
@@ -46,6 +52,6 @@ export class Timesheets extends React.Component {
     }
 
     addRegistration = () => {
-        store.router.goTo(routes.registrationDetail, {}, store);
+        store.router.goTo(routes.newRegistration, {}, store);
     }
 }

@@ -38,13 +38,11 @@ export class ViewStore implements IViewStore {
     this.title = "";
     this.isDrawerOpen = false;
     this.day = date.getDate();
-    this.month = date.getMonth();
+    this.month = date.getMonth() + 1;
     this.year = date.getFullYear();
   }
 
   @computed get moment() {
-    console.log("computer moment");
-    console.log(this.year);
     return moment(`${this.year}-${this.month}-${this.day}`, 'YYYY-MM-DD');
   }
 

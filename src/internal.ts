@@ -11,3 +11,4 @@
 
 export * from './components/App';
 export * from './routes/timesheets/overview';
+export * from './routes/config/projects';

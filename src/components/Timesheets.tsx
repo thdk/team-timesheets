@@ -15,12 +15,13 @@ export class Timesheets extends React.Component {
     render() {
 
         const rows = Array.from(store.registrations.docs.values()).map(r => {
+            const {id, description, project, time, date} = r.data;
             return (
-                <TableRow key={r.id}>
-                    <TableCell>{r.description}</TableCell>
-                    <TableCell>{r.project}</TableCell>
-                    <TableCell>{r.time}</TableCell>
-                    <TableCell>{r.date.toDate().toLocaleDateString()}</TableCell>
+                <TableRow key={id}>
+                    <TableCell>{description}</TableCell>
+                    <TableCell>{project}</TableCell>
+                    <TableCell>{time}</TableCell>
+                    <TableCell>{date.toDate().toLocaleDateString()}</TableCell>
                 </TableRow>
             )
         });

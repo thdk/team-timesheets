@@ -8,7 +8,7 @@ export interface IChipProps {
     icon?: string;
     isSelected?: boolean;
     onClick: (id: string) => void;
-    id?: string;
+    id: string;
 }
 export class Chip extends React.Component<IChipProps> {
     private mdcChipRef: React.RefObject<HTMLDivElement>;
@@ -28,6 +28,8 @@ export class Chip extends React.Component<IChipProps> {
 
         let className = "mdc-chip";
         if (this.props.isSelected) className += " mdc-chip--selected";
+
+        console.log(this.mdcChipRef);
         return (
             <div tabIndex={tabIndex} className={className} id={id} ref={this.mdcChipRef} key={tabIndex}>
                 {iconEl}
@@ -37,7 +39,6 @@ export class Chip extends React.Component<IChipProps> {
     }
 
     componentDidMount() {
-        console.log(this.mdcChipRef.current);
         this.mdcChipRef.current &&
             this.mdcChipRef.current.addEventListener("click", this.click);
             // this.mdcChipRef.current &&
@@ -46,6 +47,8 @@ export class Chip extends React.Component<IChipProps> {
     }
 
     click = () => {
+        console.log("chip clicked");
+        console.log(this.mdcChipRef.current);
         this.mdcChipRef.current && this.props.onClick(this.mdcChipRef.current.id);
     }
 

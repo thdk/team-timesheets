@@ -10,6 +10,6 @@ export class UserStore implements IUserStore {
     @observable defaultTask: string;
     constructor(rootStore: IRootStore) {
         this.rootStore = rootStore;
-        this.defaultTask = "";
+        this.defaultTask = "HIBd74BItKoURLdQJmLf";
     }
 }

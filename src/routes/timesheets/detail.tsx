@@ -5,7 +5,7 @@ import { path as parentPath } from './overview';
 import { App } from '../../components/App';
 import { Registration } from '../../components/Registration';
 import { setTitleForRoute } from '../actions';
-import { IRootStore } from '../../store';
+import store, { IRootStore } from '../../store';
 import { goTo as goToOverview } from '../../internal';
 import { reaction } from '../../../node_modules/mobx';
 
@@ -17,6 +17,7 @@ export default {
         component: <App><Registration></Registration></App>,
         title: "New registration",
         onEnter: (route: Route, _params: any, s: IRootStore) => {
+            s.registrationsStore.registration = s.registrationsStore.getNew();
             const action = {
                 action: () => {
                     s.registrationsStore.save();

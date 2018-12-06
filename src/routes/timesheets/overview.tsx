@@ -27,11 +27,7 @@ export const goTo = (s: IRootStore, date?: IDate) => {
 }
 
 const routeChanged = (route: any, params: IDate, s: IRootStore) => {
-    // store.registrations.query = ref => ref.where()
-    console.log("routeChanged");
-        console.log(params);
     transaction(() => {
-        console.log(params);
         s.view.year = params.year;
         s.view.month = params.month;
         s.view.day = params.day;

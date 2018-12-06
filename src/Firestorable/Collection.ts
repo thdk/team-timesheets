@@ -3,14 +3,16 @@ import { firestore } from "firebase";
 import 'firebase/firestore';
 
 import { updateAsync, addAsync, typeSnapshot } from "./FirestoreUtils";
-import { observable, ObservableMap, reaction } from "mobx";
+import { observable, ObservableMap, reaction, transaction } from "mobx";
 import { OptionalId } from "./types";
 import { CollectionMap } from "../store";
+import { Doc } from "./Document";
 
 export interface ICollection<T extends IDocument> {
-    readonly docs: ObservableMap<string, T>;
+    readonly docs: ObservableMap<string, Doc<T>>;
     query?: (ref: firestore.CollectionReference) => firestore.Query;
     getDocs: () => void;
+    newDoc: (data: OptionalId<T>) => Doc<T>;
     updateAsync: (data: T) => Promise<void>;
     addAsync: (data: OptionalId<T>) => Promise<T>;
     deleteAsync: (id: string) => Promise<void>;
@@ -18,6 +20,7 @@ export interface ICollection<T extends IDocument> {
 
 export interface IDocument {
     readonly id: string;
+    // readonly collectionRef: firebase.firestore.CollectionReference;
 }
 
 export interface ICollectionOptions {
@@ -25,7 +28,7 @@ export interface ICollectionOptions {
 }
 
 export class Collection<T extends IDocument> implements ICollection<T> {
-    public docs: ObservableMap<string, T> = observable(new Map);
+    public docs: ObservableMap<string, Doc<T>> = observable(new Map);
     @observable public query?: (ref: firestore.CollectionReference) => firestore.Query;
     private readonly name: keyof CollectionMap;
     private readonly collectionRef: firebase.firestore.CollectionReference;
@@ -55,16 +58,23 @@ export class Collection<T extends IDocument> implements ICollection<T> {
                 if (snapshot.empty)
                     return;
 
-                snapshot.docChanges().forEach(change => {
-                    const { doc: { id }, doc } = change;
-                    if (change.type === "added" || change.type === "modified") {
-                        this.docs.set(id, typeSnapshot(doc));
-                    }
-                    else if (change.type === "removed") {
-                        this.docs.delete(id);
-                    }
-                });
+                transaction(() => {
+                    snapshot.docChanges().forEach(change => {
+                        const { doc: { id }, doc } = change;
+                        if (change.type === "added" || change.type === "modified") {
+                            this.docs.set(id, new Doc<T>(this.collectionRef, typeSnapshot(doc)));
+                        }
+                        else if (change.type === "removed") {
+                            this.docs.delete(id);
+                        }
+                    });
+                })
+
             });
+    }
+
+    public newDoc(data: OptionalId<T>) {
+        return new Doc<T>(this.collectionRef, data);
     }
 
     public updateAsync(data: T) {

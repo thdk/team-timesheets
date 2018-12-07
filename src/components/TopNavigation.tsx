@@ -24,9 +24,9 @@ export class TopNavigation extends React.Component {
     }
 
     render() {
-        const { icon: navigationIcon = "menu" } = store.view.navigationAction || {};
+        const { navigationAction: { icon: navigationIcon = "menu"} = {}, title } = store.view;
         return (
-            <TopAppBar navigationIcon={navigationIcon} navigationClick={this.navigationClick} showNavigationIcon={true}></TopAppBar>
+            <TopAppBar navigationIcon={navigationIcon} title={title} navigationClick={this.navigationClick} showNavigationIcon={true}></TopAppBar>
         )
     }
 }

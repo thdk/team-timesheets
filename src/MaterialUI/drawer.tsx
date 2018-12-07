@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { MDCDrawer } from "@material/drawer";
+import { MDCDrawer } from "@material/drawer/index";
 import { observer } from '../../node_modules/mobx-react';
 
 @observer

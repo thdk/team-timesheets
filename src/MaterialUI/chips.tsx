@@ -1,10 +1,9 @@
 import * as React from 'react';
-import { MDCChipSet } from '@material/chips';
+import { MDCChipSet } from '@material/chips/index';
 
 export interface IChipProps {
-    tabIndex: number;
+    tabIndex?: number;
     text: string;
-    color?: string;
     icon?: string;
     isSelected?: boolean;
     onClick: (id: string) => void;
@@ -19,7 +18,7 @@ export class Chip extends React.Component<IChipProps> {
     }
     render() {
         // TODO: add tabindex to mdc-chip
-        const { color = "grey", tabIndex, text, icon, id } = this.props;
+        const { tabIndex = 0, text, icon, id } = this.props;
 
         const iconEl = icon ?
             <i className="material-icons mdc-chip__icon mdc-chip__icon--leading">{icon}</i>
@@ -29,33 +28,26 @@ export class Chip extends React.Component<IChipProps> {
         let className = "mdc-chip";
         if (this.props.isSelected) className += " mdc-chip--selected";
 
-        console.log(this.mdcChipRef);
         return (
-            <div tabIndex={tabIndex} className={className} id={id} ref={this.mdcChipRef} key={tabIndex}>
+            <div tabIndex={tabIndex} className={className} id={id} ref={this.mdcChipRef} key={id}>
                 {iconEl}
                 <div className="mdc-chip__text">{text}</div>
             </div>
         );
     }
 
-    componentDidMount() {
-        this.mdcChipRef.current &&
-            this.mdcChipRef.current.addEventListener("click", this.click);
-            // this.mdcChipRef.current &&
-            // this.mdcChipRef.current.addEventListener("MDCChip:interaction", this.interaction);
-
-    }
-
     click = () => {
-        console.log("chip clicked");
-        console.log(this.mdcChipRef.current);
         this.mdcChipRef.current && this.props.onClick(this.mdcChipRef.current.id);
     }
 
-    // interaction = (e: Event) => {
-    //    console.log(e);
-    //    alert("interaction");
-    // }
+    interaction = (e: Event) => {
+       console.log(e);
+       alert("interaction");
+    }
+
+    componentDidMount() {
+        this.mdcChipRef.current!.addEventListener("click", this.click);
+    }
 
     componentWillUnmount() {
         this.mdcChipRef.current &&
@@ -70,7 +62,7 @@ export interface IChipSetProps {
 }
 
 export class ChipSet extends React.Component<IChipSetProps> {
-    private mdcChipSet: React.RefObject<HTMLDivElement>;
+    private mdcChipSet: React.RefObject<MDCChipSet>;
     constructor(props: IChipSetProps) {
         super(props);
         this.mdcChipSet = React.createRef();

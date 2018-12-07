@@ -1,5 +1,5 @@
 import * as React from "react";
-import { MDCTextField } from '@material/textfield';
+import { MDCTextField } from '@material/textfield/index';
 
 export interface ITextFieldProps {
     id: string;
@@ -10,14 +10,18 @@ export interface ITextFieldProps {
     disabled?: boolean;
     value?: string;
     onChange?: (value: string) => void;
+    tabIndex?: number;
+    focus?: true;
 }
 
 export class TextField extends React.Component<ITextFieldProps> {
     private readonly mdcTextField: React.RefObject<HTMLDivElement>;
+    private readonly inputField: React.RefObject<HTMLInputElement>;
+
     constructor(props: ITextFieldProps) {
         super(props);
-        // create a ref to store the textInput DOM element
         this.mdcTextField = React.createRef();
+        this.inputField = React.createRef();
     }
 
     render() {
@@ -33,25 +37,27 @@ export class TextField extends React.Component<ITextFieldProps> {
         if (outlined) className += " text-field mdc-text-field--outlined";
         if (disabled) className += " mdc-text-field--disabled";
 
-        const lineEl = outlined ?
+        const lineEl = outlined !== fullWidth ?
             <>
                 <div className="mdc-notched-outline">
-                    <svg>
-                        <path className="mdc-notched-outline__path" />
-                    </svg>
+                    <div className="mdc-notched-outline__leading"></div>
+                    <div className="mdc-notched-outline__notch">
+                        <label htmlFor={id} className="mdc-floating-label">{hint}</label>
+                    </div>
+                    <div className="mdc-notched-outline__trailing"></div>
                 </div>
-                <div className="mdc-notched-outline__idle"></div>
             </>
             :
-            <div className="mdc-line-ripple"></div>;
+            <>
+                <label className="mdc-floating-label" htmlFor={id}>{hint}</label>
+                <div className="mdc-line-ripple"></div>
+            </>
 
         const input = fullWidth ?
-            <input type="text" id={id} placeholder={hint} className="mdc-text-field__input" onChange={this.onChange} value={value} />
+            <input ref={this.inputField} type="text" placeholder={hint} id={id} className="mdc-text-field__input" onChange={this.onChange} value={value} />
             :
-            <>
-                <input type="text" id={id} className="mdc-text-field__input" onChange={this.onChange} value={value} />
-                <label className="mdc-floating-label" htmlFor={id}>{hint}</label>
-            </>;
+            <input ref={this.inputField} type="text" id={id} className="mdc-text-field__input" onChange={this.onChange} value={value} />
+
         return (
             <>
                 <div className={className} ref={this.mdcTextField}>
@@ -65,6 +71,9 @@ export class TextField extends React.Component<ITextFieldProps> {
 
     componentDidMount() {
         MDCTextField.attachTo(this.mdcTextField.current);
+        if (this.inputField.current && this.props.focus) {
+            this.inputField.current.focus();
+        }
     }
 
     onChange = (event: React.ChangeEvent<HTMLInputElement>) => {

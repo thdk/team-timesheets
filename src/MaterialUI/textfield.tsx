@@ -12,26 +12,29 @@ export interface ITextFieldProps {
     onChange?: (value: string) => void;
     tabIndex?: number;
     focus?: true;
+    rows?: number;
+    cols?: number;
+    type?: "text" | "number"
 }
 
 export class TextField extends React.Component<ITextFieldProps> {
     private readonly mdcTextField: React.RefObject<HTMLDivElement>;
-    private readonly inputField: React.RefObject<HTMLInputElement>;
 
     constructor(props: ITextFieldProps) {
         super(props);
         this.mdcTextField = React.createRef();
-        this.inputField = React.createRef();
     }
 
     render() {
-        const { id, hint, fullWidth = false, leadingIcon, outlined = false, value = "", disabled = false } = this.props;
+        const { type = "text", rows, cols, tabIndex, id, hint, fullWidth = false, leadingIcon, outlined = false, value = "", disabled = false } = this.props;
+        const isTextArea = !!rows && !!cols;
         const leadingIconEl = leadingIcon ?
             <i className="material-icons mdc-text-field__icon">{leadingIcon}</i>
             :
             "";
 
         let className = "mdc-text-field";
+        if (isTextArea) className += " mdc-text-field--textarea";
         if (fullWidth) className += " mdc-text-field--fullwidth";
         if (leadingIcon) className += " mdc-text-field--with-leading-icon";
         if (outlined) className += " text-field mdc-text-field--outlined";
@@ -53,10 +56,21 @@ export class TextField extends React.Component<ITextFieldProps> {
                 <div className="mdc-line-ripple"></div>
             </>
 
-        const input = fullWidth ?
-            <input ref={this.inputField} type="text" placeholder={hint} id={id} className="mdc-text-field__input" onChange={this.onChange} value={value} />
+        const attr = {
+            tabIndex,
+            placeholder: fullWidth ? hint : undefined,
+            id,
+            className: "mdc-text-field__input",
+            value,
+            onChange: this.onChange,
+            type
+        }
+
+
+        const input = isTextArea ?
+            <textarea cols={cols} rows={rows} {...attr} />
             :
-            <input ref={this.inputField} type="text" id={id} className="mdc-text-field__input" onChange={this.onChange} value={value} />
+            <input {...attr} />
 
         return (
             <>
@@ -70,13 +84,11 @@ export class TextField extends React.Component<ITextFieldProps> {
     }
 
     componentDidMount() {
-        MDCTextField.attachTo(this.mdcTextField.current);
-        if (this.inputField.current && this.props.focus) {
-            this.inputField.current.focus();
-        }
+        const textField = new MDCTextField(this.mdcTextField.current);
+        this.props.focus && textField.focus();
     }
 
-    onChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    onChange = (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         this.props.onChange && this.props.onChange(event.target.value);
     }
 }

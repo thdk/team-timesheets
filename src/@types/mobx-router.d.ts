@@ -16,7 +16,7 @@ declare module 'mobx-router' {
         readonly path: string;
         readonly component: JSX.Element;
         readonly onEnter?: (route: Route, params: any, store: any, queryParams: any) => void;
-        readonly onBeforeEnter?: (route: any, params: any, store: any) => boolean;
+        readonly beforeEnter?: (route: any, params: any, store: any) => boolean;
         readonly beforeExit?: (route: any, params: any, store: any) => void | false;
         readonly onParamsChange: (route: any, params: any, store: any) => void;
         readonly title?: string;
@@ -27,7 +27,7 @@ declare module 'mobx-router' {
             onEnter?: Route["onEnter"],
             beforeExit?: Route["beforeExit"],
             onParamsChange?: Route["onParamsChange"],
-            onBeforeEnter?:  Route["onBeforeEnter"];
+            beforeEnter?:  Route["onBeforeEnter"];
             title?: string
         });
     }

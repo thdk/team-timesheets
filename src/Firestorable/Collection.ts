@@ -2,7 +2,7 @@
 import { firestore } from "firebase";
 import 'firebase/firestore';
 
-import { updateAsync, addAsync, typeSnapshot } from "./FirestoreUtils";
+import { updateAsync, addAsync, typeSnapshot, getAsync } from "./FirestoreUtils";
 import { observable, ObservableMap, reaction, transaction } from "mobx";
 import { OptionalId } from "./types";
 import { CollectionMap } from "../store";
@@ -15,6 +15,7 @@ export interface ICollection<T extends IDocument> {
     newDoc: (data: OptionalId<T>) => Doc<T>;
     updateAsync: (data: T) => Promise<void>;
     addAsync: (data: OptionalId<T>) => Promise<T>;
+    getAsync: (id: string) => Promise<T | undefined>;
     deleteAsync: (id: string) => Promise<void>;
 }
 
@@ -84,7 +85,11 @@ export class Collection<T extends IDocument> implements ICollection<T> {
 
     // TODO: when realtime updates is disabled, we must manually update the docs!
     public addAsync(data: OptionalId<T>) {
-        return addAsync(this.collectionRef, data);
+        return addAsync<T>(this.collectionRef, data);
+    }
+
+    public getAsync(id: string) {
+        return getAsync<T>(this.collectionRef, id);
     }
 
     // TODO: when realtime updates is disabled, we must manually update the docs!

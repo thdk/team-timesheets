@@ -48,8 +48,7 @@ export class RegistrationStore implements IRegistrationsStore {
             ),
             description: "",
             project: "",
-            task: store.user.defaultTask,
-            time: 1
+            task: store.user.defaultTask
         });
     }
 

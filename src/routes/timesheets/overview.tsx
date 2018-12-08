@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Route } from 'mobx-router';
 import { Timesheets } from '../../components/Timesheets';
-import { IRootStore } from '../../store';
+import store, { IRootStore } from '../../store';
 import { transaction } from 'mobx';
 import { setTitleForRoute } from '../actions';
 import { App } from '../../internal';
@@ -15,26 +15,20 @@ interface IDate {
 export const path = "/timesheets";
 
 export const goTo = (s: IRootStore, date?: IDate) => {
-    if (!date) {
-        const toDay = new Date();
-        date = {
-            year: toDay.getFullYear(),
-            month: toDay.getMonth() + 1,
-            day: toDay.getDate()
-        }
-    }
-    s.router.goTo(routes.overview, date, s);
+    s.router.goTo(routes.overview, date || {
+        year: store.view.year,
+        month: store.view.month,
+        day: store.view.day
+    }, s);
 }
 
 const routeChanged = (route: any, params: IDate, s: IRootStore) => {
-    // TODO: don't reload registrations every time
-    // they should only be reloaded if the query has been changed
     transaction(() => {
         s.view.year = params.year;
         s.view.month = params.month;
         s.view.day = params.day;
     });
-   
+
     setTitleForRoute(route);
 }
 

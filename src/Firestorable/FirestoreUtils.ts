@@ -1,4 +1,5 @@
 import { OptionalId } from "./types";
+import { IDocument } from "./Collection";
 
 export function typeSnapshot<T extends firebase.firestore.DocumentData>(snapshot: firebase.firestore.QueryDocumentSnapshot): T;
 export function typeSnapshot<T extends firebase.firestore.DocumentData>(snapshot: firebase.firestore.DocumentSnapshot): T | undefined;
@@ -21,4 +22,8 @@ export const addAsync = <T extends firebase.firestore.DocumentData & { id: strin
     // warning: in case promise rejects, we have lost the id of the document!
     // TODO?: alsways set id back on the document. Both on resolve, and rejects.
     return docRef.set(data).then(() => Object.assign(data, { id: docRef.id }) as T);
+}
+
+export const getAsync = <T extends IDocument>(collectionRef: firebase.firestore.CollectionReference, id: string) => {
+    return collectionRef.doc(id).get().then(d => typeSnapshot<T>(d));
 }

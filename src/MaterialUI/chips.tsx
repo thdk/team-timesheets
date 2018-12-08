@@ -40,11 +40,6 @@ export class Chip extends React.Component<IChipProps> {
         this.mdcChipRef.current && this.props.onClick(this.mdcChipRef.current.id);
     }
 
-    interaction = (e: Event) => {
-       console.log(e);
-       alert("interaction");
-    }
-
     componentDidMount() {
         this.mdcChipRef.current!.addEventListener("click", this.click);
     }
@@ -52,8 +47,6 @@ export class Chip extends React.Component<IChipProps> {
     componentWillUnmount() {
         this.mdcChipRef.current &&
             this.mdcChipRef.current.removeEventListener("click", this.click);
-        // this.mdcChipRef.current &&
-        //     this.mdcChipRef.current.removeEventListener("MDCChip:interaction", this.interaction);
     }
 }
 

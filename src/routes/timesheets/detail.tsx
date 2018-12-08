@@ -29,8 +29,8 @@ const onEnter = (route: Route, params: { id?: string }, s: IRootStore) => {
 
     const deleteAction = {
         action: () => {
-           s.registrationsStore.registration instanceof (Doc) && s.registrations.deleteAsync(s.registrationsStore.registration.data.id);
-           goToOverview(s, { day: s.view.day, year: s.view.year, month: s.view.month });
+            s.registrationsStore.registration instanceof (Doc) && s.registrations.deleteAsync(s.registrationsStore.registration.data.id);
+            goToOverview(s, { day: s.view.day, year: s.view.year, month: s.view.month });
         },
         icon: "delete",
         isActive: false
@@ -64,6 +64,10 @@ const beforeExit = (_route: Route, _params: any, s: IRootStore) => {
     s.view.setNavigation("default");
 };
 
+const beforeEnter = (_route: Route, params: { id: string }, s: IRootStore) => {
+    return s.registrations.getAsync(params.id)
+};
+
 const routes = {
     newRegistration: new Route({
         path,
@@ -77,7 +81,8 @@ const routes = {
         component: <App><Registration></Registration></App>,
         title: "Edit registration",
         onEnter,
-        beforeExit
+        beforeExit,
+        beforeEnter
     })
 } as RoutesConfig;
 

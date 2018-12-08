@@ -3,12 +3,33 @@ div.form {
     flex-direction: column;
     align-content: center;
     justify-content: center;
+    padding: 2em;
 
+    & .row {
+        margin-bottom: 1em;
+    }
 }
 
 .form-item {
     display: flex;
     flex-direction: column;
     align-items: flex-start;
-    margin: 1em;
+}
+
+.formField {
+    margin-left: 1em;
+
+    &.first {
+        margin-left: 0;
+    }
+}
+
+.flex {
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+
+    &.vertical {
+        flex-direction: column;
+    }
 }

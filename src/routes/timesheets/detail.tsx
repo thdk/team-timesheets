@@ -82,7 +82,7 @@ const routes = {
         title: "Edit registration",
         onEnter,
         beforeExit,
-        beforeEnter
+        // beforeEnter
     })
 } as RoutesConfig;
 

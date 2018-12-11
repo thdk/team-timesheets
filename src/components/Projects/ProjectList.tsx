@@ -7,7 +7,7 @@ import store from '../../store';
 export class ProjectList extends React.Component {
     render() {
         const items = Array.from(store.config.projects.docs.values()).map(p => {
-            const {icon, id, name} = p.data;
+            const { id, data: { icon, name } } = p;
             return (
                 <ListItem icon={icon} key={id}>
                     <span className="mdc-list-item__text">{name}</span>

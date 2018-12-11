@@ -1,5 +1,4 @@
 import * as React from 'react';
-import { IReactProps } from '../../types';
 
 export interface IFlexGroupProps {
     direction?: "vertical" | "horizontal";

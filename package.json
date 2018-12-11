@@ -49,7 +49,6 @@
     "firebase-tools": "^6.1.2",
     "mobx": "^5.7.0",
     "mobx-react": "^5.4.2",
-    "mobx-router": "0.0.13",
     "moment-es6": "^1.0.0",
     "rc-datetime-picker": "^1.6.1",
     "react": "^16.6.3",

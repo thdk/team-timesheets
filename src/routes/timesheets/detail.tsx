@@ -7,7 +7,7 @@ import { Registration } from '../../components/Registration';
 import { setTitleForRoute } from '../actions';
 import store, { IRootStore } from '../../store';
 import { goTo as goToOverview } from '../../internal';
-import { reaction, isObservable } from '../../../node_modules/mobx';
+import { reaction } from '../../../node_modules/mobx';
 import { Doc } from '../../Firestorable/Document';
 
 const path = parentPath + "/detail";
@@ -29,7 +29,7 @@ const onEnter = (route: Route, params: { id?: string }, s: IRootStore) => {
 
     const deleteAction = {
         action: () => {
-            s.registrationsStore.registration instanceof (Doc) && s.registrations.deleteAsync(s.registrationsStore.registration.data.id);
+            s.registrationsStore.registration instanceof (Doc) && s.registrations.deleteAsync(s.registrationsStore.registration.id);
             goToOverview(s, { day: s.view.day, year: s.view.year, month: s.view.month });
         },
         icon: "delete",
@@ -64,9 +64,9 @@ const beforeExit = (_route: Route, _params: any, s: IRootStore) => {
     s.view.setNavigation("default");
 };
 
-const beforeEnter = (_route: Route, params: { id: string }, s: IRootStore) => {
-    return s.registrations.getAsync(params.id)
-};
+// const beforeEnter = (_route: Route, params: { id: string }, s: IRootStore) => {
+//     return s.registrations.getAsync(params.id)
+// };
 
 const routes = {
     newRegistration: new Route({

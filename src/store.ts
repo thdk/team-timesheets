@@ -1,6 +1,6 @@
 import { observable } from 'mobx';
 import { Firestorable } from './Firestorable/Firestorable';
-import { ICollection, Collection, IDocument } from './Firestorable/Collection';
+import { ICollection, Collection } from './Firestorable/Collection';
 import { RouterStore } from 'mobx-router';
 import { IViewStore, ViewStore } from './stores/ViewStore';
 import { IRegistration, IRegistrationsStore, RegistrationStore } from './stores/RegistrationStore';
@@ -13,7 +13,7 @@ export interface CollectionMap {
     "projects": IProject;
 }
 
-export interface ITask extends IDocument {
+export interface ITask {
     name: string;
     color?: string;
     icon?: string;

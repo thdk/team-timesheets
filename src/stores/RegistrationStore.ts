@@ -1,11 +1,10 @@
 import { observable } from "mobx";
 import store, { IRootStore } from "../store";
-import { IDocument } from "../Firestorable/Collection";
 import { Doc } from "../Firestorable/Document";
 
 import * as firebase from 'firebase/app'
 
-export interface IRegistration extends IDocument {
+export interface IRegistration {
     description: string;
     time: number;
     project: string;
@@ -16,7 +15,7 @@ export interface IRegistration extends IDocument {
 export interface IRegistrationsStore {
     registration?: Doc<IRegistration> | {};
     save: () => void;
-    getNew: () => Doc<IRegistration>;
+    getNew: () => Doc<Partial<IRegistration>>;
 }
 
 export class RegistrationStore implements IRegistrationsStore {
@@ -37,7 +36,6 @@ export class RegistrationStore implements IRegistrationsStore {
             this.registration.data.project &&
             this.registration.data.task &&
             this.registration.data.time &&
-            this.registration.data.id &&
             this.registration.save();
     }
 

@@ -4,31 +4,25 @@ import 'firebase/firestore';
 
 import { updateAsync, addAsync, typeSnapshot, getAsync } from "./FirestoreUtils";
 import { observable, ObservableMap, reaction, transaction } from "mobx";
-import { OptionalId } from "./types";
 import { CollectionMap } from "../store";
 import { Doc } from "./Document";
 
-export interface ICollection<T extends IDocument> {
+export interface ICollection<T> {
     readonly docs: ObservableMap<string, Doc<T>>;
     query?: (ref: firestore.CollectionReference) => firestore.Query;
     getDocs: () => void;
-    newDoc: (data: OptionalId<T>) => Doc<T>;
-    updateAsync: (data: T) => Promise<void>;
-    addAsync: (data: OptionalId<T>) => Promise<T>;
+    newDoc: (data: Partial<T>) => Doc<Partial<T>>;
+    updateAsync: (id: string, data: T) => Promise<void>;
+    addAsync: (doc: Doc<T>) => Promise<string>;
     getAsync: (id: string) => Promise<T | undefined>;
     deleteAsync: (id: string) => Promise<void>;
-}
-
-export interface IDocument {
-    readonly id: string;
-    // readonly collectionRef: firebase.firestore.CollectionReference;
 }
 
 export interface ICollectionOptions {
     realtime?: boolean;
 }
 
-export class Collection<T extends IDocument> implements ICollection<T> {
+export class Collection<T> implements ICollection<T> {
     public docs: ObservableMap<string, Doc<T>> = observable(new Map);
     @observable public query?: (ref: firestore.CollectionReference) => firestore.Query;
     private readonly name: keyof CollectionMap;
@@ -74,18 +68,18 @@ export class Collection<T extends IDocument> implements ICollection<T> {
             });
     }
 
-    public newDoc(data: OptionalId<T>) {
-        return new Doc<T>(this.collectionRef, data);
+    public newDoc(data: Partial<T>) {
+        return new Doc<Partial<T>>(this.collectionRef, data);
     }
 
     // TODO: when realtime updates is disabled, we must manually update the docs!
-    public updateAsync(data: T) {
-        return updateAsync(this.collectionRef, data);
+    public updateAsync(id: string, data: T) {
+        return updateAsync(this.collectionRef, Object.assign(data, { id }));
     }
 
     // TODO: when realtime updates is disabled, we must manually update the docs!
-    public addAsync(data: OptionalId<T>) {
-        return addAsync<T>(this.collectionRef, data);
+    public addAsync(doc: Doc<T>) {
+        return addAsync<T>(this.collectionRef, doc.data, doc.id);
     }
 
     public getAsync(id: string) {

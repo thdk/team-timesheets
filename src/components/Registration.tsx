@@ -14,14 +14,17 @@ export class Registration extends React.Component {
         if (!(store.registrationsStore.registration instanceof (Doc))) return <></>;
 
         const { task = store.user.defaultTask, description, project, time, date } = store.registrationsStore.registration.data;
-        const tasks = Array.from(store.tasks.docs.values()).map(t => {
-            const { name: taskName, id: taskId } = t.data;
+        const tasks = Array.from(store.tasks.docs.values())
+            .filter(t => !!t.data.name) // todo move validation to Doc
+            .map(t => {
+            const { id: taskId, data: { name: taskName} } = t;
 
             return (
-                <Chip onClick={this.taskClicked} {...t.data} text={taskName} key={taskId} isSelected={taskId === task}></Chip>
+                <Chip onClick={this.taskClicked} id={taskId} {...t.data} text={taskName!} key={taskId} isSelected={taskId === task}></Chip>
             );
         });
 
+        if (!date) throw "Date is required";
         const realDate = date.toDate();
 
         return (

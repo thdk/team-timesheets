@@ -6,10 +6,10 @@ export interface IUserStore {
 }
 
 export class UserStore implements IUserStore {
-    private rootStore: IRootStore;
+    // private rootStore: IRootStore;
     @observable defaultTask: string;
-    constructor(rootStore: IRootStore) {
-        this.rootStore = rootStore;
+    constructor(_rootStore: IRootStore) {
+        // this.rootStore = rootStore;
         this.defaultTask = "HIBd74BItKoURLdQJmLf";
     }
 }

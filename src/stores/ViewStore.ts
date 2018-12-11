@@ -1,6 +1,5 @@
 import { observable, IObservableArray, action, computed } from "mobx";
 import { IRootStore } from "../store";
-import {goTo as goToOverview} from '../internal';
 
 import moment from 'moment-es6';
 

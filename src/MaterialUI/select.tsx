@@ -20,6 +20,7 @@ export interface ISelectProps extends IReactProps {
     label: string;
     value?: string;
     onChange: (value: string) => void;
+    outlined?: boolean;
 }
 
 export class Select extends React.Component<ISelectProps> {
@@ -31,15 +32,34 @@ export class Select extends React.Component<ISelectProps> {
     }
 
     render() {
+        const { label, value, outlined } = this.props;
+        const lineEl = outlined ?
+            <>
+                <div className="mdc-notched-outline">
+                    <div className="mdc-notched-outline__leading"></div>
+                    <div className="mdc-notched-outline__notch">
+                        <span className="mdc-floating-label">{label}</span>
+                    </div>
+                    <div className="mdc-notched-outline__trailing"></div>
+                </div>
+            </>
+            :
+            <>
+                <label className="mdc-floating-label">{label}</label>
+                <div className="mdc-line-ripple"></div>
+            </>;
+
+        const classList = ["mdc-select"];
+        outlined && classList.push("mdc-select--outlined");
+
         return (
-            <div className="mdc-select" ref={this.mdcSelect}>
+            <div className={classList.join(" ")} ref={this.mdcSelect}>
                 <i className="mdc-select__dropdown-icon"></i>
-                <select className="mdc-select__native-control" defaultValue={this.props.value} >
+                <select className="mdc-select__native-control" defaultValue={value} >
                     <option value="" disabled></option>
                     {this.props.children}
                 </select>
-                <label className="mdc-floating-label">{this.props.label}</label>
-                <div className="mdc-line-ripple"></div>
+                {lineEl}
             </div>
         );
     }

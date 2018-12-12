@@ -52,14 +52,9 @@ export class Registration extends React.Component {
                             <TextField cols={250} rows={2} outlined={true} tabIndex={0} onChange={this.onDescriptionChange} value={description} id="description" hint="Description" fullWidth={false}></TextField>
                         </FormField>
                     </FlexGroup>
-                    {/* <FlexGroup extraCssClass="row">
-                        <FormField>
-                            <TextField outlined={true} tabIndex={0} onChange={this.onProjectChange} value={project} id="project" hint="Project" fullWidth={false}></TextField>
-                        </FormField>
-                    </FlexGroup> */}
                     <FlexGroup>
                         <FormField>
-                            <Select value={project} label="Project" onChange={this.onProjectChange}>{projects}</Select>
+                            <Select value={project} outlined={true} label="Project" onChange={this.onProjectChange}>{projects}</Select>
                         </FormField>
                     </FlexGroup>
                     <FlexGroup extraCssClass="row">

@@ -7,6 +7,7 @@ import { Chip, ChipSet } from '../MaterialUI/chips';
 import { Doc } from '../Firestorable/Document';
 import { FlexGroup } from './Layout/flex';
 import { goTo as goToOverview } from '../internal';
+import { Select, SelectOption } from '../MaterialUI/select';
 
 @observer
 export class Registration extends React.Component {
@@ -17,12 +18,20 @@ export class Registration extends React.Component {
         const tasks = Array.from(store.tasks.docs.values())
             .filter(t => !!t.data.name) // todo move validation to Doc
             .map(t => {
-            const { id: taskId, data: { name: taskName} } = t;
+                const { id: taskId, data: { name: taskName } } = t;
 
-            return (
-                <Chip onClick={this.taskClicked} id={taskId} {...t.data} text={taskName!} key={taskId} isSelected={taskId === task}></Chip>
-            );
-        });
+                return (
+                    <Chip onClick={this.taskClicked} id={taskId} {...t.data} text={taskName!} key={taskId} isSelected={taskId === task}></Chip>
+                );
+            });
+
+        const projects = Array.from(store.config.projects.docs.values())
+            .map(p => {
+                const { id, data: { name } } = p;
+                return (
+                    <SelectOption text={name!} value={id} key={id}></SelectOption>
+                );
+            });
 
         if (!date) throw "Date is required";
         const realDate = date.toDate();
@@ -43,9 +52,14 @@ export class Registration extends React.Component {
                             <TextField cols={250} rows={2} outlined={true} tabIndex={0} onChange={this.onDescriptionChange} value={description} id="description" hint="Description" fullWidth={false}></TextField>
                         </FormField>
                     </FlexGroup>
-                    <FlexGroup extraCssClass="row">
+                    {/* <FlexGroup extraCssClass="row">
                         <FormField>
                             <TextField outlined={true} tabIndex={0} onChange={this.onProjectChange} value={project} id="project" hint="Project" fullWidth={false}></TextField>
+                        </FormField>
+                    </FlexGroup> */}
+                    <FlexGroup>
+                        <FormField>
+                            <Select value={project} label="Project" onChange={this.onProjectChange}>{projects}</Select>
                         </FormField>
                     </FlexGroup>
                     <FlexGroup extraCssClass="row">

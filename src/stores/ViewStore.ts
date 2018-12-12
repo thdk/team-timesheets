@@ -57,7 +57,6 @@ export class ViewStore implements IViewStore {
         this.rootStore.view.isDrawerOpen = !this.rootStore.view.isDrawerOpen;
       },
       icon: "menu",
-      isActive: false,
     } : action;
   }
 

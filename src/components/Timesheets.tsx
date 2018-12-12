@@ -25,12 +25,20 @@ export class Timesheets extends React.Component {
     render() {
 
         const rows = Array.from(store.registrations.docs.values()).map(r => {
-            const {id, data: {description, project, time, date}} = r;
+            const { id, data: { description, project, time, date, task } } = r;
+
+            const projectData = project ? store.config.projects.docs.get(project) : null;
+            const { data: { name: projectName = "ARCHIVED" } = {} } = projectData || {};
+
+            const taskData = task ? store.tasks.docs.get(task) : null;
+            const { data: { name: taskName = "N/A" } = {} } = taskData || {};
+
             return (
                 <TableRow key={id} onClick={this.registrationClick.bind(this, id)}>
-                    <TableCell>{description}</TableCell>
-                    <TableCell>{project}</TableCell>
                     <TableCell>{time}</TableCell>
+                    <TableCell>{description}</TableCell>
+                    <TableCell>{projectName}</TableCell>
+                    <TableCell>{taskName}</TableCell>
                     <TableCell>{date && date.toDate().toLocaleDateString()}</TableCell>
                 </TableRow>
             )
@@ -40,9 +48,10 @@ export class Timesheets extends React.Component {
                 <Table>
                     <TableHead>
                         <TableRow>
+                            <TableCell>Time</TableCell>
                             <TableCell>Description</TableCell>
                             <TableCell>Project</TableCell>
-                            <TableCell>Time</TableCell>
+                            <TableCell>Task</TableCell>
                             <TableCell>Date</TableCell>
                         </TableRow>
                     </TableHead>

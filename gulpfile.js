@@ -4,6 +4,9 @@ const gulp = require('gulp');
 const rollup = require('rollup-stream');
 const sass = require('gulp-sass');
 
+const postcss = require('gulp-postcss');
+const autoprefixer = require('autoprefixer');
+
 const source = require('vinyl-source-stream');
 
 // Configuration
@@ -33,6 +36,7 @@ gulp.task('scss', gulp.series(function (done) {
         .pipe(sass({
             includePaths: ['node_modules/'] // added includePaths to resolve scss partials from node modules
         }).on('error', sass.logError))
+        .pipe(postcss([ autoprefixer() ]))
         .pipe(gulp.dest(configuration.paths.dist + '/css'))
     done();
 }));

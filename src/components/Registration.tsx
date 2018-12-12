@@ -88,6 +88,9 @@ export class Registration extends React.Component {
             store.registrationsStore.save();
             goToOverview(store);
         }
+        else if (e.key === "Escape") {
+            goToOverview(store);
+        }
     }
 
     componentDidMount() {

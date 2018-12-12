@@ -17,6 +17,6 @@ export class Doc<T> {
     }
 
     public save() {
-        addAsync(this.collectionRef, this.data);
+        addAsync(this.collectionRef, this.data, this.id);
     }
 }

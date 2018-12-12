@@ -64,9 +64,15 @@ const beforeExit = (_route: Route, _params: any, s: IRootStore) => {
     s.view.setNavigation("default");
 };
 
-// const beforeEnter = (_route: Route, params: { id: string }, s: IRootStore) => {
-//     return s.registrations.getAsync(params.id)
-// };
+const beforeEnter = (_route: Route, params: { id?: string }, s: IRootStore) => {
+    if (params.id) return s.registrations.getAsync(params.id);
+
+    // temporary return to overview if params are missing
+    // due to bug in mobx-router
+    goToOverview(s);
+
+    return false;
+};
 
 const routes = {
     newRegistration: new Route({

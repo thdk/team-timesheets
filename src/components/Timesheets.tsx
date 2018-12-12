@@ -15,6 +15,10 @@ import { goToRegistration } from '../internal';
 export class Timesheets extends React.Component {
 
     registrationClick = (id: string) => {
+        // since beforeEnter doesn't receive the proper params (bug in mobx router)
+        // https://github.com/kitze/mobx-router/issues/43
+        // we need to query the registration here
+        store.registrationsStore.registration = store.registrations.docs.get(id);
         goToRegistration(id);
     }
 

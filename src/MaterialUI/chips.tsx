@@ -36,17 +36,23 @@ export class Chip extends React.Component<IChipProps> {
         );
     }
 
-    click = () => {
-        this.mdcChipRef.current && this.props.onClick(this.mdcChipRef.current.id);
+    interaction = (e: Event) => {
+        if (this.isChipEvent(e)) {
+            this.mdcChipRef.current && this.props.onClick(e.detail.chipId);
+        };
+    }
+
+    isChipEvent = (e: any): e is Event & { detail: { chipId: string } } => {
+        return !!e.detail;
     }
 
     componentDidMount() {
-        this.mdcChipRef.current!.addEventListener("click", this.click);
+        this.mdcChipRef.current!.addEventListener("MDCChip:interaction", this.interaction);
     }
 
     componentWillUnmount() {
         this.mdcChipRef.current &&
-            this.mdcChipRef.current.removeEventListener("click", this.click);
+            this.mdcChipRef.current.removeEventListener("MDCChip:interaction", this.interaction);
     }
 }
 

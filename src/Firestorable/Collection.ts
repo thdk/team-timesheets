@@ -57,7 +57,7 @@ export class Collection<T> implements ICollection<T> {
                     snapshot.docChanges().forEach(change => {
                         const { doc: { id }, doc } = change;
                         if (change.type === "added" || change.type === "modified") {
-                            this.docs.set(id, new Doc<T>(this.collectionRef, typeSnapshot(doc)));
+                            this.docs.set(id, new Doc<T>(this.collectionRef, doc.data() as Partial<T>, id));
                         }
                         else if (change.type === "removed") {
                             this.docs.delete(id);

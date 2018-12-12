@@ -10,6 +10,7 @@ import TableBody from "@material-ui/core/es/TableBody";
 import { Fab } from "../MaterialUI/buttons";
 import routes from '../routes/index';
 import { goToRegistration } from '../internal';
+import TableFooter from '@material-ui/core/es/TableFooter/TableFooter';
 
 @observer
 export class Timesheets extends React.Component {
@@ -18,13 +19,13 @@ export class Timesheets extends React.Component {
         // since beforeEnter doesn't receive the proper params (bug in mobx router)
         // https://github.com/kitze/mobx-router/issues/43
         // we need to query the registration here
-        store.registrationsStore.registration = store.registrations.docs.get(id);
+        store.registrationsStore.registration = store.registrationsStore.registrations.docs.get(id);
         goToRegistration(id);
     }
 
     render() {
 
-        const rows = Array.from(store.registrations.docs.values()).map(r => {
+        const rows = Array.from(store.registrationsStore.registrations.docs.values()).map(r => {
             const { id, data: { description, project, time, date, task } } = r;
 
             const projectData = project ? store.config.projects.docs.get(project) : null;
@@ -58,6 +59,13 @@ export class Timesheets extends React.Component {
                     <TableBody>
                         {rows}
                     </TableBody>
+                    <TableFooter>
+                        <TableRow>
+                            <TableCell>
+                                {store.registrationsStore.totalTime}
+                            </TableCell>
+                        </TableRow>
+                    </TableFooter>
                 </Table>
                 <Fab onClick={this.addRegistration} icon="add" name="Add new registration"></Fab>
             </>

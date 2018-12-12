@@ -17,15 +17,15 @@ export const goToRegistration = (id?: string) => {
 }
 
 const onEnter = (route: Route, params: { id?: string }, s: IRootStore) => {
-    s.registrationsStore.registration = params.id ? s.registrations.docs.get(params.id) : s.registrationsStore.getNew();
+    s.registrationsStore.registration = params.id ? s.registrationsStore.registrations.docs.get(params.id) : s.registrationsStore.getNew();
 
-    if (params.id && !s.registrationsStore.registration) s.registrations.getAsync(params.id).then(r => {
+    if (params.id && !s.registrationsStore.registration) s.registrationsStore.registrations.getAsync(params.id).then(r => {
         s.registrationsStore.registration = r;
     });
 
     const deleteAction = {
         action: () => {
-            s.registrationsStore.registration instanceof (Doc) && s.registrations.deleteAsync(s.registrationsStore.registration.id);
+            s.registrationsStore.registration instanceof (Doc) && s.registrationsStore.registrations.deleteAsync(s.registrationsStore.registration.id);
             goToOverview(s);
         },
         icon: "delete",
@@ -52,7 +52,7 @@ const beforeExit = (_route: Route, _params: any, s: IRootStore) => {
 };
 
 const beforeEnter = (_route: Route, params: { id?: string }, s: IRootStore) => {
-    if (params.id) return s.registrations.getAsync(params.id);
+    if (params.id) return s.registrationsStore.registrations.getAsync(params.id);
 
     // temporary return to overview if params are missing
     // due to bug in mobx-router

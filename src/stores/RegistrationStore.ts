@@ -1,8 +1,9 @@
-import { observable } from "mobx";
+import { observable, computed } from "mobx";
 import store, { IRootStore } from "../store";
 import { Doc } from "../Firestorable/Document";
 
 import * as firebase from 'firebase/app'
+import { ICollection, Collection } from "../Firestorable/Collection";
 
 export interface IRegistration {
     description: string;
@@ -13,19 +14,28 @@ export interface IRegistration {
 }
 
 export interface IRegistrationsStore {
+    registrations: ICollection<IRegistration>;
     registration?: Doc<IRegistration> | {};
+    totalTime: number;
     save: () => void;
     getNew: () => Doc<Partial<IRegistration>>;
 }
 
-export class RegistrationStore implements IRegistrationsStore {
+export class RegistrationStore  implements IRegistrationsStore {
     private rootStore: IRootStore;
+    readonly registrations: ICollection<IRegistration>;
 
     @observable registration: Doc<IRegistration> | {};
+    
 
     constructor(rootStore: IRootStore) {
         this.rootStore = rootStore;
+        this.registrations = observable(new Collection<IRegistration>("registrations", rootStore.getCollection, { realtime: true }));
         this.registration = {};
+    }
+
+    @computed get totalTime() {
+        return Array.from(this.registrations.docs.values()).reduce((p, c) => p + (c.data.time || 0), 0);
     }
 
     save() {
@@ -40,7 +50,7 @@ export class RegistrationStore implements IRegistrationsStore {
     }
 
     getNew() {
-        return this.rootStore.registrations.newDoc({
+        return this.registrations.newDoc({
             date: firebase.firestore.Timestamp.fromDate(this.toUTC(
                 this.rootStore.view.moment.toDate())
             ),

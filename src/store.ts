@@ -22,15 +22,14 @@ export interface ITask {
 const firestorable = new Firestorable();
 
 
-export interface IRootStore {
-    registrations: ICollection<IRegistration>;
+export interface IRootStore {    
     view: IViewStore;
     router: RouterStore;
     registrationsStore: IRegistrationsStore;
+    getCollection: (name: string) => firebase.firestore.CollectionReference;
 }
 
-class Store implements IRootStore {
-    readonly registrations: ICollection<IRegistration>;
+export class Store implements IRootStore {    
     readonly tasks: ICollection<ITask>;
     readonly registrationsStore: IRegistrationsStore;
     readonly view: IViewStore;
@@ -38,12 +37,11 @@ class Store implements IRootStore {
     readonly config: IConfigStore;
     router = new RouterStore();
 
-    protected readonly getCollection: (name: string) => firebase.firestore.CollectionReference;
+    public readonly getCollection: (name: string) => firebase.firestore.CollectionReference;
 
     constructor(getCollection: (name: string) => firebase.firestore.CollectionReference) {
         this.getCollection = getCollection;
-
-        this.registrations = observable(new Collection<IRegistration>("registrations", getCollection, { realtime: true }));
+       
         this.tasks = observable(new Collection<ITask>("tasks", getCollection, { realtime: true }));
 
         this.view = new ViewStore(this);

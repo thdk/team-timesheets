@@ -6,7 +6,6 @@ import moment from 'moment-es6';
 export interface IViewAction {
   icon: string;
   action: () => void;
-  isActive: boolean;
 }
 
 export interface INavigationViewAction extends IViewAction {

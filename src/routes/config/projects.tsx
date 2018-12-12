@@ -1,9 +1,9 @@
 import { Route } from "mobx-router";
 import { ProjectList } from "../../components/Projects/ProjectList";
 import { App } from "../../internal";
-import store, { IRootStore } from "../../store";
+import { IRootStore } from "../../store";
 import * as React from 'react';
-import { setTitleForRoute } from "../actions";
+import {  onEnter } from "../actions";
 
 export const goToProjects = (s: IRootStore) => {
     s.router.goTo(routes.projects, {}, s);
@@ -14,10 +14,7 @@ const routes = {
     projects: new Route({
         path,
         component: <App><ProjectList></ProjectList></App>,
-        onEnter: (route: Route) => {
-            setTitleForRoute(route);
-            store.config.projects.getDocs();
-        },
+        onEnter,
         title: "Projects"
     })
 } as { projects: Route };

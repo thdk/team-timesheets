@@ -26,5 +26,10 @@ const loadRegistrations = () => {
     store.registrations.getDocs();
 };
 
+const loadProjects = () => {
+    store.config.projects.getDocs();
+}
+
+loadProjects();
 loadRegistrations();
 reaction(() => store.view.moment, loadRegistrations);

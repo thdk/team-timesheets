@@ -19,7 +19,8 @@ export class Menu extends React.Component {
 
     navigateToOverview = (e: React.MouseEvent) => {
         e.preventDefault();
-        goToOverview(store);
+        const date = new Date();
+        goToOverview(store, { day: date.getDate(), month: date.getMonth() + 1, year: date.getFullYear() });
     }
 
     render() {

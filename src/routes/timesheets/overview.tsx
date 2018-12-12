@@ -3,7 +3,7 @@ import { Route } from 'mobx-router';
 import { Timesheets } from '../../components/Timesheets';
 import store, { IRootStore } from '../../store';
 import { transaction } from 'mobx';
-import { setTitleForRoute } from '../actions';
+import { onEnter } from '../actions';
 import { App } from '../../internal';
 
 interface IDate {
@@ -23,13 +23,12 @@ export const goTo = (s: IRootStore, date?: IDate) => {
 }
 
 const routeChanged = (route: any, params: IDate, s: IRootStore) => {
+    onEnter(route, false);
     transaction(() => {
         s.view.year = params.year;
         s.view.month = params.month;
         s.view.day = params.day;
     });
-
-    setTitleForRoute(route);
 }
 
 const routes = {

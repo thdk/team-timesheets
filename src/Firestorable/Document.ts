@@ -5,15 +5,26 @@ export class Doc<T> {
     private ref: firebase.firestore.DocumentReference;
     private readonly collectionRef: firebase.firestore.CollectionReference;
     public readonly id: string;
-    @observable public readonly data: Partial<T>;
+    @observable public data: Partial<T>;
+    
+    private unwatchDocument?: () => void;
 
     constructor(collectionRef: firebase.firestore.CollectionReference, data: Partial<T>, id?: string) {
         this.ref = id ? collectionRef.doc(id) : collectionRef.doc();
         this.collectionRef = collectionRef;
-
-        // WARNING: VERIFY IF ID IS NEEDED ON DATA OR IF IT CAN BE SAVED ON DOC INSTEAD
         this.id = this.ref.id;
-        this.data = data;
+        this.data = data;              
+    }
+
+    public watch() {
+        this.unwatchDocument = this.ref.onSnapshot(snapshot => {
+            const data = snapshot.data();
+            if (data) this.data = data as T;
+        });  
+    }
+
+    public unwatch() {
+        this.unwatchDocument && this.unwatchDocument();
     }
 
     public save() {

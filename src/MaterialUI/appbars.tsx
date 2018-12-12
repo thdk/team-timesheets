@@ -18,7 +18,6 @@ export class TopAppBar extends React.Component<TopAppBarProps> {
 
         const actions = store.view.actions.map((a, i) => {
             let className = "rst-action mdc-top-app-bar__action-item mdc-icon-button";
-            if (a.isActive) className += " mdc-icon-button--on";
 
             return <button onClick={a.action} key={i} data-action-id={a.icon} className={className} aria-label={a.icon}
                 aria-hidden="true" aria-pressed="false">

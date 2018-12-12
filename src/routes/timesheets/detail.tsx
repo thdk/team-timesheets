@@ -4,7 +4,7 @@ import { RoutesConfig, Route } from 'mobx-router';
 import { path as parentPath } from './overview';
 import { App } from '../../components/App';
 import { Registration } from '../../components/Registration';
-import { setTitleForRoute } from '../actions';
+import { setTitleForRoute, setBackToOverview } from '../actions';
 import store, { IRootStore } from '../../store';
 import { goTo as goToOverview } from '../../internal';
 import { reaction } from '../../../node_modules/mobx';
@@ -18,38 +18,25 @@ export const goToRegistration = (id?: string) => {
 
 const onEnter = (route: Route, params: { id?: string }, s: IRootStore) => {
     s.registrationsStore.registration = params.id ? s.registrations.docs.get(params.id) : s.registrationsStore.getNew();
-    const action = {
-        action: () => {
-            s.registrationsStore.save();
-            goToOverview(s, { day: s.view.day, year: s.view.year, month: s.view.month });
-        },
-        icon: "save",
-        isActive: false
-    };
+
+    if (params.id && !s.registrationsStore.registration) s.registrations.getAsync(params.id).then(r => {
+        s.registrationsStore.registration = r;
+    });
 
     const deleteAction = {
         action: () => {
             s.registrationsStore.registration instanceof (Doc) && s.registrations.deleteAsync(s.registrationsStore.registration.id);
-            goToOverview(s, { day: s.view.day, year: s.view.year, month: s.view.month });
+            goToOverview(s);
         },
         icon: "delete",
         isActive: false
     }
 
     s.view.setActions([
-        action,
         deleteAction
     ]);
 
-    s.view.setNavigation({
-        action: () => {
-            s.registrationsStore.save();
-            goToOverview(s, { day: s.view.day, year: s.view.year, month: s.view.month });
-        },
-        icon: "arrow_back",
-        isActive: false,
-    });
-
+    setBackToOverview(() => s.registrationsStore.save());
     setTitleForRoute(route);
 
     const u = reaction(() => s.registrationsStore.registration, () => {

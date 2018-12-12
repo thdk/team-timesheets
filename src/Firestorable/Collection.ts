@@ -14,7 +14,7 @@ export interface ICollection<T> {
     newDoc: (data: Partial<T>) => Doc<Partial<T>>;
     updateAsync: (id: string, data: T) => Promise<void>;
     addAsync: (doc: Doc<T>) => Promise<string>;
-    getAsync: (id: string) => Promise<T | undefined>;
+    getAsync: (id: string) => Promise<Doc<T> | undefined>;
     deleteAsync: (id: string) => Promise<void>;
 }
 
@@ -83,7 +83,9 @@ export class Collection<T> implements ICollection<T> {
     }
 
     public getAsync(id: string) {
-        return getAsync<T>(this.collectionRef, id);
+        return getAsync<T>(this.collectionRef, id).then(doc => {
+            return doc && new Doc<T>(this.collectionRef, doc);
+        });
     }
 
     // TODO: when realtime updates is disabled, we must manually update the docs!

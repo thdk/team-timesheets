@@ -17,11 +17,16 @@ export const goToRegistration = (id?: string) => {
 }
 
 const onEnter = (route: Route, params: { id?: string }, s: IRootStore) => {
-    s.timesheets.registration = params.id ? s.timesheets.registrations.docs.get(params.id) : s.timesheets.getNew();
+    s.timesheets.registration = params.id
+        ? s.timesheets.registrations.docs.get(params.id)
+        : s.timesheets.getNew();
 
-    if (params.id && !s.timesheets.registration) s.timesheets.registrations.getAsync(params.id).then(r => {
-        s.timesheets.registration = r;
-    });
+    // registration not in memory yet, request it
+    if (params.id && !s.timesheets.registration) {
+        s.timesheets.registrations
+            .getAsync(params.id)
+            .then(r => s.timesheets.registration = r);
+    }
 
     const deleteAction = {
         action: () => {
@@ -51,14 +56,8 @@ const beforeExit = (_route: Route, _params: any, s: IRootStore) => {
     s.view.setNavigation("default");
 };
 
-const beforeEnter = (_route: Route, params: { id?: string }, s: IRootStore) => {
-    if (params.id) return s.timesheets.registrations.getAsync(params.id);
-
-    // temporary return to overview if params are missing
-    // due to bug in mobx-router
-    goToOverview(s);
-
-    return false;
+const beforeEnter = (_route: Route, _params: { id?: string }, _s: IRootStore) => {
+    return true;
 };
 
 const routes = {
@@ -75,7 +74,7 @@ const routes = {
         title: "Edit registration",
         onEnter,
         beforeExit,
-        // beforeEnter
+        beforeEnter
     })
 } as RoutesConfig;
 

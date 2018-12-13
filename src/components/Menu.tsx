@@ -3,7 +3,7 @@ import { DatetimePicker } from 'rc-datetime-picker';
 import store from '../store';
 import moment from 'moment-es6';
 import { observer } from 'mobx-react';
-import { goTo as goToOverview, goToProjects } from "../internal";
+import { goTo as goToOverview, goToProjects, goToLogin } from "../internal";
 
 @observer
 export class Menu extends React.Component {
@@ -23,6 +23,11 @@ export class Menu extends React.Component {
         goToOverview(store, { day: date.getDate(), month: date.getMonth() + 1, year: date.getFullYear() });
     }
 
+    navigateToLogin = (e:React.MouseEvent) => {
+        e.preventDefault();
+        goToLogin(store);
+    }
+
     render() {
         return (
             <>
@@ -38,6 +43,12 @@ export class Menu extends React.Component {
                     <a className="mdc-list-item" onClick={this.navigateToProjects} href="/config/projects">
                         <i className="material-icons mdc-list-item__graphic" aria-hidden="true">bookmark</i>
                         <span className="mdc-list-item__text">Projects</span>
+                    </a>
+
+                    <hr className="mdc-list-divider" />
+                    <a className="mdc-list-item" onClick={this.navigateToLogin} href="/config/projects">
+                        <i className="material-icons mdc-list-item__graphic" aria-hidden="true">perm_identity</i>
+                        <span className="mdc-list-item__text">Login</span>
                     </a>
 
                 </div>

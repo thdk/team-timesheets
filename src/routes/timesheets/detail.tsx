@@ -17,15 +17,20 @@ export const goToRegistration = (id?: string) => {
 }
 
 const onEnter = (route: Route, params: { id?: string }, s: IRootStore) => {
-    s.registrationsStore.registration = params.id ? s.registrationsStore.registrations.docs.get(params.id) : s.registrationsStore.getNew();
+    s.timesheets.registration = params.id
+        ? s.timesheets.registrations.docs.get(params.id)
+        : s.timesheets.getNew();
 
-    if (params.id && !s.registrationsStore.registration) s.registrationsStore.registrations.getAsync(params.id).then(r => {
-        s.registrationsStore.registration = r;
-    });
+    // registration not in memory yet, request it
+    if (params.id && !s.timesheets.registration) {
+        s.timesheets.registrations
+            .getAsync(params.id)
+            .then(r => s.timesheets.registration = r);
+    }
 
     const deleteAction = {
         action: () => {
-            s.registrationsStore.registration instanceof (Doc) && s.registrationsStore.registrations.deleteAsync(s.registrationsStore.registration.id);
+            s.timesheets.registration instanceof (Doc) && s.timesheets.registrations.deleteAsync(s.timesheets.registration.id);
             goToOverview(s);
         },
         icon: "delete",
@@ -36,10 +41,10 @@ const onEnter = (route: Route, params: { id?: string }, s: IRootStore) => {
         deleteAction
     ]);
 
-    setBackToOverview(() => s.registrationsStore.save());
+    setBackToOverview(() => s.timesheets.save());
     setTitleForRoute(route);
 
-    const u = reaction(() => s.registrationsStore.registration, () => {
+    const u = reaction(() => s.timesheets.registration, () => {
         // use icon as unique id of action
         s.view.actions.replace([]);
         u();
@@ -47,18 +52,12 @@ const onEnter = (route: Route, params: { id?: string }, s: IRootStore) => {
 };
 
 const beforeExit = (_route: Route, _params: any, s: IRootStore) => {
-    s.registrationsStore.registration = {};
+    s.timesheets.registration = {};
     s.view.setNavigation("default");
 };
 
-const beforeEnter = (_route: Route, params: { id?: string }, s: IRootStore) => {
-    if (params.id) return s.registrationsStore.registrations.getAsync(params.id);
-
-    // temporary return to overview if params are missing
-    // due to bug in mobx-router
-    goToOverview(s);
-
-    return false;
+const beforeEnter = (_route: Route, _params: { id?: string }, _s: IRootStore) => {
+    return true;
 };
 
 const routes = {
@@ -75,7 +74,7 @@ const routes = {
         title: "Edit registration",
         onEnter,
         beforeExit,
-        // beforeEnter
+        beforeEnter
     })
 } as RoutesConfig;
 

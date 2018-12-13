@@ -19,13 +19,13 @@ export class Timesheets extends React.Component {
         // since beforeEnter doesn't receive the proper params (bug in mobx router)
         // https://github.com/kitze/mobx-router/issues/43
         // we need to query the registration here
-        store.registrationsStore.registration = store.registrationsStore.registrations.docs.get(id);
+        // store.timesheets.registration = store.timesheets.registrations.docs.get(id);
         goToRegistration(id);
     }
 
     render() {
 
-        const rows = Array.from(store.registrationsStore.registrations.docs.values()).map(r => {
+        const rows = Array.from(store.timesheets.registrations.docs.values()).map(r => {
             const { id, data: { description, project, time, date, task } } = r;
 
             const projectData = project ? store.config.projects.docs.get(project) : null;
@@ -62,7 +62,7 @@ export class Timesheets extends React.Component {
                     <TableFooter>
                         <TableRow>
                             <TableCell>
-                                {store.registrationsStore.totalTime}
+                                {store.timesheets.totalTime}
                             </TableCell>
                         </TableRow>
                     </TableFooter>

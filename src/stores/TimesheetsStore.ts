@@ -1,4 +1,4 @@
-import { observable, computed } from "mobx";
+import { observable, computed, reaction } from "mobx";
 import store, { IRootStore } from "../store";
 import { Doc } from "../Firestorable/Document";
 
@@ -26,12 +26,25 @@ export class RegistrationStore  implements IRegistrationsStore {
     readonly registrations: ICollection<IRegistration>;
 
     @observable registration: Doc<IRegistration> | {};
-    
+
 
     constructor(rootStore: IRootStore) {
         this.rootStore = rootStore;
         this.registrations = observable(new Collection<IRegistration>("registrations", rootStore.getCollection, { realtime: true }));
         this.registration = {};
+
+        const loadRegistrations = () => {
+            const moment = rootStore.view.moment;
+            const endDate = moment.clone().add(1, "days").toDate();
+            const startDate = moment.clone().toDate();
+            this.registrations.query = ref => ref.where("date", ">", startDate).where("date", "<=", endDate);
+            this.registrations.getDocs();
+        };
+
+        loadRegistrations();
+
+        // load registration every time the moment property of the viewstore changes
+        reaction(() => rootStore.view.moment, loadRegistrations);
     }
 
     @computed get totalTime() {

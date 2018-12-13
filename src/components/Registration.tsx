@@ -12,9 +12,9 @@ import { Select, SelectOption } from '../MaterialUI/select';
 @observer
 export class Registration extends React.Component {
     render() {
-        if (!(store.registrationsStore.registration instanceof (Doc))) return <></>;
+        if (!(store.timesheets.registration instanceof (Doc))) return <></>;
 
-        const { task = store.user.defaultTask, description, project, time, date } = store.registrationsStore.registration.data;
+        const { task = store.user.defaultTask, description, project, time, date } = store.timesheets.registration.data;
         const tasks = Array.from(store.tasks.docs.values())
             .filter(t => !!t.data.name) // todo move validation to Doc
             .map(t => {
@@ -73,28 +73,28 @@ export class Registration extends React.Component {
     }
 
     onDescriptionChange = (value: string) => {
-        if (store.registrationsStore.registration instanceof (Doc))
-            store.registrationsStore.registration.data.description = value;
+        if (store.timesheets.registration instanceof (Doc))
+            store.timesheets.registration.data.description = value;
     }
 
     onTimeChange = (value: string) => {
-        if (store.registrationsStore.registration instanceof (Doc))
-            store.registrationsStore.registration!.data.time = +value;
+        if (store.timesheets.registration instanceof (Doc))
+            store.timesheets.registration!.data.time = +value;
     }
 
     onProjectChange = (value: string) => {
-        if (store.registrationsStore.registration instanceof (Doc))
-            store.registrationsStore.registration!.data.project = value;
+        if (store.timesheets.registration instanceof (Doc))
+            store.timesheets.registration!.data.project = value;
     }
 
     taskClicked = (taskId: string) => {
-        if (store.registrationsStore.registration instanceof (Doc))
-            store.registrationsStore.registration!.data.task = taskId;
+        if (store.timesheets.registration instanceof (Doc))
+            store.timesheets.registration!.data.task = taskId;
     }
 
     keyDown = (e: KeyboardEvent) => {
         if (e.ctrlKey && e.key === "Enter") {
-            store.registrationsStore.save();
+            store.timesheets.save();
             goToOverview(store);
         }
         else if (e.key === "Escape") {

@@ -3,7 +3,7 @@ import { Firestorable } from './Firestorable/Firestorable';
 import { ICollection, Collection } from './Firestorable/Collection';
 import { RouterStore } from 'mobx-router';
 import { IViewStore, ViewStore } from './stores/ViewStore';
-import { IRegistration, IRegistrationsStore, RegistrationStore } from './stores/RegistrationStore';
+import { IRegistration, IRegistrationsStore, RegistrationStore } from './stores/TimesheetsStore';
 import { IUserStore, UserStore } from './stores/UserStore';
 import { IProject, IConfigStore, ConfigStore } from './stores/ConfigStore';
 
@@ -15,23 +15,21 @@ export interface CollectionMap {
 
 export interface ITask {
     name: string;
-    color?: string;
     icon?: string;
 }
 
 const firestorable = new Firestorable();
 
-
-export interface IRootStore {    
+export interface IRootStore {
     view: IViewStore;
     router: RouterStore;
-    registrationsStore: IRegistrationsStore;
+    timesheets: IRegistrationsStore;
     getCollection: (name: string) => firebase.firestore.CollectionReference;
 }
 
-export class Store implements IRootStore {    
+export class Store implements IRootStore {
     readonly tasks: ICollection<ITask>;
-    readonly registrationsStore: IRegistrationsStore;
+    readonly timesheets: IRegistrationsStore;
     readonly view: IViewStore;
     readonly user: IUserStore;
     readonly config: IConfigStore;
@@ -41,13 +39,13 @@ export class Store implements IRootStore {
 
     constructor(getCollection: (name: string) => firebase.firestore.CollectionReference) {
         this.getCollection = getCollection;
-       
+
         this.tasks = observable(new Collection<ITask>("tasks", getCollection, { realtime: true }));
 
         this.view = new ViewStore(this);
         this.user = new UserStore(this);
         this.config = new ConfigStore(this, getCollection);
-        this.registrationsStore = new RegistrationStore(this);
+        this.timesheets = new RegistrationStore(this);
         this.loadData();
     }
 

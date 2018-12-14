@@ -6,7 +6,7 @@ import store from '../store';
 import { Chip, ChipSet } from '../MaterialUI/chips';
 import { Doc } from '../Firestorable/Document';
 import { FlexGroup } from './Layout/flex';
-import { goTo as goToOverview } from '../internal';
+import { goToOverview } from '../internal';
 import { Select, SelectOption } from '../MaterialUI/select';
 
 @observer

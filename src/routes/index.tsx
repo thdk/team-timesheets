@@ -3,7 +3,7 @@ import { App } from '../internal';
 import { Route, RoutesConfig } from 'mobx-router';
 import timesheetsRoutes from './timesheets/index';
 import configRoutes from './config';
-import { goTo as goToOverview } from '../internal';
+import { goToOverview } from '../internal';
 import store from '../store';
 
 const routes: RoutesConfig = {

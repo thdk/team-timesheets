@@ -8,7 +8,8 @@ export default {
   input: 'src/app.ts', // can be a typescript file if we have a rollup typescript plugin
   format: 'iife',
   globals: {
-    'firebase/app': 'firebase'
+    'firebase/app': 'firebase',
+    'firebaseui': 'firebaseui'
   },
   plugins: [
     replace({

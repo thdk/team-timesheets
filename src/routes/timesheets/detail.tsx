@@ -4,9 +4,9 @@ import { RoutesConfig, Route } from 'mobx-router';
 import { path as parentPath } from './overview';
 import { App } from '../../components/App';
 import { Registration } from '../../components/Registration';
-import { setTitleForRoute, setBackToOverview } from '../actions';
+import { setTitleForRoute, setBackToOverview, beforeEnter } from '../actions';
 import store, { IRootStore } from '../../store';
-import { goTo as goToOverview } from '../../internal';
+import { goToOverview } from '../../internal';
 import { reaction } from '../../../node_modules/mobx';
 import { Doc } from '../../Firestorable/Document';
 
@@ -56,17 +56,14 @@ const beforeExit = (_route: Route, _params: any, s: IRootStore) => {
     s.view.setNavigation("default");
 };
 
-const beforeEnter = (_route: Route, _params: { id?: string }, _s: IRootStore) => {
-    return true;
-};
-
 const routes = {
     newRegistration: new Route({
         path,
         component: <App><Registration></Registration></App>,
         title: "New registration",
         onEnter,
-        beforeExit
+        beforeExit,
+        beforeEnter
     }),
     registrationDetail: new Route({
         path: path + '/:id',

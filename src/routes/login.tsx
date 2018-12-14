@@ -1,14 +1,16 @@
 import * as React from 'react';
 import { Route } from 'mobx-router';
 import { Login } from '../components/Login';
-import { IRootStore } from '../store';
+import store, { IRootStore } from '../store';
 import { onEnter } from './actions';
-import { App } from '../internal';
+import { App, goToOverview } from '../internal';
+import { getLoggedInUserAsync } from '../Firestorable/Firestorable';
+import { reaction } from 'mobx';
 
 const path = "/login";
 
 export const goToLogin = (s: IRootStore) => {
-    s.router.goTo(routes.login, s);
+    s.router.goTo(routes.login, null, s);
 }
 
 const routes = {
@@ -16,9 +18,17 @@ const routes = {
         path,
         component: <App><Login></Login></App>,
         onEnter,
-        title: "Login"
+        title: "Login",
+        beforeEnter: (_route: Route, _params: any, s: IRootStore) => {
+            return getLoggedInUserAsync().then(() => {
+                goToOverview(s);
+                return false;
+            }, () => true);
+        }
     })
 };
+
+reaction(() => store.user.user, user => { user ? goToOverview(store) : goToLogin(store) }, { fireImmediately: true });
 
 export default routes;
 

@@ -1,24 +1,23 @@
 import { observable } from 'mobx';
-import { Firestorable } from './Firestorable/Firestorable';
 import { ICollection, Collection } from './Firestorable/Collection';
 import { RouterStore } from 'mobx-router';
 import { IViewStore, ViewStore } from './stores/ViewStore';
 import { IRegistration, IRegistrationsStore, RegistrationStore } from './stores/TimesheetsStore';
-import { IUserStore, UserStore } from './stores/UserStore';
+import { IUserStore, UserStore, IUser } from './stores/UserStore';
 import { IProject, IConfigStore, ConfigStore } from './stores/ConfigStore';
+import { firestorable } from './Firestorable/Firestorable';
 
 export interface CollectionMap {
     "registrations": IRegistration;
     "tasks": ITask;
     "projects": IProject;
+    "users": IUser;
 }
 
 export interface ITask {
     name: string;
     icon?: string;
 }
-
-const firestorable = new Firestorable();
 
 export interface IRootStore {
     view: IViewStore;

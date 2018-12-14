@@ -2,8 +2,9 @@ import * as firebase from "firebase/app";
 import "firebase/firestore";
 import { config } from "../config";
 
-export class Firestorable {
+class Firestorable {
     public readonly firestore: firebase.firestore.Firestore;
+    public readonly auth: firebase.auth.Auth;
 
     constructor() {
         firebase.initializeApp({
@@ -14,5 +15,23 @@ export class Firestorable {
         this.firestore = firebase.firestore();
         const settings = { timestampsInSnapshots: true };
         this.firestore.settings(settings);
+
+        this.auth = firebase.auth();
     }
+}
+
+export const firestorable = new Firestorable();
+
+/**
+ * Resolves with firbase.User if user is logged in
+ * Rejects if no user is logged in
+ */
+export const getLoggedInUserAsync = () => {
+    return new Promise<firebase.User>((resolve, reject) => {
+        const unsubscribe = firebase.auth().onAuthStateChanged(user => {
+            unsubscribe();
+            if (user) resolve(user);
+            else reject("Not authenticated");
+        });
+    });
 }

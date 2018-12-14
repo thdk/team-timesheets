@@ -1,4 +1,4 @@
-import { observable, computed, reaction } from 'mobx';
+import { observable, computed, reaction, when } from 'mobx';
 import store, { IRootStore } from "../store";
 import { Doc } from "../Firestorable/Document";
 
@@ -11,6 +11,7 @@ export interface IRegistration {
     project: string;
     task: string;
     date: firebase.firestore.Timestamp; // Todo: use Date and add conversion layer
+    userId: string;
 }
 
 export interface IRegistrationsStore {
@@ -21,7 +22,7 @@ export interface IRegistrationsStore {
     getNew: () => Doc<Partial<IRegistration>>;
 }
 
-export class RegistrationStore  implements IRegistrationsStore {
+export class RegistrationStore implements IRegistrationsStore {
     private rootStore: IRootStore;
     readonly registrations: ICollection<IRegistration>;
 
@@ -34,17 +35,25 @@ export class RegistrationStore  implements IRegistrationsStore {
         this.registration = {};
 
         const loadRegistrations = () => {
-            const moment = rootStore.view.moment;
-            const endDate = moment.clone().add(1, "days").toDate();
-            const startDate = moment.clone().toDate();
-            this.registrations.query = ref => ref.where("date", ">", startDate).where("date", "<=", endDate);
-            this.registrations.getDocs();
-        };
+            when(() => !!this.rootStore.user.user, () => {
+                if (!rootStore.user.user) return;
 
-        loadRegistrations();
+                const moment = rootStore.view.moment;
+                const endDate = moment.clone().add(1, "days").toDate();
+                const startDate = moment.clone().toDate();
+                this.registrations.query = ref => ref
+                    .where("date", ">", startDate)
+                    .where("date", "<=", endDate)
+                    .where("userId", "==", rootStore.user.user!.uid);
+
+                this.registrations.getDocs();
+            });
+        };
 
         // load registration every time the moment property of the viewstore changes
         reaction(() => rootStore.view.moment, loadRegistrations);
+
+        reaction(() => rootStore.user.user, loadRegistrations);
     }
 
     @computed get totalTime() {
@@ -53,23 +62,27 @@ export class RegistrationStore  implements IRegistrationsStore {
 
     save() {
         // TODO move to Document class for Firestorable (with dynamic validation)
-        this.registration instanceof(Doc) &&
+        this.registration instanceof (Doc) &&
             this.registration.data.date &&
             this.registration.data.description &&
             this.registration.data.project &&
             this.registration.data.task &&
             this.registration.data.time &&
+            this.registration.data.userId &&
             this.registration.save();
     }
 
     getNew() {
+        if (!store.user.user) throw new Error("Can't add new registration if user is unknown");
+
         return this.registrations.newDoc({
             date: firebase.firestore.Timestamp.fromDate(this.toUTC(
                 this.rootStore.view.moment.toDate())
             ),
             description: "",
             project: "",
-            task: store.user.defaultTask
+            task: store.user.defaultTask,
+            userId: store.user.user.uid
         });
     }
 

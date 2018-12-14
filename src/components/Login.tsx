@@ -6,17 +6,17 @@ import store from '../store';
 import { firestorable } from '../Firestorable/Firestorable';
 
 export class Login extends React.Component {
-    private readonly loginUi?: firebaseui.auth.AuthUI;
-    private readonly loginUiConfig?: firebaseui.auth.Config;
-    private isLoggedIn = false;
-    constructor(props: any) {
-        super(props);
+    private loginUi?: firebaseui.auth.AuthUI;
+    render() {
+        return (
+            <div>
+                <div id="firebaseui-auth-container"></div>
+            </div>
+        );
+    }
 
-        this.isLoggedIn = !!store.user.user;
-
-        if (this.isLoggedIn) return;
-
-        this.loginUiConfig = {
+    componentDidMount() {
+        const loginUiConfig = {
             callbacks: {
                 signInSuccessWithAuthResult: (authResult: firebase.auth.UserCredential, _redirectUrl: string) => {
                     store.user.setUser(authResult.user);
@@ -43,19 +43,8 @@ export class Login extends React.Component {
 
         // Initialize the FirebaseUI Widget using Firebase.
         this.loginUi = new firebaseui.auth.AuthUI(firestorable.auth);
-    }
-    render() {
-        return this.isLoggedIn ? <div>Already logged in</div> : (
-            <div>
-                <div id="firebaseui-auth-container"></div>
-            </div>
-        );
-    }
-
-    componentDidMount() {
-        if (this.isLoggedIn || !this.loginUi || !this.loginUiConfig) return;
         // The start method will wait until the DOM is loaded.
-        this.loginUi.start('#firebaseui-auth-container', this.loginUiConfig);
+        this.loginUi.start('#firebaseui-auth-container', loginUiConfig);
     }
 
     componentWillUnmount() {

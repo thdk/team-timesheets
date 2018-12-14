@@ -20,6 +20,7 @@ export interface ITask {
 }
 
 export interface IRootStore {
+    user: IUserStore;
     view: IViewStore;
     router: RouterStore;
     timesheets: IRegistrationsStore;
@@ -41,9 +42,9 @@ export class Store implements IRootStore {
 
         this.tasks = observable(new Collection<ITask>("tasks", getCollection, { realtime: true }));
 
-        this.view = new ViewStore(this);
         this.user = new UserStore(this);
         this.config = new ConfigStore(this, getCollection);
+        this.view = new ViewStore(this);
         this.timesheets = new RegistrationStore(this);
         this.loadData();
     }

@@ -28,7 +28,7 @@ const routes = {
     })
 };
 
-reaction(() => store.user.user, user => { user ? goToOverview(store) : goToLogin(store) }, { fireImmediately: true });
+reaction(() => store.user.user, user => user ? goToOverview(store) : goToLogin(store), { fireImmediately: true });
 
 export default routes;
 

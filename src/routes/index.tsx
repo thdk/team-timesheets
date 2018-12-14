@@ -5,6 +5,7 @@ import timesheetsRoutes from './timesheets/index';
 import configRoutes from './config';
 import { goToOverview } from '../internal';
 import store from '../store';
+import { beforeEnter } from './actions';
 
 const routes: RoutesConfig = {
   root: new Route({
@@ -13,6 +14,7 @@ const routes: RoutesConfig = {
     onEnter: () => {
       goToOverview(store); // TODO: verify if we can't use the global store inside goToOverview
     },
+    // beforeEnter,
     title: "Root"
   }),
   ...timesheetsRoutes,

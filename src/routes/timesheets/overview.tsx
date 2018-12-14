@@ -35,7 +35,10 @@ const routes = {
     overview: new Route({
         path: path + '/:year/:month/:day',
         component: <App><Timesheets></Timesheets></App>,
-        onEnter: routeChanged,
+        onEnter: (route: any, params: IDate, s: IRootStore) => {
+            console.log("on enter");
+            routeChanged(route, params, store);
+        },
         onParamsChange: routeChanged,
         title: "Overview",
         beforeEnter

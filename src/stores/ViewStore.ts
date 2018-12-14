@@ -1,4 +1,4 @@
-import { observable, IObservableArray, action, computed } from "mobx";
+import { observable, IObservableArray, action, computed, transaction } from "mobx";
 import { IRootStore } from "../store";
 
 import moment from 'moment-es6';
@@ -15,9 +15,9 @@ export interface INavigationViewAction extends IViewAction {
 export interface IViewStore {
   title: string;
   isDrawerOpen: boolean;
-  day: number;
-  month: number;
-  year: number;
+  day?: number;
+  month?: number;
+  year?: number;
   moment: moment.Moment;
   readonly actions: IObservableArray<IViewAction>;
   navigationAction?: INavigationViewAction;
@@ -31,9 +31,9 @@ export class ViewStore implements IViewStore {
   @observable navigationAction?: INavigationViewAction;
   @observable readonly title: string;
   @observable readonly isDrawerOpen: boolean;
-  @observable readonly day: number;
-  @observable readonly month: number;
-  @observable readonly year: number;
+  @observable day?: number;
+  @observable month?: number;
+  @observable year?: number;
 
   private readonly rootStore: IRootStore;
 
@@ -43,9 +43,12 @@ export class ViewStore implements IViewStore {
     const date = new Date();
     this.title = "";
     this.isDrawerOpen = false;
-    this.day = date.getDate();
-    this.month = date.getMonth() + 1;
-    this.year = date.getFullYear();
+
+    transaction(() => {
+      this.day = date.getDate();
+      this.month = date.getMonth() + 1;
+      this.year = date.getFullYear();
+    })
 
     this.setNavigation("default");
   }

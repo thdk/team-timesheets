@@ -4,7 +4,7 @@ import typescript from 'rollup-plugin-typescript';
 import replace from 'rollup-plugin-replace';
 
 export default {
-  external: ["firebase/app"],
+  external: ["firebase/app", "firebaseui"],
   input: 'src/app.ts', // can be a typescript file if we have a rollup typescript plugin
   format: 'iife',
   globals: {

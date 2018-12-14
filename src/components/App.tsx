@@ -33,7 +33,7 @@ export class App extends React.Component {
     }
 
     componentDidMount() {
-        this.unobserveDrawerOpen = observe<IViewStore, "isDrawerOpen">(store.view, "isDrawerOpen", change => {
+        this.unobserveDrawerOpen = observe<IViewStore, "isDrawerOpen">(store.view, "isDrawerOpen", (change: any) => {
             this.drawerRef && this.drawerRef.toggle(change.newValue);
         });
     }

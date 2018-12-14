@@ -2,8 +2,8 @@
 import { firestore } from "firebase";
 import 'firebase/firestore';
 
-import { updateAsync, addAsync, typeSnapshot, getAsync } from "./FirestoreUtils";
-import { observable, ObservableMap, reaction, transaction } from "mobx";
+import { updateAsync, addAsync, getAsync } from "./FirestoreUtils";
+import { observable, ObservableMap, reaction, transaction } from 'mobx';
 import { CollectionMap } from "../store";
 import { Doc } from "./Document";
 

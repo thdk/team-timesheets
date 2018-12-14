@@ -1,4 +1,4 @@
-import { observable, computed, reaction } from "mobx";
+import { observable, computed, reaction } from 'mobx';
 import store, { IRootStore } from "../store";
 import { Doc } from "../Firestorable/Document";
 

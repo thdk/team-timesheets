@@ -1,5 +1,5 @@
 import { IRootStore } from "../store";
-import { observable } from "mobx";
+import { observable } from 'mobx';
 import { Collection, ICollection } from "../Firestorable/Collection";
 
 export interface IConfigStore {

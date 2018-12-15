@@ -66,8 +66,6 @@ export class Collection<T> implements ICollection<T> {
                 })
 
             });
-
-            // reaction(() => this.query, this.getDocs.bind(this));
     }
 
     public newDoc(data: Partial<T>) {

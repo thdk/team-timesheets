@@ -34,7 +34,7 @@ export class RegistrationStore implements IRegistrationsStore {
         this.registrations = observable(new Collection<IRegistration>("registrations", rootStore.getCollection, { realtime: true }));
         this.registration = {};
 
-        const loadRegistrations = () => {
+        const updateRegistrationQuery = () => {
             when(() => !!this.rootStore.user.user, () => {
                 if (!rootStore.user.user) return;
 
@@ -45,15 +45,14 @@ export class RegistrationStore implements IRegistrationsStore {
                     .where("date", ">", startDate)
                     .where("date", "<=", endDate)
                     .where("userId", "==", rootStore.user.user!.uid);
-
-                this.registrations.getDocs();
             });
         };
 
-        // load registration every time the moment property of the viewstore changes
-        reaction(() => rootStore.view.moment, loadRegistrations);
-
-        reaction(() => rootStore.user.user, loadRegistrations);
+        // update the query of the registration collection each time...
+        // -- the view moment changes
+        // -- the logged in user changes
+        reaction(() => rootStore.view.moment, updateRegistrationQuery);
+        reaction(() => rootStore.user.user, updateRegistrationQuery);
     }
 
     @computed get totalTime() {

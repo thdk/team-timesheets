@@ -1,10 +1,8 @@
-
 import { firestore } from "firebase";
 import 'firebase/firestore';
 
 import { updateAsync, addAsync, getAsync } from "./FirestoreUtils";
 import { observable, ObservableMap, reaction, transaction } from 'mobx';
-import { CollectionMap } from "../store";
 import { Doc } from "./Document";
 
 export interface ICollection<T> {
@@ -25,18 +23,16 @@ export interface ICollectionOptions {
 export class Collection<T> implements ICollection<T> {
     public docs: ObservableMap<string, Doc<T>> = observable(new Map);
     @observable public query?: (ref: firestore.CollectionReference) => firestore.Query;
-    private readonly name: keyof CollectionMap;
     private readonly collectionRef: firebase.firestore.CollectionReference;
     private readonly isRealtime: boolean;
     private unsubscribeFirestore?: () => void;
     private readonly queryReactionDisposable: () => void;
 
-    constructor(name: keyof CollectionMap, getFirestoreCollection: (name: string) => firebase.firestore.CollectionReference, options: ICollectionOptions = {}) {
+    constructor(getFirestoreCollection: () => firebase.firestore.CollectionReference, options: ICollectionOptions = {}) {
         const { realtime = false } = options;
 
         this.isRealtime = realtime;
-        this.name = name;
-        this.collectionRef = getFirestoreCollection(this.name);
+        this.collectionRef = getFirestoreCollection();
 
         this.queryReactionDisposable = reaction(() => this.query, this.getDocs.bind(this));
     }

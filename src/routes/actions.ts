@@ -1,7 +1,7 @@
-import store from "../store";
 import { Route } from "mobx-router";
 import { goToOverview } from './timesheets/overview';
 import { getLoggedInUserAsync } from "../Firestorable/Firestorable";
+import store from "../stores/RootStore";
 
 export const onEnter = (route: Route, isChildRoute = true) => {
     if (isChildRoute) setBackToOverview();

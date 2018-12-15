@@ -1,6 +1,5 @@
 import * as React from 'react';
 import { observer } from "mobx-react";
-import store from "../store";
 
 import Table from '@material-ui/core/es/Table';
 import TableRow from "@material-ui/core/es/TableRow";
@@ -11,15 +10,12 @@ import { Fab } from "../MaterialUI/buttons";
 import routes from '../routes/index';
 import { goToRegistration } from '../internal';
 import TableFooter from '@material-ui/core/es/TableFooter/TableFooter';
+import store from '../stores/RootStore';
 
 @observer
 export class Timesheets extends React.Component {
 
     registrationClick = (id: string) => {
-        // since beforeEnter doesn't receive the proper params (bug in mobx router)
-        // https://github.com/kitze/mobx-router/issues/43
-        // we need to query the registration here
-        // store.timesheets.registration = store.timesheets.registrations.docs.get(id);
         goToRegistration(id);
     }
 
@@ -31,7 +27,7 @@ export class Timesheets extends React.Component {
             const projectData = project ? store.config.projects.docs.get(project) : null;
             const { data: { name: projectName = "ARCHIVED" } = {} } = projectData || {};
 
-            const taskData = task ? store.tasks.docs.get(task) : null;
+            const taskData = task ? store.config.tasks.docs.get(task) : null;
             const { data: { name: taskName = "N/A" } = {} } = taskData || {};
 
             return (

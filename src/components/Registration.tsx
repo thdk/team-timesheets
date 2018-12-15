@@ -2,12 +2,12 @@ import * as React from 'react';
 import { observer } from "mobx-react";
 import { TextField } from '../MaterialUI/textfield';
 import { Form, FormField } from '../components/Layout/form';
-import store from '../store';
 import { Chip, ChipSet } from '../MaterialUI/chips';
 import { Doc } from '../Firestorable/Document';
 import { FlexGroup } from './Layout/flex';
 import { goToOverview } from '../internal';
 import { Select, SelectOption } from '../MaterialUI/select';
+import store from '../stores/RootStore';
 
 @observer
 export class Registration extends React.Component {
@@ -15,7 +15,7 @@ export class Registration extends React.Component {
         if (!(store.timesheets.registration instanceof (Doc))) return <></>;
 
         const { task = store.user.defaultTask, description, project, time, date } = store.timesheets.registration.data;
-        const tasks = Array.from(store.tasks.docs.values())
+        const tasks = Array.from(store.config.tasks.docs.values())
             .filter(t => !!t.data.name) // todo move validation to Doc
             .map(t => {
                 const { id: taskId, data: { name: taskName } } = t;

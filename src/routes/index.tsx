@@ -4,8 +4,7 @@ import { Route, RoutesConfig } from 'mobx-router';
 import timesheetsRoutes from './timesheets/index';
 import configRoutes from './config';
 import { goToOverview } from '../internal';
-import store from '../store';
-import { beforeEnter } from './actions';
+import store from '../stores/RootStore';
 
 const routes: RoutesConfig = {
   root: new Route({

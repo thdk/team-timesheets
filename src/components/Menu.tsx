@@ -1,10 +1,10 @@
 import * as React from 'react';
 import { DatetimePicker } from 'rc-datetime-picker';
-import store from '../store';
 import moment from 'moment-es6';
 import { observer } from 'mobx-react';
 import { goToOverview, goToProjects, goToLogin } from "../internal";
 import { firestorable } from '../Firestorable/Firestorable';
+import store from '../stores/RootStore';
 
 @observer
 export class Menu extends React.Component {

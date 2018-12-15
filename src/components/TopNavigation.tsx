@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { observer } from '../../node_modules/mobx-react';
 import { TopAppBar } from '../MaterialUI/appbars';
-import store from '../store';
+import store from '../stores/RootStore';
 
 // TODO: move to  MaterialUI/TopAppBar
 export interface ITopAppBarProps {

@@ -1,10 +1,10 @@
 import * as React from 'react';
 import { Drawer } from '../MaterialUI/drawer';
 import { Menu } from './Menu';
-import store from '../store';
 import { observe } from 'mobx';
 import { IViewStore } from '../stores/ViewStore';
 import { TopNavigation } from './TopNavigation';
+import store from '../stores/RootStore';
 
 export class App extends React.Component {
     private drawerRef?: Drawer | null;

@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { List, ListItem } from '../../MaterialUI/list';
 import { observer } from 'mobx-react';
-import store from '../../store';
+import store from '../../stores/RootStore';
 
 @observer
 export class ProjectList extends React.Component {

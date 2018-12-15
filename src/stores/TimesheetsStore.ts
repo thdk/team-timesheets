@@ -1,9 +1,9 @@
 import { observable, computed, reaction, when } from 'mobx';
-import store, { IRootStore } from "../store";
 import { Doc } from "../Firestorable/Document";
 
 import * as firebase from 'firebase/app'
 import { ICollection, Collection } from "../Firestorable/Collection";
+import store, { IRootStore } from './RootStore';
 
 export interface IRegistration {
     description: string;
@@ -31,7 +31,7 @@ export class RegistrationStore implements IRegistrationsStore {
 
     constructor(rootStore: IRootStore) {
         this.rootStore = rootStore;
-        this.registrations = observable(new Collection<IRegistration>("registrations", rootStore.getCollection, { realtime: true }));
+        this.registrations = observable(new Collection<IRegistration>(() => rootStore.getCollection("registrations"), { realtime: true }));
         this.registration = {};
 
         const updateRegistrationQuery = () => {

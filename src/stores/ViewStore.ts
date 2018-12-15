@@ -1,7 +1,6 @@
 import { observable, IObservableArray, action, computed, transaction } from "mobx";
-import { IRootStore } from "../store";
-
 import moment from 'moment-es6';
+import { IRootStore } from "./RootStore";
 
 export interface IViewAction {
   icon: string;

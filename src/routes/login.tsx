@@ -1,11 +1,11 @@
 import * as React from 'react';
 import { Route } from 'mobx-router';
 import { Login } from '../components/Login';
-import store, { IRootStore } from '../store';
 import { onEnter } from './actions';
 import { App, goToOverview } from '../internal';
 import { getLoggedInUserAsync } from '../Firestorable/Firestorable';
 import { reaction } from 'mobx';
+import store, { IRootStore } from '../stores/RootStore';
 
 const path = "/login";
 

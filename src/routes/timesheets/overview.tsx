@@ -1,10 +1,10 @@
 import * as React from 'react';
 import { Route } from 'mobx-router';
 import { Timesheets } from '../../components/Timesheets';
-import store, { IRootStore } from '../../store';
 import { transaction } from 'mobx';
 import { onEnter, beforeEnter } from '../actions';
 import { App } from '../../internal';
+import { IRootStore } from '../../stores/RootStore';
 
 interface IDate {
     year: number;
@@ -16,9 +16,9 @@ export const path = "/timesheets";
 
 export const goToOverview = (s: IRootStore, date?: IDate) => {
     s.router.goTo(routes.overview, date || {
-        year: store.view.year,
-        month: store.view.month,
-        day: store.view.day
+        year: s.view.year,
+        month: s.view.month,
+        day: s.view.day
     }, s);
 }
 
@@ -36,8 +36,7 @@ const routes = {
         path: path + '/:year/:month/:day',
         component: <App><Timesheets></Timesheets></App>,
         onEnter: (route: any, params: IDate, s: IRootStore) => {
-            console.log("on enter");
-            routeChanged(route, params, store);
+            routeChanged(route, params, s);
         },
         onParamsChange: routeChanged,
         title: "Overview",

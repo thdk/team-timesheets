@@ -1,9 +1,9 @@
 import * as React from 'react';
 
 import * as firebase from 'firebase/app';
-import * as firebaseui from 'firebaseui'
-import store from '../store';
+import * as firebaseui from 'firebaseui';
 import { firestorable } from '../Firestorable/Firestorable';
+import store from '../stores/RootStore';
 
 export class Login extends React.Component {
     private loginUi?: firebaseui.auth.AuthUI;

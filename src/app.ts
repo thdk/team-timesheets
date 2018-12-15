@@ -4,7 +4,7 @@ import * as ReactDOM from 'react-dom';
 import { Provider } from 'mobx-react';
 import { MobxRouter, startRouter } from 'mobx-router';
 import routes from './routes/index';
-import store from './store';
+import store from './stores/RootStore';
 
 startRouter(routes, store);
 
@@ -17,10 +17,3 @@ ReactDOM.render(
         React.createElement(MobxRouter)
     ), document.getElementById("root")
 );
-
-
-const loadProjects = () => {
-    store.config.projects.getDocs();
-}
-
-loadProjects();

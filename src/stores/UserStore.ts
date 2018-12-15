@@ -1,9 +1,9 @@
 import { observable, action } from "mobx";
-import { IRootStore } from "../store";
 import { ICollection, Collection } from "../Firestorable/Collection";
 import { Doc } from "../Firestorable/Document";
 import { getLoggedInUserAsync, firestorable } from "../Firestorable/Firestorable";
 import { goToLogin } from "../routes/login";
+import { IRootStore } from "./RootStore";
 
 export interface IUserStore {
     defaultTask: string;
@@ -30,7 +30,7 @@ export class UserStore implements IUserStore {
     private readonly users: ICollection<IUser>;
     constructor(rootStore: IRootStore) {
         this.rootStore = rootStore;
-        this.users = new Collection<IUser>("users", rootStore.getCollection);
+        this.users = new Collection<IUser>(rootStore.getCollection.bind(this, "users"));
         this.defaultTask = "HIBd74BItKoURLdQJmLf";
 
         firestorable.auth.onAuthStateChanged(this.setUser.bind(this));

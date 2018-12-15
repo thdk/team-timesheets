@@ -5,10 +5,10 @@ import { path as parentPath } from './overview';
 import { App } from '../../components/App';
 import { Registration } from '../../components/Registration';
 import { setTitleForRoute, setBackToOverview, beforeEnter } from '../actions';
-import store, { IRootStore } from '../../store';
 import { goToOverview } from '../../internal';
 import { reaction } from '../../../node_modules/mobx';
 import { Doc } from '../../Firestorable/Document';
+import store, { IRootStore } from '../../stores/RootStore';
 
 const path = parentPath + "/detail";
 

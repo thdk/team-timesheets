@@ -1,8 +1,7 @@
 import { Route } from "mobx-router";
 import { ProjectList } from "../../components/Projects/ProjectList";
-import { App } from "../../internal";
+import { App, setNavigationContent } from "../../internal";
 import * as React from 'react';
-import {  onEnter } from "../actions";
 import { IRootStore } from "../../stores/RootStore";
 
 export const goToProjects = (s: IRootStore) => {
@@ -14,9 +13,11 @@ const routes = {
     projects: new Route({
         path,
         component: <App><ProjectList></ProjectList></App>,
-        onEnter,
+        onEnter: (route: Route) => {
+            setNavigationContent(route, false);
+        },
         title: "Projects"
     })
-} as { projects: Route };
+};
 
 export default routes;

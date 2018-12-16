@@ -22,14 +22,14 @@ export enum StoreState {
 }
 
 export class UserStore implements IUserStore {
-    private rootStore: IRootStore;
+    // private rootStore: IRootStore;
     @observable defaultTask: string;
     @observable user?: IUserStore["user"];
     @observable state = StoreState.Done;
 
     private readonly users: ICollection<IUser>;
     constructor(rootStore: IRootStore) {
-        this.rootStore = rootStore;
+        // this.rootStore = rootStore;
         this.users = new Collection<IUser>(rootStore.getCollection.bind(this, "users"));
         this.defaultTask = "HIBd74BItKoURLdQJmLf";
 

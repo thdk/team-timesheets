@@ -1,7 +1,7 @@
 import { Route } from "mobx-router";
 import { App } from "../../internal";
 import * as React from 'react';
-import {  onEnter } from "../actions";
+import { setNavigationContent } from "../actions";
 import { IRootStore } from "../../stores/RootStore";
 import { TaskList } from "../../components/Projects/Tasks/TaskList";
 
@@ -14,7 +14,9 @@ const routes = {
     tasks: new Route({
         path,
         component: <App><TaskList></TaskList></App>,
-        onEnter,
+        onEnter: (route: Route) => {
+            setNavigationContent(route, false);
+        },
         title: "Tasks"
     })
 };

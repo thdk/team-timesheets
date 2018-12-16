@@ -3,7 +3,7 @@ import { goToOverview } from './timesheets/overview';
 import { getLoggedInUserAsync } from "../Firestorable/Firestorable";
 import store from "../stores/RootStore";
 
-export const onEnter = (route: Route, isChildRoute = true) => {
+export const setNavigationContent = (route: Route, isChildRoute = true) => {
     if (isChildRoute) setBackToOverview();
     else store.view.setNavigation("default");
     setTitleForRoute(route);

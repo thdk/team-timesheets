@@ -26,8 +26,8 @@ export class Store implements IRootStore {
         this.getCollection = getCollection;
 
         this.user = new UserStore(this);
-        this.config = new ConfigStore(this, getCollection);
         this.view = new ViewStore(this);
+        this.config = new ConfigStore(this, getCollection);
         this.timesheets = new RegistrationStore(this);
     }
 };

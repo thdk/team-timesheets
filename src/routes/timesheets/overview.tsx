@@ -2,7 +2,7 @@ import * as React from 'react';
 import { Route } from 'mobx-router';
 import { Timesheets } from '../../components/Timesheets';
 import { transaction } from 'mobx';
-import { onEnter, beforeEnter } from '../actions';
+import { beforeEnter, setNavigationContent } from '../actions';
 import { App } from '../../internal';
 import { IRootStore } from '../../stores/RootStore';
 
@@ -22,8 +22,8 @@ export const goToOverview = (s: IRootStore, date?: IDate) => {
     }, s);
 }
 
-const routeChanged = (route: any, params: IDate, s: IRootStore) => {
-    onEnter(route, false);
+const routeChanged = (route: Route, params: IDate, s: IRootStore) => {
+    setNavigationContent(route, false);
     transaction(() => {
         s.view.year = params.year;
         s.view.month = params.month;
@@ -35,7 +35,7 @@ const routes = {
     overview: new Route({
         path: path + '/:year/:month/:day',
         component: <App><Timesheets></Timesheets></App>,
-        onEnter: (route: any, params: IDate, s: IRootStore) => {
+        onEnter: (route: Route, params: IDate, s: IRootStore) => {
             routeChanged(route, params, s);
         },
         onParamsChange: routeChanged,

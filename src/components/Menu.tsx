@@ -2,7 +2,7 @@ import * as React from 'react';
 import { DatetimePicker } from 'rc-datetime-picker';
 import moment from 'moment-es6';
 import { observer } from 'mobx-react';
-import { goToOverview, goToProjects, goToLogin } from "../internal";
+import { goToOverview, goToProjects, goToLogin, goToTasks } from "../internal";
 import { firestorable } from '../Firestorable/Firestorable';
 import store from '../stores/RootStore';
 
@@ -16,6 +16,11 @@ export class Menu extends React.Component {
     navigateToProjects = (e: React.MouseEvent) => {
         e.preventDefault();
         goToProjects(store);
+    }
+
+    navigateToTasks = (e: React.MouseEvent) => {
+        e.preventDefault();
+        goToTasks(store);
     }
 
     navigateToOverview = (e: React.MouseEvent) => {
@@ -44,6 +49,10 @@ export class Menu extends React.Component {
                     <a className="mdc-list-item" onClick={this.navigateToProjects} href="/config/projects">
                         <i className="material-icons mdc-list-item__graphic" aria-hidden="true">bookmark</i>
                         <span className="mdc-list-item__text">Projects</span>
+                    </a>
+                    <a className="mdc-list-item" onClick={this.navigateToTasks} href="/config/tasks">
+                        <i className="material-icons mdc-list-item__graphic" aria-hidden="true">bookmark</i>
+                        <span className="mdc-list-item__text">Tasks</span>
                     </a>
 
                     <hr className="mdc-list-divider" />

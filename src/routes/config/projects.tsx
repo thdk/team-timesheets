@@ -1,9 +1,9 @@
 import { Route } from "mobx-router";
 import { ProjectList } from "../../components/Projects/ProjectList";
 import { App } from "../../internal";
-import { IRootStore } from "../../store";
 import * as React from 'react';
 import {  onEnter } from "../actions";
+import { IRootStore } from "../../stores/RootStore";
 
 export const goToProjects = (s: IRootStore) => {
     s.router.goTo(routes.projects, {}, s);

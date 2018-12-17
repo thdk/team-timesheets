@@ -18,7 +18,7 @@ const routes = {
         component: <App><Login></Login></App>,
         onEnter: (route: Route, _params: any, s: IRootStore) => {
             when(() => !!s.user.user, () => goToOverview(s));
-            setNavigationContent(route, true);
+            setNavigationContent(route, false);
         },
         title: "Login",
         beforeEnter: (_route: Route, _params: any, s: IRootStore) => {

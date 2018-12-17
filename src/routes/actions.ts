@@ -1,7 +1,8 @@
 import { Route } from "mobx-router";
 import { goToOverview } from './timesheets/overview';
 import { getLoggedInUserAsync } from "../Firestorable/Firestorable";
-import store from "../stores/RootStore";
+import store, { IRootStore } from "../stores/RootStore";
+import { goToLogin } from "./login";
 
 export const setNavigationContent = (route: Route, isChildRoute = true) => {
     if (isChildRoute) setBackToOverview();
@@ -9,8 +10,11 @@ export const setNavigationContent = (route: Route, isChildRoute = true) => {
     setTitleForRoute(route);
 }
 
-export const beforeEnter = () => {
-    return getLoggedInUserAsync().then(() => true, () => false);
+export const beforeEnter = (_route: Route, _params: any, s: IRootStore) => {
+    return getLoggedInUserAsync().then(() => true, () => {
+        goToLogin(s);
+        return false;
+    });
 }
 
 export const setTitleForRoute = (route: Route) => {

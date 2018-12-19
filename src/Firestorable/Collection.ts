@@ -98,8 +98,14 @@ export class Collection<T> implements ICollection<T> {
     }
 
     // TODO: when realtime updates is disabled, we must manually update the docs!
+    // WARNING: NEEDS INVESTIGATION: No snapshot change received when deleting a registration
+    // Temporary always manually remove the registration from the docs.
     public deleteAsync(id: string) {
-        return this.collectionRef.doc(id).delete();
+        return this.collectionRef.doc(id).delete().then(() => {
+          this.docs.delete(id);  
+        }, () => {
+            throw new Error("Could not delete document");
+        });
     }
 
     public dispose() {

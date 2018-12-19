@@ -3,6 +3,8 @@ import { goToOverview } from './timesheets/overview';
 import { getLoggedInUserAsync } from "../Firestorable/Firestorable";
 import store, { IRootStore } from "../stores/RootStore";
 import { goToLogin } from "./login";
+import { when } from "mobx";
+import { Doc } from "../Firestorable/Document";
 
 export const setNavigationContent = (route: Route, isChildRoute = true) => {
     if (isChildRoute) setBackToOverview();
@@ -11,7 +13,9 @@ export const setNavigationContent = (route: Route, isChildRoute = true) => {
 }
 
 export const beforeEnter = (_route: Route, _params: any, s: IRootStore) => {
-    return getLoggedInUserAsync().then(() => true, () => {
+    return getLoggedInUserAsync().then(() => {
+        return when(() => s.user.user instanceof(Doc))
+    }, () => {
         goToLogin(s);
         return false;
     });

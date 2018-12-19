@@ -35,16 +35,14 @@ export class RegistrationStore implements IRegistrationsStore {
         this.registration = {};
 
         const updateRegistrationQuery = () => {
-            when(() => !!this.rootStore.user.user, () => {
-                if (!rootStore.user.user) return;
-
+            when(() => this.rootStore.user.user instanceof(Doc), () => {                
                 const moment = rootStore.view.moment;
                 const endDate = moment.clone().add(1, "days").toDate();
                 const startDate = moment.clone().toDate();
                 this.registrations.query = ref => ref
                     .where("date", ">", startDate)
                     .where("date", "<=", endDate)
-                    .where("userId", "==", rootStore.user.user!.uid);
+                    .where("userId", "==", (rootStore.user.user as Doc<IRegistration>).id);
             });
         };
 
@@ -56,23 +54,25 @@ export class RegistrationStore implements IRegistrationsStore {
     }
 
     @computed get totalTime() {
-        return Array.from(this.registrations.docs.values()).reduce((p, c) => p + (c.data.time || 0), 0);
+        return Array.from(this.registrations.docs.values())
+        .filter(r => !!r.data)
+        .reduce((p, c) => p + (c.data!.time || 0), 0);
     }
 
     save() {
         // TODO move to Document class for Firestorable (with dynamic validation)
         this.registration instanceof (Doc) &&
-            this.registration.data.date &&
+            this.registration.data &&
             this.registration.data.description &&
             this.registration.data.project &&
             this.registration.data.task &&
             this.registration.data.time &&
-            this.registration.data.userId &&
+            this.registration.data.date &&
             this.registration.save();
     }
 
     getNew() {
-        if (!store.user.user) throw new Error("Can't add new registration if user is unknown");
+        if (!(store.user.user instanceof(Doc))) throw new Error("Can't add new registration if user is unknown");
 
         return this.registrations.newDoc({
             date: firebase.firestore.Timestamp.fromDate(this.toUTC(
@@ -81,7 +81,7 @@ export class RegistrationStore implements IRegistrationsStore {
             description: "",
             project: "",
             task: store.user.defaultTask,
-            userId: store.user.user.uid
+            userId: store.user.user.id
         });
     }
 

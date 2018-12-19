@@ -13,6 +13,7 @@ export interface ICollection<T> {
     updateAsync: (id: string, data: T) => Promise<void>;
     addAsync: (doc: Doc<T>) => Promise<string>;
     getAsync: (id: string) => Promise<Doc<T> | undefined>;
+    getOrCreateAsync: (id: string) => Promise<Doc<T>>;
     deleteAsync: (id: string) => Promise<void>;
 }
 
@@ -53,7 +54,7 @@ export class Collection<T> implements ICollection<T> {
                     snapshot.docChanges().forEach(change => {
                         const { doc: { id }, doc } = change;
                         if (change.type === "added" || change.type === "modified") {
-                            this.docs.set(id, new Doc<T>(this.collectionRef, doc.data() as Partial<T>, id));
+                            this.docs.set(id, new Doc<T>(this.collectionRef, doc.data() as T, id));
                         }
                         else if (change.type === "removed") {
                             this.docs.delete(id);
@@ -75,12 +76,24 @@ export class Collection<T> implements ICollection<T> {
 
     // TODO: when realtime updates is disabled, we must manually update the docs!
     public addAsync(doc: Doc<T>) {
-        return addAsync<T>(this.collectionRef, doc.data, doc.id);
+        // if (!doc.data) throw new Error("Can't save document without data");
+
+        return addAsync<T>(this.collectionRef, doc.data || {}, doc.id);
     }
 
     public getAsync(id: string) {
         return getAsync<T>(this.collectionRef, id).then(doc => {
-            return doc && new Doc<T>(this.collectionRef, doc);
+            return doc && new Doc<T>(this.collectionRef, doc, id);
+        });
+    }
+
+    public getOrCreateAsync(id: string) {
+        return this.getAsync(id).then(fsDoc => {
+            if (fsDoc) return new Promise<Doc<T>>(resolve => resolve(fsDoc));
+            else {
+                const doc = new Doc<T>(this.collectionRef, null, id);
+                return this.addAsync(doc).then(() => doc);
+            }
         });
     }
 

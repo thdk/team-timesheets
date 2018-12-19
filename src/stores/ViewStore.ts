@@ -1,6 +1,8 @@
-import { observable, IObservableArray, action, computed, transaction } from "mobx";
+import { observable, IObservableArray, action, computed, transaction, reaction } from "mobx";
 import moment from 'moment-es6';
 import { IRootStore } from "./RootStore";
+import { Doc } from "../Firestorable/Document";
+import { goToLogin } from "../internal";
 
 export interface IViewAction {
   icon: string;
@@ -50,7 +52,13 @@ export class ViewStore implements IViewStore {
     })
 
     this.setNavigation("default");
-  }
+
+    reaction(() => rootStore.user.user, user => {
+      if (!(user instanceof(Doc))) {
+        goToLogin(rootStore);
+      }      
+    });
+  }  
 
   @action
   public setNavigation(action: INavigationViewAction | "default") {

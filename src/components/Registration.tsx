@@ -12,12 +12,16 @@ import store from '../stores/RootStore';
 @observer
 export class Registration extends React.Component {
     render() {
-        if (!(store.timesheets.registration instanceof (Doc))) return <></>;
+        if (!store.timesheets.registration || !(store.timesheets.registration instanceof(Doc))) return <></>;
+
+        if (!store.timesheets.registration.data) return <></>;
 
         const { task = store.user.defaultTask, description, project, time, date } = store.timesheets.registration.data;
         const tasks = Array.from(store.config.tasks.docs.values())
-            .filter(t => !!t.data.name) // todo move validation to Doc
+            .filter(t => !!t.data) // todo move validation to Doc
             .map(t => {
+                if (!t.data) return;
+
                 const { id: taskId, data: { name: taskName } } = t;
 
                 return (
@@ -27,6 +31,8 @@ export class Registration extends React.Component {
 
         const projects = Array.from(store.config.projects.docs.values())
             .map(p => {
+                if (!p.data) return;
+
                 const { id, data: { name } } = p;
                 return (
                     <SelectOption text={name!} value={id} key={id}></SelectOption>
@@ -73,23 +79,23 @@ export class Registration extends React.Component {
     }
 
     onDescriptionChange = (value: string) => {
-        if (store.timesheets.registration instanceof (Doc))
+        if (store.timesheets.registration && store.timesheets.registration instanceof (Doc) && store.timesheets.registration.data)
             store.timesheets.registration.data.description = value;
     }
 
     onTimeChange = (value: string) => {
-        if (store.timesheets.registration instanceof (Doc))
-            store.timesheets.registration!.data.time = +value;
+        if (store.timesheets.registration && store.timesheets.registration instanceof (Doc) && store.timesheets.registration.data)
+        store.timesheets.registration.data.time = +value;
     }
 
     onProjectChange = (value: string) => {
-        if (store.timesheets.registration instanceof (Doc))
-            store.timesheets.registration!.data.project = value;
+        if (store.timesheets.registration && store.timesheets.registration instanceof (Doc) && store.timesheets.registration.data)
+            store.timesheets.registration.data.project = value;
     }
 
     taskClicked = (taskId: string) => {
-        if (store.timesheets.registration instanceof (Doc))
-            store.timesheets.registration!.data.task = taskId;
+        if (store.timesheets.registration && store.timesheets.registration instanceof (Doc) && store.timesheets.registration.data)
+            store.timesheets.registration.data.task = taskId;
     }
 
     keyDown = (e: KeyboardEvent) => {

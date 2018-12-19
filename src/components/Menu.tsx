@@ -5,6 +5,7 @@ import { observer } from 'mobx-react';
 import { goToOverview, goToProjects, goToLogin, goToTasks } from "../internal";
 import { firestorable } from '../Firestorable/Firestorable';
 import store from '../stores/RootStore';
+import { Doc } from '../Firestorable/Document';
 
 @observer
 export class Menu extends React.Component {
@@ -31,7 +32,7 @@ export class Menu extends React.Component {
 
     toggleLogin = (e:React.MouseEvent) => {
         e.preventDefault();
-        store.user.user ? firestorable.auth.signOut() : goToLogin(store);
+        (store.user.user instanceof(Doc)) ? firestorable.auth.signOut() : goToLogin(store);
     }
 
     render() {
@@ -58,7 +59,7 @@ export class Menu extends React.Component {
                     <hr className="mdc-list-divider" />
                     <a className="mdc-list-item" onClick={this.toggleLogin} href="/config/projects">
                         <i className="material-icons mdc-list-item__graphic" aria-hidden="true">perm_identity</i>
-                        <span className="mdc-list-item__text">{store.user.user ? "Logout" : "Login"}</span>
+                        <span className="mdc-list-item__text">{(store.user.user instanceof(Doc)) ? "Logout" : "Login"}</span>
                     </a>
 
                 </div>

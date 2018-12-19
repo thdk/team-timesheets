@@ -1,13 +1,12 @@
-import { observable, action } from "mobx";
+import { observable, action, transaction, extendObservable } from "mobx";
 import { ICollection, Collection } from "../Firestorable/Collection";
 import { Doc } from "../Firestorable/Document";
-import { getLoggedInUserAsync, firestorable } from "../Firestorable/Firestorable";
-import { goToLogin } from "../routes/login";
+import { firestorable } from "../Firestorable/Firestorable";
 import { IRootStore } from "./RootStore";
 
 export interface IUserStore {
     defaultTask: string;
-    user?: Partial<IUser> & Pick<firebase.User, "uid" | "email" | "displayName">;
+    user: (Doc<IUser> & Pick<firebase.User, "email" | "displayName">) | {};
     setUser: (fbUser: firebase.User | null) => void;
 }
 
@@ -24,7 +23,7 @@ export enum StoreState {
 export class UserStore implements IUserStore {
     // private rootStore: IRootStore;
     @observable defaultTask: string;
-    @observable user?: IUserStore["user"];
+    @observable user: IUserStore["user"];
     @observable state = StoreState.Done;
 
     private readonly users: ICollection<IUser>;
@@ -34,31 +33,28 @@ export class UserStore implements IUserStore {
         this.defaultTask = "HIBd74BItKoURLdQJmLf";
 
         firestorable.auth.onAuthStateChanged(this.setUser.bind(this));
+
+        this.user = {};
     }
 
     @action
     public setUser(fbUser: firebase.User | null) {
         if (!fbUser) {
-            this.user = undefined;
+            this.user = {};
         }
         else {
             this.state = StoreState.Pending;
-            this.users.getAsync(fbUser.uid).then(user => this.getUserSuccess(user, fbUser), this.getUserError);
+            this.users.getOrCreateAsync(fbUser.uid).then(user => this.getUserSuccess(user, fbUser), this.getUserError);
         }
     }
 
     @action.bound
-    getUserSuccess = (user: Doc<IUser> | undefined, fbUser: firebase.User) => {
+    getUserSuccess = (user: Doc<IUser>, fbUser: firebase.User) => {
         this.state = StoreState.Done;
-
-        const userData = user ? user.data : {};
-
-        this.user = {
-            uid: fbUser.uid,
-            email: fbUser.email,
-            displayName: fbUser.displayName,
-            ...userData
-        }
+        transaction(() => {
+            this.user = user;
+            extendObservable(this.user, { email: fbUser.email, displayName: fbUser.displayName });
+        });
     }
 
     @action.bound

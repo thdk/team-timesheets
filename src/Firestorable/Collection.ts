@@ -100,9 +100,11 @@ export class Collection<T> implements ICollection<T> {
     // TODO: when realtime updates is disabled, we must manually update the docs!
     // WARNING: NEEDS INVESTIGATION: No snapshot change received when deleting a registration
     // Temporary always manually remove the registration from the docs.
+    // update: first findings are that when a query is set, there won't be delete snapshot changes
+    // so when we have an active query => always manually update the docs
     public deleteAsync(id: string) {
         return this.collectionRef.doc(id).delete().then(() => {
-          this.docs.delete(id);  
+          this.query && this.docs.delete(id);
         }, () => {
             throw new Error("Could not delete document");
         });

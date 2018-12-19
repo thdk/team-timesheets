@@ -5,7 +5,11 @@ import * as firebase from 'firebase/app'
 import { ICollection, Collection } from "../Firestorable/Collection";
 import store, { IRootStore } from './RootStore';
 
-export interface IRegistration {
+export interface IDocumentData {
+    deleted: boolean;
+}
+
+export interface IRegistration extends IDocumentData {
     description: string;
     time: number;
     project: string;
@@ -19,6 +23,7 @@ export interface IRegistrationsStore {
     registration?: Doc<IRegistration> | {};
     totalTime: number;
     save: () => void;
+    delete: () => void;
     getNew: () => Doc<Partial<IRegistration>>;
 }
 
@@ -35,11 +40,12 @@ export class RegistrationStore implements IRegistrationsStore {
         this.registration = {};
 
         const updateRegistrationQuery = () => {
-            when(() => this.rootStore.user.user instanceof(Doc), () => {                
+            when(() => this.rootStore.user.user instanceof(Doc), () => {
                 const moment = rootStore.view.moment;
                 const endDate = moment.clone().add(1, "days").toDate();
                 const startDate = moment.clone().toDate();
                 this.registrations.query = ref => ref
+                    .where("deleted", "==", false)
                     .where("date", ">", startDate)
                     .where("date", "<=", endDate)
                     .where("userId", "==", (rootStore.user.user as Doc<IRegistration>).id);
@@ -55,7 +61,7 @@ export class RegistrationStore implements IRegistrationsStore {
 
     @computed get totalTime() {
         return Array.from(this.registrations.docs.values())
-        .filter(r => !!r.data)
+        .filter(r => !!r.data && !r.data.deleted)
         .reduce((p, c) => p + (c.data!.time || 0), 0);
     }
 
@@ -71,6 +77,14 @@ export class RegistrationStore implements IRegistrationsStore {
             this.registration.save();
     }
 
+    delete() {
+        if (this.registration instanceof (Doc) && this.registration.data)
+        {
+            this.registration.data.deleted = true;
+            this.registration.save();
+        }
+    }
+
     getNew() {
         if (!(store.user.user instanceof(Doc))) throw new Error("Can't add new registration if user is unknown");
 
@@ -81,7 +95,8 @@ export class RegistrationStore implements IRegistrationsStore {
             description: "",
             project: "",
             task: store.user.defaultTask,
-            userId: store.user.user.id
+            userId: store.user.user.id,
+            deleted: false
         });
     }
 

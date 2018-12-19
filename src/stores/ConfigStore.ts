@@ -26,7 +26,6 @@ export class ConfigStore implements IConfigStore {
         // this._rootStore = rootStore;
         this.projects = observable(new Collection<IProject>(getCollection.bind(this, "projects"), { realtime: true }));
         this.tasks = observable(new Collection<ITask>(getCollection.bind(this, "tasks"), { realtime: true }));
-
         this.projects.getDocs();
         this.tasks.getDocs();
     }

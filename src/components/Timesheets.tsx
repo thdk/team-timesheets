@@ -22,6 +22,8 @@ export class Timesheets extends React.Component {
     render() {
 
         const rows = Array.from(store.timesheets.registrations.docs.values()).map(r => {
+            if (!r.data || r.data.deleted) return;
+
             const { id, data: { description, project, time, date, task } } = r;
 
             const projectData = project ? store.config.projects.docs.get(project) : null;

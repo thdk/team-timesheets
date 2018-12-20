@@ -18,6 +18,7 @@ export interface IRegistration extends IDocumentData {
     task: string;
     date: Date;
     userId: string;
+    deleted: boolean; // TODO: should not be needed here as the app only needs to work with non deleted docs
 }
 
 export interface IRegistrationData {
@@ -27,6 +28,7 @@ export interface IRegistrationData {
     task: string;
     date: firebase.firestore.Timestamp; // Todo: use Date and add conversion layer
     userId: string;
+    deleted: boolean;
 }
 
 export interface IRegistrationsStore {

@@ -3,6 +3,8 @@ import { ICollection, Collection } from "../Firestorable/Collection";
 import { Doc } from "../Firestorable/Document";
 import { firestorable } from "../Firestorable/Firestorable";
 import { IRootStore } from "./RootStore";
+import * as deserializer from '../serialization/deserializer';
+import * as serializer from '../serialization/serializer';
 
 export interface IUserStore {
     defaultTask: string;
@@ -13,7 +15,6 @@ export interface IUserStore {
 
 export interface IUser {
     tasks: Map<string, true>;
-    id: string;
 }
 
 export interface IUserData {
@@ -35,7 +36,12 @@ export class UserStore implements IUserStore {
     private readonly users: ICollection<IUser>;
     constructor(rootStore: IRootStore) {
         this.rootStore = rootStore;
-        this.users = new Collection<IUser>(rootStore.getCollection.bind(this, "users"));
+        this.users = new Collection(rootStore.getCollection.bind(this, "users"), {
+            realtime: true,
+            serialize: serializer.convertUser,
+            deserialize: deserializer.convertUser
+        });
+
         this.defaultTask = "HIBd74BItKoURLdQJmLf";
 
         firestorable.auth.onAuthStateChanged(this.setUser.bind(this));

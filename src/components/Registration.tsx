@@ -8,6 +8,7 @@ import { FlexGroup } from './Layout/flex';
 import { goToOverview } from '../internal';
 import { Select, SelectOption } from '../MaterialUI/select';
 import store from '../stores/RootStore';
+import { IUser } from '../stores/UserStore';
 
 @observer
 export class Registration extends React.Component {
@@ -16,9 +17,10 @@ export class Registration extends React.Component {
 
         if (!store.timesheets.registration.data) return <></>;
 
+        const userTasks = Array.from((store.user.user as Doc<IUser>).data!.tasks.keys());
         const { task = store.user.defaultTask, description, project, time, date } = store.timesheets.registration.data;
         const tasks = Array.from(store.config.tasks.docs.values())
-            .filter(t => !!t.data) // todo move validation to Doc
+            .filter(t => userTasks.some(userTaskId => userTaskId === t.id))
             .map(t => {
                 if (!t.data) return;
 

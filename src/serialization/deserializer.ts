@@ -1,4 +1,5 @@
 import { IRegistrationData, IRegistration } from "../stores/TimesheetsStore";
+import { IUser, IUserData } from "../stores/UserStore";
 
 export const convertRegistration = (firestoreData: IRegistrationData) => {
     const registration: IRegistration = {
@@ -7,7 +8,16 @@ export const convertRegistration = (firestoreData: IRegistrationData) => {
         project: firestoreData.project,
         task: firestoreData.task,
         time: firestoreData.time,
-        userId: firestoreData.userId
+        userId: firestoreData.userId,
+        deleted: firestoreData.deleted
+    };
+
+    return registration;
+}
+
+export const convertUser = (firestoreData: IUserData) => {
+    const registration: IUser = {
+        tasks: firestoreData.tasks ? new Map(firestoreData.tasks.map((t): [string, true] => [t, true])) : new Map<string, true>()
     };
 
     return registration;

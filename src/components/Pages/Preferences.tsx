@@ -4,6 +4,7 @@ import store from '../../stores/RootStore';
 import { Chip, ChipSet } from '../../MaterialUI/chips';
 import { Doc } from '../../Firestorable/Document';
 import { IUser } from '../../stores/UserStore';
+import { toJS } from 'mobx';
 
 @observer
 export class Preferences extends React.Component {
@@ -32,6 +33,8 @@ export class Preferences extends React.Component {
         if (!(store.user.user instanceof(Doc)) || !store.user.user.data) return;
 
         if (store.user.user.data.tasks) {
+            console.log(toJS(store.user.user.data.tasks));
+
             if (selected) store.user.user.data.tasks.set(id, true);
             else store.user.user.data.tasks.delete(id);
 

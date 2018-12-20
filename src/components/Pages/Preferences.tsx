@@ -5,11 +5,13 @@ import { Chip, ChipSet } from '../../MaterialUI/chips';
 import { Doc } from '../../Firestorable/Document';
 import { IUser } from '../../stores/UserStore';
 import { toJS } from 'mobx';
+import { FlexGroup } from '../Layout/flex';
+import { Box } from '../Layout/box';
 
 @observer
 export class Preferences extends React.Component {
     render() {
-        const { tasks: userTasks = undefined } = (store.user.user as Doc<IUser>).data || {};
+        const { tasks: userTasks = undefined } = store.user.user ? store.user.user.data || {} : {};
         const tasks = Array.from(store.config.tasks.docs.values())
             .filter(t => !!t.data && t instanceof(Doc)) // todo move validation to Doc
             .map(t => {
@@ -21,11 +23,13 @@ export class Preferences extends React.Component {
                 );
             });
         return (
-            <>
+            <Box>
+                <h3 className="mdc-typography--subtitle1">Pick your tasks</h3>
+                <p>Only selected tasks will be available for you when adding a new regisration.</p>
                 <ChipSet type="filter">
                     {tasks}
                 </ChipSet>
-            </>
+            </Box>
         );
     }
 

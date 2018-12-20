@@ -41,8 +41,6 @@ export class Registration extends React.Component {
                 );
             });
 
-        if (!date) throw "Date is required";
-
         return (
             <>
                 <Form>

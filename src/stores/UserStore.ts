@@ -1,4 +1,4 @@
-import { observable, action, transaction, extendObservable } from "mobx";
+import { observable, action, transaction, extendObservable, computed } from "mobx";
 import { ICollection, Collection } from "../Firestorable/Collection";
 import { Doc } from "../Firestorable/Document";
 import { firestorable } from "../Firestorable/Firestorable";
@@ -8,7 +8,7 @@ import * as serializer from '../serialization/serializer';
 
 export interface IUserStore {
     defaultTask: string;
-    user: (Doc<IUser> & Pick<firebase.User, "email" | "displayName">) | {};
+    user: (Doc<IUser> & Pick<firebase.User, "email" | "displayName">) | undefined;
     setUser: (fbUser: firebase.User | null) => void;
     save: () => void;
 }
@@ -30,7 +30,8 @@ export enum StoreState {
 export class UserStore implements IUserStore {
     private rootStore: IRootStore;
     @observable defaultTask: string;
-    @observable user: IUserStore["user"];
+    @observable.ref userId?: string;
+    @observable.ref fbUser?: firebase.User
     @observable state = StoreState.Done;
 
     private readonly users: ICollection<IUser>;
@@ -46,20 +47,33 @@ export class UserStore implements IUserStore {
 
         firestorable.auth.onAuthStateChanged(this.setUser.bind(this));
 
-        this.user = {};
+        // TODO: this is not good. we only need a single user!
+        this.users.getDocs();
     }
 
     public save() {
-        if (!(this.user instanceof (Doc))) return;
+        if (!this.user) return;
         this.rootStore.getCollection("users").doc(this.user!.id).set(
             { tasks: Array.from(this.user!.data!.tasks!.keys()) }
         );
     }
 
+    @computed public get user() {
+
+        if (this.userId && this.fbUser){
+            const user = this.users.docs.get(this.userId);
+            return user 
+            ? Object.assign(user, { email: this.fbUser.email, displayName: this.fbUser.displayName }) 
+            : undefined;
+        }
+
+        return undefined;
+    }
+
     @action
     public setUser(fbUser: firebase.User | null) {
         if (!fbUser) {
-            this.user = {};
+            this.userId = "none"; // userid should be observable ref?
         }
         else {
             this.state = StoreState.Pending;
@@ -71,8 +85,8 @@ export class UserStore implements IUserStore {
     getUserSuccess = (user: Doc<IUser>, fbUser: firebase.User) => {
         this.state = StoreState.Done;
         transaction(() => {
-            this.user = user;
-            extendObservable(this.user, { email: fbUser.email, displayName: fbUser.displayName });
+            this.userId = user.id;
+            this.fbUser = fbUser;
         });
     }
 

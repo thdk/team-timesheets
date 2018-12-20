@@ -59,7 +59,7 @@ export class RegistrationStore implements IRegistrationsStore {
         this.registration = {};
 
         const updateRegistrationQuery = () => {
-            when(() => this.rootStore.user.user instanceof(Doc), () => {
+            when(() => !!this.rootStore.user.user, () => {
                 const moment = rootStore.view.moment;
                 const endDate = moment.clone().add(1, "days").toDate();
                 const startDate = moment.clone().toDate();
@@ -67,7 +67,7 @@ export class RegistrationStore implements IRegistrationsStore {
                     .where("deleted", "==", false)
                     .where("date", ">", startDate)
                     .where("date", "<=", endDate)
-                    .where("userId", "==", (rootStore.user.user as Doc<IRegistration>).id);
+                    .where("userId", "==", rootStore.user.user!.id);
             });
         };
 
@@ -85,8 +85,15 @@ export class RegistrationStore implements IRegistrationsStore {
     }
 
     save() {
-        this.registration instanceof (Doc) &&
-            this.registrations.addAsync(this.registration);
+        this.registration instanceof (Doc) 
+            && this.registration.data
+            && this.registration.data.time
+            && this.registration.data.project
+            && this.registration.data.task
+            && this.registration.data.date
+            && this.registration.data.description
+            && this.registration.data.userId
+            && this.registrations.addAsync(this.registration);
     }
 
     delete() {

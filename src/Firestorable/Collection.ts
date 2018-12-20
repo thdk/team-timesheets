@@ -89,8 +89,7 @@ export class Collection<T, K = T> implements ICollection<T> {
 
     // TODO: when realtime updates is disabled, we must manually update the docs!
     public addAsync(doc: Doc<T>) {
-        if (!doc.data) throw new Error("Can't save document without data");
-        const firestoreData = this.serialize(doc.data);
+        const firestoreData = doc.data ? this.serialize(doc.data) : {};
         return addAsync(this.collectionRef, firestoreData, doc.id);
     }
 

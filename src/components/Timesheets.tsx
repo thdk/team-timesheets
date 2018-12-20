@@ -38,7 +38,7 @@ export class Timesheets extends React.Component {
                     <TableCell>{description}</TableCell>
                     <TableCell>{projectName}</TableCell>
                     <TableCell>{taskName}</TableCell>
-                    <TableCell>{date && date.toDate().toLocaleDateString()}</TableCell>
+                    <TableCell>{date && date.toLocaleDateString()}</TableCell>
                 </TableRow>
             )
         });

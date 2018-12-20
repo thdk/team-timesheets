@@ -4,12 +4,23 @@ import { Doc } from "../Firestorable/Document";
 import * as firebase from 'firebase/app'
 import { ICollection, Collection } from "../Firestorable/Collection";
 import store, { IRootStore } from './RootStore';
+import * as deserializer from '../serialization/deserializer';
+import * as serializer from '../serialization/serializer';
 
 export interface IDocumentData {
     deleted: boolean;
 }
 
 export interface IRegistration extends IDocumentData {
+    description: string;
+    time: number;
+    project: string;
+    task: string;
+    date: Date;
+    userId: string;
+}
+
+export interface IRegistrationData {
     description: string;
     time: number;
     project: string;
@@ -36,7 +47,13 @@ export class RegistrationStore implements IRegistrationsStore {
 
     constructor(rootStore: IRootStore) {
         this.rootStore = rootStore;
-        this.registrations = observable(new Collection<IRegistration>(() => rootStore.getCollection("registrations"), { realtime: true }));
+        this.registrations = observable(new Collection(() => rootStore.getCollection("registrations"),
+            {
+                realtime: true,
+                deserialize: deserializer.convertRegistration,
+                serialize: serializer.convertRegistration
+            }));
+
         this.registration = {};
 
         const updateRegistrationQuery = () => {
@@ -66,31 +83,25 @@ export class RegistrationStore implements IRegistrationsStore {
     }
 
     save() {
-        // TODO move to Document class for Firestorable (with dynamic validation)
         this.registration instanceof (Doc) &&
-            this.registration.data &&
-            this.registration.data.description &&
-            this.registration.data.project &&
-            this.registration.data.task &&
-            this.registration.data.time &&
-            this.registration.data.date &&
-            this.registration.save();
+            this.registrations.addAsync(this.registration);
     }
 
     delete() {
         if (this.registration instanceof (Doc) && this.registration.data)
         {
             this.registration.data.deleted = true;
-            this.registration.save();
+            this.save();
         }
     }
 
     getNew() {
         if (!(store.user.user instanceof(Doc))) throw new Error("Can't add new registration if user is unknown");
 
+        // TODO: conversion toUTC should happen in de serializer
         return this.registrations.newDoc({
-            date: firebase.firestore.Timestamp.fromDate(this.toUTC(
-                this.rootStore.view.moment.toDate())
+            date: this.toUTC(
+                this.rootStore.view.moment.toDate()
             ),
             description: "",
             project: "",

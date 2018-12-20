@@ -20,7 +20,7 @@ export class List extends React.Component<IListProps> {
 }
 
 export interface IListItemProps extends IReactProps {
-    lines: [string, ...string[]] & { length: 1 | 2 };
+    lines: { length: 1 | 2 } & [string, ...string[]];
     icon?: string;
 }
 

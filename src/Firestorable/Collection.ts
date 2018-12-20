@@ -17,22 +17,32 @@ export interface ICollection<T> {
     deleteAsync: (id: string) => Promise<void>;
 }
 
-export interface ICollectionOptions {
+export interface ICollectionOptions<T, K> {
     realtime?: boolean;
+    deserialize?: (firestoreData: K) => T;
+    serialize?: (appData: T) => K;
 }
 
-export class Collection<T> implements ICollection<T> {
+export class Collection<T, K = T> implements ICollection<T> {
     public docs: ObservableMap<string, Doc<T>> = observable(new Map);
     @observable public query?: (ref: firestore.CollectionReference) => firestore.Query;
     private readonly collectionRef: firebase.firestore.CollectionReference;
     private readonly isRealtime: boolean;
     private unsubscribeFirestore?: () => void;
     private readonly queryReactionDisposable: () => void;
+    private readonly deserialize: (firestoreData: K) => T;
+    private readonly serialize: (appData: T) => K;
 
-    constructor(getFirestoreCollection: () => firebase.firestore.CollectionReference, options: ICollectionOptions = {}) {
-        const { realtime = false } = options;
+    constructor(getFirestoreCollection: () => firebase.firestore.CollectionReference, options: ICollectionOptions<T, K> = {}) {
+        const { realtime = false,
+            deserialize = (x: K) => x as unknown as T,
+            serialize = (x: T) => x as unknown as K
+        } = options;
 
         this.isRealtime = realtime;
+        this.deserialize = deserialize;
+        this.serialize = serialize;
+
         this.collectionRef = getFirestoreCollection();
 
         this.queryReactionDisposable = reaction(() => this.query, this.getDocs.bind(this));
@@ -54,7 +64,9 @@ export class Collection<T> implements ICollection<T> {
                     snapshot.docChanges().forEach(change => {
                         const { doc: { id }, doc } = change;
                         if (change.type === "added" || change.type === "modified") {
-                            this.docs.set(id, new Doc<T>(this.collectionRef, doc.data() as T, id));
+                            const firestoreData = doc.data() as K;
+                            const data = this.deserialize(firestoreData);
+                            this.docs.set(id, new Doc<T>(this.collectionRef, data, id));
                         }
                         else if (change.type === "removed") {
                             this.docs.delete(id);
@@ -71,7 +83,8 @@ export class Collection<T> implements ICollection<T> {
 
     // TODO: when realtime updates is disabled, we must manually update the docs!
     public updateAsync(id: string, data: T) {
-        return updateAsync(this.collectionRef, Object.assign(data, { id }));
+        const firestoreData = this.serialize(data);
+        return updateAsync(this.collectionRef, Object.assign(firestoreData, { id }));
     }
 
     // TODO: when realtime updates is disabled, we must manually update the docs!

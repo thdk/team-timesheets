@@ -1,8 +1,4 @@
-<<<<<<< HEAD
 import { observable, action, transaction, extendObservable } from "mobx";
-=======
-import { observable, action, toJS } from "mobx";
->>>>>>> 70c3a56... Tryout the user preferences page
 import { ICollection, Collection } from "../Firestorable/Collection";
 import { Doc } from "../Firestorable/Document";
 import { firestorable } from "../Firestorable/Firestorable";
@@ -17,6 +13,11 @@ export interface IUserStore {
 
 export interface IUser {
     tasks: Map<string, true>;
+    id: string;
+}
+
+export interface IUserData {
+    tasks?: string[];
 }
 
 export enum StoreState {
@@ -43,16 +44,10 @@ export class UserStore implements IUserStore {
     }
 
     public save() {
-        this.users.getAsync(this.user!.uid).then((u) => {
-            if (u) {
-                this.users.updateAsync(this.user!.uid, { tasks: toJS(this.user!.tasks!) });
-            }
-            else {
-                this.rootStore.getCollection("users").doc(this.user!.uid).set(
-                    { tasks: Array.from(this.user!.tasks!.keys()) }
-                );
-            }
-        })
+        if (!(this.user instanceof (Doc))) return;
+        this.rootStore.getCollection("users").doc(this.user!.id).set(
+            { tasks: Array.from(this.user!.data!.tasks!.keys()) }
+        );
     }
 
     @action
@@ -69,23 +64,10 @@ export class UserStore implements IUserStore {
     @action.bound
     getUserSuccess = (user: Doc<IUser>, fbUser: firebase.User) => {
         this.state = StoreState.Done;
-<<<<<<< HEAD
         transaction(() => {
             this.user = user;
             extendObservable(this.user, { email: fbUser.email, displayName: fbUser.displayName });
         });
-=======
-
-        const userData = user ? user.data : {};
-
-        this.user = {
-            uid: fbUser.uid,
-            email: fbUser.email,
-            displayName: fbUser.displayName,
-            ...userData,
-            tasks: new Map()
-        }
->>>>>>> 70c3a56... Tryout the user preferences page
     }
 
     @action.bound

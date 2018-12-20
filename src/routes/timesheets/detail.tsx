@@ -30,7 +30,7 @@ const onEnter = (route: Route, params: { id?: string }, s: IRootStore) => {
 
     const deleteAction = {
         action: () => {
-            s.timesheets.registration instanceof (Doc) && s.timesheets.registrations.deleteAsync(s.timesheets.registration.id);
+            s.timesheets.registration instanceof (Doc) && s.timesheets.delete();
             goToOverview(s);
         },
         icon: "delete",

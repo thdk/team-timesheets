@@ -6,8 +6,9 @@ export interface IChipProps {
     text: string;
     icon?: string;
     isSelected?: boolean;
-    onClick: (id: string) => void;
+    onClick: (id: string, selected: boolean) => void;
     id: string;
+    type?: "filter"
 }
 export class Chip extends React.Component<IChipProps> {
     private mdcChipRef: React.RefObject<HTMLDivElement>;
@@ -18,7 +19,7 @@ export class Chip extends React.Component<IChipProps> {
     }
     render() {
         // TODO: add tabindex to mdc-chip
-        const { tabIndex = 0, text, icon, id } = this.props;
+        const { tabIndex = 0, text, icon, id, type } = this.props;
 
         const iconEl = icon ?
             <i className="material-icons mdc-chip__icon mdc-chip__icon--leading">{icon}</i>
@@ -28,9 +29,21 @@ export class Chip extends React.Component<IChipProps> {
         let className = "mdc-chip";
         if (this.props.isSelected) className += " mdc-chip--selected";
 
+        const checkmarkIcon = type === "filter"
+            ? <>
+                <div className="mdc-chip__checkmark" >
+                    <svg className="mdc-chip__checkmark-svg" viewBox="-2 -3 30 30">
+                        <path className="mdc-chip__checkmark-path" fill="none" stroke="black"
+                            d="M1.73,12.91 8.1,19.28 22.79,4.59" />
+                    </svg>
+                </div>
+            </>
+            : undefined;
+
         return (
             <div tabIndex={tabIndex} className={className} id={id} ref={this.mdcChipRef} key={id}>
                 {iconEl}
+                {checkmarkIcon}
                 <div className="mdc-chip__text">{text}</div>
             </div>
         );
@@ -38,21 +51,22 @@ export class Chip extends React.Component<IChipProps> {
 
     interaction = (e: Event) => {
         if (this.isChipEvent(e)) {
-            this.mdcChipRef.current && this.props.onClick(e.detail.chipId);
+            this.mdcChipRef.current && this.props.onClick(e.detail.chipId, e.detail.selected);
         };
     }
 
-    isChipEvent = (e: any): e is Event & { detail: { chipId: string } } => {
+    isChipEvent = (e: any): e is Event & { detail: { chipId: string, selected: boolean } } => {
         return !!e.detail;
     }
 
     componentDidMount() {
-        this.mdcChipRef.current!.addEventListener("MDCChip:interaction", this.interaction);
+        this.mdcChipRef.current &&
+            this.mdcChipRef.current.addEventListener("MDCChip:selection", (e) => this.interaction(e));
     }
 
     componentWillUnmount() {
         this.mdcChipRef.current &&
-            this.mdcChipRef.current.removeEventListener("MDCChip:interaction", this.interaction);
+            this.mdcChipRef.current.removeEventListener("MDCChip:selection", this.interaction);
     }
 }
 
@@ -69,16 +83,19 @@ export class ChipSet extends React.Component<IChipSetProps> {
 
     render() {
         // TODO: add tabindex to mdc-chip
-        let className = "mdc-chip-set";
+        let classNames = ["mdc-chip-set"];
         switch (this.props.type) {
             case "choice":
-                className += " mdc-chip-set--choice";
+                classNames.push("mdc-chip-set--choice");
+                break;
+            case "filter":
+                classNames.push("mdc-chip-set--filter");
                 break;
             default:
                 break;
         }
         return (
-            <div className={className} ref={this.mdcChipSet}>
+            <div className={classNames.join(" ")} ref={this.mdcChipSet}>
                 {this.props.children}
             </div>
         );

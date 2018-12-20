@@ -2,7 +2,7 @@ import * as React from 'react';
 import { DatetimePicker } from 'rc-datetime-picker';
 import moment from 'moment-es6';
 import { observer } from 'mobx-react';
-import { goToOverview, goToProjects, goToLogin, goToTasks } from "../internal";
+import { goToOverview, goToProjects, goToLogin, goToTasks, goToPreferences } from "../internal";
 import { firestorable } from '../Firestorable/Firestorable';
 import store from '../stores/RootStore';
 import { Doc } from '../Firestorable/Document';
@@ -30,9 +30,14 @@ export class Menu extends React.Component {
         goToOverview(store, { day: date.getDate(), month: date.getMonth() + 1, year: date.getFullYear() });
     }
 
-    toggleLogin = (e:React.MouseEvent) => {
+    toggleLogin = (e: React.MouseEvent) => {
         e.preventDefault();
         (store.user.user instanceof(Doc)) ? firestorable.auth.signOut() : goToLogin(store);
+    }
+
+    navigate = (e: React.MouseEvent, navigate: () => void) => {
+        e.preventDefault();
+        navigate();
     }
 
     render() {
@@ -57,6 +62,10 @@ export class Menu extends React.Component {
                     </a>
 
                     <hr className="mdc-list-divider" />
+                    <a className="mdc-list-item" onClick={(e: React.MouseEvent) => this.navigate(e, goToPreferences)} href="/settings/preferences">
+                        <i className="material-icons mdc-list-item__graphic" aria-hidden="true">settings</i>
+                        <span className="mdc-list-item__text">Settings</span>
+                    </a>
                     <a className="mdc-list-item" onClick={this.toggleLogin} href="/config/projects">
                         <i className="material-icons mdc-list-item__graphic" aria-hidden="true">perm_identity</i>
                         <span className="mdc-list-item__text">{(store.user.user instanceof(Doc)) ? "Logout" : "Login"}</span>

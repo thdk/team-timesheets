@@ -53,8 +53,8 @@ export class UserStore implements IUserStore {
 
     public save() {
         if (!this.user) return;
-        this.rootStore.getCollection("users").doc(this.user!.id).set(
-            { tasks: Array.from(this.user!.data!.tasks!.keys()) }
+        this.rootStore.getCollection("users").doc(this.user.id).set(
+            { tasks: Array.from(this.user.data!.tasks.keys()) }
         );
     }
 

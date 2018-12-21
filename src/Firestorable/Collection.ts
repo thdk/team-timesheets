@@ -20,7 +20,7 @@ export interface ICollection<T> {
 export interface ICollectionOptions<T, K> {
     realtime?: boolean;
     deserialize?: (firestoreData: K) => T;
-    serialize?: (appData: T) => K;
+    serialize?: (appData: Partial<T>) => Partial<K>;
 }
 
 export class Collection<T, K = T> implements ICollection<T> {
@@ -31,12 +31,12 @@ export class Collection<T, K = T> implements ICollection<T> {
     private unsubscribeFirestore?: () => void;
     private readonly queryReactionDisposable: () => void;
     private readonly deserialize: (firestoreData: K) => T;
-    private readonly serialize: (appData: T) => K;
+    private readonly serialize: (appData: Partial<T>) => Partial<K>;
 
     constructor(getFirestoreCollection: () => firebase.firestore.CollectionReference, options: ICollectionOptions<T, K> = {}) {
         const { realtime = false,
             deserialize = (x: K) => x as unknown as T,
-            serialize = (x: T) => x as unknown as K
+            serialize = (x: Partial<T>) => x as unknown as Partial<K>
         } = options;
 
         this.isRealtime = realtime;
@@ -82,7 +82,7 @@ export class Collection<T, K = T> implements ICollection<T> {
     }
 
     // TODO: when realtime updates is disabled, we must manually update the docs!
-    public updateAsync(id: string, data: T) {
+    public updateAsync(id: string, data: Partial<T>) {
         const firestoreData = this.serialize(data);
         return updateAsync(this.collectionRef, Object.assign(firestoreData, { id }));
     }

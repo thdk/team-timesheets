@@ -26,7 +26,7 @@ export interface IRegistrationData {
     time: number;
     project: string;
     task: string;
-    date: firebase.firestore.Timestamp; // Todo: use Date and add conversion layer
+    date: firebase.firestore.Timestamp;
     userId: string;
     deleted: boolean;
 }
@@ -85,15 +85,18 @@ export class RegistrationStore implements IRegistrationsStore {
     }
 
     save() {
-        this.registration instanceof (Doc) 
-            && this.registration.data
-            && this.registration.data.time
-            && this.registration.data.project
-            && this.registration.data.task
-            && this.registration.data.date
-            && this.registration.data.description
-            && this.registration.data.userId
-            && this.registrations.addAsync(this.registration);
+        // TODO: undefined values should be converted to firestore.FieldValue.delete()
+        // in order to save incomplete forms
+        // worst case is to save empty string / array / object
+        this.registration instanceof (Doc)
+        && this.registration.data
+        && this.registration.data.time
+        && this.registration.data.project
+        && this.registration.data.task
+        && this.registration.data.date
+        && this.registration.data.description
+        && this.registration.data.userId
+        && this.registrations.addAsync(this.registration);
     }
 
     delete() {
@@ -113,7 +116,7 @@ export class RegistrationStore implements IRegistrationsStore {
                 this.rootStore.view.moment.toDate()
             ),
             description: "",
-            project: "",   
+            project: "",
             task: store.user.defaultTask,
             userId: store.user.user.id,
             deleted: false

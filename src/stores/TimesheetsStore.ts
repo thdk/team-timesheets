@@ -113,7 +113,7 @@ export class RegistrationStore implements IRegistrationsStore {
                 this.rootStore.view.moment.toDate()
             ),
             description: "",
-            project: "",
+            project: "",   
             task: store.user.defaultTask,
             userId: store.user.user.id,
             deleted: false

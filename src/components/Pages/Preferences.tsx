@@ -3,9 +3,7 @@ import { observer } from 'mobx-react';
 import store from '../../stores/RootStore';
 import { Chip, ChipSet } from '../../MaterialUI/chips';
 import { Doc } from '../../Firestorable/Document';
-import { IUser } from '../../stores/UserStore';
 import { toJS } from 'mobx';
-import { FlexGroup } from '../Layout/flex';
 import { Box } from '../Layout/box';
 
 @observer

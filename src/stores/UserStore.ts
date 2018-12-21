@@ -1,4 +1,4 @@
-import { observable, action, transaction, extendObservable, computed } from "mobx";
+import { observable, action, transaction, computed } from "mobx";
 import { ICollection, Collection } from "../Firestorable/Collection";
 import { Doc } from "../Firestorable/Document";
 import { firestorable } from "../Firestorable/Firestorable";
@@ -62,8 +62,8 @@ export class UserStore implements IUserStore {
 
         if (this.userId && this.fbUser){
             const user = this.users.docs.get(this.userId);
-            return user 
-            ? Object.assign(user, { email: this.fbUser.email, displayName: this.fbUser.displayName }) 
+            return user
+            ? Object.assign(user, { email: this.fbUser.email, displayName: this.fbUser.displayName })
             : undefined;
         }
 

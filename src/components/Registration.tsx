@@ -13,7 +13,7 @@ import { IUser } from '../stores/UserStore';
 @observer
 export class Registration extends React.Component {
     render() {
-        if (!store.timesheets.registration || !(store.timesheets.registration instanceof(Doc))) return <></>;
+        if (!store.timesheets.registration || !(store.timesheets.registration instanceof (Doc))) return <></>;
 
         if (!store.timesheets.registration.data) return <></>;
 
@@ -32,14 +32,15 @@ export class Registration extends React.Component {
             });
 
         const projects = Array.from(store.config.projects.docs.values())
-            .map(p => {
-                if (!p.data) return;
-
-                const { id, data: { name } } = p;
-                return (
-                    <SelectOption text={name!} value={id} key={id}></SelectOption>
-                );
-            });
+            .reduce((p, c) => {
+                if (c.data) {
+                    const { id, data: { name } } = c;
+                    p.push(
+                        <SelectOption text={name!} value={id} key={id}></SelectOption>
+                    );
+                }
+                return p;
+            }, new Array());
 
         return (
             <>
@@ -59,7 +60,9 @@ export class Registration extends React.Component {
                     </FlexGroup>
                     <FlexGroup>
                         <FormField>
-                            <Select value={project} outlined={true} label="Project" onChange={this.onProjectChange}>{projects}</Select>
+                            <Select value={project} outlined={true} label="Project" onChange={this.onProjectChange}>
+                                {projects}
+                            </Select>
                         </FormField>
                     </FlexGroup>
                     <FlexGroup extraCssClass="row">
@@ -84,7 +87,7 @@ export class Registration extends React.Component {
 
     onTimeChange = (value: string) => {
         if (store.timesheets.registration && store.timesheets.registration instanceof (Doc) && store.timesheets.registration.data)
-        store.timesheets.registration.data.time = +value;
+            store.timesheets.registration.data.time = +value;
     }
 
     onProjectChange = (value: string) => {

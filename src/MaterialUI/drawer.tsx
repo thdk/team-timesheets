@@ -6,7 +6,7 @@ import { Doc } from '../Firestorable/Document';
 
 @observer
 export class Drawer extends React.Component {
-    private mdcDrawer?: MDCDrawer;
+    private mdcDrawer?: any;
 
     render() {
         const displayName = store.user.user instanceof(Doc) ? store.user.user.displayName || "Guest" : "";

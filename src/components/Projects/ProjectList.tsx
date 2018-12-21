@@ -6,17 +6,16 @@ import store from '../../stores/RootStore';
 @observer
 export class ProjectList extends React.Component {
     render() {
-        console.log(store.config.projects.docs);
-        console.log(Array.from(store.config.projects.docs.values())[0] && Array.from(store.config.projects.docs.values())[0].data);
         const items = Array.from(store.config.projects.docs.values())
-            .filter(p => p.data)
-            .map(p => {
-                console.log(p.data);
-            const { id, data: { icon = "star", name = "test" } = {} } = p;
-            return (
-                <ListItem icon={icon} key={id} lines={[name!]}></ListItem>
-            );
-        });
+            .reduce((p, c) => {
+                if (c.data) {
+                    const { id, data: { icon, name }} = c;
+                    p.push(
+                        <ListItem icon={icon} key={id} lines={[name]}></ListItem>
+                    );
+                }
+                return p;
+            }, new Array());
         return (
             <List isTwoLine={false}>
                 {items}

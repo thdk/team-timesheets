@@ -6,12 +6,17 @@ import { ListItem, List } from '../../../MaterialUI/list';
 @observer
 export class TaskList extends React.Component {
     render() {
-        const items = Array.from(store.config.tasks.docs.values()).map(t => {
-            const { id, data: { icon, name } } = t;
-            return (
-                <ListItem icon={icon} key={id} lines={[name!]}></ListItem>
-            );
-        });
+        const items = Array.from(store.config.tasks.docs.values())
+            .reduce((p, c) => {
+                if (c.data) {
+                    const { id, data: { icon, name } } = c;
+                    p.push(
+                        <ListItem icon={icon} key={id} lines={[name!]}></ListItem>
+                    );
+                }
+                return p;
+            }, new Array());
+
         return (
             <List isTwoLine={false}>
                 {items}

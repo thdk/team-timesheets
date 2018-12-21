@@ -75,7 +75,7 @@ export interface IChipSetProps {
 }
 
 export class ChipSet extends React.Component<IChipSetProps> {
-    private mdcChipSet: React.RefObject<MDCChipSet>;
+    private mdcChipSet: React.RefObject<HTMLDivElement>;
     constructor(props: IChipSetProps) {
         super(props);
         this.mdcChipSet = React.createRef();

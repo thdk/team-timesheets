@@ -2,6 +2,7 @@ import * as React from 'react';
 import { observer } from 'mobx-react';
 import store from '../../../stores/RootStore';
 import { ListItem, List } from '../../../MaterialUI/list';
+import { ReactNode } from 'react';
 
 @observer
 export class TaskList extends React.Component {
@@ -15,7 +16,7 @@ export class TaskList extends React.Component {
                     );
                 }
                 return p;
-            }, new Array());
+            }, new Array<ReactNode>());
 
         return (
             <List isTwoLine={false}>

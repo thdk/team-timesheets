@@ -1,9 +1,10 @@
 import * as React from 'react';
+import { IReactProps } from '../../types';
 
-export class Box extends React.Component {
+export class Box extends React.Component<IReactProps> {
     render() {
         return (
-            <div className={`box`}>
+            <div {...this.props} className={`box`}>
                 {this.props.children}
             </div>
         )

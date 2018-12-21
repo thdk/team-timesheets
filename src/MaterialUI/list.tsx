@@ -1,18 +1,18 @@
 import * as React from 'react';
-import { observer } from 'mobx-react';
 import { IReactProps } from '../types';
 
 export interface IListProps extends IReactProps {
     isTwoLine?: boolean;
 }
 
-@observer
 export class List extends React.Component<IListProps> {
     render() {
+        const {isTwoLine, style} = this.props;
+
         const classNames = ["mdc-list"];
-        this.props.isTwoLine && classNames.push("mdc-list--two-line");
+        isTwoLine && classNames.push("mdc-list--two-line");
         return (
-            <ul className={classNames.join(" ")} aria-orientation="vertical">
+            <ul style={style} className={classNames.join(" ")} aria-orientation="vertical">
                 {this.props.children}
             </ul>
         );
@@ -20,33 +20,73 @@ export class List extends React.Component<IListProps> {
 }
 
 export interface IListItemProps extends IReactProps {
-    lines: { length: 1 | 2 } & [string, ...string[]];
+    lines?: { length: 1 | 2 } & [React.ReactNode, ...React.ReactNode[]];
     icon?: string;
+    meta?: React.ReactNode;
+    disabled?: boolean;
+    onClick?: () => void;
 }
 
-@observer
 export class ListItem extends React.Component<IListItemProps> {
-    public readonly isTwoLines: boolean;
+    private readonly liRef: React.RefObject<HTMLLIElement>;
     constructor(props: IListItemProps) {
         super(props);
-        this.isTwoLines = this.props.lines.length > 1;
+        this.liRef = React.createRef();
     }
     render() {
-        const { lines } = this.props;
+        const { lines = [undefined], icon, meta, disabled = false } = this.props;
+
         const line1El = lines.length === 2
             ? <span className="mdc-list-item__primary-text">{lines[0]}</span>
             : lines[0]
         const line2El = lines.length === 2
             ? <span className="mdc-list-item__secondary-text">{lines[1]}</span>
             : undefined;
+
+        const classNames = ["mdc-list-item"];
+        if (disabled) classNames.push("mdc-list-item--disabled");
+
         return (
-            <li className="mdc-list-item">
-                {this.props.icon && <span className="mdc-list-item__graphic material-icons" aria-hidden="true">{this.props.icon}</span>}
+            <li ref={this.liRef} className={classNames.join(" ")}>
+                {icon && <span className="mdc-list-item__graphic material-icons" aria-hidden="true">{icon}</span>}
                 <span className="mdc-list-item__text">
                     {line1El}
                     {line2El}
                 </span>
+                {meta && <span className="mdc-list-item__meta">{meta}</span>}
             </li>
+        );
+    }
+
+
+
+    componentDidMount() {
+        this.props.onClick && this.liRef.current && this.liRef.current.addEventListener("click", this.props.onClick);
+    }
+
+    componentWillUnmount() {
+        this.props.onClick && this.liRef.current && this.liRef.current.removeEventListener("click", this.props.onClick)
+    }
+}
+
+export enum ListDividerType {
+    standard,
+    padded,
+    inset
+}
+
+export interface IListDividerProps {
+    type?: ListDividerType;
+}
+
+export class ListDivider extends React.Component<IListDividerProps> {
+    render() {
+        const {type = ListDividerType.standard} = this.props;
+        const classNames = ["mdc-list-divider"];
+        if (type === ListDividerType.padded) classNames.push("mdc-list-divider--padded");
+        if (type === ListDividerType.inset) classNames.push("mdc-list-divider--inset");
+        return (
+            <hr className={classNames.join(" ")}></hr>
         );
     }
 }

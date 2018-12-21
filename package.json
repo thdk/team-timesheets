@@ -21,7 +21,6 @@
   },
   "homepage": "https://github.com/thdk/typescript-start#readme",
   "devDependencies": {
-    "@material-ui/core": "^3.6.1",
     "@types/react": "^16.7.13",
     "@types/react-dom": "^16.0.11",
     "autoprefixer": "^9.4.2",

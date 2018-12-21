@@ -1,16 +1,11 @@
 import * as React from 'react';
 import { observer } from "mobx-react";
-
-import Table from '@material-ui/core/es/Table';
-import TableRow from "@material-ui/core/es/TableRow";
-import TableCell from "@material-ui/core/es/TableCell";
-import TableHead from "@material-ui/core/es/TableHead";
-import TableBody from "@material-ui/core/es/TableBody";
 import { Fab } from "../MaterialUI/buttons";
 import routes from '../routes/index';
 import { goToRegistration } from '../internal';
-import TableFooter from '@material-ui/core/es/TableFooter/TableFooter';
 import store from '../stores/RootStore';
+import { ListItem, List, ListDivider } from '../MaterialUI/list';
+import { FlexGroup } from './Layout/flex';
 
 @observer
 export class Timesheets extends React.Component {
@@ -30,41 +25,40 @@ export class Timesheets extends React.Component {
             const { data: { name: projectName = "ARCHIVED" } = {} } = projectData || {};
 
             const taskData = task ? store.config.tasks.docs.get(task) : null;
-            const { data: { name: taskName = "N/A" } = {} } = taskData || {};
+            const { data: { name: taskName = "N/A", icon = undefined } = {} } = taskData || {};
 
+            const line1 = projectName;
+            const line2 = `${taskName} - ${description}`;
             return (
-                <TableRow key={id} onClick={this.registrationClick.bind(this, id)}>
-                    <TableCell>{time}</TableCell>
-                    <TableCell>{description}</TableCell>
-                    <TableCell>{projectName}</TableCell>
-                    <TableCell>{taskName}</TableCell>
-                    <TableCell>{date && date.toLocaleDateString()}</TableCell>
-                </TableRow>
-            )
+                <ListItem
+                    icon={icon}
+                    key={id}
+                    lines={[line1, line2]}
+                    meta={time + " uur"}
+                    onClick={this.registrationClick.bind(this, id)}>
+                </ListItem>
+            );
         });
+
+        const total = <ListItem lines={["TOTAL"]} meta={store.timesheets.totalTime + " uur"} disabled={true}></ListItem>
+
+        const listStyle = { maxWidth: '900px', width: '100%' };
         return (
             <>
-                <Table>
-                    <TableHead>
-                        <TableRow>
-                            <TableCell>Time</TableCell>
-                            <TableCell>Description</TableCell>
-                            <TableCell>Project</TableCell>
-                            <TableCell>Task</TableCell>
-                            <TableCell>Date</TableCell>
-                        </TableRow>
-                    </TableHead>
-                    <TableBody>
+                <FlexGroup direction="vertical">
+                    <div style={{ paddingLeft: "1em" }}>
+                        <h3 className="mdc-typography--subtitle1">
+                            {`Timesheet ${store.view.moment.format('LL')}`}
+                        </h3>
+                    </div>
+                    <List isTwoLine={true} style={listStyle}>
                         {rows}
-                    </TableBody>
-                    <TableFooter>
-                        <TableRow>
-                            <TableCell>
-                                {store.timesheets.totalTime}
-                            </TableCell>
-                        </TableRow>
-                    </TableFooter>
-                </Table>
+                        <ListDivider></ListDivider>
+                    </List>
+                    <List style={listStyle}>
+                        {total}
+                    </List>
+                </FlexGroup>
                 <Fab onClick={this.addRegistration} icon="add" name="Add new registration"></Fab>
             </>
         );

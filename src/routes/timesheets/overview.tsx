@@ -16,7 +16,9 @@ interface IDate {
 export const path = "/timesheets";
 
 export const goToOverview = (s: IRootStore, date?: IDate) => {
-    s.router.goTo(date ? date.day ? routes.overview : routes.monthOverview : routes.overview, date || {
+    const route = (date && date.day) || (!date && s.view.day) ? routes.overview : routes.monthOverview;
+
+    s.router.goTo(route, date || {
         year: s.view.year,
         month: s.view.month,
         day: s.view.day
@@ -26,9 +28,9 @@ export const goToOverview = (s: IRootStore, date?: IDate) => {
 const routeChanged = (route: Route, params: IDate, s: IRootStore) => {
     setNavigationContent(route, false);
     transaction(() => {
-        s.view.year = params.year;
-        s.view.month = params.month;
-        s.view.day = params.day;
+        s.view.year = +params.year;
+        s.view.month = +params.month;
+        s.view.day = params.day ? +params.day : undefined;
     });
 }
 

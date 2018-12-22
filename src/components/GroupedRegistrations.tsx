@@ -7,12 +7,13 @@ import { observer } from 'mobx-react';
 export interface IGroupedRegistrationsProps extends IReactProps {
     registrationClick: (id: string) => void;
     createTotalLabel: (date:Date) => React.ReactNode;
+    totalOnTop?: boolean;
 }
 
 @observer
 export class GroupedRegistrations extends React.Component<IGroupedRegistrationsProps> {
     render() {
-        const {createTotalLabel} = this.props;
+        const {createTotalLabel, totalOnTop = false} = this.props;
 
         const listStyle = { width: '100%' };
 
@@ -43,17 +44,18 @@ export class GroupedRegistrations extends React.Component<IGroupedRegistrationsP
             const totalLabel = createTotalLabel(g.date);
 
             const total = <ListItem key={`total-${i}`} lines={[totalLabel]} meta={g.totalTime + " hours"} disabled={true}></ListItem>
+
+            const totalList = <List style={listStyle}><ListDivider></ListDivider>{total}<ListDivider></ListDivider></List>;
+            const topTotal = totalOnTop ? totalList : undefined;
+            const bottomTotal = totalOnTop ? undefined : totalList;
+
             return (
                 <React.Fragment key={`group-${i}`}>
+                    {topTotal}
                     <List isTwoLine={true} style={listStyle}>
                         {rows}
                     </List>
-
-                    <List style={listStyle}>
-                        <ListDivider></ListDivider>
-                        {total}
-                        <ListDivider></ListDivider>
-                    </List>
+                    {bottomTotal}
                 </React.Fragment>
             );
         });

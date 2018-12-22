@@ -7,6 +7,12 @@ import store, { IRootStore } from './RootStore';
 import * as deserializer from '../serialization/deserializer';
 import * as serializer from '../serialization/serializer';
 
+export interface IGroupedRegistrations {
+    readonly registrations: Doc<IRegistration>[];
+    readonly date: Date;
+    totalTime: number;
+}
+
 export interface IDocumentData {
     deleted: boolean;
 }
@@ -32,8 +38,9 @@ export interface IRegistrationData {
 }
 
 export interface IRegistrationsStore {
-    registrations: ICollection<IRegistration>;
+    readonly registrations: ICollection<IRegistration>;
     registration?: Doc<IRegistration> | {};
+    readonly registrationsGroupedByDay: IGroupedRegistrations[];
     totalTime: number;
     save: () => void;
     delete: () => void;
@@ -61,7 +68,7 @@ export class RegistrationStore implements IRegistrationsStore {
         const updateRegistrationQuery = () => {
             when(() => !!this.rootStore.user.user, () => {
                 const moment = rootStore.view.moment;
-                const endDate = moment.clone().add(1, "days").toDate();
+                const endDate = moment.clone().add(4, "days").toDate();
                 const startDate = moment.clone().toDate();
                 this.registrations.query = ref => ref
                     .where("deleted", "==", false)
@@ -80,8 +87,33 @@ export class RegistrationStore implements IRegistrationsStore {
 
     @computed get totalTime() {
         return Array.from(this.registrations.docs.values())
-        .filter(r => !!r.data && !r.data.deleted)
-        .reduce((p, c) => p + (c.data!.time || 0), 0);
+            .filter(r => !!r.data)
+            .reduce((p, c) => p + (c.data!.time || 0), 0);
+    }
+
+    @computed get registrationsGroupedByDay() {
+        const registrations = Array.from(this.registrations.docs.values());
+        if (registrations.length === 0) return [];
+        return registrations
+            .slice(1)
+            .reduce((p, c) => {
+                const currentDayGroup = p[p.length - 1];
+                if (c.data!.date.getTime() === currentDayGroup.date.getTime()) {
+                    currentDayGroup.registrations.push(c)
+                } else {
+                    p.push({
+                        date: c.data!.date,
+                        registrations: [c],
+                        totalTime: c.data!.time
+                    });
+                }
+
+                return p;
+            }, [{
+                date: registrations[0].data!.date,
+                registrations: [registrations[0]],
+                totalTime: registrations[0].data!.time
+            }]);
     }
 
     save() {
@@ -89,26 +121,25 @@ export class RegistrationStore implements IRegistrationsStore {
         // in order to save incomplete forms
         // worst case is to save empty string / array / object
         this.registration instanceof (Doc)
-        && this.registration.data
-        && this.registration.data.time
-        && this.registration.data.project
-        && this.registration.data.task
-        && this.registration.data.date
-        && this.registration.data.description
-        && this.registration.data.userId
-        && this.registrations.addAsync(this.registration);
+            && this.registration.data
+            && this.registration.data.time
+            && this.registration.data.project
+            && this.registration.data.task
+            && this.registration.data.date
+            && this.registration.data.description
+            && this.registration.data.userId
+            && this.registrations.addAsync(this.registration);
     }
 
     delete() {
-        if (this.registration instanceof (Doc) && this.registration.data)
-        {
+        if (this.registration instanceof (Doc) && this.registration.data) {
             this.registration.data.deleted = true;
             this.save();
         }
     }
 
     getNew() {
-        if (!(store.user.user instanceof(Doc))) throw new Error("Can't add new registration if user is unknown");
+        if (!(store.user.user instanceof (Doc))) throw new Error("Can't add new registration if user is unknown");
 
         // TODO: conversion toUTC should happen in de serializer
         return this.registrations.newDoc({

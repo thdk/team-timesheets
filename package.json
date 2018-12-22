@@ -56,8 +56,8 @@
     "mobx-react": "^5.4.2",
     "mobx-router": "0.0.16",
     "moment-es6": "^1.0.0",
-    "rc-datetime-picker": "^1.6.1",
     "react": "^16.6.3",
+    "react-calendar": "^2.17.5",
     "react-dom": "^16.6.3"
   }
 }

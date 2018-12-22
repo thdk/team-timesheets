@@ -1,0 +1,14 @@
+@import "react-calendar/dist/calendar";
+
+.react-calendar {
+    border-right: none;
+    border-color: rgba(0, 0, 0, 0.12);
+}
+
+.react-calendar__navigation {
+    margin-bottom: 0;
+
+    button {
+        min-width: 35px;
+    }
+}

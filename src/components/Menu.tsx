@@ -1,17 +1,18 @@
 import * as React from 'react';
-import { DatetimePicker } from 'rc-datetime-picker';
 import moment from 'moment-es6';
 import { observer } from 'mobx-react';
 import { goToOverview, goToProjects, goToLogin, goToTasks, goToPreferences } from "../internal";
 import { firestorable } from '../Firestorable/Firestorable';
 import store from '../stores/RootStore';
 import { Doc } from '../Firestorable/Document';
+import Calendar from 'react-calendar/dist/entry.nostyle';
 
 @observer
 export class Menu extends React.Component {
 
-    dateChanged = (moment: moment.Moment) => {
-        goToOverview(store, { year: moment.year(), day: moment.date(), month: moment.month() + 1 });
+    dateChanged = (dates: Date | Date[]) => {
+        const date = dates instanceof(Date) ? dates : dates[0];
+        goToOverview(store, { year: date.getFullYear(), day: date.getDate(), month: date.getMonth() + 1 });
     }
 
     navigateToProjects = (e: React.MouseEvent) => {
@@ -49,7 +50,7 @@ export class Menu extends React.Component {
     render() {
         return (
             <>
-                <DatetimePicker moment={moment(store.view.moment)} showTimePicker={false} onChange={this.dateChanged}></DatetimePicker>
+                <Calendar activeStartDate={store.view.moment.toDate()} onChange={this.dateChanged}></Calendar>
                 <div className="mdc-list">
                     <a className="mdc-list-item" onClick={this.navigateToOverview} href="/" aria-selected="true">
                         <i className="material-icons mdc-list-item__graphic" aria-hidden="true">today</i>

@@ -13,7 +13,7 @@
 
 @import '../MaterialUI/styles/list';
 
-@import "rc-datetime-picker/dist/picker";
+@import './calendar';
 
 body {
     font: 100% $font-stack;

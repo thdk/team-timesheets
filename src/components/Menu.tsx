@@ -30,9 +30,15 @@ export class Menu extends React.Component {
         goToOverview(store, { day: date.getDate(), month: date.getMonth() + 1, year: date.getFullYear() });
     }
 
+    navigateToCurrentMonth = (e: React.MouseEvent) => {
+        e.preventDefault();
+        const today = new Date();
+        goToOverview(store, { year: today.getFullYear(), month: today.getMonth() + 1 });
+    }
+
     toggleLogin = (e: React.MouseEvent) => {
         e.preventDefault();
-        (store.user.user instanceof(Doc)) ? firestorable.auth.signOut() : goToLogin(store);
+        (store.user.user instanceof (Doc)) ? firestorable.auth.signOut() : goToLogin(store);
     }
 
     navigate = (e: React.MouseEvent, navigate: () => void) => {
@@ -50,6 +56,11 @@ export class Menu extends React.Component {
                         <span className="mdc-list-item__text">Today</span>
                     </a>
 
+                    <a className="mdc-list-item" onClick={this.navigateToCurrentMonth} href="/" aria-selected="true">
+                        <i className="material-icons mdc-list-item__graphic" aria-hidden="true">calendar_today</i>
+                        <span className="mdc-list-item__text">{moment(new Date()).format("MMMM")}</span>
+                    </a>
+
                     <hr className="mdc-list-divider" />
                     <h6 className="mdc-list-group__subheader">Planning</h6>
                     <a className="mdc-list-item" onClick={this.navigateToProjects} href="/config/projects">
@@ -62,13 +73,13 @@ export class Menu extends React.Component {
                     </a>
 
                     <hr className="mdc-list-divider" />
-                    <a className="mdc-list-item" onClick={(e: React.MouseEvent) => this.navigate(e, goToPreferences)} href="/settings/preferences">
+                    <a className="mdc-list-item" onClick={e => this.navigate(e, goToPreferences)} href="/settings/preferences">
                         <i className="material-icons mdc-list-item__graphic" aria-hidden="true">settings</i>
                         <span className="mdc-list-item__text">Settings</span>
                     </a>
                     <a className="mdc-list-item" onClick={this.toggleLogin} href="/config/projects">
                         <i className="material-icons mdc-list-item__graphic" aria-hidden="true">perm_identity</i>
-                        <span className="mdc-list-item__text">{(store.user.user instanceof(Doc)) ? "Logout" : "Login"}</span>
+                        <span className="mdc-list-item__text">{(store.user.user instanceof (Doc)) ? "Logout" : "Login"}</span>
                     </a>
 
                 </div>

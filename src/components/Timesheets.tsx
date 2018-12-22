@@ -6,6 +6,7 @@ import { goToRegistration } from '../internal';
 import store from '../stores/RootStore';
 import { FlexGroup } from './Layout/flex';
 import { GroupedRegistrations } from './GroupedRegistrations';
+import { goToOverview } from '../routes/timesheets/overview';
 
 @observer
 export class Timesheets extends React.Component {
@@ -14,16 +15,31 @@ export class Timesheets extends React.Component {
         goToRegistration(id);
     }
 
+    createTotalLabel = (_date: Date) => {
+        return `Total`;
+    }
+
+    goToMonth(e: React.MouseEvent) {
+        e.preventDefault();
+        goToOverview(store, {
+            year: store.view.year!,
+            month: store.view.month!
+        });
+    }
+
     render() {
+        const title = store.view.day
+        ? <>Timesheet <a href="#" onClick={this.goToMonth}>{store.view.moment.format('MMMM')}</a> {store.view.moment.format('D, YYYY')}</>
+        : `Timesheet ${store.view.moment.format('MMMM YYYY')}`;
         return (
             <>
                 <FlexGroup direction="vertical">
                     <div style={{ paddingLeft: "1em" }}>
                         <h3 className="mdc-typography--subtitle1">
-                            {`Timesheet ${store.view.moment.format('LL')}`}
+                            {title}
                         </h3>
                     </div>
-                    <GroupedRegistrations registrationClick={this.registrationClick.bind(this)}/>
+                    <GroupedRegistrations createTotalLabel={this.createTotalLabel} registrationClick={this.registrationClick.bind(this)}/>
                 </FlexGroup>
                 <Fab onClick={this.addRegistration} icon="add" name="Add new registration"></Fab>
             </>

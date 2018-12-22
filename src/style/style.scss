@@ -24,6 +24,16 @@ body {
     margin: 0;
   }
 
+  a:visited, a:link {
+    text-decoration: none;
+    @include mdc-theme-prop("color", "secondary");
+  }
+
+  a:hover, a:active {
+    text-decoration: none;
+    @include mdc-theme-prop("color", "primary");
+  }
+
   .body-wrapper {
     display: flex;
     height: 100vh;

@@ -5,17 +5,18 @@ import { transaction } from 'mobx';
 import { beforeEnter, setNavigationContent } from '../actions';
 import { App } from '../../internal';
 import { IRootStore } from '../../stores/RootStore';
+import { Reports } from '../../components/Pages/Reports';
 
 interface IDate {
     year: number;
     month: number;
-    day: number;
+    day?: number;
 }
 
 export const path = "/timesheets";
 
 export const goToOverview = (s: IRootStore, date?: IDate) => {
-    s.router.goTo(routes.overview, date || {
+    s.router.goTo(date ? date.day ? routes.overview : routes.monthOverview : routes.overview, date || {
         year: s.view.year,
         month: s.view.month,
         day: s.view.day
@@ -39,10 +40,20 @@ const routes = {
             routeChanged(route, params, s);
         },
         onParamsChange: routeChanged,
-        title: "Overview",
+        title: "Timesheet",
+        beforeEnter
+    }),
+    monthOverview: new Route({
+        path: path + '/:year/:month',
+        component: <App><Reports></Reports></App>,
+        onEnter: (route: Route, params: IDate, s: IRootStore) => {
+            routeChanged(route, params, s);
+        },
+        onParamsChange: routeChanged,
+        title: "Report",
         beforeEnter
     })
-} as { overview: Route };
+};
 
 export default routes;
 

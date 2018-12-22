@@ -6,12 +6,15 @@ import { observer } from 'mobx-react';
 
 export interface IGroupedRegistrationsProps extends IReactProps {
     registrationClick: (id: string) => void;
+    createTotalLabel: (date:Date) => React.ReactNode;
 }
 
 @observer
 export class GroupedRegistrations extends React.Component<IGroupedRegistrationsProps> {
     render() {
-        const listStyle = { maxWidth: '900px', width: '100%' };
+        const {createTotalLabel} = this.props;
+
+        const listStyle = { width: '100%' };
 
         return store.timesheets.registrationsGroupedByDay.map((g, i) => {
             const rows = g.registrations.map(r => {
@@ -32,22 +35,24 @@ export class GroupedRegistrations extends React.Component<IGroupedRegistrationsP
                         icon={icon}
                         key={id}
                         lines={[line1, line2]}
-                        meta={time + " uur"}
+                        meta={time + " hours"}
                         onClick={this.props.registrationClick.bind(this, id)}>
                     </ListItem>
                 );
             });
+            const totalLabel = createTotalLabel(g.date);
 
-            const total = <ListItem key={`total-${i}`} lines={["TOTAL"]} meta={g.totalTime + " uur"} disabled={true}></ListItem>
-
+            const total = <ListItem key={`total-${i}`} lines={[totalLabel]} meta={g.totalTime + " hours"} disabled={true}></ListItem>
             return (
                 <React.Fragment key={`group-${i}`}>
                     <List isTwoLine={true} style={listStyle}>
                         {rows}
                     </List>
-                    <ListDivider></ListDivider>
+
                     <List style={listStyle}>
+                        <ListDivider></ListDivider>
                         {total}
+                        <ListDivider></ListDivider>
                     </List>
                 </React.Fragment>
             );

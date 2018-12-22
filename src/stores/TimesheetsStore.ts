@@ -68,7 +68,7 @@ export class RegistrationStore implements IRegistrationsStore {
         const updateRegistrationQuery = () => {
             when(() => !!this.rootStore.user.user, () => {
                 const moment = rootStore.view.moment;
-                const endDate = moment.clone().add(4, "days").toDate();
+                const endDate = moment.clone().add(rootStore.view.day ? 1 : rootStore.view.moment.daysInMonth(), "days").toDate();
                 const startDate = moment.clone().toDate();
                 this.registrations.query = ref => ref
                     .where("deleted", "==", false)
@@ -99,7 +99,8 @@ export class RegistrationStore implements IRegistrationsStore {
             .reduce((p, c) => {
                 const currentDayGroup = p[p.length - 1];
                 if (c.data!.date.getTime() === currentDayGroup.date.getTime()) {
-                    currentDayGroup.registrations.push(c)
+                    currentDayGroup.registrations.push(c);
+                    currentDayGroup.totalTime += c.data!.time;
                 } else {
                     p.push({
                         date: c.data!.date,

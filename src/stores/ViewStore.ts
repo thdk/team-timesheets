@@ -1,12 +1,20 @@
 import { observable, IObservableArray, action, computed, transaction, reaction } from "mobx";
 import moment from 'moment-es6';
 import { IRootStore } from "./RootStore";
-import { Doc } from "../Firestorable/Document";
 import { goToLogin } from "../internal";
+
+export interface IShortKey {
+  ctrlKey?: boolean;
+  altKey?: boolean;
+  metaKey?: boolean;
+  shiftKey?: boolean;
+  key: string;
+}
 
 export interface IViewAction {
   icon: string;
   action: () => void;
+  shortKey?: IShortKey;
 }
 
 export interface INavigationViewAction extends IViewAction {
@@ -57,6 +65,24 @@ export class ViewStore implements IViewStore {
     reaction(() => rootStore.user.userId, userId => {
       if (!userId) {
         goToLogin(rootStore);
+      }
+    });
+
+    document.addEventListener("keydown", ev => {
+      const action = this.actions.filter(a => {
+        const { key = undefined, ctrlKey = false, altKey = false, shiftKey = false, metaKey = false } = a.shortKey || {};
+        return a.shortKey &&
+          altKey === ev.altKey &&
+          ctrlKey === ev.ctrlKey &&
+          metaKey === ev.metaKey &&
+          shiftKey === ev.shiftKey &&
+          key === ev.key
+      }).map(a => a.action)[0];
+
+      if (action) {
+        ev.preventDefault();
+        ev.stopPropagation();
+        action();
       }
     });
   }

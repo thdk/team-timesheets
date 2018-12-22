@@ -9,6 +9,7 @@ import { goToOverview } from '../../internal';
 import { reaction } from '../../../node_modules/mobx';
 import { Doc } from '../../Firestorable/Document';
 import store, { IRootStore } from '../../stores/RootStore';
+import { IViewAction } from '../../stores/ViewStore';
 
 const path = parentPath + "/detail";
 
@@ -28,16 +29,26 @@ const onEnter = (route: Route, params: { id?: string }, s: IRootStore) => {
             .then(r => s.timesheets.registration = r);
     }
 
-    const deleteAction = {
+    const deleteAction: IViewAction = {
         action: () => {
             s.timesheets.registration instanceof (Doc) && s.timesheets.delete();
             goToOverview(s);
         },
         icon: "delete",
-        isActive: false
+        shortKey: { key: "Delete" }
+    }
+
+    const saveAction: IViewAction = {
+        action: () => {
+            s.timesheets.save();
+            goToOverview(s);
+        },
+        icon: "save",
+        shortKey: { key: "s", ctrlKey: true }
     }
 
     s.view.setActions([
+        saveAction,
         deleteAction
     ]);
 

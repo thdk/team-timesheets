@@ -5,7 +5,7 @@ import { goToOverview, goToProjects, goToLogin, goToTasks, goToPreferences } fro
 import { firestorable } from '../Firestorable/Firestorable';
 import store from '../stores/RootStore';
 import { Doc } from '../Firestorable/Document';
-import Calendar from 'react-calendar/dist/entry.nostyle';
+import Calendar, { CalendarTileProperties } from 'react-calendar/dist/entry.nostyle';
 
 @observer
 export class Menu extends React.Component {
@@ -47,10 +47,22 @@ export class Menu extends React.Component {
         navigate();
     }
 
+    getTileClassName = (tile: CalendarTileProperties) => {
+        if (tile.view === "month") {
+            const tileHasData = store.timesheets.registrationsGroupedByDay.some(g =>
+                g.date.getDate() === tile.date.getDate()
+                && g.date.getMonth() === tile.date.getMonth()
+                && g.date.getFullYear() === tile.date.getFullYear());
+            if (tileHasData) return "has-data";
+        }
+
+        return null;
+    }
+
     render() {
         return (
             <>
-                <Calendar activeStartDate={store.view.moment.toDate()} onChange={this.dateChanged}></Calendar>
+                <Calendar key={store.timesheets.registrationsGroupedByDay.map(g => g.date.getDate()).join()} tileClassName={this.getTileClassName} activeStartDate={store.view.moment.toDate()} onChange={this.dateChanged}></Calendar>
                 <div className="mdc-list">
                     <a className="mdc-list-item" onClick={this.navigateToOverview} href="/" aria-selected="true">
                         <i className="material-icons mdc-list-item__graphic" aria-hidden="true">today</i>

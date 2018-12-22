@@ -20,6 +20,7 @@ export interface IViewStore {
   month?: number;
   year?: number;
   readonly moment: moment.Moment;
+  readonly monthMoment: moment.Moment;
   readonly actions: IObservableArray<IViewAction>;
   navigationAction?: INavigationViewAction;
   setActions: (actions: IViewAction[]) => void;
@@ -74,7 +75,11 @@ export class ViewStore implements IViewStore {
     if (this.day)
       return moment(`${this.year}-${this.month}-${this.day}`, 'YYYY-MM-DD');
     else
-      return moment(`${this.year}-${this.month}`, 'YYYY-MM');
+      return this.monthMoment;
+  }
+
+  @computed get monthMoment() {
+    return moment(`${this.year}-${this.month}`, 'YYYY-MM');
   }
 
   @action setActions(actions: IViewAction[]) {

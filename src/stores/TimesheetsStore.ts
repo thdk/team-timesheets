@@ -41,7 +41,6 @@ export interface IRegistrationsStore {
     readonly registrations: ICollection<IRegistration>;
     registration?: Doc<IRegistration> | {};
     readonly registrationsGroupedByDay: IGroupedRegistrations[];
-    totalTime: number;
     save: () => void;
     delete: () => void;
     getNew: () => Doc<Partial<IRegistration>>;
@@ -68,8 +67,8 @@ export class RegistrationStore implements IRegistrationsStore {
         const updateRegistrationQuery = () => {
             when(() => !!this.rootStore.user.user, () => {
                 const moment = rootStore.view.moment;
-                const endDate = moment.clone().add(rootStore.view.day ? 1 : rootStore.view.moment.daysInMonth(), "days").toDate();
-                const startDate = moment.clone().toDate();
+                const endDate = moment.clone().endOf("month").toDate();
+                const startDate = moment.clone().startOf("month").toDate();
                 this.registrations.query = ref => ref
                     .where("deleted", "==", false)
                     .where("date", ">", startDate)
@@ -81,14 +80,8 @@ export class RegistrationStore implements IRegistrationsStore {
         // update the query of the registration collection each time...
         // -- the view moment changes
         // -- the logged in user changes
-        reaction(() => rootStore.view.moment, updateRegistrationQuery);
+        reaction(() => rootStore.view.monthMoment, updateRegistrationQuery);
         reaction(() => rootStore.user.user, updateRegistrationQuery);
-    }
-
-    @computed get totalTime() {
-        return Array.from(this.registrations.docs.values())
-            .filter(r => !!r.data)
-            .reduce((p, c) => p + (c.data!.time || 0), 0);
     }
 
     @computed get registrationsGroupedByDay() {

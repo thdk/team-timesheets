@@ -38,7 +38,8 @@ export class Reports extends React.Component {
             ? `Timesheet ${store.view.moment.format('LL')}`
             : `Timesheet ${store.view.moment.format('MMMM YYYY')}`;
 
-        const totalTime = store.timesheets.totalTime;
+        const totalTime = Array.from(store.timesheets.registrations.docs.values())
+        .reduce((p, c) => p + (c.data!.time || 0), 0);
 
         const totalLabel = `Total in ${store.view.moment.format('MMMM')}`;
         const total = <ListItem key={`total-month`} lines={[totalLabel]} meta={totalTime + " hours"} disabled={true}></ListItem>

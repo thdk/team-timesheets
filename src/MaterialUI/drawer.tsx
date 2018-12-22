@@ -2,14 +2,13 @@ import * as React from 'react';
 import { MDCDrawer } from "@material/drawer/index";
 import { observer } from 'mobx-react';
 import store from '../stores/RootStore';
-import { Doc } from '../Firestorable/Document';
 
 @observer
 export class Drawer extends React.Component {
     private mdcDrawer?: any;
 
     render() {
-        const displayName = store.user.user instanceof(Doc) ? store.user.user.displayName || "Guest" : "";
+        const displayName = store.user.user ? store.user.user!.displayName || "Guest" : "";
         return (<>
             <aside className="mdc-drawer mdc-drawer--dismissible">
                 <div className="mdc-drawer__header">

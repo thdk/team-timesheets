@@ -73,7 +73,7 @@ export class RegistrationStore implements IRegistrationsStore {
                     .where("deleted", "==", false)
                     .where("date", ">", startDate)
                     .where("date", "<=", endDate)
-                    .where("userId", "==", rootStore.user.user!.id);
+                    .where("userId", "==", rootStore.user.userId);
             });
         };
 
@@ -81,7 +81,7 @@ export class RegistrationStore implements IRegistrationsStore {
         // -- the view moment changes
         // -- the logged in user changes
         reaction(() => rootStore.view.monthMoment, updateRegistrationQuery);
-        reaction(() => rootStore.user.user, updateRegistrationQuery);
+        reaction(() => rootStore.user.userId, updateRegistrationQuery);
     }
 
     @computed get registrationsGroupedByDay() {

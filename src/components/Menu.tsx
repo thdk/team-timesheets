@@ -39,7 +39,7 @@ export class Menu extends React.Component {
 
     toggleLogin = (e: React.MouseEvent) => {
         e.preventDefault();
-        (store.user.user instanceof (Doc)) ? firestorable.auth.signOut() : goToLogin(store);
+        store.user.user ? firestorable.auth.signOut() : goToLogin(store);
     }
 
     navigate = (e: React.MouseEvent, navigate: () => void) => {
@@ -49,6 +49,10 @@ export class Menu extends React.Component {
 
     getTileClassName = (tile: CalendarTileProperties) => {
         if (tile.view === "month") {
+            // TODO: TIMEZONE ISSUE!!!
+            // It should be enough to check g.date.getTime() === tile.date.getTime()
+            // However due to a timezone issue it not always gives the required results!
+            // below code is NOT ready for production
             const tileHasData = store.timesheets.registrationsGroupedByDay.some(g =>
                 g.date.getDate() === tile.date.getDate()
                 && g.date.getMonth() === tile.date.getMonth()
@@ -62,7 +66,7 @@ export class Menu extends React.Component {
     render() {
         return (
             <>
-                <Calendar key={store.timesheets.registrationsGroupedByDay.map(g => g.date.getDate()).join()} tileClassName={this.getTileClassName} activeStartDate={store.view.moment.toDate()} onChange={this.dateChanged}></Calendar>
+                <Calendar key={store.timesheets.registrationsGroupedByDay.toString()} tileClassName={this.getTileClassName} activeStartDate={store.view.moment.toDate()} onChange={this.dateChanged}></Calendar>
                 <div className="mdc-list">
                     <a className="mdc-list-item" onClick={this.navigateToOverview} href="/" aria-selected="true">
                         <i className="material-icons mdc-list-item__graphic" aria-hidden="true">today</i>
@@ -92,7 +96,7 @@ export class Menu extends React.Component {
                     </a>
                     <a className="mdc-list-item" onClick={this.toggleLogin} href="/config/projects">
                         <i className="material-icons mdc-list-item__graphic" aria-hidden="true">perm_identity</i>
-                        <span className="mdc-list-item__text">{(store.user.user instanceof (Doc)) ? "Logout" : "Login"}</span>
+                        <span className="mdc-list-item__text">{store.user.userId ? "Logout" : "Login"}</span>
                     </a>
 
                 </div>

@@ -8,6 +8,7 @@ import * as serializer from '../serialization/serializer';
 
 export interface IUserStore {
     defaultTask: string;
+    userId?: string;
     user: (Doc<IUser> & Pick<firebase.User, "email" | "displayName">) | undefined;
     setUser: (fbUser: firebase.User | null) => void;
     save: () => void;

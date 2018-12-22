@@ -54,8 +54,8 @@ export class ViewStore implements IViewStore {
 
     this.setNavigation("default");
 
-    reaction(() => rootStore.user.user, user => {
-      if (!(user instanceof(Doc))) {
+    reaction(() => rootStore.user.userId, userId => {
+      if (!userId) {
         goToLogin(rootStore);
       }
     });

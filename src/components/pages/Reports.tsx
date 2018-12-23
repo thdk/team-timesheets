@@ -7,6 +7,7 @@ import { FlexGroup } from '../Layout/flex';
 import { GroupedRegistrations } from '../GroupedRegistrations';
 import { goToOverview } from '../../routes/timesheets/overview';
 import { List, ListItem, ListDivider } from '../../MaterialUI/list';
+import { DateSelect } from '../Controls/DateSelect';
 
 @observer
 export class Reports extends React.Component {
@@ -36,7 +37,7 @@ export class Reports extends React.Component {
 
         const totalTime = Array.from(store.timesheets.registrations.docs.values())
             .reduce((p, c) => p + (c.data!.time || 0), 0);
-
+            
         const totalLabel = `Total in ${store.view.moment.format('MMMM')}`;
         const total = <ListItem key={`total-month`} lines={[totalLabel]} meta={totalTime + " hours"} disabled={true}></ListItem>
 
@@ -44,13 +45,8 @@ export class Reports extends React.Component {
         return (
             <>
                 <FlexGroup direction="vertical">
-                    <div style={{ paddingLeft: "1em" }}>
-                        <h3 className="mdc-typography--subtitle1">
-                            {title}
-                        </h3>
-                    </div>
                     <FlexGroup>
-                        
+                        <DateSelect month={store.view.month - 1} year={store.view.year}></DateSelect>
                     </FlexGroup>
                     <GroupedRegistrations totalOnTop={true} createTotalLabel={this.createTotalLabel} registrationClick={this.registrationClick.bind(this)} />
                     {totalList}

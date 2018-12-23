@@ -7,6 +7,7 @@ import store from '../stores/RootStore';
 import { FlexGroup } from './Layout/flex';
 import { goToOverview } from '../routes/timesheets/overview';
 import { GroupedRegistration } from './GroupedRegistration';
+import {GroupedRegistrations} from './GroupedRegistrations';
 
 @observer
 export class Timesheets extends React.Component {
@@ -28,11 +29,17 @@ export class Timesheets extends React.Component {
     }
 
     render() {
-        const group = store.timesheets.registrationsGroupedByDay.filter(g => g.date.getDate() === store.view.day);
+        let regs: React.ReactNode;
+        if (store.view.day) {
+            const group = store.timesheets.registrationsGroupedByDay.filter(g => g.date.getDate() === store.view.day);
 
-        const registrations = group.length
-            ? <GroupedRegistration group={group[0]} createTotalLabel={this.createTotalLabel} registrationClick={this.registrationClick.bind(this)} />
-            : <></>;
+            regs = group.length
+                ? <GroupedRegistration group={group[0]} createTotalLabel={this.createTotalLabel} registrationClick={this.registrationClick.bind(this)} />
+                : <></>;
+        } else {
+            regs = <GroupedRegistrations createTotalLabel={this.createTotalLabel} registrationClick={this.registrationClick.bind(this)}></GroupedRegistrations>
+        }
+
 
         const title = store.view.day
             ? <>Timesheet <a href="#" onClick={this.goToMonth}>{store.view.moment.format('MMMM')}</a> {store.view.moment.format('D, YYYY')}</>
@@ -45,7 +52,7 @@ export class Timesheets extends React.Component {
                             {title}
                         </h3>
                     </div>
-                    {registrations}
+                    {regs}
                 </FlexGroup>
                 <Fab onClick={this.addRegistration} icon="add" name="Add new registration"></Fab>
             </>

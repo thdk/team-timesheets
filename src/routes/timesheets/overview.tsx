@@ -44,7 +44,7 @@ const routes = {
     }),
     monthOverview: new Route({
         path: path + '/:year/:month',
-        component: <App><Reports></Reports></App>,
+        component: <App><Timesheets></Timesheets></App>,
         onEnter: (route: Route, params: IDate, s: IRootStore) => {
             s.view.setCalendarDetail("month");
             routeChanged(route, params, s);

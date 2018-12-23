@@ -20,7 +20,10 @@ const routes = {
     report: new Route({
         path: path + '/:year/:month',
         component: <App><Reports></Reports></App>,
-        onEnter: routeChanged,
+        onEnter: (route: Route, params: IDate, s: IRootStore) => {
+            routeChanged(route, params, s);
+            s.view.setCalendarDetail("year");
+        },
         onParamsChange: routeChanged,
         title: "Report",
         beforeEnter

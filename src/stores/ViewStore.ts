@@ -21,12 +21,16 @@ export interface INavigationViewAction extends IViewAction {
   icon: "menu" | "arrow_back" | "arrow_upward";
 }
 
+export type CalendarDetail = "month" | "year" | "decade" | "century";
+
 export interface IViewStore {
   title: string;
   isDrawerOpen: boolean;
   day?: number;
   month?: number;
   year?: number;
+  calendarDetail: CalendarDetail;
+  setCalendarDetail: (detail: CalendarDetail) => void;
   readonly moment: moment.Moment;
   readonly monthMoment: moment.Moment;
   readonly actions: IObservableArray<IViewAction>;
@@ -44,6 +48,7 @@ export class ViewStore implements IViewStore {
   @observable day?: number;
   @observable month?: number;
   @observable year?: number;
+  @observable calendarDetail: CalendarDetail;
 
   private readonly rootStore: IRootStore;
 
@@ -53,6 +58,7 @@ export class ViewStore implements IViewStore {
     const date = new Date();
     this.title = "";
     this.isDrawerOpen = false;
+    this.calendarDetail = "month";
 
     transaction(() => {
       this.day = date.getDate();
@@ -114,5 +120,9 @@ export class ViewStore implements IViewStore {
 
   @action removeAction(action: IViewAction) {
     this.actions.remove(action);
+  }
+
+  @action setCalendarDetail(detail: CalendarDetail)  {
+    this.calendarDetail = detail;
   }
 }

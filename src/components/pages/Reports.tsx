@@ -32,9 +32,7 @@ export class Reports extends React.Component {
     }
 
     render() {
-        const title = store.view.day
-            ? `Timesheet ${store.view.moment.format('LL')}`
-            : `Timesheet ${store.view.moment.format('MMMM YYYY')}`;
+        const title = `Timesheet ${store.view.moment.format('MMMM YYYY')}`;
 
         const totalTime = Array.from(store.timesheets.registrations.docs.values())
             .reduce((p, c) => p + (c.data!.time || 0), 0);
@@ -51,6 +49,9 @@ export class Reports extends React.Component {
                             {title}
                         </h3>
                     </div>
+                    <FlexGroup>
+                        
+                    </FlexGroup>
                     <GroupedRegistrations totalOnTop={true} createTotalLabel={this.createTotalLabel} registrationClick={this.registrationClick.bind(this)} />
                     {totalList}
                 </FlexGroup>

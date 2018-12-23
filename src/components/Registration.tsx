@@ -8,16 +8,15 @@ import { FlexGroup } from './Layout/flex';
 import { goToOverview } from '../internal';
 import { Select, SelectOption } from '../MaterialUI/select';
 import store from '../stores/RootStore';
-import { IUser } from '../stores/UserStore';
 
 @observer
 export class Registration extends React.Component {
     render() {
         if (!store.timesheets.registration || !(store.timesheets.registration instanceof (Doc))) return <></>;
 
-        if (!store.timesheets.registration.data) return <></>;
+        if (!store.timesheets.registration.data || !store.user.userId) return <></>;
 
-        const userTasks = Array.from((store.user.user as Doc<IUser>).data!.tasks.keys());
+        const userTasks = Array.from(store.user.user!.data!.tasks.keys());
         const { task = store.user.defaultTask, description, project, time, date } = store.timesheets.registration.data;
         const tasks = Array.from(store.config.tasks.docs.values())
             .filter(t => userTasks.some(userTaskId => userTaskId === t.id))
@@ -98,23 +97,5 @@ export class Registration extends React.Component {
     taskClicked = (taskId: string) => {
         if (store.timesheets.registration && store.timesheets.registration instanceof (Doc) && store.timesheets.registration.data)
             store.timesheets.registration.data.task = taskId;
-    }
-
-    keyDown = (e: KeyboardEvent) => {
-        if (e.ctrlKey && e.key === "Enter") {
-            store.timesheets.save();
-            goToOverview(store);
-        }
-        else if (e.key === "Escape") {
-            goToOverview(store);
-        }
-    }
-
-    componentDidMount() {
-        document.addEventListener("keydown", this.keyDown);
-    }
-
-    componentWillUnmount() {
-        document.removeEventListener("keydown", this.keyDown);
     }
 }

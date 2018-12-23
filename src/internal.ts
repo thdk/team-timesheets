@@ -12,6 +12,7 @@
 export * from './components/App';
 export * from './routes/timesheets/overview';
 export * from './routes/timesheets/detail';
+export * from './routes/reports/report';
 export * from './routes/login';
 export * from './routes/config/projects';
 export * from './routes/config/tasks';

@@ -4,6 +4,7 @@ import { Route, RoutesConfig } from 'mobx-router';
 import timesheetsRoutes from './timesheets/index';
 import settingsRoutes from './settings/index';
 import configRoutes from './config';
+import reportRoutes from './reports/index';
 import { goToOverview } from '../internal';
 import store from '../stores/RootStore';
 
@@ -19,6 +20,7 @@ const routes: RoutesConfig = {
   }),
   ...timesheetsRoutes,
   ...configRoutes,
-  ...settingsRoutes
+  ...settingsRoutes,
+  ...reportRoutes
 };
 export default routes;

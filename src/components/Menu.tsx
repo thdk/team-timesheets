@@ -1,7 +1,7 @@
 import * as React from 'react';
 import moment from 'moment-es6';
 import { observer } from 'mobx-react';
-import { goToOverview, goToProjects, goToLogin, goToTasks, goToPreferences } from "../internal";
+import { goToOverview, goToProjects, goToLogin, goToTasks, goToPreferences, goToReports } from "../internal";
 import { firestorable } from '../Firestorable/Firestorable';
 import store from '../stores/RootStore';
 import { Doc } from '../Firestorable/Document';
@@ -80,21 +80,25 @@ export class Menu extends React.Component {
 
                     <hr className="mdc-list-divider" />
                     <h6 className="mdc-list-group__subheader">Planning</h6>
-                    <a className="mdc-list-item" onClick={this.navigateToProjects} href="/config/projects">
+                    <a className="mdc-list-item" onClick={this.navigateToProjects} href="#">
                         <i className="material-icons mdc-list-item__graphic" aria-hidden="true">bookmark</i>
                         <span className="mdc-list-item__text">Projects</span>
                     </a>
-                    <a className="mdc-list-item" onClick={this.navigateToTasks} href="/config/tasks">
+                    <a className="mdc-list-item" onClick={this.navigateToTasks} href="#">
                         <i className="material-icons mdc-list-item__graphic" aria-hidden="true">bookmark</i>
                         <span className="mdc-list-item__text">Tasks</span>
                     </a>
+                    <a className="mdc-list-item" onClick={e => this.navigate(e, () => {e.preventDefault(); goToReports(store);})} href="#">
+                        <i className="material-icons mdc-list-item__graphic" aria-hidden="true">bookmark</i>
+                        <span className="mdc-list-item__text">Reports</span>
+                    </a>
 
                     <hr className="mdc-list-divider" />
-                    <a className="mdc-list-item" onClick={e => this.navigate(e, goToPreferences)} href="/settings/preferences">
+                    <a className="mdc-list-item" onClick={e => this.navigate(e, goToPreferences)} href="#">
                         <i className="material-icons mdc-list-item__graphic" aria-hidden="true">settings</i>
                         <span className="mdc-list-item__text">Settings</span>
                     </a>
-                    <a className="mdc-list-item" onClick={this.toggleLogin} href="/config/projects">
+                    <a className="mdc-list-item" onClick={this.toggleLogin} href="#">
                         <i className="material-icons mdc-list-item__graphic" aria-hidden="true">perm_identity</i>
                         <span className="mdc-list-item__text">{store.user.userId ? "Logout" : "Login"}</span>
                     </a>

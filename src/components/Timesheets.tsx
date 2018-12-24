@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { observer } from "mobx-react";
+import moment from 'moment-es6';
 import { Fab } from "../MaterialUI/buttons";
 import routes from '../routes/index';
 import { goToRegistration } from '../internal';
@@ -16,8 +17,19 @@ export class Timesheets extends React.Component {
         goToRegistration(id);
     }
 
-    createTotalLabel = (_date: Date) => {
-        return `Total`;
+    createTotalLabel = (date: Date) => {
+        return store.view.day 
+        ? `Total` 
+        : <a  href="#" onClick={(e) => this.goToDate(e, date)}>{moment(date).format("MMMM Do")}</a>;
+    }
+
+    goToDate(e: React.MouseEvent, date: Date) {
+        e.preventDefault();
+        goToOverview(store, {
+            year: date.getFullYear(),
+            month: date.getMonth() + 1,
+            day: date.getDate()
+        })
     }
 
     goToMonth(e: React.MouseEvent) {
@@ -37,7 +49,7 @@ export class Timesheets extends React.Component {
                 ? <GroupedRegistration group={group[0]} createTotalLabel={this.createTotalLabel} registrationClick={this.registrationClick.bind(this)} />
                 : <></>;
         } else {
-            regs = <GroupedRegistrations createTotalLabel={this.createTotalLabel} registrationClick={this.registrationClick.bind(this)}></GroupedRegistrations>
+            regs = <GroupedRegistrations totalOnTop={true} createTotalLabel={this.createTotalLabel} registrationClick={this.registrationClick.bind(this)}></GroupedRegistrations>
         }
 
 

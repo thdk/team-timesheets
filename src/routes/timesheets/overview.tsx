@@ -5,7 +5,6 @@ import { transaction } from 'mobx';
 import { beforeEnter, setNavigationContent, goToRouteWithDate } from '../actions';
 import { App } from '../../internal';
 import { IRootStore } from '../../stores/RootStore';
-import { Reports } from '../../components/Pages/Reports';
 
 export interface IDate {
     year: number;

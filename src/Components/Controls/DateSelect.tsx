@@ -9,12 +9,13 @@ import { observer } from 'mobx-react';
 export interface IDateSelectProps {
     year?: number;
     month?: number;
+    onMonthChange: (month: number) => void;
+    onYearChange: (year: number) => void;
 }
 
-@observer
 export class DateSelect extends React.Component<IDateSelectProps> {
     render() {
-        const { year, month} = this.props;
+        const { year, month, onMonthChange, onYearChange } = this.props;
         const months = moment.months().map((m, i) => {
             return <SelectOption key={m} text={m} value={i.toString()}></SelectOption>
         });
@@ -25,32 +26,29 @@ export class DateSelect extends React.Component<IDateSelectProps> {
             return <SelectOption key={year} text={year.toString()} value={year.toString()}></SelectOption>
         });
 
-        console.log(month);
-        console.log(year);
         return (
             <Form>
                 <FlexGroup>
                     <FormField>
-                        <Select value={year!.toString()} outlined={true} label={"Year"} onChange={this.yearChange}>
+                        <Select value={year ? year.toString() : undefined} outlined={true} label={"Year"} onChange={this.onYearChange}>
                             {years}
                         </Select>
                     </FormField>
                     <FormField first={false}>
-                        <Select value={month!.toString()} outlined={true} label={"Month"} onChange={this.monthChange}>
+                        <Select value={month ? month.toString() : undefined} outlined={true} label={"Month"} onChange={this.onMonthChange}>
                             {months}
                         </Select>
                     </FormField>
                 </FlexGroup>
             </Form>
         );
-
     }
 
-    monthChange(value: string) {
-        store.view.month = +value + 1;
+    onMonthChange = (value: string) => {
+        this.props.onMonthChange(+value);
     }
 
-    yearChange(value: string) {
-        store.view.year = +value;
+    onYearChange = (value: string) => {
+        this.props.onYearChange(+value);
     }
 }

@@ -1,10 +1,8 @@
 import * as React from 'react';
-import moment from 'moment-es6';
 import { observer } from 'mobx-react';
 import { goToOverview, goToProjects, goToLogin, goToTasks, goToPreferences, goToReports } from "../internal";
 import { firestorable } from '../Firestorable/Firestorable';
 import store from '../stores/RootStore';
-import { Doc } from '../Firestorable/Document';
 import Calendar, { CalendarTileProperties } from 'react-calendar/dist/entry.nostyle';
 
 @observer
@@ -73,9 +71,9 @@ export class Menu extends React.Component {
                         <span className="mdc-list-item__text">Today</span>
                     </a>
 
-                    <a className="mdc-list-item" onClick={this.navigateToCurrentMonth} href="/" aria-selected="true">
-                        <i className="material-icons mdc-list-item__graphic" aria-hidden="true">calendar_today</i>
-                        <span className="mdc-list-item__text">{moment(new Date()).format("MMMM")}</span>
+                    <a className="mdc-list-item" onClick={e => this.navigate(e, () => {e.preventDefault(); goToReports(store);})} href="#">
+                        <i className="material-icons mdc-list-item__graphic" aria-hidden="true">list</i>
+                        <span className="mdc-list-item__text">Reports</span>
                     </a>
 
                     <hr className="mdc-list-divider" />
@@ -87,11 +85,7 @@ export class Menu extends React.Component {
                     <a className="mdc-list-item" onClick={this.navigateToTasks} href="#">
                         <i className="material-icons mdc-list-item__graphic" aria-hidden="true">bookmark</i>
                         <span className="mdc-list-item__text">Tasks</span>
-                    </a>
-                    <a className="mdc-list-item" onClick={e => this.navigate(e, () => {e.preventDefault(); goToReports(store);})} href="#">
-                        <i className="material-icons mdc-list-item__graphic" aria-hidden="true">bookmark</i>
-                        <span className="mdc-list-item__text">Reports</span>
-                    </a>
+                    </a>                    
 
                     <hr className="mdc-list-divider" />
                     <a className="mdc-list-item" onClick={e => this.navigate(e, goToPreferences)} href="#">

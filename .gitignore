@@ -68,3 +68,5 @@ src/config.ts
 
 .firebaserc
 .firebase/
+
+functions/lib

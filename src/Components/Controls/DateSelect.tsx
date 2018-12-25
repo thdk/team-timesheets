@@ -2,11 +2,10 @@ import * as React from 'react';
 import { FlexGroup } from '../Layout/flex';
 import moment from 'moment-es6';
 import { Select, SelectOption } from '../../MaterialUI/select';
-import { Form, FormField } from '../Layout/form';
-import store from '../../stores/RootStore';
-import { observer } from 'mobx-react';
+import { FormField } from '../Layout/form';
+import { IReactProps } from '../../types';
 
-export interface IDateSelectProps {
+export interface IDateSelectProps extends IReactProps {
     year?: number;
     month?: number;
     onMonthChange: (month: number) => void;
@@ -15,7 +14,7 @@ export interface IDateSelectProps {
 
 export class DateSelect extends React.Component<IDateSelectProps> {
     render() {
-        const { year, month, onMonthChange, onYearChange } = this.props;
+        const { year, month, style } = this.props;
         const months = moment.months().map((m, i) => {
             return <SelectOption key={m} text={m} value={i.toString()}></SelectOption>
         });
@@ -27,20 +26,18 @@ export class DateSelect extends React.Component<IDateSelectProps> {
         });
 
         return (
-            <Form>
-                <FlexGroup>
-                    <FormField>
-                        <Select value={year ? year.toString() : undefined} outlined={true} label={"Year"} onChange={this.onYearChange}>
-                            {years}
-                        </Select>
-                    </FormField>
-                    <FormField first={false}>
-                        <Select value={month ? month.toString() : undefined} outlined={true} label={"Month"} onChange={this.onMonthChange}>
-                            {months}
-                        </Select>
-                    </FormField>
-                </FlexGroup>
-            </Form>
+            <FlexGroup style={style}>
+                <FormField>
+                    <Select value={year ? year.toString() : undefined} outlined={true} label={"Year"} onChange={this.onYearChange}>
+                        {years}
+                    </Select>
+                </FormField>
+                <FormField first={false}>
+                    <Select value={month ? month.toString() : undefined} outlined={true} label={"Month"} onChange={this.onMonthChange}>
+                        {months}
+                    </Select>
+                </FormField>
+            </FlexGroup>
         );
     }
 

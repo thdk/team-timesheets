@@ -8,6 +8,8 @@ import { GroupedRegistrations } from '../GroupedRegistrations';
 import { goToOverview } from '../../routes/timesheets/overview';
 import { List, ListItem, ListDivider } from '../../MaterialUI/list';
 import { DateSelect } from '../Controls/DateSelect';
+import { Button, ButtonType } from '../../MaterialUI/buttons';
+import { Form } from '../Layout/form';
 
 @observer
 export class Reports extends React.Component {
@@ -46,14 +48,22 @@ export class Reports extends React.Component {
         return (
             <>
                 <FlexGroup direction="vertical">
-                    <FlexGroup>
-                        <DateSelect onMonthChange={this.changeMonth} onYearChange={this.changeYear} month={month ? month - 1 : undefined} year={year}></DateSelect>
+                    <FlexGroup style={{ alignItems: "center", justifyContent: "space-between", width: "100%" }}>
+                        <DateSelect style={{ margin: "1em" }} onMonthChange={this.changeMonth} onYearChange={this.changeYear} month={month ? month - 1 : undefined} year={year}></DateSelect>
+                        <Button onClick={this.export} style={{ margin: "1em" }} type={ButtonType.Outlined}>Export</Button>
                     </FlexGroup>
                     <GroupedRegistrations totalOnTop={true} createTotalLabel={this.createTotalLabel} registrationClick={this.registrationClick.bind(this)} />
                     {totalList}
                 </FlexGroup>
             </>
         );
+    }
+
+    export = () => {
+        store.user.userId
+            && store.view.year
+            && store.view.month
+            && store.reports.requestReport(store.user.userId, store.view.year, store.view.month);
     }
 
     changeMonth(month: number) {

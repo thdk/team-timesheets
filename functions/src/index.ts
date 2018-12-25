@@ -18,11 +18,11 @@ db.settings({ timestampsInSnapshots: true });
 
 exports.requestReport = functions.https.onRequest((req, res) => {
     // ...
-    const { year, user, month } = req.query;
+    const { year, user: userId, month } = req.query;
     admin.firestore().collection('reports').add(
         {
             status: 'waiting',
-            user,
+            userId,
             year,
             month
         }
@@ -40,7 +40,7 @@ exports.createCSV = functions.firestore
         // Step 1. Set main variables
 
         const reportData = snapshot.data();
-        const { year, month, user } = reportData;
+        const { year, month, userId } = reportData;
 
         const reportId = snapshot.id;
         const fileName = `reports/${reportId}.csv`;
@@ -68,7 +68,7 @@ exports.createCSV = functions.firestore
             .where("deleted", "==", false)
             .where("date", ">", startDate)
             .where("date", "<=", endDate)
-            .where("userId", "==", user)
+            .where("userId", "==", userId)
             .get()
             .then(querySnapshot => {
                 /// Step 3. Creates CSV file from with orders collection
@@ -104,7 +104,7 @@ exports.createCSV = functions.firestore
                 throw new Error(error)
             })
             .then(file => {
-                // Step 6. Update status to complete in Firestore 
+                // Step 6. Update status to complete in Firestore
 
                 return reportRef.update({ status: 'complete' })
             }, error => {

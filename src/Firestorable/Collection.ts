@@ -11,7 +11,7 @@ export interface ICollection<T> {
     getDocs: () => void;
     newDoc: (data: Partial<T>) => Doc<Partial<T>>;
     updateAsync: (id: string, data: T) => Promise<void>;
-    addAsync: (doc: Doc<T>) => Promise<string>;
+    addAsync: (data: T, id?: string) => Promise<string>;
     getAsync: (id: string) => Promise<Doc<T> | undefined>;
     getOrCreateAsync: (id: string) => Promise<Doc<T>>;
     deleteAsync: (id: string) => Promise<void>;
@@ -88,9 +88,9 @@ export class Collection<T, K = T> implements ICollection<T> {
     }
 
     // TODO: when realtime updates is disabled, we must manually update the docs!
-    public addAsync(doc: Doc<T>) {
-        const firestoreData = doc.data ? this.serialize(doc.data) : {};
-        return addAsync(this.collectionRef, firestoreData, doc.id);
+    public addAsync(data: T | null, id?: string) {
+        const firestoreData = data ? this.serialize(data) : {};
+        return addAsync(this.collectionRef, firestoreData, id);
     }
 
     public getAsync(id: string) {
@@ -104,7 +104,7 @@ export class Collection<T, K = T> implements ICollection<T> {
             if (fsDoc) return new Promise<Doc<T>>(resolve => resolve(fsDoc));
             else {
                 const doc = new Doc<T>(this.collectionRef, null, id);
-                return this.addAsync(doc).then(() => doc);
+                return this.addAsync(null, id).then(() => doc);
             }
         });
     }

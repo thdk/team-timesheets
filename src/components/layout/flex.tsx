@@ -1,15 +1,16 @@
 import * as React from 'react';
+import { IReactProps } from '../../types';
 
-export interface IFlexGroupProps {
+export interface IFlexGroupProps extends IReactProps {
     direction?: "vertical" | "horizontal";
     extraCssClass?: string;
 }
 
 export class FlexGroup extends React.Component<IFlexGroupProps> {
     render() {
-        const { direction = "horizontal", extraCssClass = "" } = this.props;
+        const { direction = "horizontal", extraCssClass = "", style } = this.props;
         return (
-            <div className={`flex ${extraCssClass} ${direction}`}>
+            <div style={style} className={`flex ${extraCssClass} ${direction}`}>
                 {this.props.children}
             </div>
         )

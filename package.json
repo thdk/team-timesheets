@@ -40,6 +40,7 @@
     "vinyl-source-stream": "^2.0.0"
   },
   "dependencies": {
+    "@material/button": "^0.42.0",
     "@material/chips": "^0.42.0",
     "@material/drawer": "^0.42.0",
     "@material/fab": "^0.42.0",
@@ -48,6 +49,7 @@
     "@material/textfield": "^0.42.0",
     "@material/top-app-bar": "^0.42.0",
     "@material/typography": "^0.42.0",
+    "@material/ripple": "0.40.1",
     "firebase": "^5.6.0",
     "firebase-tools": "^6.1.2",
     "firebaseui": "^3.4.1",

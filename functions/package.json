@@ -16,6 +16,7 @@
     "firebase-functions": "^2.0.3",
     "fs-extra": "^7.0.1",
     "json2csv": "^4.3.2",
+    "moment-es6": "^1.0.0",
     "os": "^0.1.1",
     "path": "^0.12.7"
   },

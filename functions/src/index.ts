@@ -40,6 +40,9 @@ exports.createCSV = functions.firestore
         // Step 1. Set main variables
 
         const reportData = snapshot.data();
+
+        if (!reportData) return new Promise(resolve => resolve());
+
         const { year, month, userId } = reportData;
 
         const reportId = snapshot.id;

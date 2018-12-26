@@ -65,7 +65,9 @@ export class RegistrationStore implements IRegistrationsStore {
         this.registration = {};
 
         const updateRegistrationQuery = () => {
-            when(() => !!this.rootStore.user.user, () => {
+            // TODO: replace when whith a if else
+            // clear the docs when there is no userId
+            when(() => !!this.rootStore.user.userId, () => {
                 const moment = rootStore.view.moment;
                 const endDate = moment.clone().endOf("month").toDate();
                 const startDate = moment.clone().startOf("month").toDate();
@@ -122,7 +124,7 @@ export class RegistrationStore implements IRegistrationsStore {
             && this.registration.data.date
             && this.registration.data.description
             && this.registration.data.userId
-            && this.registrations.addAsync(this.registration);
+            && this.registrations.addAsync(this.registration.data, this.registration.id);
     }
 
     delete() {

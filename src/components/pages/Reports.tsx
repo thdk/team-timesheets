@@ -9,7 +9,6 @@ import { goToOverview } from '../../routes/timesheets/overview';
 import { List, ListItem, ListDivider } from '../../MaterialUI/list';
 import { DateSelect } from '../Controls/DateSelect';
 import { Button, ButtonType } from '../../MaterialUI/buttons';
-import { Form } from '../Layout/form';
 
 @observer
 export class Reports extends React.Component {
@@ -45,6 +44,12 @@ export class Reports extends React.Component {
 
         const { month, year } = store.view;
 
+        const download = (store.reports.report && store.reports.report.data) ? store.reports.reportUrl
+            ? <a href={store.reports.reportUrl}>Download report</a>
+            : store.reports.report.data.status : undefined;
+        const downloadReport = download &&
+            <FlexGroup direction={"vertical"} style={{ paddingRight:"1em", alignItems: "flex-end"}}>{download}</FlexGroup>
+
         return (
             <>
                 <FlexGroup direction="vertical">
@@ -52,6 +57,7 @@ export class Reports extends React.Component {
                         <DateSelect style={{ margin: "1em" }} onMonthChange={this.changeMonth} onYearChange={this.changeYear} month={month ? month - 1 : undefined} year={year}></DateSelect>
                         <Button onClick={this.export} style={{ margin: "1em" }} type={ButtonType.Outlined}>Export</Button>
                     </FlexGroup>
+                    {downloadReport}
                     <GroupedRegistrations totalOnTop={true} createTotalLabel={this.createTotalLabel} registrationClick={this.registrationClick.bind(this)} />
                     {totalList}
                 </FlexGroup>

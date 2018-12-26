@@ -3,6 +3,7 @@ export interface IAppConfig {
     apiKey: string;
     authDomain: string;
     projectId: string;
+    storageBucket: string;
 }
 
 export const config: IAppConfig = {

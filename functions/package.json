@@ -21,6 +21,8 @@
     "path": "^0.12.7"
   },
   "devDependencies": {
+    "@types/json2csv": "^4.2.0",
+    "@types/fs-extra": "^5.0.4",
     "tslint": "~5.8.0",
     "typescript": "~2.8.3"
   },

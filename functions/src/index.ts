@@ -16,29 +16,9 @@ admin.initializeApp();
 const db = admin.firestore();
 db.settings({ timestampsInSnapshots: true });
 
-exports.requestReport = functions.https.onRequest((req, res) => {
-    // ...
-    const { year, user: userId, month } = req.query;
-    admin.firestore().collection('reports').add(
-        {
-            status: 'waiting',
-            userId,
-            year,
-            month
-        }
-    ).then(r =>
-        res.status(200).send(r.id)
-        , error => {
-            res.status(500).end()
-        })
-});
-
 exports.createCSV = functions.firestore
     .document('reports/{reportId}')
     .onCreate(snapshot => {
-
-        // Step 1. Set main variables
-
         const reportData = snapshot.data();
 
         if (!reportData) return new Promise(resolve => resolve());
@@ -46,7 +26,7 @@ exports.createCSV = functions.firestore
         const { year, month, userId } = reportData;
 
         const reportId = snapshot.id;
-        const fileName = `reports/${reportId}.csv`;
+        const fileName = `reports/${year}/${month}/${year}-${month}-${userId}.csv`;
         const tempFilePath = path.join(os.tmpdir(), fileName);
 
         const reportRef = db.collection('reports').doc(reportId)
@@ -74,10 +54,9 @@ exports.createCSV = functions.firestore
             .where("userId", "==", userId)
             .get()
             .then(querySnapshot => {
-                /// Step 3. Creates CSV file from with orders collection
-                const orders = []
+                const registrations: any[] = [];
 
-                // create array of order data
+                // create array of registration data
                 querySnapshot.forEach(doc => {
                     const fireStoreData = doc.data();
                     const projectData = projectsMap.get(fireStoreData.project);
@@ -85,30 +64,30 @@ exports.createCSV = functions.firestore
                     const project = projectData ? projectData.name : fireStoreData.project;
                     const task = taskData ? taskData.name : fireStoreData.task;
 
-                    // todo use optiosn of jsonTOcsv to filter unwanted fields from csv
+                    // todo use options of jsonTOcsv to filter unwanted fields from csv
                     // instead of deleting each field below
                     delete fireStoreData.deleted;
                     delete fireStoreData.userId;
-                    orders.push({ ...fireStoreData, project, task });
+                    registrations.push({ ...fireStoreData, project, task });
                 });
 
-                return json2csv(orders);
+                return json2csv(registrations);
             })
             .then(csv => {
-                // Step 4. Write the file to cloud function tmp storage
+                // Write the file to cloud function tmp storage
                 return fs.outputFile(tempFilePath, csv);
             }, error => {
                 throw new Error(error)
             })
             .then(() => {
-                // Step 5. Upload the file to Firebase cloud storage
+                // Upload the file to Firebase cloud storage
                 return storage.upload(tempFilePath, { destination: fileName })
             }, error => {
                 throw new Error(error)
             })
-            .then(file => {
-                // Step 6. Update status to complete in Firestore
-
+            .then(_file => {
+                // Update status to complete in Firestore
+                // TODO? Get download url of uploaded file and add it to the Firestore report record
                 return reportRef.update({ status: 'complete' })
             }, error => {
                 throw new Error(error)

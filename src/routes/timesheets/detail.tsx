@@ -35,7 +35,7 @@ const onEnter = (route: Route, params: { id?: string }, s: IRootStore) => {
             goToOverview(s);
         },
         icon: "delete",
-        shortKey: { key: "Delete" }
+        shortKey: { key: "Delete", ctrlKey: true }
     }
 
     const saveAction: IViewAction = {

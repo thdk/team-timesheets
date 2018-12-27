@@ -74,7 +74,7 @@ export class UserStore implements IUserStore {
     @action
     public setUser(fbUser: firebase.User | null) {
         if (!fbUser) {
-            this.userId = "none"; // userid should be observable ref?
+            this.userId = undefined; // userid should be observable ref?
         }
         else {
             this.state = StoreState.Pending;

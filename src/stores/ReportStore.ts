@@ -49,7 +49,7 @@ export class ReportStore implements IReportStore {
             if (r && r.data && r.data.status === "complete") {
                 const { month, year } = rootStore.view;
                 const {userId} = rootStore.user;
-                firestorable.storage.ref(`reports/${year}/${month}/${year}-${month}-${userId}.csv`).getDownloadURL()
+                firestorable.storage.ref(`reports/${year}/${month}/${userId}.csv`).getDownloadURL()
                     .then(url => this.reportUrl = url);
             }
         })

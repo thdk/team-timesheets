@@ -87,7 +87,12 @@ export class RegistrationStore implements IRegistrationsStore {
     }
 
     @computed get registrationsGroupedByDay() {
-        const registrations = Array.from(this.registrations.docs.values());
+        const registrations = Array.from(this.registrations.docs.values())
+            .sort((a, b) => {
+                const aTime = a.data!.date.getTime();
+                const bTime = b.data!.date.getTime();
+                return aTime > bTime ? -1 : aTime < bTime ? 1 : 0;
+            });
         if (registrations.length === 0) return [];
         return registrations
             .slice(1)

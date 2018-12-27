@@ -1,4 +1,4 @@
-import * as functions from 'firebase-functions'
+import * as functions from 'firebase-functions';
 import * as admin from 'firebase-admin';
 
 import moment from 'moment-es6';
@@ -26,7 +26,7 @@ exports.createCSV = functions.firestore
         const { year, month, userId } = reportData;
 
         const reportId = snapshot.id;
-        const fileName = `reports/${year}/${month}/${year}-${month}-${userId}.csv`;
+        const fileName = `reports/${year}/${month}/${userId}.csv`;
         const tempFilePath = path.join(os.tmpdir(), fileName);
 
         const reportRef = db.collection('reports').doc(reportId)

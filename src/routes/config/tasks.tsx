@@ -5,7 +5,7 @@ import { setNavigationContent } from "../actions";
 import { IRootStore } from "../../stores/RootStore";
 import { TaskList } from "../../components/Projects/Tasks/TaskList";
 import { IViewAction } from "../../stores/ViewStore";
-import { reaction, IReactionDisposer } from "mobx";
+import { reaction, IReactionDisposer, when } from "mobx";
 
 export const goToTasks = (s: IRootStore) => {
     s.router.goTo(routes.tasks, {}, s);
@@ -36,7 +36,14 @@ const routes = {
             setNavigationContent(route, false);
         },
         title: "Tasks",
-        beforeExit: () => reactionDisposer && reactionDisposer()
+        beforeExit: (_route, _params, s: IRootStore) => {
+            s.config.taskId = undefined;
+
+            // needed 'when' to allow reaction to run one more time before disposing it
+            // when(() => s.config.taskId === undefined, () => {
+                reactionDisposer && reactionDisposer();
+            // });
+        }
     })
 };
 

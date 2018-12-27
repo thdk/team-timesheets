@@ -16,15 +16,6 @@ export class TopAppBar extends React.Component<TopAppBarProps> {
     render() {
         const { title, navigationIcon, navigationClick } = this.props;
 
-        const actions = store.view.actions.map((a, i) => {
-            let className = "rst-action mdc-top-app-bar__action-item mdc-icon-button";
-
-            return <button onClick={a.action} key={i} data-action-id={a.icon} className={className} aria-label={a.icon}
-                aria-hidden="true" aria-pressed="false">
-                <i className="material-icons mdc-icon-button__icon">{a.icon}</i>
-            </button>
-        });
-
         return (
             <header className="mdc-top-app-bar app-bar">
                 <div className="mdc-top-app-bar__row">
@@ -33,7 +24,7 @@ export class TopAppBar extends React.Component<TopAppBarProps> {
                         <span className="mdc-top-app-bar__title">{title}</span>
                     </section>
                     <section className="mdc-top-app-bar__section mdc-top-app-bar__section--align-end" role="toolbar">
-                        {actions}
+                        <AppBarActions></AppBarActions>
                     </section>
                 </div>
             </header>
@@ -48,5 +39,18 @@ export class TopAppBar extends React.Component<TopAppBarProps> {
 
     componentWillUnmount() {
         // TODO: deinit topappbar
+    }
+}
+
+@observer class AppBarActions extends React.Component {
+    render() {
+        return store.view.actions.map((a, i) => {
+            let className = "rst-action mdc-top-app-bar__action-item mdc-icon-button";
+
+            return <button onClick={a.action} key={i} data-action-id={a.icon} className={className} aria-label={a.icon}
+                aria-hidden="true" aria-pressed="false">
+                <i className="material-icons mdc-icon-button__icon">{a.icon}</i>
+            </button>
+        });
     }
 }

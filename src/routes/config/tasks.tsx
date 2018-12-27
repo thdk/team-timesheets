@@ -40,9 +40,9 @@ const routes = {
             s.config.taskId = undefined;
 
             // needed 'when' to allow reaction to run one more time before disposing it
-            // when(() => s.config.taskId === undefined, () => {
+            when(() => s.config.taskId === undefined, () => {
                 reactionDisposer && reactionDisposer();
-            // });
+            });
         }
     })
 };

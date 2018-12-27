@@ -48,7 +48,7 @@ export class ListItem extends React.Component<IListItemProps> {
 
         return (
             <li ref={this.liRef} className={classNames.join(" ")}>
-                {icon && <span className="mdc-list-item__graphic material-icons" aria-hidden="true">{icon}</span>}
+                {icon !== undefined && <span className="mdc-list-item__graphic material-icons" aria-hidden="true">{icon}</span>}
                 <span className="mdc-list-item__text">
                     {line1El}
                     {line2El}

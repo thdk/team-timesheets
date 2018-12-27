@@ -5,6 +5,7 @@ import { IRootStore } from './RootStore';
 export interface IConfigStore {
     projects: ICollection<IProject>;
     tasks: ICollection<ITask>;
+    taskId?: string;
 }
 
 export interface IProject {
@@ -22,6 +23,9 @@ export class ConfigStore implements IConfigStore {
 
     readonly projects: ICollection<IProject>;
     readonly tasks: ICollection<IProject>;
+
+    @observable.ref taskId?: string;
+
     constructor(_rootStore: IRootStore, getCollection: (name: string) => firebase.firestore.CollectionReference) {
         // this._rootStore = rootStore;
         this.projects = observable(new Collection<IProject>(getCollection.bind(this, "projects"), { realtime: true }));

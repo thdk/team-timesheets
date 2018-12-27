@@ -12,6 +12,7 @@ export interface IRootStore {
     readonly router: RouterStore;
     readonly timesheets: IRegistrationsStore;
     readonly reports: IReportStore;
+    readonly config: IConfigStore;
     readonly getCollection: (name: string) => firebase.firestore.CollectionReference;
 }
 

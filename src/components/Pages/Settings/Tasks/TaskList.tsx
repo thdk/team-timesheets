@@ -1,10 +1,10 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
-import store from '../../../stores/RootStore';
-import { ListItem, List } from '../../../MaterialUI/list';
 import { ReactNode } from 'react';
-import { IReactProps } from '../../../types';
-import { AddListItem, IListItemData } from '../../AddListItem';
+import { IReactProps } from '../../../../types';
+import store from '../../../../stores/RootStore';
+import { AddListItem, IListItemData } from '../../../Controls/AddListItem';
+import { ListItem, List } from '../../../../MaterialUI/list';
 
 export interface ITaskListState {
     newTask?: { name?: string, icon?: string }
@@ -23,7 +23,7 @@ export class TaskList extends React.Component<IReactProps, ITaskListState> {
                 if (c.data) {
                     const { id, data: { icon = "", name } } = c;
                     p.push(id === store.config.taskId
-                        ? <AddListItem key={id} onCancel={this.unSelectItem} onSave={(data) => this.saveListItem(data, id)} data={c.data} onClick={this.selectItem.bind(this, id)}></AddListItem>
+                        ? <AddListItem key={id} onCancel={this.unselectItem} onSave={(data) => this.saveListItem(data, id)} data={c.data} onClick={this.selectItem.bind(this, id)}></AddListItem>
                         : <ListItem onClick={this.selectItem.bind(this, id)} icon={icon} key={id} lines={[name!]}></ListItem>
                     );
                 }
@@ -36,7 +36,7 @@ export class TaskList extends React.Component<IReactProps, ITaskListState> {
             <>
                 <List isTwoLine={false}>
                     {items}
-                    <AddListItem onSave={this.saveListItem.bind(this)} ></AddListItem>
+                    <AddListItem labels={{add: "Add task"}} onSave={this.saveListItem.bind(this)} ></AddListItem>
                 </List>
             </>
         );
@@ -46,7 +46,7 @@ export class TaskList extends React.Component<IReactProps, ITaskListState> {
         store.config.taskId = id;
     }
 
-    unSelectItem() {
+    unselectItem() {
         store.config.taskId = undefined;
     }
 

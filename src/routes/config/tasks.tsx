@@ -3,9 +3,9 @@ import { App } from "../../internal";
 import * as React from 'react';
 import { setNavigationContent } from "../actions";
 import { IRootStore } from "../../stores/RootStore";
-import { TaskList } from "../../components/Projects/Tasks/TaskList";
 import { IViewAction } from "../../stores/ViewStore";
 import { reaction, IReactionDisposer, when } from "mobx";
+import { TaskList } from "../../components/Pages/Settings/Tasks/TaskList";
 
 export const goToTasks = (s: IRootStore) => {
     s.router.goTo(routes.tasks, {}, s);

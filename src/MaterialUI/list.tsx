@@ -3,14 +3,16 @@ import { IReactProps } from '../types';
 
 export interface IListProps extends IReactProps {
     isTwoLine?: boolean;
+    isDense?: boolean;
 }
 
 export class List extends React.Component<IListProps> {
     render() {
-        const {isTwoLine, style} = this.props;
+        const {isTwoLine, style, isDense} = this.props;
 
         const classNames = ["mdc-list"];
         isTwoLine && classNames.push("mdc-list--two-line");
+        isDense && classNames.push("mdc-list--dense");
         return (
             <ul style={style} className={classNames.join(" ")} aria-orientation="vertical">
                 {this.props.children}

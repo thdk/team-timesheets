@@ -7,6 +7,7 @@ declare module 'mobx-router' {
     export class RouterStore extends object {
         params: any;
         currentPath: any;
+        queryParams: any;
         goTo: any;
     };
 
@@ -16,9 +17,9 @@ declare module 'mobx-router' {
         readonly path: string;
         readonly component: JSX.Element;
         readonly onEnter?: (route: Route, params: any, store: any, queryParams: any) => void;
-        readonly beforeEnter?: (route: any, params: any, store: any) => boolean;
-        readonly beforeExit?: (route: any, params: any, store: any) => void | false;
-        readonly onParamsChange: (route: any, params: any, store: any) => void;
+        readonly beforeEnter?: (route: Route, params: any, store: any) => boolean;
+        readonly beforeExit?: (route: Route, params: any, store: any) => void | false;
+        readonly onParamsChange: (route: Route, params: any, store: any, queryParams: any) => void;
         readonly title?: string;
 
         constructor(routeConfig: {

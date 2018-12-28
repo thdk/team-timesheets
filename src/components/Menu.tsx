@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
-import { goToOverview, goToProjects, goToLogin, goToTasks, goToPreferences, goToReports } from "../internal";
+import { goToOverview, goToLogin, goToSettings, goToReports } from "../internal";
 import { firestorable } from '../Firestorable/Firestorable';
 import store from '../stores/RootStore';
 import Calendar, { CalendarTileProperties } from 'react-calendar/dist/entry.nostyle';
@@ -11,16 +11,6 @@ export class Menu extends React.Component {
     dateChanged = (dates: Date | Date[]) => {
         const date = dates instanceof(Date) ? dates : dates[0];
         goToOverview(store, { year: date.getFullYear(), day: date.getDate(), month: date.getMonth() + 1 });
-    }
-
-    navigateToProjects = (e: React.MouseEvent) => {
-        e.preventDefault();
-        goToProjects(store);
-    }
-
-    navigateToTasks = (e: React.MouseEvent) => {
-        e.preventDefault();
-        goToTasks(store);
     }
 
     navigateToOverview = (e: React.MouseEvent) => {
@@ -71,24 +61,17 @@ export class Menu extends React.Component {
                         <span className="mdc-list-item__text">Today</span>
                     </a>
 
+                    <hr className="mdc-list-divider" />
+
+                    <h6 className="mdc-list-group__subheader">Reports</h6>
                     <a className="mdc-list-item" onClick={e => this.navigate(e, () => {e.preventDefault(); goToReports(store);})} href="#">
                         <i className="material-icons mdc-list-item__graphic" aria-hidden="true">list</i>
-                        <span className="mdc-list-item__text">Reports</span>
+                        <span className="mdc-list-item__text">Export</span>
                     </a>
 
                     <hr className="mdc-list-divider" />
-                    <h6 className="mdc-list-group__subheader">Planning</h6>
-                    <a className="mdc-list-item" onClick={this.navigateToProjects} href="#">
-                        <i className="material-icons mdc-list-item__graphic" aria-hidden="true">bookmark</i>
-                        <span className="mdc-list-item__text">Projects</span>
-                    </a>
-                    <a className="mdc-list-item" onClick={this.navigateToTasks} href="#">
-                        <i className="material-icons mdc-list-item__graphic" aria-hidden="true">bookmark</i>
-                        <span className="mdc-list-item__text">Tasks</span>
-                    </a>                    
 
-                    <hr className="mdc-list-divider" />
-                    <a className="mdc-list-item" onClick={e => this.navigate(e, goToPreferences)} href="#">
+                    <a className="mdc-list-item" onClick={e => this.navigate(e, goToSettings)} href="#">
                         <i className="material-icons mdc-list-item__graphic" aria-hidden="true">settings</i>
                         <span className="mdc-list-item__text">Settings</span>
                     </a>

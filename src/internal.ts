@@ -16,5 +16,5 @@ export * from './routes/reports/report';
 export * from './routes/login';
 export * from './routes/config/projects';
 export * from './routes/config/tasks';
-export * from './routes/settings/preferences';
+export * from './routes/settings/settings';
 export * from './routes/actions';

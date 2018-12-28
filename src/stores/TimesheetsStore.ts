@@ -91,7 +91,7 @@ export class RegistrationStore implements IRegistrationsStore {
             .sort((a, b) => {
                 const aTime = a.data!.date.getTime();
                 const bTime = b.data!.date.getTime();
-                return aTime > bTime ? -1 : aTime < bTime ? 1 : 0;
+                return aTime > bTime ? 1 : aTime < bTime ? -1 : 0;
             });
         if (registrations.length === 0) return [];
         return registrations

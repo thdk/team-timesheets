@@ -18,8 +18,8 @@ export class Timesheets extends React.Component {
     }
 
     createTotalLabel = (date: Date) => {
-        return store.view.day 
-        ? `Total` 
+        return store.view.day
+        ? `Total`
         : <a  href="#" onClick={(e) => this.goToDate(e, date)}>{moment(date).format("MMMM Do")}</a>;
     }
 
@@ -66,7 +66,7 @@ export class Timesheets extends React.Component {
                     </div>
                     {regs}
                 </FlexGroup>
-                <Fab onClick={this.addRegistration} icon="add" name="Add new registration"></Fab>
+                {store.view.day && <Fab onClick={this.addRegistration} icon="add" name="Add new registration"></Fab>}
             </>
         );
     }

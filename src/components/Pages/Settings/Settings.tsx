@@ -6,7 +6,7 @@ import { Icon } from '../../../MaterialUI/icon';
 import store from '../../../stores/RootStore';
 import { TaskList } from './Tasks/TaskList';
 import { ProjectList } from './Projects/ProjectList';
-import { SettingsTab } from '../../../routes/settings/settings';
+import { SettingsTab } from '../../../routes/settings';
 import { goToSettings } from '../../../internal';
 
 interface ITabData {

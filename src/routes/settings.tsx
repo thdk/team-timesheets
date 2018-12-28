@@ -1,13 +1,13 @@
 import { Route } from "mobx-router";
-import { App, setNavigationContent, goToOverview } from "../../internal";
+import { App, setNavigationContent, goToOverview } from "../internal";
 import * as React from 'react';
-import store, { IRootStore } from "../../stores/RootStore";
-import { Settings } from "../../components/Pages/Settings/Settings";
-import { IViewAction } from "../../stores/ViewStore";
-import { IReactionDisposer, reaction } from "mobx";
+import store, { IRootStore } from "../stores/RootStore";
+import { Settings } from "../components/Pages/Settings/Settings";
+import { IViewAction } from "../stores/ViewStore";
+import { IReactionDisposer, reaction, when } from "mobx";
 
 export const goToSettings = (tab: SettingsTab = "preferences") => {
-    store.router.goTo(routes.preferences, {}, store, {tab});
+    store.router.goTo(routes.preferences, {}, store, { tab });
 }
 
 export type SettingsTab = "tasks" | "projects" | "preferences";
@@ -16,7 +16,7 @@ let reactionDisposer: IReactionDisposer;
 
 const setActions = (tab: SettingsTab, s: IRootStore) => {
     reactionDisposer && reactionDisposer();
-    switch(tab) {
+    switch (tab) {
         case "tasks": {
             const deleteAction: IViewAction = {
                 action: () => {
@@ -57,11 +57,13 @@ const routes = {
     preferences: new Route({
         path,
         component: <App><Settings></Settings></App>,
-        onEnter: (route: Route, _params, s: IRootStore, queryParams: {tab: SettingsTab}) => {
+        onEnter: (route: Route, _params, s: IRootStore, queryParams: { tab: SettingsTab }) => {
             setActions(queryParams.tab, s);
             setNavigationContent(route, false);
         },
-        onParamsChange: (_route, _params, s: IRootStore, queryParams: {tab: SettingsTab}) => {
+        onParamsChange: (_route, _params, s: IRootStore, queryParams: { tab: SettingsTab }) => {
+            s.config.projectId = undefined;
+            s.config.taskId = undefined;
             setActions(queryParams.tab, s);
         },
         title: "Settings",
@@ -73,12 +75,16 @@ const routes = {
             if (!s.router.currentPath) {
                 goToOverview(s);
                 return false;
-            } else{
+            } else {
                 return true;
             }
         },
-        beforeExit: ()  => {
-            reactionDisposer && reactionDisposer();
+        beforeExit: (_route, _param, s: IRootStore) => {
+            s.config.projectId = undefined;
+            s.config.taskId = undefined;
+            when(() => s.config.taskId === undefined && s.config.projectId === undefined, () => {
+                reactionDisposer && reactionDisposer();
+            });
         }
     })
 };

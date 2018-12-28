@@ -14,7 +14,5 @@ export * from './routes/timesheets/overview';
 export * from './routes/timesheets/detail';
 export * from './routes/reports/report';
 export * from './routes/login';
-export * from './routes/config/projects';
-export * from './routes/config/tasks';
-export * from './routes/settings/settings';
+export * from './routes/settings';
 export * from './routes/actions';

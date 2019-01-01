@@ -1,0 +1,3 @@
+.mdc-top-app-bar__title {
+    @include mdc-top-app-bar-ink-color(mdc-theme-prop-value("on-primary"));
+  }

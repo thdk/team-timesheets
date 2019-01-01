@@ -13,8 +13,20 @@
     }
 
     .react-calendar__tile {
+        &.react-calendar__tile--active {
+            @include mdc-theme-prop("background-color", "primary");
+
+            &.react-calendar__tile--now {
+                @include mdc-theme-prop("color", "on-primary");
+            }
+        }
+
         &.has-data{
             font-weight: bold;
+        }
+
+        &.react-calendar__tile--now {
+            @include mdc-theme-prop("color", "secondary");
         }
     }
 }

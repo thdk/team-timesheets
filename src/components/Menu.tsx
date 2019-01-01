@@ -36,6 +36,7 @@ export class Menu extends React.Component {
     }
 
     getTileClassName = (tile: CalendarTileProperties) => {
+        const classNames = [];
         if (tile.view === "month") {
             // TODO: TIMEZONE ISSUE!!!
             // It should be enough to check g.date.getTime() === tile.date.getTime()
@@ -45,16 +46,16 @@ export class Menu extends React.Component {
                 g.date.getDate() === tile.date.getDate()
                 && g.date.getMonth() === tile.date.getMonth()
                 && g.date.getFullYear() === tile.date.getFullYear());
-            if (tileHasData) return "has-data";
+            if (tileHasData) classNames.push("has-data");
         }
 
-        return null;
+        return classNames.length ? classNames.join(" ") : null;
     }
 
     render() {
         return (
             <>
-                <Calendar key={store.timesheets.registrationsGroupedByDay.toString()} tileClassName={this.getTileClassName} activeStartDate={store.view.moment.toDate()} onChange={this.dateChanged}></Calendar>
+                <Calendar key={store.timesheets.registrationsGroupedByDay.toString()} tileClassName={this.getTileClassName} value={store.view.moment.toDate()} onChange={this.dateChanged}></Calendar>
                 <div className="mdc-list">
                     <a className="mdc-list-item" onClick={this.navigateToOverview} href="/" aria-selected="true">
                         <i className="material-icons mdc-list-item__graphic" aria-hidden="true">today</i>

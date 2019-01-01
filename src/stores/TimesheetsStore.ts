@@ -83,7 +83,10 @@ export class RegistrationStore implements IRegistrationsStore {
         // -- the view moment changes
         // -- the logged in user changes
         reaction(() => rootStore.view.monthMoment, updateRegistrationQuery);
-        reaction(() => rootStore.user.userId, updateRegistrationQuery);
+        reaction(() => rootStore.user.userId, userId => {
+            if (userId) updateRegistrationQuery();
+            else this.registrations.dispose();
+        });
     }
 
     @computed get registrationsGroupedByDay() {

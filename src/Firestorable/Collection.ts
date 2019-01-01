@@ -4,8 +4,9 @@ import 'firebase/firestore';
 import { updateAsync, addAsync, getAsync } from "./FirestoreUtils";
 import { observable, ObservableMap, reaction, transaction } from 'mobx';
 import { Doc } from "./Document";
+import { IDisposable } from "./types";
 
-export interface ICollection<T> {
+export interface ICollection<T> extends IDisposable {
     readonly docs: ObservableMap<string, Doc<T>>;
     query?: (ref: firestore.CollectionReference) => firestore.Query;
     getDocs: () => void;
@@ -124,7 +125,7 @@ export class Collection<T, K = T> implements ICollection<T> {
 
     public dispose() {
         if (this.unsubscribeFirestore) this.unsubscribeFirestore();
-
+        this.docs.clear();
         this.queryReactionDisposable();
     }
 }

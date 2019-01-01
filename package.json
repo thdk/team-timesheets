@@ -57,7 +57,7 @@
     "g": "^2.0.1",
     "mobx": "^5.7.0",
     "mobx-react": "^5.4.2",
-    "mobx-router": "0.0.16",
+    "mobx-router": "0.0.17",
     "moment": "^2.23.0",
     "moment-es6": "^1.0.0",
     "react": "^16.6.3",

@@ -63,15 +63,11 @@ exports.createCSV = functions.firestore
                     const taskData = tasksMap.get(fireStoreData.task);
                     const project = projectData ? projectData.name : fireStoreData.project;
                     const task = taskData ? taskData.name : fireStoreData.task;
-
-                    // todo use options of jsonTOcsv to filter unwanted fields from csv
-                    // instead of deleting each field below
-                    delete fireStoreData.deleted;
-                    delete fireStoreData.userId;
-                    registrations.push({ ...fireStoreData, project, task });
+                    const date = fireStoreData.date.toDate().getDate();
+                    registrations.push({ ...fireStoreData, project, task, date });
                 });
 
-                return json2csv(registrations);
+                return json2csv(registrations, {fields: ["date", "time", "project", "description", "task"]});
             })
             .then(csv => {
                 // Write the file to cloud function tmp storage

@@ -67,7 +67,7 @@ exports.createCSV = functions.firestore
                     registrations.push({ ...fireStoreData, project, task, date });
                 });
 
-                return json2csv(registrations, {fields: ["date", "time", "project", "description", "task"]});
+                return json2csv(registrations, { fields: ["date", "time", "project", "description", "task"] });
             })
             .then(csv => {
                 // Write the file to cloud function tmp storage
@@ -88,6 +88,79 @@ exports.createCSV = functions.firestore
             }, error => {
                 throw new Error(error)
             }));
-    })
+    });
+
+exports.getChart = functions.https.onCall((data, context) => {
+    // Message text passed from the client.
+    const year = data.year;
+
+    // Checking attribute.
+    // if (!(typeof year === 'number') || number.length === 0) {
+    //     // Throwing an HttpsError so that the client gets the error details.
+    //     throw new functions.https.HttpsError('invalid-argument', 'The function must be called with ' +
+    //         'one arguments "text" containing the message text to add.');
+    // }
+
+    // Checking that the user is authenticated.
+    if (!context.auth) {
+        // Throwing an HttpsError so that the client gets the error details.
+        throw new functions.https.HttpsError('failed-precondition', 'The function must be called ' +
+            'while authenticated.');
+    }
+
+    // Authentication / user information is automatically added to the request.
+    const uid = context.auth.uid;
+    // const name = context.auth.token.name || null;
+    // const picture = context.auth.token.picture || null;
+    // const email = context.auth.token.email || null;
+
+    let projectsMap: Map<string, any>;
+    let tasksMap: Map<string, any>;
+
+    const startMonent = moment(`${year}`, 'YYYY');
+    const endDate = startMonent.clone().endOf("year").toDate();
+    const startDate = startMonent.clone().startOf("year").toDate();
+
+    return Promise.all([
+        db.collection('projects').get()
+            .then(
+                s => projectsMap = new Map(s.docs.map((d): [string, any] =>
+                    [d.id, { ...d.data(), totalTime: 0 }])
+                )
+            ),
+        db.collection('tasks').get().then(s => tasksMap = new Map(s.docs.map((d): [string, any] => [d.id, d.data()])))
+    ]).then(() => db.collection('registrations')
+        .where("deleted", "==", false)
+        .where("date", ">", startDate)
+        .where("date", "<=", endDate)
+        .where("userId", "==", uid)
+        .get()
+        .then(querySnapshot => {
+            const registrations: any[] = [];
+
+            // create array of registration data
+            querySnapshot.forEach(doc => {
+                const fireStoreData = doc.data();
+                const projectData = projectsMap.get(fireStoreData.project);
+                const taskData = tasksMap.get(fireStoreData.task);
+                const project = projectData ? projectData.name : fireStoreData.project;
+                const task = taskData ? taskData.name : fireStoreData.task;
+                const date = fireStoreData.date.toDate().getDate();
+
+                delete fireStoreData.deleted;
+                delete fireStoreData.userId;
+                registrations.push({ ...fireStoreData, project, task, date });
+            });
+
+            registrations.forEach(r => {
+                const project =  projectsMap.get(r.project);
+                if (project) {
+                    project.totalTime = project.totalTime + r.time;
+                }
+            });
+
+            return Array.from(projectsMap.values());
+        }))
+});
 
 

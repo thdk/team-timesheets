@@ -25,7 +25,7 @@ const routes = {
             s.view.setCalendarDetail("year");
         },
         onParamsChange: routeChanged,
-        title: "Report",
+        title: "Export timesheet",
         beforeEnter
     })
 };

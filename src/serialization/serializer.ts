@@ -24,7 +24,9 @@ export const convertRegistration = (appData: Partial<IRegistration>) => {
 
 export const convertUser = (appData: Partial<IUser>) => {
     const user: IUserData = {
-        tasks: appData.tasks ? Array.from(appData.tasks.keys()) : undefined
+        tasks: appData.tasks ? Array.from(appData.tasks.keys()) : undefined,
+        name: appData.name,
+        roles: appData.roles
     }
 
     return user;

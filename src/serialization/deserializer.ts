@@ -17,7 +17,9 @@ export const convertRegistration = (firestoreData: IRegistrationData) => {
 
 export const convertUser = (firestoreData: IUserData) => {
     const registration: IUser = {
-        tasks: firestoreData.tasks ? new Map(firestoreData.tasks.map((t): [string, true] => [t, true])) : new Map<string, true>()
+        tasks: firestoreData.tasks ? new Map(firestoreData.tasks.map((t): [string, true] => [t, true])) : new Map<string, true>(),
+        roles: firestoreData.roles || {},
+        name: firestoreData.name || "Unknown time traveller"
     };
 
     return registration;

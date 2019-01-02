@@ -14,12 +14,21 @@ export interface IUserStore {
     save: () => void;
 }
 
+export interface IRoles {
+    admin?: boolean;
+    user?: boolean;
+}
+
 export interface IUser {
     tasks: Map<string, true>;
+    roles: IRoles;
+    name: string;
 }
 
 export interface IUserData {
     tasks?: string[];
+    roles?: IRoles;
+    name?: string;
 }
 
 export enum StoreState {
@@ -61,11 +70,11 @@ export class UserStore implements IUserStore {
 
     @computed public get user() {
 
-        if (this.userId && this.fbUser){
+        if (this.userId && this.fbUser) {
             const user = this.users.docs.get(this.userId);
             return user
-            ? Object.assign(user, { email: this.fbUser.email, displayName: this.fbUser.displayName })
-            : undefined;
+                ? Object.assign(user, { email: this.fbUser.email, displayName: this.fbUser.displayName })
+                : undefined;
         }
 
         return undefined;
@@ -78,7 +87,27 @@ export class UserStore implements IUserStore {
         }
         else {
             this.state = StoreState.Pending;
-            this.users.getOrCreateAsync(fbUser.uid).then(user => this.getUserSuccess(user, fbUser), this.getUserError);
+            this.users.getAsync(fbUser.uid).then(user => {
+                // Check if existing user
+                if (user) {
+                    this.getUserSuccess(user, fbUser);
+                }
+                else {
+                    // register new user
+                    this.users.addAsync(deserializer.convertUser(
+                        {
+                            roles: { user: true },
+                            name: fbUser.displayName || undefined
+                        }
+                    )).then(newUserId => {
+                        // get the newly registered user
+                        return this.users.getAsync(newUserId).then(user => {
+                            if (!user) throw new Error("No user found after registration");
+                            this.getUserSuccess(user, fbUser);
+                        }, this.getUserError);
+                    });
+                }
+            }, this.getUserError);            
         }
     }
 

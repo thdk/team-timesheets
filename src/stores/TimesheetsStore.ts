@@ -6,6 +6,7 @@ import { ICollection, Collection } from "../Firestorable/Collection";
 import store, { IRootStore } from './RootStore';
 import * as deserializer from '../serialization/deserializer';
 import * as serializer from '../serialization/serializer';
+import { getLoggedInUserAsync } from '../Firestorable/Firestorable';
 
 export interface IGroupedRegistrations {
     readonly registrations: Doc<IRegistration>[];
@@ -84,7 +85,9 @@ export class RegistrationStore implements IRegistrationsStore {
         // -- the logged in user changes
         reaction(() => rootStore.view.monthMoment, updateRegistrationQuery);
         reaction(() => rootStore.user.userId, userId => {
-            if (userId) updateRegistrationQuery();
+            if (userId) getLoggedInUserAsync().then(() =>
+                updateRegistrationQuery()
+            );
             else this.registrations.unsubscribeAndClear();
         });
     }

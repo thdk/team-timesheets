@@ -85,13 +85,7 @@ export class RegistrationStore implements IRegistrationsStore {
         reaction(() => rootStore.view.monthMoment, updateRegistrationQuery);
         reaction(() => rootStore.user.userId, userId => {
             if (userId) updateRegistrationQuery();
-            else this.registrations.dispose();
-        });
-
-        // test firebase chart data function
-        const getChart = firebase.functions().httpsCallable('getChart');
-        getChart({ year: 2018 }).then(function (result) {
-            console.log(result)
+            else this.registrations.unsubscribeAndClear();
         });
     }
 

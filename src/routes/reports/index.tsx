@@ -1,3 +1,4 @@
 import report from './report';
+import dashboard from './dashboard';
 
-export default { ...report };
+export default { ...report, ...dashboard };

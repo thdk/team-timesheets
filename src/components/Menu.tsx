@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
-import { goToOverview, goToLogin, goToSettings, goToReports } from "../internal";
+import { goToOverview, goToLogin, goToSettings, goToReports, goToDashboard } from "../internal";
 import { firestorable } from '../Firestorable/Firestorable';
 import store from '../stores/RootStore';
 import Calendar, { CalendarTileProperties } from 'react-calendar/dist/entry.nostyle';
@@ -68,6 +68,11 @@ export class Menu extends React.Component {
                     <a className="mdc-list-item" onClick={e => this.navigate(e, () => {e.preventDefault(); goToReports(store);})} href="#">
                         <i className="material-icons mdc-list-item__graphic" aria-hidden="true">list</i>
                         <span className="mdc-list-item__text">Export</span>
+                    </a>
+
+                    <a className="mdc-list-item" onClick={e => this.navigate(e, () => {e.preventDefault(); goToDashboard(store);})} href="#">
+                        <i className="material-icons mdc-list-item__graphic" aria-hidden="true">bar_chart</i>
+                        <span className="mdc-list-item__text">Dashboard</span>
                     </a>
 
                     <hr className="mdc-list-divider" />

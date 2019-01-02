@@ -16,6 +16,7 @@ export interface ICollection<T> extends IDisposable {
     getAsync: (id: string) => Promise<Doc<T> | undefined>;
     getOrCreateAsync: (id: string) => Promise<Doc<T>>;
     deleteAsync: (id: string) => Promise<void>;
+    unsubscribeAndClear: () => void;
 }
 
 export interface ICollectionOptions<T, K> {
@@ -124,8 +125,13 @@ export class Collection<T, K = T> implements ICollection<T> {
     }
 
     public dispose() {
-        if (this.unsubscribeFirestore) this.unsubscribeFirestore();
-        this.docs.clear();
+        this.unsubscribeAndClear();
         this.queryReactionDisposable();
+    }
+    
+    public unsubscribeAndClear() {
+        if (this.unsubscribeFirestore) this.unsubscribeFirestore();
+        this.unsubscribeFirestore = undefined;
+        this.docs.clear();
     }
 }

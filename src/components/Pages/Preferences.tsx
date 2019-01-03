@@ -32,15 +32,11 @@ export class Preferences extends React.Component {
             <Box>
                 <h3 className="mdc-typography--subtitle1">Pick your tasks</h3>
                 <p>Only selected tasks will be available for you when adding a new regisration.</p>
-                <ChipSet type="filter">
-                    {tasks}
-                </ChipSet>
+                <ChipSet chips={tasks} type="filter"></ChipSet>
 
                 <h3 className="mdc-typography--subtitle1">Pick your default task</h3>
                 <p>This task will be selected by default when you create a new registration.</p>
-                <ChipSet type="choice">
-                    {userTasksChips}
-                </ChipSet>
+                <ChipSet chips={userTasksChips} type="choice"></ChipSet>
             </Box>
         );
     }

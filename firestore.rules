@@ -9,6 +9,10 @@ service cloud.firestore {
             allow update, delete: if get(/databases/$(database)/documents/registrations/$(registrationId)).data.userId == request.auth.uid
         }
 
+        match /reports/{reportId} {
+            allow read, write;
+        }
+
         match /projects/{document} {
             allow read, create;
             allow update, delete: if getRole('admin') == true

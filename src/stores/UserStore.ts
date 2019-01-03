@@ -1,4 +1,4 @@
-import { observable, action, transaction, computed } from "mobx";
+import { observable, action, transaction, computed, toJS } from "mobx";
 import { ICollection, Collection } from "../Firestorable/Collection";
 import { Doc } from "../Firestorable/Document";
 import { firestorable } from "../Firestorable/Firestorable";
@@ -38,7 +38,7 @@ export enum StoreState {
 }
 
 export class UserStore implements IUserStore {
-    private rootStore: IRootStore;
+    // private rootStore: IRootStore;
     @observable defaultTask: string;
     @observable.ref userId?: string;
     @observable.ref fbUser?: firebase.User
@@ -46,7 +46,7 @@ export class UserStore implements IUserStore {
 
     private readonly users: ICollection<IUser>;
     constructor(rootStore: IRootStore) {
-        this.rootStore = rootStore;
+        // this.rootStore = rootStore;
         this.users = new Collection(rootStore.getCollection.bind(this, "users"), {
             realtime: true,
             serialize: serializer.convertUser,
@@ -63,9 +63,16 @@ export class UserStore implements IUserStore {
 
     public save() {
         if (!this.user) return;
-        this.rootStore.getCollection("users").doc(this.user.id).set(
-            { tasks: Array.from(this.user.data!.tasks.keys()) }
-        );
+
+        const userData = toJS(this.user.data!);
+
+        // TODO: implement canChangeUserRoles (Only admin can change user roles!)
+        // if (!rules.canChangeUserRoles(this.user))
+        delete userData.roles;
+
+        // TODO: this currently only updates the user tasks
+        // TODO: should allow partial updates? (Since firestore allows that)
+        this.users.updateAsync(this.user.id, { ...userData, ...{ tasks: this.user.data!.tasks || {} } });
     }
 
     @computed public get user() {
@@ -99,15 +106,15 @@ export class UserStore implements IUserStore {
                             roles: { user: true },
                             name: fbUser.displayName || undefined
                         }
-                    )).then(newUserId => {
+                    ), fbUser.uid).then(() => {
                         // get the newly registered user
-                        return this.users.getAsync(newUserId).then(user => {
+                        return this.users.getAsync(fbUser.uid).then(user => {
                             if (!user) throw new Error("No user found after registration");
                             this.getUserSuccess(user, fbUser);
                         }, this.getUserError);
-                    });
+                    }, error => console.log(`${error}\nCoudn't save newly registered user. `));
                 }
-            }, this.getUserError);            
+            }, this.getUserError);
         }
     }
 

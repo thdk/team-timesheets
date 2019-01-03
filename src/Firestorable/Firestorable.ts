@@ -8,18 +8,18 @@ class Firestorable {
     public readonly auth: firebase.auth.Auth;
 
     constructor() {
-        firebase.initializeApp({
+        const app = firebase.initializeApp({
             apiKey: config.apiKey,
             authDomain: config.authDomain,
             projectId: config.projectId,
             storageBucket: config.storageBucket
         });
-        this.firestore = firebase.firestore();
-        this.storage = firebase.storage();
+        this.firestore = app.firestore();
+        this.storage = app.storage();
         const settings = { timestampsInSnapshots: true };
         this.firestore.settings(settings);
 
-        this.auth = firebase.auth();
+        this.auth = app.auth();
     }
 }
 
@@ -31,7 +31,7 @@ export const firestorable = new Firestorable();
  */
 export const getLoggedInUserAsync = () => {
     return new Promise<firebase.User>((resolve, reject) => {
-        const unsubscribe = firebase.auth().onAuthStateChanged(user => {
+        const unsubscribe = firestorable.auth.onAuthStateChanged(user => {
             unsubscribe();
             if (user) resolve(user);
             else reject("Not authenticated");

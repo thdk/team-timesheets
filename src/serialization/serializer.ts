@@ -29,5 +29,7 @@ export const convertUser = (appData: Partial<IUser>) => {
         roles: appData.roles
     }
 
+    if (!user.roles) delete user.roles;
+
     return user;
 }

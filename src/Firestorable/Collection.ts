@@ -11,7 +11,7 @@ export interface ICollection<T> extends IDisposable {
     query?: (ref: firestore.CollectionReference) => firestore.Query;
     getDocs: () => void;
     newDoc: (data: Partial<T>) => Doc<Partial<T>>;
-    updateAsync: (id: string, data: T) => Promise<void>;
+    updateAsync: (id: string, data: Partial<T>) => Promise<void>;
     addAsync: (data: T, id?: string) => Promise<string>;
     getAsync: (id: string) => Promise<Doc<T> | undefined>;
     getOrCreateAsync: (id: string) => Promise<Doc<T>>;
@@ -128,7 +128,7 @@ export class Collection<T, K = T> implements ICollection<T> {
         this.unsubscribeAndClear();
         this.queryReactionDisposable();
     }
-    
+
     public unsubscribeAndClear() {
         if (this.unsubscribeFirestore) this.unsubscribeFirestore();
         this.unsubscribeFirestore = undefined;

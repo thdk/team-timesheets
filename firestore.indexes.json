@@ -1,0 +1,54 @@
+{
+  "indexes": [
+    {
+      "collectionId": "reports",
+      "state": "READY",
+      "fields": [
+        {
+          "fieldPath": "month",
+          "mode": "ASCENDING"
+        },
+        {
+          "fieldPath": "userId",
+          "mode": "ASCENDING"
+        },
+        {
+          "fieldPath": "year",
+          "mode": "ASCENDING"
+        },
+        {
+          "fieldPath": "created",
+          "mode": "DESCENDING"
+        }
+      ]
+    },
+    {
+      "collectionId": "registrations",
+      "state": "READY",
+      "fields": [
+        {
+          "fieldPath": "userId",
+          "mode": "ASCENDING"
+        },
+        {
+          "fieldPath": "date",
+          "mode": "ASCENDING"
+        }
+      ]
+    },
+    {
+      "collectionId": "registrations",
+      "state": "READY",
+      "fields": [
+        {
+          "fieldPath": "deleted",
+          "mode": "ASCENDING"
+        },
+        {
+          "fieldPath": "date",
+          "mode": "ASCENDING"
+        }
+      ]
+    }
+  ]
+}

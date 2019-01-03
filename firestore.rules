@@ -1,0 +1,27 @@
+service cloud.firestore {
+    match /databases/{database}/documents {
+        function getRole(role) {
+            return get(/databases/$(database)/documents/users/$(request.auth.uid)).data.roles[role]
+        }
+
+        match /registrations/{registrationId} {
+            allow read, create: if request.auth.uid != null;
+            allow update, delete: if get(/databases/$(database)/documents/registrations/$(registrationId)).data.userId == request.auth.uid
+        }
+
+        match /projects/{document} {
+            allow read, create;
+            allow update, delete: if getRole('admin') == true
+        }
+
+        match /tasks/{document} {
+            allow read;
+            allow create, update, delete: if getRole('admin') == true;
+        }
+
+        match /users/{userId} {
+            allow read, create;
+            allow update: if getRole('user') == true;
+        }
+  	}
+}

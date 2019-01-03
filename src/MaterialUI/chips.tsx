@@ -8,7 +8,7 @@ export interface IChipProps {
     isSelected?: boolean;
     onClick: (id: string, selected: boolean) => void;
     id: string;
-    type?: "filter"
+    type?: "filter" | "choice"
 }
 export class Chip extends React.Component<IChipProps> {
     private mdcChipRef: React.RefObject<HTMLDivElement>;

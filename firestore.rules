@@ -24,8 +24,8 @@ service cloud.firestore {
         }
 
         match /users/{userId} {
-            allow read, create;
-            allow update: if getRole('user') == true;
+            allow read;
+            allow create, update: if getRole('admin') == true || !request.resource.keys().hasAny(["roles"]);
         }
   	}
 }

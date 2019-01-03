@@ -26,7 +26,8 @@ export const convertUser = (appData: Partial<IUser>) => {
     const user: IUserData = {
         tasks: appData.tasks ? Array.from(appData.tasks.keys()) : undefined,
         name: appData.name,
-        roles: appData.roles
+        roles: appData.roles,
+        defaultTask: appData.defaultTask || ""
     }
 
     if (!user.roles) delete user.roles;

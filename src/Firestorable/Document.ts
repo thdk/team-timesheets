@@ -10,6 +10,7 @@ export class Doc<T> {
 
     private unwatchDocument?: () => void;
 
+    // TODO: don't allow null as a type for data
     constructor(collectionRef: firebase.firestore.CollectionReference, data: T | null, id?: string) {
         this.ref = id ? collectionRef.doc(id) : collectionRef.doc();
         this.collectionRef = collectionRef;

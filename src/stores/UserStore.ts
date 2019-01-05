@@ -7,7 +7,6 @@ import * as deserializer from '../serialization/deserializer';
 import * as serializer from '../serialization/serializer';
 
 export interface IUserStore {
-    defaultTask: string;
     userId?: string;
     user: (Doc<IUser> & Pick<firebase.User, "email" | "displayName">) | undefined;
     setUser: (fbUser: firebase.User | null) => void;
@@ -23,12 +22,14 @@ export interface IUser {
     tasks: Map<string, true>;
     roles: IRoles;
     name: string;
+    defaultTask?: string;
 }
 
 export interface IUserData {
     tasks?: string[];
     roles?: IRoles;
     name?: string;
+    defaultTask: string;
 }
 
 export enum StoreState {
@@ -39,7 +40,6 @@ export enum StoreState {
 
 export class UserStore implements IUserStore {
     // private rootStore: IRootStore;
-    @observable defaultTask: string;
     @observable.ref userId?: string;
     @observable.ref fbUser?: firebase.User
     @observable state = StoreState.Done;
@@ -52,8 +52,6 @@ export class UserStore implements IUserStore {
             serialize: serializer.convertUser,
             deserialize: deserializer.convertUser
         });
-
-        this.defaultTask = "HIBd74BItKoURLdQJmLf";
 
         firestorable.auth.onAuthStateChanged(this.setUser.bind(this));
 
@@ -72,7 +70,13 @@ export class UserStore implements IUserStore {
 
         // TODO: this currently only updates the user tasks
         // TODO: should allow partial updates? (Since firestore allows that)
-        this.users.updateAsync(this.user.id, { ...userData, ...{ tasks: this.user.data!.tasks || {} } });
+
+        this.users.updateAsync(this.user.id, {
+            ...userData, ...{
+                tasks: this.user.data!.tasks || {},
+                defaultTask: userData.defaultTask
+            }
+        });
     }
 
     @computed public get user() {
@@ -101,18 +105,19 @@ export class UserStore implements IUserStore {
                 }
                 else {
                     // register new user
-                    this.users.addAsync(deserializer.convertUser(
+                    this.users.addAsync(
                         {
                             roles: { user: true },
-                            name: fbUser.displayName || undefined
+                            name: fbUser.displayName || "",
+                            tasks: new Map()
                         }
-                    ), fbUser.uid).then(() => {
-                        // get the newly registered user
-                        return this.users.getAsync(fbUser.uid).then(user => {
-                            if (!user) throw new Error("No user found after registration");
-                            this.getUserSuccess(user, fbUser);
-                        }, this.getUserError);
-                    }, error => console.log(`${error}\nCoudn't save newly registered user. `));
+                        , fbUser.uid).then(() => {
+                            // get the newly registered user
+                            return this.users.getAsync(fbUser.uid).then(user => {
+                                if (!user) throw new Error("No user found after registration");
+                                this.getUserSuccess(user, fbUser);
+                            }, this.getUserError);
+                        }, error => console.log(`${error}\nCoudn't save newly registered user. `));
                 }
             }, this.getUserError);
         }

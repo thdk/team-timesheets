@@ -146,7 +146,7 @@ export class RegistrationStore implements IRegistrationsStore {
     }
 
     getNew() {
-        if (!(store.user.user instanceof (Doc))) throw new Error("Can't add new registration if user is unknown");
+        if (!store.user.user) throw new Error("Can't add new registration if user is unknown");
 
         // TODO: conversion toUTC should happen in de serializer
         return this.registrations.newDoc({
@@ -155,7 +155,7 @@ export class RegistrationStore implements IRegistrationsStore {
             ),
             description: "",
             project: "",
-            task: store.user.defaultTask,
+            task: store.user.user.data!.defaultTask,
             userId: store.user.user.id,
             deleted: false
         });

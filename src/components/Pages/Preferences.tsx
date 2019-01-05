@@ -3,11 +3,14 @@ import { observer } from 'mobx-react';
 import store from '../../stores/RootStore';
 import { Chip, ChipSet } from '../../MaterialUI/chips';
 import { Box } from '../Layout/box';
+import { UserTasks } from './Settings/Preferences/UserTasks';
 
 @observer
 export class Preferences extends React.Component {
     render() {
-        const { tasks: userTasks = new Map() } = store.user.user ? store.user.user.data || {} : {};
+        if (!store.user.user) return null;
+
+        const { tasks: userTasks = new Map(), defaultTask = undefined} = store.user.user.data || {};
         const tasks = Array.from(store.config.tasks.docs.values())
             .reduce((p, c) => {
                 if (c.data) {
@@ -20,13 +23,19 @@ export class Preferences extends React.Component {
                 }
                 return p;
             }, new Array());
+
+        // TODO: create computed value on user store containing the data of the user tasks
+        const userTasksChips = store.user.user.data!.tasks.size > 1 
+            ? <UserTasks value={defaultTask} onChange={this.defaultTaskChanged}></UserTasks>
+            : undefined;
+
         return (
             <Box>
                 <h3 className="mdc-typography--subtitle1">Pick your tasks</h3>
                 <p>Only selected tasks will be available for you when adding a new regisration.</p>
-                <ChipSet type="filter">
-                    {tasks}
-                </ChipSet>
+                <ChipSet chips={tasks} type="filter"></ChipSet>
+
+                {userTasksChips}
             </Box>
         );
     }
@@ -38,6 +47,17 @@ export class Preferences extends React.Component {
 
             if (selected) store.user.user.data.tasks.set(id, true);
             else store.user.user.data.tasks.delete(id);
+
+            store.user.save();
+        }
+    }
+
+    defaultTaskChanged = (id: string) => {
+        if (!store.user.user || !store.user.user.data) return;
+
+        if (store.user.user.data.tasks) {
+
+            store.user.user.data.defaultTask = id;
 
             store.user.save();
         }

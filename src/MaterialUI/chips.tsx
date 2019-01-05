@@ -8,7 +8,7 @@ export interface IChipProps {
     isSelected?: boolean;
     onClick: (id: string, selected: boolean) => void;
     id: string;
-    type?: "filter"
+    type?: "filter" | "choice"
 }
 export class Chip extends React.Component<IChipProps> {
     private mdcChipRef: React.RefObject<HTMLDivElement>;
@@ -72,9 +72,11 @@ export class Chip extends React.Component<IChipProps> {
 
 export interface IChipSetProps {
     type: "standard" | "filter" | "choice";
+    chips: React.ReactNode;
 }
 
 export class ChipSet extends React.Component<IChipSetProps> {
+    private chipset: any;
     private mdcChipSet: React.RefObject<HTMLDivElement>;
     constructor(props: IChipSetProps) {
         super(props);
@@ -82,7 +84,6 @@ export class ChipSet extends React.Component<IChipSetProps> {
     }
 
     render() {
-        // TODO: add tabindex to mdc-chip
         let classNames = ["mdc-chip-set"];
         switch (this.props.type) {
             case "choice":
@@ -96,12 +97,17 @@ export class ChipSet extends React.Component<IChipSetProps> {
         }
         return (
             <div className={classNames.join(" ")} ref={this.mdcChipSet}>
-                {this.props.children}
+                {this.props.chips}
             </div>
         );
     }
 
+    componentDidUpdate() {
+        this.chipset.destroy();
+        this.chipset = new MDCChipSet(this.mdcChipSet.current);
+    }
+
     componentDidMount() {
-        MDCChipSet.attachTo(this.mdcChipSet.current);
+        this.chipset = new MDCChipSet(this.mdcChipSet.current);
     }
 }

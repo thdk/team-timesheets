@@ -5,7 +5,6 @@ import { Form, FormField } from '../components/Layout/form';
 import { Chip, ChipSet } from '../MaterialUI/chips';
 import { Doc } from '../Firestorable/Document';
 import { FlexGroup } from './Layout/flex';
-import { goToOverview } from '../internal';
 import { Select, SelectOption } from '../MaterialUI/select';
 import store from '../stores/RootStore';
 
@@ -17,7 +16,7 @@ export class Registration extends React.Component {
         if (!store.timesheets.registration.data || !store.user.userId) return <></>;
 
         const userTasks = Array.from(store.user.user!.data!.tasks.keys());
-        const { task = store.user.defaultTask, description, project, time, date } = store.timesheets.registration.data;
+        const { task = store.user.user!.data!.defaultTask, description, project, time, date } = store.timesheets.registration.data;
         const tasks = Array.from(store.config.tasks.docs.values())
             .filter(t => userTasks.some(userTaskId => userTaskId === t.id))
             .map(t => {
@@ -68,9 +67,7 @@ export class Registration extends React.Component {
                         <FlexGroup direction="vertical">
                             <h3 className="mdc-typography--subtitle1">Select one of your standard tasks</h3>
                             <FormField>
-                                <ChipSet type="choice">
-                                    {tasks}
-                                </ChipSet>
+                                <ChipSet chips={tasks} type="choice"></ChipSet>
                             </FormField>
                         </FlexGroup>
                     </FlexGroup>

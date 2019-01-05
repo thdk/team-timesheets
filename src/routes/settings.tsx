@@ -1,5 +1,5 @@
 import { Route } from "mobx-router";
-import { App, setNavigationContent, goToOverview } from "../internal";
+import { App, setNavigationContent } from "../internal";
 import * as React from 'react';
 import store, { IRootStore } from "../stores/RootStore";
 import { Settings } from "../components/Pages/Settings/Settings";
@@ -67,18 +67,6 @@ const routes = {
             setActions(queryParams.tab, s);
         },
         title: "Settings",
-        beforeEnter: (_route: Route, _params: {}, s: IRootStore) => {
-            // bug in material chipset component
-            // https://github.com/material-components/material-components-web-catalog/issues/176
-            // chips not working if displayed on page load
-            // Temp sollution redirect to overview if this is the first path of the application
-            if (!s.router.currentPath) {
-                goToOverview(s);
-                return false;
-            } else {
-                return true;
-            }
-        },
         beforeExit: (_route, _param, s: IRootStore) => {
             s.config.projectId = undefined;
             s.config.taskId = undefined;

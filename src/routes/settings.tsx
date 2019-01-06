@@ -4,7 +4,7 @@ import * as React from 'react';
 import store, { IRootStore } from "../stores/RootStore";
 import { Settings } from "../components/Pages/Settings/Settings";
 import { IViewAction } from "../stores/ViewStore";
-import { IReactionDisposer, reaction, when } from "mobx";
+import { IReactionDisposer, reaction, transaction } from "mobx";
 
 export const goToSettings = (tab: SettingsTab = "preferences") => {
     store.router.goTo(routes.preferences, {}, store, { tab });
@@ -47,6 +47,10 @@ const setActions = (tab: SettingsTab, s: IRootStore) => {
                 if (id) s.view.setActions([deleteAction]);
                 else s.view.setActions([]);
             });
+            break;
+        }
+        default: {
+            s.view.setActions([]);
         }
     }
 
@@ -62,17 +66,20 @@ const routes = {
             setNavigationContent(route, false);
         },
         onParamsChange: (_route, _params, s: IRootStore, queryParams: { tab: SettingsTab }) => {
-            s.config.projectId = undefined;
-            s.config.taskId = undefined;
+            transaction(() => {
+                s.config.projectId = undefined;
+                s.config.taskId = undefined;
+            });
             setActions(queryParams.tab, s);
         },
         title: "Settings",
         beforeExit: (_route, _param, s: IRootStore) => {
-            s.config.projectId = undefined;
-            s.config.taskId = undefined;
-            when(() => s.config.taskId === undefined && s.config.projectId === undefined, () => {
-                reactionDisposer && reactionDisposer();
+            transaction(() => {
+                s.config.projectId = undefined;
+                s.config.taskId = undefined;
             });
+
+            reactionDisposer && reactionDisposer();
         }
     })
 };

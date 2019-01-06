@@ -14,7 +14,9 @@ If you don't have node installed yet, install [node](https://nodejs.org/en/downl
 
 #### Firebase
 
-Note: if you are joining a project where a firebase project has already been set up, simply ask for the *src/config.ts* and the *.firebasesrc* file of one of your team members and skip this section.
+**Remark 1:** You can skip Firebase section if you are contributing to an existing project and if you don't have to deploy.
+
+**Remark 2:** If you do are alowed to deploy for an existing project where a firebase project has already been set up, simply ask for the *src/config.ts* and the *.firebasesrc* file of one of your team members and skip this section. Note that you'll need to be added as a user of the firebase project and given correct permissions"
 
 ##### Firebase project
 

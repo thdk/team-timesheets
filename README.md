@@ -1,38 +1,113 @@
-# typescript-start
-I start every web project based on this simple project.
-It installs the following npm packages:
-* typescript
-* concurrently
-* lite-server
-* gulp
-* gulp-sass
-* rollup
-* rollup-plugin-typescript
+# Timesheets app
 
-It makes and src folder with the following:
-* app.ts (entry file for the app)
-* utils/foo.ts (dummy module)
-* style (contains two dummy scss files styles.scss and _vars.scss)
+Web base timesheet app. Built to replace old school excel timesheets.
 
-The src folder also contains an index.html file which will be the container for this app.
+## Getting Started
 
-A gulpfile.js contains tasks to compile typescript and scss files and copy the combined files in the dist folder.
-Rollup will bundle the ES bundles into iife format in a single js file which can be understood by a browser
-.
-The index.html file from src folder is also copied into the dist folder.
+These instructions will get you a copy of the project up and running on your local machine for development and testing purposes. See deployment for notes on how to deploy the project on a live system.
 
-The default gulp task will compile and copy all folders as well as watch the typescript and scss files for changes.
+### Prerequisites
 
-# how to get started with this
-Simply fork this repo!
+## Node
 
-Next, to start a new project based on this repo (or your fork):
-* Create a new git repository on github called [New_Repo]
+If you don't have node installed yet, install [node](https://nodejs.org/en/download/)
 
-From your project folder on your local machine, enter the following commands:
-* git clone https://github.com/userName/Repo New_Repo
-* cd New_Repo
-* git remote set-url origin https://github.com/userName/New_Repo
-* git remote add upstream https://github.com/userName/Repo
-* git push origin master
-* git push --all
+## Firebase
+
+The project is build entirely for Google Cloud Firebase.
+
+You'll need to create or select an existing Firebase project from the [Firebase console](https://console.firebase.google.com).
+
+From the project overview page, click **Add an app** and select **Web**
+
+Copy the javascript object with your project configuration settings:
+
+```
+{
+    apiKey: "YOUR API KEY",
+    authDomain: "YOUR AUTH DOMAIN",
+    databaseURL: "YOUR DATABASE URL",
+    projectId: "YOUR PROJECT ID",
+    storageBucket: "YOUR STORAGE BUCKET",
+    messagingSenderId: "YOUR MESSAGE SENDER ID"
+  }
+```
+
+Now copy these into the *src/config-sample.text* and save the file as *src/config.ts*
+
+### Installing
+
+Install dependencies
+
+    npm install
+
+Build everything (outputs will live in `dist/`-directory)
+
+    npm run build
+
+Start development server with hot reloading (open `http://localhost:3000/`
+
+    npm start
+
+## Running the tests
+
+    npm run test (Sorry, no tests yet 👎)
+
+## Deployment
+
+    The whole project is set up to be deployed with firebase.
+
+    Running `firebase deploy` will deploy:
+    * Hosting: Everything in the dist folder will be deployed in a firebase hosting site. **Warning this will deploy to both production and develop environment!!! (See Hosting below)**
+    * Firestore: Will set up read, write, update and delete rules from firestore.rules file on the active Firebase Firestore database. Will also set up the database indexes from *firestore.indexes.json*
+    * Functions: All functions from the functions subpackage of this project will be build and deployed as Firebase functions.
+
+## Hosting
+
+    To seperate a development environment from the production environment you'll need to setup two sites in the Firebase Hosting console.
+
+    * sitename
+    * sitename-dev
+
+    This project will use **dev** and **production** as target names for the hosting environments.
+
+    You'll need to map each target name with one of your firebase sites.
+
+    `firebase target:apply hosting [target-name] [resource-name]`
+
+    So you 'll have to run something like:
+    `firebase target:apply hosting dev sitename-dev`
+    `firebase target:apply hosting production sitename`
+
+    These settings will be stored in the file called: *.firebasesrc*
+
+    To deploy you site to the development/production environment run:
+
+    `firebase deploy --only hosting:dev`
+    `firebase deploy --only hosting:production`
+
+    **REMARK**
+    Running firebase deploy or firebase deploy --only hosting will deploy the same data to both develop and production environment! DON'T do that.
+##
+
+
+## Built With
+
+* Typescript
+* React
+* Mobx
+* Rollup
+* Gulp
+* Material Design ([Material Components for the web](https://github.com/material-components/material-components-web))
+
+## Contributing
+
+Feel free to contribute!
+
+## Authors
+
+* **Thomas Dekiere** - *Initial work* - [thdk](https://github.com/thdk)
+
+## License
+
+No license yet. See [no permission](https://choosealicense.com/no-permission/).

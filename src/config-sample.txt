@@ -1,11 +1,19 @@
 // rename this file with correct values to config.ts
+
+// Replace the values below with those from your firebase project settings.
+
+export const config: IAppConfig = {
+    apiKey: "YOUR API KEY",
+    authDomain: "YOUR AUTH DOMAIN",
+    projectId: "YOUR PROJECT ID",
+    storageBucket: "YOUR STORAGE BUCKET"
+}
+
+// DO NOT EDIT BELOW THIS LINE
+
 export interface IAppConfig {
     apiKey: string;
     authDomain: string;
     projectId: string;
     storageBucket: string;
-}
-
-export const config: IAppConfig = {
-    apiKey: "google api key"
 }

@@ -48,7 +48,7 @@ gulp.task('scss', gulp.series(function (done) {
 }));
 
 gulp.task('scsswatch', gulp.series(function (done) {
-    gulp.watch('./src/style/**/*.scss', gulp.series('scss'));
+    gulp.watch('./src/style/**/*.scss', gulp.series('clean-css', 'scss'));
     done();
 }));
 
@@ -61,7 +61,7 @@ gulp.task('bundle', function () {
 });
 
 gulp.task('tswatch', gulp.series(function (done) {
-    gulp.watch(['./src/**/*.ts', './src/**/*.tsx'], gulp.series('bundle'));
+    gulp.watch(['./src/**/*.ts', './src/**/*.tsx'], gulp.series('clean-js', 'bundle'));
     done();
 }));
 
@@ -76,14 +76,24 @@ gulp.task('inject', function (done) {
     done();
 });
 
-gulp.task('clean', function (cb) {
+gulp.task('clean-js', function (cb) {
+    // You can use multiple globbing patterns as you would with `gulp.src`
+    return del(['dist/js'], cb);
+});
+
+gulp.task('clean-css', function (cb) {
+    // You can use multiple globbing patterns as you would with `gulp.src`
+    return del(['dist/js'], cb);
+});
+
+gulp.task('clean-dist', function (cb) {
     // You can use multiple globbing patterns as you would with `gulp.src`
     return del(['dist'], cb);
 });
 
 // Gulp default task
 gulp.task('default', gulp.series(
-    gulp.series('clean'),
+    gulp.series('clean-dist'),
     gulp.parallel('html', 'bundle', 'scss'),
     gulp.series('inject')
 ));

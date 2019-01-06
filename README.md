@@ -8,11 +8,15 @@ These instructions will get you a copy of the project up and running on your loc
 
 ### Prerequisites
 
-## Node
+#### Node
 
 If you don't have node installed yet, install [node](https://nodejs.org/en/download/)
 
-## Firebase
+#### Firebase
+
+Note: if you are joining a project where a firebase project has already been set up, simply ask for the *src/config.ts* and the *.firebasesrc* file of one of your team members and skip this section.
+
+##### Firebase project
 
 The project is build entirely for Google Cloud Firebase.
 
@@ -35,7 +39,47 @@ Copy the javascript object with your project configuration settings:
 
 Now copy these into the *src/config-sample.text* and save the file as *src/config.ts*
 
-### Installing
+**Tell firebase cli to use your project:**
+
+`firebase login`
+`firebase use --add`
+
+(follow instructions)
+
+When your project was succesfully selected, it will be stored in the file called: *.firebasesrc*
+
+##### Firebase hosting
+To seperate a development environment from the production environment you'll need to setup two sites in the Firebase Hosting console.
+
+* sitename
+* sitename-dev
+
+This project will use **dev** and **production** as target names for the hosting environments.
+
+You'll need to map each target name with one of your firebase sites.
+
+`firebase target:apply hosting [target-name] [resource-name]`
+
+So you 'll have to run something like:
+
+```
+firebase target:apply hosting dev sitename-dev
+firebase target:apply hosting production sitename
+```
+
+These settings will also be stored in the file called: *.firebasesrc*
+
+##### Firebase authentication
+
+From the firebase console, go to the authentication tab.
+Activate authentication and set up the desired authentication providers.
+
+Verify if the authorized domain list. You'll need:
+* localhost
+* production site domain
+* develop site domain
+
+#### Installing
 
 Install dependencies
 
@@ -64,32 +108,15 @@ Running `firebase deploy` will deploy:
 
 ## Hosting
 
-To seperate a development environment from the production environment you'll need to setup two sites in the Firebase Hosting console.
-
-* sitename
-* sitename-dev
-
-This project will use **dev** and **production** as target names for the hosting environments.
-
-You'll need to map each target name with one of your firebase sites.
-
-`firebase target:apply hosting [target-name] [resource-name]`
-
-So you 'll have to run something like:
-`firebase target:apply hosting dev sitename-dev`
-`firebase target:apply hosting production sitename`
-
-These settings will be stored in the file called: *.firebasesrc*
-
 To deploy you site to the development/production environment run:
 
-`firebase deploy --only hosting:dev`
-`firebase deploy --only hosting:production`
+```
+firebase deploy --only hosting:dev
+firebase deploy --only hosting:production
+```
 
 **REMARK**
 Running firebase deploy or firebase deploy --only hosting will deploy the same data to both develop and production environment! DON'T do that.
-##
-
 
 ## Built With
 

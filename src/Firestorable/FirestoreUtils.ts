@@ -18,5 +18,11 @@ export const addAsync = <T>(collectionRef: firebase.firestore.CollectionReferenc
 }
 
 export const getAsync = <T>(collectionRef: firebase.firestore.CollectionReference, id: string) => {
-    return collectionRef.doc(id).get().then(d => typeSnapshot<T>(d));
+    return new Promise<T>((resolve, reject) => {
+        collectionRef.doc(id).get()
+            .then(d => d
+                ? resolve(typeSnapshot<T>(d))
+                : reject()
+            );
+    });
 }

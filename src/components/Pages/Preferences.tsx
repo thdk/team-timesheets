@@ -10,7 +10,7 @@ export class Preferences extends React.Component {
     render() {
         if (!store.user.user) return null;
 
-        const { tasks: userTasks = new Map(), defaultTask = undefined} = store.user.user.data || {};
+        const { tasks: userTasks = new Map(), defaultTask = undefined } = store.user.user.data || {};
         const tasks = Array.from(store.config.tasks.docs.values())
             .reduce((p, c) => {
                 if (c.data) {
@@ -25,7 +25,7 @@ export class Preferences extends React.Component {
             }, new Array());
 
         // TODO: create computed value on user store containing the data of the user tasks
-        const userTasksChips = store.user.user.data!.tasks.size > 1 
+        const userTasksChips = store.user.user.data!.tasks.size > 1
             ? <UserTasks value={defaultTask} onChange={this.defaultTaskChanged}></UserTasks>
             : undefined;
 
@@ -43,23 +43,21 @@ export class Preferences extends React.Component {
     taskClicked = (id: string, selected: boolean) => {
         if (!store.user.user || !store.user.user.data) return;
 
-        if (store.user.user.data.tasks) {
+        const { tasks } = store.user.user.data;
 
-            if (selected) store.user.user.data.tasks.set(id, true);
-            else store.user.user.data.tasks.delete(id);
+        if (selected) tasks.set(id, true);
+        else tasks.delete(id);
 
-            store.user.save();
-        }
+        store.user.users.updateAsync(store.user.userId!, {
+            tasks,
+        });
     }
 
-    defaultTaskChanged = (id: string) => {
+    defaultTaskChanged = (defaultTask: string) => {
         if (!store.user.user || !store.user.user.data) return;
 
-        if (store.user.user.data.tasks) {
-
-            store.user.user.data.defaultTask = id;
-
-            store.user.save();
-        }
+        store.user.users.updateAsync(store.user.userId!, {
+            defaultTask
+        });
     }
 }

@@ -1,4 +1,4 @@
-import { observable, action, transaction, computed, toJS } from "mobx";
+import { observable, action, transaction, computed } from "mobx";
 import { ICollection, Collection } from "../Firestorable/Collection";
 import { Doc } from "../Firestorable/Document";
 import { firestorable } from "../Firestorable/Firestorable";
@@ -10,7 +10,7 @@ export interface IUserStore {
     userId?: string;
     user: (Doc<IUser> & Pick<firebase.User, "email" | "displayName">) | undefined;
     setUser: (fbUser: firebase.User | null) => void;
-    save: () => void;
+    users: ICollection<IUser>;
 }
 
 export interface IRoles {
@@ -44,7 +44,7 @@ export class UserStore implements IUserStore {
     @observable.ref fbUser?: firebase.User
     @observable state = StoreState.Done;
 
-    private readonly users: ICollection<IUser>;
+    public readonly users: ICollection<IUser>;
     constructor(rootStore: IRootStore) {
         // this.rootStore = rootStore;
         this.users = new Collection(rootStore.getCollection.bind(this, "users"), {
@@ -57,26 +57,6 @@ export class UserStore implements IUserStore {
 
         // TODO: this is not good. we only need a single user!
         this.users.getDocs();
-    }
-
-    public save() {
-        if (!this.user) return;
-
-        const userData = toJS(this.user.data!);
-
-        // TODO: implement canChangeUserRoles (Only admin can change user roles!)
-        // if (!rules.canChangeUserRoles(this.user))
-        delete userData.roles;
-
-        // TODO: this currently only updates the user tasks
-        // TODO: should allow partial updates? (Since firestore allows that)
-
-        this.users.updateAsync(this.user.id, {
-            ...userData, ...{
-                tasks: this.user.data!.tasks || {},
-                defaultTask: userData.defaultTask
-            }
-        });
     }
 
     @computed public get user() {

@@ -27,13 +27,6 @@ const configuration = {
     }
 };
 
-// Gulp task to copy HTML files to output directory
-gulp.task('html', gulp.series(function (done) {
-    gulp.src(configuration.paths.src.html)
-        .pipe(gulp.dest(configuration.paths.dist));
-    done();
-}));
-
 // Gulp task to concatenate our scss files
 gulp.task('scss', gulp.series(function (done) {
     gulp.src(configuration.paths.src.css)
@@ -48,7 +41,7 @@ gulp.task('scss', gulp.series(function (done) {
 }));
 
 gulp.task('scsswatch', gulp.series(function (done) {
-    gulp.watch('./src/style/**/*.scss', gulp.series('clean-css', 'scss'));
+    gulp.watch('./src/style/**/*.scss', gulp.series('clean-css', 'scss', 'inject'));
     done();
 }));
 
@@ -61,7 +54,7 @@ gulp.task('bundle', function () {
 });
 
 gulp.task('tswatch', gulp.series(function (done) {
-    gulp.watch(['./src/**/*.ts', './src/**/*.tsx'], gulp.series('clean-js', 'bundle'));
+    gulp.watch(['./src/**/*.ts', './src/**/*.tsx'], gulp.series('clean-js', 'bundle', 'inject'));
     done();
 }));
 
@@ -94,7 +87,7 @@ gulp.task('clean-dist', function (cb) {
 // Gulp default task
 gulp.task('default', gulp.series(
     gulp.series('clean-dist'),
-    gulp.parallel('html', 'bundle', 'scss'),
+    gulp.parallel('bundle', 'scss'),
     gulp.series('inject')
 ));
 

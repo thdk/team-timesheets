@@ -45,7 +45,7 @@ Build everything (outputs will live in `dist/`-directory)
 
     npm run build
 
-Start development server with hot reloading (open `http://localhost:3000/`
+Start development server with hot reloading (open `http://localhost:3000/`)
 
     npm start
 

@@ -55,39 +55,39 @@ Start development server with hot reloading (open `http://localhost:3000/`)
 
 ## Deployment
 
-    The whole project is set up to be deployed with firebase.
+The whole project is set up to be deployed with firebase.
 
-    Running `firebase deploy` will deploy:
-    * Hosting: Everything in the dist folder will be deployed in a firebase hosting site. **Warning this will deploy to both production and develop environment!!! (See Hosting below)**
-    * Firestore: Will set up read, write, update and delete rules from firestore.rules file on the active Firebase Firestore database. Will also set up the database indexes from *firestore.indexes.json*
-    * Functions: All functions from the functions subpackage of this project will be build and deployed as Firebase functions.
+Running `firebase deploy` will deploy:
+* Hosting: Everything in the dist folder will be deployed in a firebase hosting site. **Warning this will deploy to both production and develop environment!!! (See Hosting below)**
+* Firestore: Will set up read, write, update and delete rules from firestore.rules file on the active Firebase Firestore database. Will also set up the database indexes from *firestore.indexes.json*
+* Functions: All functions from the functions subpackage of this project will be build and deployed as Firebase functions.
 
 ## Hosting
 
-    To seperate a development environment from the production environment you'll need to setup two sites in the Firebase Hosting console.
+To seperate a development environment from the production environment you'll need to setup two sites in the Firebase Hosting console.
 
-    * sitename
-    * sitename-dev
+* sitename
+* sitename-dev
 
-    This project will use **dev** and **production** as target names for the hosting environments.
+This project will use **dev** and **production** as target names for the hosting environments.
 
-    You'll need to map each target name with one of your firebase sites.
+You'll need to map each target name with one of your firebase sites.
 
-    `firebase target:apply hosting [target-name] [resource-name]`
+`firebase target:apply hosting [target-name] [resource-name]`
 
-    So you 'll have to run something like:
-    `firebase target:apply hosting dev sitename-dev`
-    `firebase target:apply hosting production sitename`
+So you 'll have to run something like:
+`firebase target:apply hosting dev sitename-dev`
+`firebase target:apply hosting production sitename`
 
-    These settings will be stored in the file called: *.firebasesrc*
+These settings will be stored in the file called: *.firebasesrc*
 
-    To deploy you site to the development/production environment run:
+To deploy you site to the development/production environment run:
 
-    `firebase deploy --only hosting:dev`
-    `firebase deploy --only hosting:production`
+`firebase deploy --only hosting:dev`
+`firebase deploy --only hosting:production`
 
-    **REMARK**
-    Running firebase deploy or firebase deploy --only hosting will deploy the same data to both develop and production environment! DON'T do that.
+**REMARK**
+Running firebase deploy or firebase deploy --only hosting will deploy the same data to both develop and production environment! DON'T do that.
 ##
 
 

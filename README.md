@@ -2,6 +2,10 @@
 
 Web base timesheet app. Built to replace old school excel timesheets.
 
+Demo:
+* Develop branch - [Latest version](https://dev-timesheets.firebaseapp.com)
+* Master branch - [Latest release](https://timesheets-ffc4b.firebaseapp.com)
+
 ## Getting Started
 
 These instructions will get you a copy of the project up and running on your local machine for development and testing purposes. See deployment for notes on how to deploy the project on a live system.

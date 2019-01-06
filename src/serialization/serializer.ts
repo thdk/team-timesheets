@@ -30,7 +30,11 @@ export const convertUser = (appData: Partial<IUser>) => {
         defaultTask: appData.defaultTask || ""
     }
 
+    // Todo: automatically remove undefined values for all keys
     if (!user.roles) delete user.roles;
+    if (!user.name) delete user.name;
+    if (!user.defaultTask) delete user.defaultTask;
+    if (!user.tasks) delete user.tasks;
 
     return user;
 }

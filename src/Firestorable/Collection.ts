@@ -14,7 +14,6 @@ export interface ICollection<T> extends IDisposable {
     updateAsync: (id: string, data: Partial<T>) => Promise<void>;
     addAsync: (data: T, id?: string) => Promise<string>;
     getAsync: (id: string) => Promise<Doc<T> | undefined>;
-    getOrCreateAsync: (id: string) => Promise<Doc<T>>;
     deleteAsync: (id: string) => Promise<void>;
     unsubscribeAndClear: () => void;
 }
@@ -84,9 +83,18 @@ export class Collection<T, K = T> implements ICollection<T> {
     }
 
     // TODO: when realtime updates is disabled, we must manually update the docs!
+    // TODO: add update settings: Merge | Overwrite
     public updateAsync(id: string, data: Partial<T>) {
-        const firestoreData = this.serialize(data);
-        return updateAsync(this.collectionRef, Object.assign(firestoreData, { id }));
+        return this.getAsync(id)
+            .then(
+                oldData => {
+                    updateAsync(this.collectionRef, Object.assign(this.serialize({...oldData.data, ...data}), { id }))
+                },
+                () => {
+                    // trying to update something that doesn't exist => add it instead
+                    addAsync(this.collectionRef, Object.assign(this.serialize(data), { id }))
+                        .then(() => { }) // convert Promise<string> into Promise<void> :(
+                });
     }
 
     // TODO: when realtime updates is disabled, we must manually update the docs!
@@ -95,19 +103,10 @@ export class Collection<T, K = T> implements ICollection<T> {
         return addAsync(this.collectionRef, firestoreData, id);
     }
 
+    // TODO: If realtime is enabled, we can safely fetch from the docs instead of a new get request
     public getAsync(id: string) {
         return getAsync<K>(this.collectionRef, id).then(doc => {
-            return doc && new Doc<T>(this.collectionRef, this.deserialize(doc), id);
-        });
-    }
-
-    public getOrCreateAsync(id: string) {
-        return this.getAsync(id).then(fsDoc => {
-            if (fsDoc) return new Promise<Doc<T>>(resolve => resolve(fsDoc));
-            else {
-                const doc = new Doc<T>(this.collectionRef, null, id);
-                return this.addAsync(null, id).then(() => doc);
-            }
+            return new Doc<T>(this.collectionRef, this.deserialize(doc), id);
         });
     }
 
@@ -118,7 +117,7 @@ export class Collection<T, K = T> implements ICollection<T> {
     // so when we have an active query => always manually update the docs
     public deleteAsync(id: string) {
         return this.collectionRef.doc(id).delete().then(() => {
-          this.query && this.docs.delete(id);
+            this.query && this.docs.delete(id);
         }, () => {
             throw new Error("Could not delete document");
         });

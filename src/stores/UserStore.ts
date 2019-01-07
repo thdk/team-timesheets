@@ -79,27 +79,19 @@ export class UserStore implements IUserStore {
         else {
             this.state = StoreState.Pending;
             this.users.getAsync(fbUser.uid).then(user => {
-                // Check if existing user
-                if (user) {
-                    this.getUserSuccess(user, fbUser);
+                this.getUserSuccess(user, fbUser);
+            }, () => this.users.addAsync(
+                {
+                    roles: { user: true },
+                    name: fbUser.displayName || "",
+                    tasks: new Map()
                 }
-                else {
-                    // register new user
-                    this.users.addAsync(
-                        {
-                            roles: { user: true },
-                            name: fbUser.displayName || "",
-                            tasks: new Map()
-                        }
-                        , fbUser.uid).then(() => {
-                            // get the newly registered user
-                            return this.users.getAsync(fbUser.uid).then(user => {
-                                if (!user) throw new Error("No user found after registration");
-                                this.getUserSuccess(user, fbUser);
-                            }, this.getUserError);
-                        }, error => console.log(`${error}\nCoudn't save newly registered user. `));
-                }
-            }, this.getUserError);
+                , fbUser.uid).then(() => {
+                    // get the newly registered user
+                    return this.users.getAsync(fbUser.uid).then(user => {
+                        this.getUserSuccess(user, fbUser);
+                    }, this.getUserError);
+                }, error => console.log(`${error}\nCoudn't save newly registered user. `)));
         }
     }
 

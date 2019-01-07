@@ -13,7 +13,7 @@ export interface ICollection<T> extends IDisposable {
     newDoc: (data: Partial<T>) => Doc<Partial<T>>;
     updateAsync: (id: string, data: Partial<T>) => Promise<void>;
     addAsync: (data: T, id?: string) => Promise<string>;
-    getAsync: (id: string) => Promise<Doc<T> | undefined>;
+    getAsync: (id: string) => Promise<Doc<T>>;
     deleteAsync: (id: string) => Promise<void>;
     unsubscribeAndClear: () => void;
 }

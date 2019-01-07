@@ -18,14 +18,26 @@ const configuration = {
     paths: {
         src: {
             html: './src/*.html',
+            images: './src/images/**/*.png',
             css: [
                 './src/style/*.scss'
             ],
-            js: 'src/app.ts'
+            js: 'src/app.ts',
+            manifest: 'src/manifest.json'
         },
         dist: './dist'
     }
 };
+
+gulp.task('root', function() {
+    return gulp.src([configuration.paths.src.manifest])
+        .pipe(gulp.dest(configuration.paths.dist));
+});
+
+gulp.task('images', function() {
+    return gulp.src(configuration.paths.src.images)
+        .pipe(gulp.dest(configuration.paths.dist + '/images'));
+});
 
 // Gulp task to concatenate our scss files
 gulp.task('scss', gulp.series(function (done) {
@@ -88,7 +100,7 @@ gulp.task('clean-dist', function (cb) {
 gulp.task('default', gulp.series(
     gulp.series('clean-dist'),
     gulp.parallel('bundle', 'scss'),
-    gulp.series('inject')
+    gulp.parallel('inject', 'root', 'images')
 ));
 
 gulp.task('watch', gulp.series('default', gulp.parallel('tswatch', 'scsswatch')));

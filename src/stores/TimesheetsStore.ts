@@ -1,4 +1,4 @@
-import { observable, computed, reaction, when } from 'mobx';
+import { observable, computed, reaction, when, action, transaction } from 'mobx';
 import { Doc } from "../Firestorable/Document";
 
 import * as firebase from 'firebase/app'
@@ -15,17 +15,17 @@ export interface IGroupedRegistrations {
 }
 
 export interface IDocumentData {
-    deleted: boolean;
+    deleted?: boolean;
 }
 
 export interface IRegistration extends IDocumentData {
-    description: string;
-    time: number;
-    project: string;
-    task: string;
+    description?: string;
+    time?: number;
+    project?: string;
+    task?: string;
     date: Date;
     userId: string;
-    deleted: boolean; // TODO: should not be needed here as the app only needs to work with non deleted docs
+    deleted?: boolean; // TODO: should not be needed here as the app only needs to work with non deleted docs
 }
 
 export interface IRegistrationData {
@@ -40,30 +40,27 @@ export interface IRegistrationData {
 
 export interface IRegistrationsStore {
     readonly registrations: ICollection<IRegistration>;
-    registration?: Doc<IRegistration> | {};
+    readonly registration: Doc<Partial<IRegistration>> | undefined;
+    registrationId?: string;
     readonly registrationsGroupedByDay: IGroupedRegistrations[];
-    save: () => void;
-    delete: () => void;
-    getNew: () => Doc<Partial<IRegistration>>;
+    readonly save: () => void;
+    readonly newRegistration: () => void;
 }
 
 export class RegistrationStore implements IRegistrationsStore {
     private rootStore: IRootStore;
     readonly registrations: ICollection<IRegistration>;
 
-    @observable registration: Doc<IRegistration> | {};
-
+    @observable.ref registrationId?: string;
 
     constructor(rootStore: IRootStore) {
         this.rootStore = rootStore;
-        this.registrations = observable(new Collection(() => rootStore.getCollection("registrations"),
+        this.registrations = observable(new Collection<IRegistration, IRegistrationData>(() => rootStore.getCollection("registrations"),
             {
                 realtime: true,
                 deserialize: deserializer.convertRegistration,
                 serialize: serializer.convertRegistration
             }));
-
-        this.registration = {};
 
         const updateRegistrationQuery = () => {
             // TODO: replace when whith a if else
@@ -106,12 +103,12 @@ export class RegistrationStore implements IRegistrationsStore {
                 const currentDayGroup = p[p.length - 1];
                 if (c.data!.date.getTime() === currentDayGroup.date.getTime()) {
                     currentDayGroup.registrations.push(c);
-                    currentDayGroup.totalTime += c.data!.time;
+                    currentDayGroup.totalTime = (currentDayGroup.totalTime || 0) + (c.data!.time || 0);
                 } else {
                     p.push({
                         date: c.data!.date,
                         registrations: [c],
-                        totalTime: c.data!.time
+                        totalTime: c.data!.time || 0
                     });
                 }
 
@@ -119,46 +116,45 @@ export class RegistrationStore implements IRegistrationsStore {
             }, [{
                 date: registrations[0].data!.date,
                 registrations: [registrations[0]],
-                totalTime: registrations[0].data!.time
+                totalTime: registrations[0].data!.time || 0
             }]);
     }
 
-    save() {
-        // TODO: undefined values should be converted to firestore.FieldValue.delete()
-        // in order to save incomplete forms
-        // worst case is to save empty string / array / object
-        this.registration instanceof (Doc)
-            && this.registration.data
-            && this.registration.data.time
-            && this.registration.data.project
-            && this.registration.data.task
-            && this.registration.data.date
-            && this.registration.data.description
-            && this.registration.data.userId
-            && this.registrations.addAsync(this.registration.data, this.registration.id);
+    @computed
+    public get registration() {
+        if (!store.user.user) throw new Error("User must be set");
+
+        const registration = this.registrationId
+            ? this.registrations.docs.get(this.registrationId)
+            : undefined;
+
+
+        return registration;
     }
 
-    delete() {
-        if (this.registration instanceof (Doc) && this.registration.data) {
-            this.registration.data.deleted = true;
-            this.save();
-        }
-    }
+    @action
+    public newRegistration() {
+        if (!store.user.user) throw new Error("User must be set");
 
-    getNew() {
-        if (!store.user.user) throw new Error("Can't add new registration if user is unknown");
-
-        // TODO: conversion toUTC should happen in de serializer
-        return this.registrations.newDoc({
+        const registration = this.registrations.newDoc<IRegistration>({
             date: this.toUTC(
                 this.rootStore.view.moment.toDate()
             ),
-            description: "",
-            project: "",
             task: store.user.user.data!.defaultTask,
             userId: store.user.user.id,
-            deleted: false
+            project: Array.from(store.config.projects.docs.keys())[0]
         });
+
+        if (!registration) throw new Error("Registration not found");
+
+        transaction(() => {
+            this.registrationId = registration.id;
+            this.registrations.docs.set(registration.id, registration);
+        });
+    }
+
+    public save() {
+        if (store.timesheets.registration) store.timesheets.registrations.updateAsync(store.timesheets.registration.id, store.timesheets.registration.data!);
     }
 
     toUTC(date: Date) {

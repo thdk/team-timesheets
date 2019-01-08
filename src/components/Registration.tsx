@@ -11,7 +11,10 @@ import store from '../stores/RootStore';
 @observer
 export class Registration extends React.Component {
     render() {
-        if (!store.timesheets.registration || !(store.timesheets.registration instanceof (Doc))) return <></>;
+        if (!store.timesheets.registration) {
+            store.timesheets.newRegistration();
+            return <></>;
+        }
 
         if (!store.timesheets.registration.data || !store.user.userId) return <></>;
 
@@ -48,7 +51,7 @@ export class Registration extends React.Component {
                             <TextField type="number" outlined={true} focus={true} tabIndex={0} onChange={this.onTimeChange} value={(time || "").toString()} id="time" hint="Time" fullWidth={false}></TextField>
                         </FormField>
                         <FormField first={false}>
-                            <TextField tabIndex={-1} disabled={true} value={`${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}`} id="date" hint="Date" leadingIcon="event" outlined={true}></TextField>
+                            <TextField tabIndex={-1} disabled={true} value={`${date!.getFullYear()}-${date!.getMonth() + 1}-${date!.getDate()}`} id="date" hint="Date" leadingIcon="event" outlined={true}></TextField>
                         </FormField>
                     </FlexGroup>
                     <FlexGroup extraCssClass="row">

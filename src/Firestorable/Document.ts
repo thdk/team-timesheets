@@ -1,7 +1,6 @@
 import { observable, computed, action } from "mobx";
 
 export class Doc<T> {
-    // TODO: probably no need anymore to keep documentReference
     private ref: firebase.firestore.DocumentReference;
     public readonly id: string;
     @observable private dataField: T | {} = {};

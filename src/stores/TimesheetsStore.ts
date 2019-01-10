@@ -145,8 +145,6 @@ export class RegistrationStore implements IRegistrationsStore {
             project: Array.from(store.config.projects.docs.keys())[0]
         });
 
-        if (!registration) throw new Error("Registration not found");
-
         transaction(() => {
             this.registrationId = registration.id;
             this.registrations.docs.set(registration.id, registration);
@@ -154,7 +152,19 @@ export class RegistrationStore implements IRegistrationsStore {
     }
 
     public save() {
-        if (store.timesheets.registration) store.timesheets.registrations.updateAsync(store.timesheets.registration.id, store.timesheets.registration.data!);
+        if (store.timesheets.registration) {
+            const registration = store.timesheets.registration;
+            store.timesheets.registrations
+                .updateAsync(registration.id, registration.data!)
+                .then(() => {
+                    if (store.user.userId && store.user.user) {
+                        const recentProjects = store.user.user.data!.recentProjects;
+                        recentProjects[registration.id] = new Date();
+                        store.user.userId && store.user.users.updateAsync(store.user.userId, { recentProjects })
+                    }
+                });
+        }
+
     }
 
     toUTC(date: Date) {

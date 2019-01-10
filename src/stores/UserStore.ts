@@ -18,11 +18,14 @@ export interface IRoles {
     user?: boolean;
 }
 
+export type RecentlyUsedProjects = { [id: string]: Date };
+
 export interface IUser {
     tasks: Map<string, true>;
     roles: IRoles;
     name: string;
     defaultTask?: string;
+    recentProjects: RecentlyUsedProjects;
 }
 
 export interface IUserData {
@@ -30,6 +33,7 @@ export interface IUserData {
     roles?: IRoles;
     name?: string;
     defaultTask: string;
+    recentProjects?: RecentlyUsedProjects;
 }
 
 export enum StoreState {
@@ -84,7 +88,8 @@ export class UserStore implements IUserStore {
                 {
                     roles: { user: true },
                     name: fbUser.displayName || "",
-                    tasks: new Map()
+                    tasks: new Map(),
+                    recentProjects: {}
                 }
                 , fbUser.uid).then(() => {
                     // get the newly registered user
@@ -109,5 +114,4 @@ export class UserStore implements IUserStore {
         console.log(error);
         this.state = StoreState.Error;
     }
-
 }

@@ -136,10 +136,14 @@ export class RegistrationStore implements IRegistrationsStore {
     public newRegistration() {
         if (!store.user.user) throw new Error("User must be set");
 
-        const { data: {
-            recentProjects = [],
-            defaultTask = undefined
-        } = {}, id: userId } = store.user.user;
+        const {
+            data: {
+                recentProjects = [],
+                defaultTask = store.config.tasks.docs.size ? Array.from(store.config.tasks.docs.keys())[0] : undefined
+            } = {}
+            , id: userId
+        } = store.user.user;
+
         const registration = this.registrations.newDoc<IRegistration>({
             date: this.toUTC(
                 this.rootStore.view.moment.toDate()

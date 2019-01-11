@@ -20,10 +20,10 @@ export class GroupedRegistration extends React.Component<IGroupedRegistrationPro
         const rows = registrations.map(r => {
             if (!r.data) throw new Error("Found registration without Data");
 
-            const { id, data: { description, project, time, task } } = r;
+            const { id, data: { description = "...", project, time, task } } = r;
 
             const projectData = project ? store.config.projects.docs.get(project) : null;
-            const { data: { name: projectName = "ARCHIVED" } = {} } = projectData || {};
+            const { data: { name: projectName = "" } = {} } = projectData || {};
 
             const taskData = task ? store.config.tasks.docs.get(task) : null;
             const { data: { name: taskName = "N/A", icon = undefined } = {} } = taskData || {};

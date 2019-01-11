@@ -11,16 +11,21 @@ import store from '../stores/RootStore';
 @observer
 export class Registration extends React.Component {
     render() {
-        if (!store.timesheets.registration) {
+        if (!store.timesheets.registration ||!store.user.user) {
             return <></>;
         }
 
         if (!store.timesheets.registration.data || !store.user.userId) return <></>;
 
         const userTasks = Array.from(store.user.user!.data!.tasks.keys());
-        const { task = store.user.user!.data!.defaultTask, description, project, time, date } = store.timesheets.registration.data;
+        const { task, 
+            description, 
+            project, 
+            time, 
+            date 
+        } = store.timesheets.registration.data;
         const tasks = Array.from(store.config.tasks.docs.values())
-            .filter(t => userTasks.some(userTaskId => userTaskId === t.id))
+            .filter(t => userTasks.length ? userTasks.some(userTaskId => userTaskId === t.id) : true)
             .map(t => {
                 if (!t.data) return;
 

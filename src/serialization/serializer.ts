@@ -23,6 +23,7 @@ export const convertRegistration = (appData: Partial<IRegistration>) => {
     if (!registration.project) delete registration.project;
     if (!registration.deleted) delete registration.deleted;
     if (!registration.time) delete registration.time;
+    if (!registration.task) delete registration.task;
 
     return registration;
 }

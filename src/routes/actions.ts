@@ -4,7 +4,6 @@ import { getLoggedInUserAsync } from "../Firestorable/Firestorable";
 import store, { IRootStore } from "../stores/RootStore";
 import { goToLogin } from "./login";
 import { when, transaction } from "mobx";
-import { Doc } from "../Firestorable/Document";
 
 export const goToRouteWithDate = (route: Route, s: IRootStore, date?: IDate) => {
     s.router.goTo(route, date || {
@@ -30,7 +29,7 @@ export const setNavigationContent = (route: Route, isChildRoute = true) => {
 
 export const beforeEnter = (_route: Route, _params: any, s: IRootStore) => {
     return getLoggedInUserAsync().then(() => {
-        return when(() => s.user.user instanceof(Doc))
+        return when(() => !!s.user.userId)
     }, () => {
         goToLogin(s);
         return false;

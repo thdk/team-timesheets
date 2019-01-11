@@ -10,9 +10,6 @@ export class Doc<T> {
     constructor(collectionRef: firebase.firestore.CollectionReference, data: T | null, id?: string) {
         this.ref = id ? collectionRef.doc(id) : collectionRef.doc();
         this.id = this.ref.id;
-
-        // If we don't receive an id from the constructor,
-        // it means this Document was manually created and must be saved in the database
         this.setData(data);
     }
 

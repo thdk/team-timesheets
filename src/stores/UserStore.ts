@@ -18,7 +18,7 @@ export interface IRoles {
     user?: boolean;
 }
 
-export type RecentlyUsedProjects = { [id: string]: Date };
+export type RecentlyUsedProjects = string[];
 
 export interface IUser {
     tasks: Map<string, true>;
@@ -89,7 +89,7 @@ export class UserStore implements IUserStore {
                     roles: { user: true },
                     name: fbUser.displayName || "",
                     tasks: new Map(),
-                    recentProjects: {}
+                    recentProjects: []
                 }
                 , fbUser.uid).then(() => {
                     // get the newly registered user

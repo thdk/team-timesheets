@@ -12,7 +12,6 @@ import store from '../stores/RootStore';
 export class Registration extends React.Component {
     render() {
         if (!store.timesheets.registration) {
-            store.timesheets.newRegistration();
             return <></>;
         }
 

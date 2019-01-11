@@ -1,4 +1,4 @@
-import { observable, computed, reaction, when, action, transaction } from 'mobx';
+import { observable, computed, reaction, when, action, transaction, toJS } from 'mobx';
 import { Doc } from "../Firestorable/Document";
 
 import * as firebase from 'firebase/app'
@@ -136,13 +136,17 @@ export class RegistrationStore implements IRegistrationsStore {
     public newRegistration() {
         if (!store.user.user) throw new Error("User must be set");
 
+        const { data: {
+            recentProjects = [],
+            defaultTask = undefined
+        } = {}, id: userId } = store.user.user;
         const registration = this.registrations.newDoc<IRegistration>({
             date: this.toUTC(
                 this.rootStore.view.moment.toDate()
             ),
-            task: store.user.user.data!.defaultTask,
-            userId: store.user.user.id,
-            project: Array.from(store.config.projects.docs.keys())[0]
+            task: defaultTask,
+            userId,
+            project: recentProjects.length ? recentProjects[0] : undefined
         });
 
         transaction(() => {
@@ -157,10 +161,29 @@ export class RegistrationStore implements IRegistrationsStore {
             store.timesheets.registrations
                 .updateAsync(registration.id, registration.data!)
                 .then(() => {
-                    if (store.user.userId && store.user.user) {
-                        const recentProjects = store.user.user.data!.recentProjects;
-                        recentProjects[registration.id] = new Date();
-                        store.user.userId && store.user.users.updateAsync(store.user.userId, { recentProjects })
+                    const { project = undefined } = registration.data || {};
+                    // TODO: move set recent project to firebase function
+                    // triggering for every update/insert of a registration?
+                    if (store.user.userId && store.user.user && project) {
+                        const recentProjects = toJS(store.user.user.data!.recentProjects);
+                        const oldProjectIndex = recentProjects.indexOf(project);
+
+                        // don't update the user document if the current project was already most recent
+                        if (oldProjectIndex !== 0) {
+                            if (oldProjectIndex > 0) {
+                                // project id exists already in the list
+                                // move it to the first place
+                                recentProjects.splice(oldProjectIndex, 1);
+                                recentProjects.unshift(project);
+                            }
+                            else {
+                                // project id not in list yet
+                                // add it in the first place
+                                recentProjects.unshift(project);
+                            }
+
+                            store.user.userId && store.user.users.updateAsync(store.user.userId, { recentProjects })
+                        }
                     }
                 });
         }

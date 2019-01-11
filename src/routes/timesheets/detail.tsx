@@ -17,13 +17,14 @@ export const goToRegistration = (id?: string) => {
 }
 
 const onEnter = (route: Route, params: { id?: string }, s: IRootStore) => {
-    s.timesheets.registrationId = params.id || undefined;
-
-    // registration not in memory yet, request it
-    if (params.id && !s.timesheets.registration) {
-        s.timesheets.registrations
-            .getAsync(params.id)
-            .then(() => s.timesheets.registrationId = params.id);
+    if (params.id) {
+        s.timesheets.registrationId = params.id;
+        if (!s.timesheets.registration) {
+            // registration not in memory yet, request it
+            s.timesheets.registrations
+                .getAsync(params.id)
+                .then(() => s.timesheets.registrationId = params.id);
+        }
     }
 
     const deleteAction: IViewAction = {
@@ -71,7 +72,14 @@ const routes = {
         title: "New registration",
         onEnter,
         beforeExit,
-        beforeEnter
+        beforeEnter: (route: Route, params: any, s: IRootStore) => {
+            return beforeEnter(route, params, s)
+                .then(() => {
+                    s.timesheets.newRegistration();
+
+                    return true;
+                })
+        }
     }),
     registrationDetail: new Route({
         path: path + '/:id',

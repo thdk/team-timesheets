@@ -19,6 +19,11 @@ export const convertRegistration = (appData: Partial<IRegistration>) => {
         deleted: appData.deleted
     };
 
+    if (!registration.description) delete registration.description;
+    if (!registration.project) delete registration.project;
+    if (!registration.deleted) delete registration.deleted;
+    if (!registration.time) delete registration.time;
+
     return registration;
 }
 
@@ -27,7 +32,8 @@ export const convertUser = (appData: Partial<IUser>) => {
         tasks: appData.tasks ? Array.from(appData.tasks.keys()) : undefined,
         name: appData.name,
         roles: appData.roles,
-        defaultTask: appData.defaultTask || ""
+        defaultTask: appData.defaultTask || "",
+        recentProjects: appData.recentProjects
     }
 
     // Todo: automatically remove undefined values for all keys
@@ -35,6 +41,7 @@ export const convertUser = (appData: Partial<IUser>) => {
     if (!user.name) delete user.name;
     if (!user.defaultTask) delete user.defaultTask;
     if (!user.tasks) delete user.tasks;
+    if (!user.recentProjects) delete user.recentProjects;
 
     return user;
 }

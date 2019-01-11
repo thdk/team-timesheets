@@ -7,7 +7,6 @@ import { Registration } from '../../components/Registration';
 import { setTitleForRoute, setBackToOverview, beforeEnter } from '../actions';
 import { goToOverview } from '../../internal';
 import { reaction } from '../../../node_modules/mobx';
-import { Doc } from '../../Firestorable/Document';
 import store, { IRootStore } from '../../stores/RootStore';
 import { IViewAction } from '../../stores/ViewStore';
 
@@ -18,20 +17,19 @@ export const goToRegistration = (id?: string) => {
 }
 
 const onEnter = (route: Route, params: { id?: string }, s: IRootStore) => {
-    s.timesheets.registration = params.id
-        ? s.timesheets.registrations.docs.get(params.id)
-        : s.timesheets.getNew();
-
-    // registration not in memory yet, request it
-    if (params.id && !s.timesheets.registration) {
-        s.timesheets.registrations
-            .getAsync(params.id)
-            .then(r => s.timesheets.registration = r);
+    if (params.id) {
+        s.timesheets.registrationId = params.id;
+        if (!s.timesheets.registration) {
+            // registration not in memory yet, request it
+            s.timesheets.registrations
+                .getAsync(params.id)
+                .then(() => s.timesheets.registrationId = params.id);
+        }
     }
 
     const deleteAction: IViewAction = {
         action: () => {
-            s.timesheets.registration instanceof (Doc) && s.timesheets.delete();
+            s.timesheets.registrationId && s.timesheets.registrations.deleteAsync(s.timesheets.registrationId);
             goToOverview(s);
         },
         icon: "delete",
@@ -63,7 +61,7 @@ const onEnter = (route: Route, params: { id?: string }, s: IRootStore) => {
 };
 
 const beforeExit = (_route: Route, _params: any, s: IRootStore) => {
-    s.timesheets.registration = {};
+    s.timesheets.registrationId = undefined;
     s.view.setNavigation("default");
 };
 
@@ -74,7 +72,14 @@ const routes = {
         title: "New registration",
         onEnter,
         beforeExit,
-        beforeEnter
+        beforeEnter: (route: Route, params: any, s: IRootStore) => {
+            return beforeEnter(route, params, s)
+                .then(() => {
+                    s.timesheets.newRegistration();
+
+                    return true;
+                })
+        }
     }),
     registrationDetail: new Route({
         path: path + '/:id',

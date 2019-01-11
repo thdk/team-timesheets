@@ -10,7 +10,7 @@ export interface ICollection<T> extends IDisposable {
     readonly docs: ObservableMap<string, Doc<T>>;
     query?: (ref: firestore.CollectionReference) => firestore.Query;
     getDocs: () => void;
-    newDoc: (data: Partial<T>) => Doc<Partial<T>>;
+    newDoc: <X extends Partial<T>>(data: X) => Doc<X>;
     updateAsync: (id: string, data: Partial<T>) => Promise<void>;
     addAsync: (data: T, id?: string) => Promise<string>;
     getAsync: (id: string) => Promise<Doc<T>>;
@@ -78,8 +78,8 @@ export class Collection<T, K = T> implements ICollection<T> {
             });
     }
 
-    public newDoc(data: Partial<T>) {
-        return new Doc<Partial<T>>(this.collectionRef, data);
+    public newDoc<X extends Partial<T>>(data: X) {
+        return new Doc<X>(this.collectionRef, data);
     }
 
     // TODO: when realtime updates is disabled, we must manually update the docs!

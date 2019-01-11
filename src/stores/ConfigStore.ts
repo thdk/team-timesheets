@@ -30,9 +30,14 @@ export class ConfigStore implements IConfigStore {
 
     constructor(_rootStore: IRootStore, getCollection: (name: string) => firebase.firestore.CollectionReference) {
         // this._rootStore = rootStore;
-        this.projects = observable(new Collection<IProject>(getCollection.bind(this, "projects"), { realtime: true }));
-        this.tasks = observable(new Collection<ITask>(getCollection.bind(this, "tasks"), { realtime: true }));
-        this.projects.getDocs();
-        this.tasks.getDocs();
+        this.projects = observable(new Collection<IProject>(getCollection.bind(this, "projects"), {
+            realtime: true,
+            query: ref => ref.orderBy("name")
+        }));
+        
+        this.tasks = observable(new Collection<ITask>(getCollection.bind(this, "tasks"), {
+            realtime: true,
+            query: ref => ref.orderBy("name")
+        }));
     }
 }

@@ -20,6 +20,7 @@ export interface ICollection<T> extends IDisposable {
 
 export interface ICollectionOptions<T, K> {
     realtime?: boolean;
+    query?: (ref: firestore.CollectionReference) => firestore.Query;
     deserialize?: (firestoreData: K) => T;
     serialize?: (appData: Partial<T>) => Partial<K>;
 }
@@ -35,7 +36,9 @@ export class Collection<T, K = T> implements ICollection<T> {
     private readonly serialize: (appData: Partial<T>) => Partial<K>;
 
     constructor(getFirestoreCollection: () => firebase.firestore.CollectionReference, options: ICollectionOptions<T, K> = {}) {
-        const { realtime = false,
+        const { 
+            realtime = false,
+            query,
             deserialize = (x: K) => x as unknown as T,
             serialize = (x: Partial<T>) => x as unknown as Partial<K>
         } = options;
@@ -47,6 +50,12 @@ export class Collection<T, K = T> implements ICollection<T> {
         this.collectionRef = getFirestoreCollection();
 
         this.queryReactionDisposable = reaction(() => this.query, this.getDocs.bind(this));
+
+        // setting a query immediately in the constructor will also trigger the above reaction
+        // => no need to manually call getDocs when a query is provided in the constructor of the collection
+        if (query) {
+            this.query = query;
+        }
     }
 
     public getDocs() {

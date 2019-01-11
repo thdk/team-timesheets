@@ -16,12 +16,11 @@ export const convertRegistration = (appData: Partial<IRegistration>) => {
         task: appData.task,
         time: appData.time,
         userId: appData.userId,
-        deleted: appData.deleted
+        deleted: appData.deleted === true ? true : false
     };
 
     if (!registration.description) delete registration.description;
     if (!registration.project) delete registration.project;
-    if (!registration.deleted) delete registration.deleted;
     if (!registration.time) delete registration.time;
     if (!registration.task) delete registration.task;
 

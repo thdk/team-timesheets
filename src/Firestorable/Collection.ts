@@ -101,7 +101,7 @@ export class Collection<T, K = T> implements ICollection<T> {
                 },
                 () => {
                     // trying to update something that doesn't exist => add it instead
-                    addAsync(this.collectionRef, Object.assign(this.serialize(data), { id }))
+                    addAsync(this.collectionRef, this.serialize(data), id)
                         .then(() => { }) // convert Promise<string> into Promise<void> :(
                 });
     }

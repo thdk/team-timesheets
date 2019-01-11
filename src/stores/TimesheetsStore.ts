@@ -150,7 +150,8 @@ export class RegistrationStore implements IRegistrationsStore {
             ),
             task: defaultTask,
             userId,
-            project: recentProjects.length ? recentProjects[0] : undefined
+            project: recentProjects.length ? recentProjects[0] : undefined,
+            deleted: false
         });
 
         transaction(() => {

@@ -18,13 +18,17 @@ export default class ProjectSelect extends React.Component {
             const projectData = store.config.projects.docs.get(c);
             if (projectData && projectData.data) {
                 p.push(
-                    <Chip onClick={this.projectClicked} id={c} {...projectData} text={projectData.data.name} key={c} isSelected={c === project}></Chip>
+                    projectData
                 );
             } else {
                 console.log("No project data found for recent project id: " + c)
             }
             return p;
         }, new Array());
+
+        const x = recentProjects.map(projectData =>
+            <Chip onClick={this.projectClicked} id={projectData.id} {...projectData.data} text={projectData.data.name} key={projectData.id} isSelected={projectData.id === project}></Chip>
+        );
 
         const projects = Array.from(store.config.projects.docs.values())
             .reduce((p, c) => {
@@ -41,7 +45,7 @@ export default class ProjectSelect extends React.Component {
             <>
                 <FlexGroup extraCssClass="row">
                     <FormField style={{ display: (!!recentProjects).toString() }}>
-                        <ChipSet chips={recentProjects} type="choice"></ChipSet>
+                        <ChipSet chips={x} type="choice"></ChipSet>
                     </FormField>
                 </FlexGroup>
 

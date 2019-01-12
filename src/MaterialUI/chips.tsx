@@ -11,11 +11,10 @@ export interface IChipProps {
     type?: "filter" | "choice"
 }
 export class Chip extends React.Component<IChipProps> {
-    private mdcChipRef: React.RefObject<HTMLDivElement>;
+    private mdcChipRef?: HTMLDivElement | null;
 
     constructor(props: IChipProps) {
         super(props);
-        this.mdcChipRef = React.createRef();
     }
     render() {
         // TODO: add tabindex to mdc-chip
@@ -41,7 +40,7 @@ export class Chip extends React.Component<IChipProps> {
             : undefined;
 
         return (
-            <div tabIndex={tabIndex} className={className} id={id} ref={this.mdcChipRef} key={id}>
+            <div tabIndex={tabIndex} className={className} id={id} ref={ el => {this.mdcChipRef = el}} key={id}>
                 {iconEl}
                 {checkmarkIcon}
                 <div className="mdc-chip__text">{text}</div>
@@ -51,7 +50,7 @@ export class Chip extends React.Component<IChipProps> {
 
     interaction = (e: Event) => {
         if (this.isChipEvent(e)) {
-            this.mdcChipRef.current && this.props.onClick(e.detail.chipId, e.detail.selected);
+            this.mdcChipRef && this.props.onClick(e.detail.chipId, e.detail.selected);
         };
     }
 
@@ -60,13 +59,13 @@ export class Chip extends React.Component<IChipProps> {
     }
 
     componentDidMount() {
-        this.mdcChipRef.current &&
-            this.mdcChipRef.current.addEventListener("MDCChip:selection", (e) => this.interaction(e));
+        this.mdcChipRef &&
+            this.mdcChipRef.addEventListener("MDCChip:selection", (e) => this.interaction(e));
     }
 
     componentWillUnmount() {
-        this.mdcChipRef.current &&
-            this.mdcChipRef.current.removeEventListener("MDCChip:selection", this.interaction);
+        this.mdcChipRef &&
+            this.mdcChipRef.removeEventListener("MDCChip:selection", this.interaction);
     }
 }
 

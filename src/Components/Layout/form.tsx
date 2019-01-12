@@ -10,7 +10,7 @@ export const Form = (props: IReactProps) => {
 }
 
 export interface IFormFieldProps extends IReactProps {
-    first?: false;
+    first?: boolean;
 }
 
 export const FormField = (props: IFormFieldProps) => {

@@ -36,7 +36,7 @@ export class Collection<T, K = T> implements ICollection<T> {
     private readonly serialize: (appData: Partial<T>) => Partial<K>;
 
     constructor(getFirestoreCollection: () => firebase.firestore.CollectionReference, options: ICollectionOptions<T, K> = {}) {
-        const { 
+        const {
             realtime = false,
             query,
             deserialize = (x: K) => x as unknown as T,
@@ -114,6 +114,7 @@ export class Collection<T, K = T> implements ICollection<T> {
 
     // TODO: If realtime is enabled, we can safely fetch from the docs instead of a new get request
     public getAsync(id: string) {
+        console.log("Collection:getAsync");
         return getAsync<K>(this.collectionRef, id).then(doc => {
             return new Doc<T>(this.collectionRef, this.deserialize(doc), id);
         });

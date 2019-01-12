@@ -77,8 +77,10 @@ export class UserStore implements IUserStore {
 
     @action
     public setUser(fbUser: firebase.User | null) {
+        console.log(`setUser:`);
+        console.log(fbUser);
         if (!fbUser) {
-            this.userId = undefined; // userid should be observable ref?
+            this.userId = undefined;
         }
         else {
             this.state = StoreState.Pending;
@@ -102,8 +104,11 @@ export class UserStore implements IUserStore {
 
     @action.bound
     getUserSuccess = (user: Doc<IUser>, fbUser: firebase.User) => {
-        this.state = StoreState.Done;
+        console.log(`getUserSuccess:`);
+        console.log(user);
+        console.log(fbUser);
         transaction(() => {
+            this.state = StoreState.Done;
             this.userId = user.id;
             this.fbUser = fbUser;
         });

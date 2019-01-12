@@ -1,12 +1,13 @@
 import * as React from 'react';
 import { observer } from "mobx-react";
+
 import { TextField } from '../MaterialUI/textfield';
 import { Form, FormField } from '../components/Layout/form';
 import { Chip, ChipSet } from '../MaterialUI/chips';
 import { Doc } from '../Firestorable/Document';
 import { FlexGroup } from './Layout/flex';
-import { Select, SelectOption } from '../MaterialUI/select';
 import store from '../stores/RootStore';
+import ProjectSelect from './Pages/Timesheets/ProjectSelect';
 
 @observer
 export class Registration extends React.Component {
@@ -18,12 +19,12 @@ export class Registration extends React.Component {
         if (!store.timesheets.registration.data || !store.user.userId) return <></>;
 
         const userTasks = Array.from(store.user.user!.data!.tasks.keys());
-        const { task, 
-            description, 
-            project, 
-            time, 
-            date 
+        const { task,
+            description,
+            time,
+            date
         } = store.timesheets.registration.data;
+
         const tasks = Array.from(store.config.tasks.docs.values())
             .filter(t => userTasks.length ? userTasks.some(userTaskId => userTaskId === t.id) : true)
             .map(t => {
@@ -36,16 +37,7 @@ export class Registration extends React.Component {
                 );
             });
 
-        const projects = Array.from(store.config.projects.docs.values())
-            .reduce((p, c) => {
-                if (c.data) {
-                    const { id, data: { name } } = c;
-                    p.push(
-                        <SelectOption text={name!} value={id} key={id}></SelectOption>
-                    );
-                }
-                return p;
-            }, new Array());
+
 
         return (
             <>
@@ -64,11 +56,7 @@ export class Registration extends React.Component {
                         </FormField>
                     </FlexGroup>
                     <FlexGroup>
-                        <FormField>
-                            <Select value={project} outlined={true} label="Project" onChange={this.onProjectChange}>
-                                {projects}
-                            </Select>
-                        </FormField>
+                        <ProjectSelect></ProjectSelect>
                     </FlexGroup>
                     <FlexGroup extraCssClass="row">
                         <FlexGroup direction="vertical">
@@ -91,11 +79,6 @@ export class Registration extends React.Component {
     onTimeChange = (value: string) => {
         if (store.timesheets.registration && store.timesheets.registration instanceof (Doc) && store.timesheets.registration.data)
             store.timesheets.registration.data.time = +value;
-    }
-
-    onProjectChange = (value: string) => {
-        if (store.timesheets.registration && store.timesheets.registration instanceof (Doc) && store.timesheets.registration.data)
-            store.timesheets.registration.data.project = value;
     }
 
     taskClicked = (taskId: string) => {

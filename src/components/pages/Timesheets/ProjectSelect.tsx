@@ -25,11 +25,18 @@ export default class ProjectSelect extends React.Component {
             return p;
         }, new Array<Doc<IProject>>());
 
-        const projects = ["\/ Recent projects \/", ...recentProjects, "", "\/ All projects \/", ...Array.from(store.config.projects.docs.values())]
-            .reduce((p, c) => {
+        const recentProjectItems = recentProjects.length
+            ? ["\/ Recent projects \/", ...recentProjects, "", "\/ More projects \/"]
+            : [""];
+
+        const otherProjectItems = Array.from(store.config.projects.docs.values())
+            .filter(p => !recentProjects.some(rp => rp.id === p.id));
+
+        const projects = [...recentProjectItems, ...otherProjectItems]
+            .reduce((p, c, i) => {
                 if (typeof c === "string") {
                     p.push([
-                        <SelectOption value="" text={c} disabled={true}></SelectOption>
+                        <SelectOption key={i.toString()} value="" text={c} disabled={true}></SelectOption>
                     ]);
                 }
                 else {

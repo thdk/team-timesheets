@@ -15,7 +15,7 @@ export default class ProjectSelect extends React.Component {
 
         const userRecentProjects = store.user.user ? store.user.user.data!.recentProjects : [];
 
-        const recentProjects = userRecentProjects.slice(0, 3).reduce((p, c) => {
+        const recentProjects = userRecentProjects.slice(0, 5).reduce((p, c) => {
             const projectData = store.config.projects.docs.get(c);
             if (projectData) {
                 p.push(projectData);

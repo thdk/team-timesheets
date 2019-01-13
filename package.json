@@ -1,6 +1,6 @@
 {
   "name": "typescript-start",
-  "version": "1.0.0",
+  "version": "0.1.0",
   "description": "A start boiler template for typescript projects",
   "main": "src/js/app.ts",
   "scripts": {

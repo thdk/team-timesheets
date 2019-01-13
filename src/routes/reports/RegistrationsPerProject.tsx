@@ -6,6 +6,7 @@ import moment from 'moment-es6';
 import { firestorable } from '../../Firestorable/Firestorable';
 import store from '../../stores/RootStore';
 import * as chartjs from 'chart.js';
+import { legendCallback } from './helpers';
 
 interface IProjectReportData extends IProject {
     totalTime: number;
@@ -22,11 +23,17 @@ export const chartColors = {
 }
 
 export class RegistrationsPerProject extends React.Component<IReactProps, { data: chartjs.ChartData }> {
+    private ref: React.RefObject<any>;
+    private legendRef: React.RefObject<HTMLDivElement>;
+
     constructor(props: IReactProps) {
         super(props);
         this.state = { data: { datasets: [] } };
 
-        getData(2018).then(r => {
+        this.ref = React.createRef();
+        this.legendRef = React.createRef();
+
+        getData(2019).then(r => {
             r = r.sort((a, b) => a.totalTime > b.totalTime ? -1 : a.totalTime < b.totalTime ? 1 : 0);
             this.setState({
                 ...this.state, ...{
@@ -50,10 +57,18 @@ export class RegistrationsPerProject extends React.Component<IReactProps, { data
         })
     }
 
+    componentDidUpdate() {
+        if (this.ref.current
+            && this.legendRef.current) {
+            this.legendRef.current!.innerHTML = this.ref.current.chartInstance.generateLegend();
+        }
+    }
+
     render() {
         return (
             <div className="chart-container" style={{ position: "relative", width: "50%" }}>
-                <Doughnut options={{ title: { text: "Time / project in 2018", display: true }, responsive: true }} data={this.state.data}></Doughnut>
+                <Doughnut ref={this.ref} options={{ legendCallback, legend: { display: false }, title: { text: "Time / project in 2019", display: true }, responsive: true }} data={this.state.data}></Doughnut>
+                <div className="legend" ref={this.legendRef}></div>
             </div>
         );
     }

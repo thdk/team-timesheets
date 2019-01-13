@@ -7,17 +7,25 @@ import { firestorable } from '../../Firestorable/Firestorable';
 import store from '../../stores/RootStore';
 import * as chartjs from 'chart.js';
 import { chartColors } from './RegistrationsPerProject';
+import { legendCallback } from './helpers';
 
 interface ITaskReportData extends IProject {
     totalTime: number;
 }
 
 export class RegistrationsPerTask extends React.Component<IReactProps, { data: chartjs.ChartData }> {
+    private ref: React.RefObject<any>;
+    private legendRef: React.RefObject<HTMLDivElement>;
+
     constructor(props: IReactProps) {
         super(props);
+
+        this.ref = React.createRef();
+        this.legendRef = React.createRef();
+
         this.state = { data: { datasets: [] } };
 
-        getData(2018).then(r => {
+        getData(2019).then(r => {
             r = r.sort((a, b) => a.totalTime > b.totalTime ? -1 : a.totalTime < b.totalTime ? 1 : 0);
             this.setState({
                 ...this.state, ...{
@@ -30,28 +38,35 @@ export class RegistrationsPerTask extends React.Component<IReactProps, { data: c
                                     chartColors.orange,
                                     chartColors.yellow,
                                     chartColors.green,
-                                    chartColors.blue,
+                                    chartColors.blue
                                 ]
                             }
                         ],
-                        labels: r.map(d => d.name)
+                        labels: r.map(d => d.name),
                     }
                 }
             });
         })
     }
 
+    componentDidUpdate() {
+        if (this.ref.current
+            && this.legendRef.current) {
+            this.legendRef.current!.innerHTML = this.ref.current.chartInstance.generateLegend();
+        }
+    }
+
     render() {
         return (
             <div className="chart-container" style={{ position: "relative", width: "50%" }}>
-                <Doughnut options={{ title: { text: "Time / Task in 2018", display: true }, responsive: true }} data={this.state.data}></Doughnut>
+                <Doughnut ref={this.ref} options={{ legend: { display: false }, legendCallback, title: { text: "Time / Task in 2019", display: true }, responsive: true }} data={this.state.data}></Doughnut>
+                <div className="legend" ref={this.legendRef}></div>
             </div>
         );
     }
 }
 
 const getData = (year: number) => {
-    let projectsMap: Map<string, IProject>;
     let tasksMap: Map<string, ITaskReportData>;
 
     const startMonent = moment(`${year}`, 'YYYY');
@@ -59,12 +74,6 @@ const getData = (year: number) => {
     const startDate = startMonent.clone().startOf("year").toDate();
 
     return Promise.all([
-        firestorable.firestore.collection('projects').get()
-            .then(
-                s => projectsMap = new Map(s.docs.map((d): [string, any] =>
-                    [d.id, { ...d.data(), totalTime: 0 }])
-                )
-            ),
         firestorable.firestore.collection('tasks').get().then(s => tasksMap = new Map(s.docs.map((d): [string, any] => [d.id, { ...d.data(), totalTime: 0 }])))
     ]).then(() => firestorable.firestore.collection('registrations')
         .where("deleted", "==", false)

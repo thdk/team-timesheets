@@ -1,0 +1,32 @@
+.legend {
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    font-size: 0.8em;
+    margin-top: 1.2em;
+
+    ul {
+        display: flex;
+        list-style: none;
+        align-items: center;
+        align-content: center;
+        flex-direction: row;
+        flex-wrap: wrap;
+        padding-left: 0;
+
+        li {
+            float: left;
+            display: flex;
+            align-items: center;
+            margin-right: 10px;
+
+            span {
+                display: block;
+                width: 39px;
+                height: 13px;
+                float: left;
+                margin-right: 11px;
+            }
+        }
+    }
+}

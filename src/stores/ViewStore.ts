@@ -122,7 +122,7 @@ export class ViewStore implements IViewStore {
     this.actions.remove(action);
   }
 
-  @action setCalendarDetail(detail: CalendarDetail)  {
+  @action setCalendarDetail(detail: CalendarDetail) {
     this.calendarDetail = detail;
   }
 }

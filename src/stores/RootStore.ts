@@ -7,6 +7,7 @@ import { firestorable } from "../Firestorable/Firestorable";
 import { IReportStore, ReportStore } from "./ReportStore";
 
 export interface IRootStore {
+
     readonly user: IUserStore;
     readonly view: IViewStore;
     readonly router: RouterStore;

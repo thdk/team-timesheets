@@ -5,6 +5,7 @@ import store, { IRootStore } from "../stores/RootStore";
 import { Settings } from "../components/Pages/Settings/Settings";
 import { IViewAction } from "../stores/ViewStore";
 import { IReactionDisposer, reaction, transaction } from "mobx";
+import { canDeleteTask, canDeleteProject } from "../rules/rules";
 
 export const goToSettings = (tab: SettingsTab = "preferences") => {
     store.router.goTo(routes.preferences, {}, store, { tab });
@@ -18,33 +19,37 @@ const setActions = (tab: SettingsTab, s: IRootStore) => {
     reactionDisposer && reactionDisposer();
     switch (tab) {
         case "tasks": {
-            const deleteAction: IViewAction = {
-                action: () => {
-                    s.config.taskId && s.config.tasks.deleteAsync(s.config.taskId);
-                    s.config.taskId = undefined;
-                },
-                icon: "delete",
-                shortKey: { key: "Delete", ctrlKey: true }
-            }
+            const deleteAction: IViewAction | undefined = canDeleteTask(store.user.currentUser)
+                ? {
+                    action: () => {
+                        s.config.taskId && s.config.tasks.deleteAsync(s.config.taskId);
+                        s.config.taskId = undefined;
+                    },
+                    icon: "delete",
+                    shortKey: { key: "Delete", ctrlKey: true }
+                }
+                : undefined;
 
             reactionDisposer = reaction(() => s.config.taskId, id => {
-                if (id) s.view.setActions([deleteAction]);
+                if (id) s.view.setActions([deleteAction].filter(a => a !== undefined) as IViewAction[]);
                 else s.view.setActions([]);
             });
             break;
         }
         case "projects": {
-            const deleteAction: IViewAction = {
-                action: () => {
-                    s.config.projectId && s.config.projects.deleteAsync(s.config.projectId);
-                    s.config.projectId = undefined;
-                },
-                icon: "delete",
-                shortKey: { key: "Delete", ctrlKey: true }
-            }
+            const deleteAction: IViewAction | undefined = canDeleteProject(store.user.currentUser) ?
+                {
+                    action: () => {
+                        s.config.projectId && s.config.projects.deleteAsync(s.config.projectId);
+                        s.config.projectId = undefined;
+                    },
+                    icon: "delete",
+                    shortKey: { key: "Delete", ctrlKey: true }
+                }
+                : undefined;
 
             reactionDisposer = reaction(() => s.config.projectId, id => {
-                if (id) s.view.setActions([deleteAction]);
+                if (id) s.view.setActions([deleteAction].filter(a => a !== undefined) as IViewAction[]);
                 else s.view.setActions([]);
             });
             break;

@@ -7,10 +7,14 @@ import * as deserializer from '../serialization/deserializer';
 import * as serializer from '../serialization/serializer';
 
 export interface IUserStore {
-    userId?: string;
-    user: (Doc<IUser> & Pick<firebase.User, "email" | "displayName">) | undefined;
-    setUser: (fbUser: firebase.User | null) => void;
-    users: ICollection<IUser>;
+    readonly userId?: string;
+    /**
+     * Deprecated: use currentUser
+     */
+    readonly user: (Doc<IUser> & Pick<firebase.User, "email" | "displayName">) | undefined;
+    readonly currentUser?: IUser;
+    readonly setUser: (fbUser: firebase.User | null) => void;
+    readonly users: ICollection<IUser>;
 }
 
 export interface IRoles {
@@ -64,7 +68,7 @@ export class UserStore implements IUserStore {
     }
 
     @computed public get user() {
-
+        // TODO: should return a type of IUser (see currentUser)
         if (this.userId && this.fbUser) {
             const user = this.users.docs.get(this.userId);
             return user
@@ -73,6 +77,15 @@ export class UserStore implements IUserStore {
         }
 
         return undefined;
+    }
+
+    @computed public get currentUser() {
+        if (!this.userId) return undefined;
+
+        const user = this.users.docs.get(this.userId);
+        if (!user) throw new Error("No user found in collection for the currentUser: " + this.userId);
+
+        return user.data!;
     }
 
     @action

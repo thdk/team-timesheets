@@ -3,6 +3,7 @@ import { observer } from 'mobx-react';
 import store from '../../../../stores/RootStore';
 import { ListItem, List } from '../../../../MaterialUI/list';
 import { IListItemData, AddListItem } from '../../../Controls/AddListItem';
+import { canAddProject, canEditProject } from '../../../../rules/rules';
 
 @observer
 export class ProjectList extends React.Component {
@@ -11,17 +12,22 @@ export class ProjectList extends React.Component {
             .reduce((p, c) => {
                 if (c.data) {
                     const { id, data: { icon, name }} = c;
-                    p.push(id === store.config.projectId
+                    p.push(id === store.config.projectId && canEditProject(store.user.currentUser)
                         ? <AddListItem key={id} onCancel={this.unselectItem} onSave={(data) => this.saveListItem(data, id)} data={c.data} onClick={this.selectItem.bind(this, id)}></AddListItem>
                         : <ListItem onClick={this.selectItem.bind(this, id)} icon={icon} key={id} lines={[name!]}></ListItem>
                     );
                 }
                 return p;
             }, new Array());
+
+        const addProject = canAddProject(store.user.currentUser)
+            ? <AddListItem labels={{add: "Add project"}} onSave={this.saveListItem.bind(this)} ></AddListItem>
+            : undefined;
+
         return (
             <List isTwoLine={false}>
                 {items}
-                <AddListItem labels={{add: "Add project"}} onSave={this.saveListItem.bind(this)} ></AddListItem>
+                {addProject}
             </List>
         );
     }

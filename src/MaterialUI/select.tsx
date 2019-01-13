@@ -56,7 +56,6 @@ export class Select extends React.Component<ISelectProps> {
             <div className={classList.join(" ")} ref={this.mdcSelect}>
                 <i className="mdc-select__dropdown-icon"></i>
                 <select onChange={() =>{}} className="mdc-select__native-control" value={value || ""} >
-                    <option value="" disabled></option>
                     {this.props.children}
                 </select>
                 {lineEl}

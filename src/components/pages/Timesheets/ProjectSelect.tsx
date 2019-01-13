@@ -4,8 +4,9 @@ import { observer } from 'mobx-react';
 import { FormField } from '../../Layout/form';
 import { Select, SelectOption } from '../../../MaterialUI/select';
 import store from '../../../stores/RootStore';
-import { Chip, ChipSet } from '../../../MaterialUI/chips';
 import { FlexGroup } from '../../Layout/flex';
+import { Doc } from '../../../Firestorable/Document';
+import { IProject } from '../../../stores/ConfigStore';
 
 @observer
 export default class ProjectSelect extends React.Component {
@@ -16,42 +17,38 @@ export default class ProjectSelect extends React.Component {
 
         const recentProjects = userRecentProjects.slice(0, 3).reduce((p, c) => {
             const projectData = store.config.projects.docs.get(c);
-            if (projectData && projectData.data) {
-                p.push(
-                    projectData
-                );
+            if (projectData) {
+                p.push(projectData);
             } else {
                 console.log("No project data found for recent project id: " + c)
             }
             return p;
-        }, new Array());
+        }, new Array<Doc<IProject>>());
 
-        const x = recentProjects.map(projectData =>
-            <Chip onClick={this.projectClicked} id={projectData.id} {...projectData.data} text={projectData.data.name} key={projectData.id} isSelected={projectData.id === project}></Chip>
-        );
-
-        const projects = Array.from(store.config.projects.docs.values())
+        const projects = ["\/ Recent projects \/", ...recentProjects, "", "\/ All projects \/", ...Array.from(store.config.projects.docs.values())]
             .reduce((p, c) => {
-                if (c.data) {
-                    const { id, data: { name } } = c;
-                    p.push(
-                        <SelectOption text={name!} value={id} key={id}></SelectOption>
-                    );
+                if (typeof c === "string") {
+                    p.push([
+                        <SelectOption value="" text={c} disabled={true}></SelectOption>
+                    ]);
                 }
+                else {
+                    if (c.data) {
+                        const { id, data: { name } } = c;
+                        p.push(
+                            <SelectOption text={name!} value={id} key={id}></SelectOption>
+                        );
+                    }
+                }
+
                 return p;
             }, new Array());
 
         return (
             <>
                 <FlexGroup extraCssClass="row">
-                    <FormField style={{ display: (!!recentProjects).toString() }}>
-                        <ChipSet chips={x} type="choice"></ChipSet>
-                    </FormField>
-                </FlexGroup>
-
-                <FlexGroup extraCssClass="row">
-                    <FormField first={!!recentProjects}>
-                        <Select value={project} outlined={true} label="All projects" onChange={this.onProjectChange}>
+                    <FormField>
+                        <Select value={project} outlined={true} label="Project" onChange={this.onProjectChange}>
                             {projects}
                         </Select>
                     </FormField>

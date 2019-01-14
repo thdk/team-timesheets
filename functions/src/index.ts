@@ -64,10 +64,13 @@ exports.createCSV = functions.firestore
                     const project = projectData ? projectData.name : fireStoreData.project;
                     const task = taskData ? taskData.name : fireStoreData.task;
                     const date = fireStoreData.date.toDate().getDate();
-                    registrations.push({ ...fireStoreData, project, task, date });
+
+                    // placeholder for client. Adds empty column in exported csv.
+                    const client = "";
+                    registrations.push({ ...fireStoreData, project, task, date, client });
                 });
 
-                return json2csv(registrations, { fields: ["date", "time", "project", "description", "task"] });
+                return json2csv(registrations, { fields: ["date", "time", "project", "task", "client", "description"] });
             })
             .then(csv => {
                 // Write the file to cloud function tmp storage
@@ -153,7 +156,7 @@ exports.getChart = functions.https.onCall((data, context) => {
             });
 
             registrations.forEach(r => {
-                const project =  projectsMap.get(r.project);
+                const project = projectsMap.get(r.project);
                 if (project) {
                     project.totalTime = project.totalTime + r.time;
                 }

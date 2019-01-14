@@ -18,14 +18,14 @@ export interface IDocumentData {
     deleted?: boolean;
 }
 
-export interface IRegistration extends IDocumentData {
+export interface IRegistration {
     description?: string;
     time?: number;
     project?: string;
     task?: string;
+    client?: string;
     date: Date;
     userId: string;
-    deleted?: boolean; // TODO: should not be needed here as the app only needs to work with non deleted docs
 }
 
 export interface IRegistrationData {
@@ -33,6 +33,7 @@ export interface IRegistrationData {
     time: number;
     project: string;
     task: string;
+    client: string;
     date: firebase.firestore.Timestamp;
     userId: string;
     deleted: boolean;
@@ -96,6 +97,7 @@ export class RegistrationStore implements IRegistrationsStore {
                 const bTime = b.data!.date.getTime();
                 return aTime > bTime ? 1 : aTime < bTime ? -1 : 0;
             });
+
         if (registrations.length === 0) return [];
         return registrations
             .slice(1)
@@ -150,8 +152,7 @@ export class RegistrationStore implements IRegistrationsStore {
             ),
             task: defaultTask,
             userId,
-            project: recentProjects.length ? recentProjects[0] : undefined,
-            deleted: false
+            project: recentProjects.length ? recentProjects[0] : undefined
         });
 
         transaction(() => {

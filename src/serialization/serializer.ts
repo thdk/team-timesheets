@@ -2,27 +2,34 @@ import { IRegistrationData, IRegistration } from "../stores/TimesheetsStore";
 import * as firebase from 'firebase/app';
 import { IUser, IUserData } from "../stores/UserStore";
 
-export const convertRegistration = (appData: Partial<IRegistration>) => {
-    // validation
-    if (!appData.date) throw new Error("Regisrations must have a date set.");
+export const convertRegistration = (appData: Partial<IRegistration> | "delete") => {
+    let registration: Partial<IRegistrationData>;
+    if (appData === "delete") {
+        registration = { deleted: true }
+    }
+    else {
 
-    if (!appData.userId) throw new Error("Registrations must have a userId set.");
-    // end validation
+        // validation
+        if (!appData.date) throw new Error("Regisrations must have a date set.");
 
-    const registration: Partial<IRegistrationData> = {
-        date: firebase.firestore.Timestamp.fromDate(appData.date),
-        description: appData.description,
-        project: appData.project,
-        task: appData.task,
-        time: appData.time,
-        userId: appData.userId,
-        deleted: appData.deleted === true ? true : false
-    };
+        if (!appData.userId) throw new Error("Registrations must have a userId set.");
+        // end validation
 
-    if (!registration.description) delete registration.description;
-    if (!registration.project) delete registration.project;
-    if (!registration.time) delete registration.time;
-    if (!registration.task) delete registration.task;
+        registration = {
+            date: firebase.firestore.Timestamp.fromDate(appData.date),
+            description: appData.description,
+            project: appData.project,
+            task: appData.task,
+            time: appData.time,
+            userId: appData.userId
+        };
+    }
+
+    if (undefined === registration.description) delete registration.description;
+    if (undefined === registration.project) delete registration.project;
+    if (undefined === registration.time) delete registration.time;
+    if (undefined === registration.task) delete registration.task;
+    if (undefined === registration.client) delete registration.client;
 
     return registration;
 }

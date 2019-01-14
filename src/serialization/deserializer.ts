@@ -7,9 +7,9 @@ export const convertRegistration = (firestoreData: IRegistrationData) => {
         description: firestoreData.description,
         project: firestoreData.project,
         task: firestoreData.task,
-        time: firestoreData.time,
+        time: firestoreData.time || 0,
         userId: firestoreData.userId,
-        deleted: firestoreData.deleted
+        client: firestoreData.client
     };
 
     return registration;

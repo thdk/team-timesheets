@@ -65,9 +65,7 @@ exports.createCSV = functions.firestore
                     const task = taskData ? taskData.name : fireStoreData.task;
                     const date = fireStoreData.date.toDate().getDate();
 
-                    // placeholder for client. Adds empty column in exported csv.
-                    const client = "";
-                    registrations.push({ ...fireStoreData, project, task, date, client });
+                    registrations.push({ client: "", ...fireStoreData, project, task, date });
                 });
 
                 return json2csv(registrations, { fields: ["date", "time", "project", "task", "client", "description"] });

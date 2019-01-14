@@ -5,7 +5,7 @@ import { IUser, IUserData } from "../stores/UserStore";
 export const convertRegistration = (appData: Partial<IRegistration> | "delete") => {
     let registration: Partial<IRegistrationData>;
     if (appData === "delete") {
-        registration = { deleted: true }
+        registration = { deleted: true };
     }
     else {
 
@@ -21,7 +21,9 @@ export const convertRegistration = (appData: Partial<IRegistration> | "delete") 
             project: appData.project,
             task: appData.task,
             time: appData.time,
-            userId: appData.userId
+            userId: appData.userId,
+            client: appData.client,
+            deleted: false
         };
     }
 

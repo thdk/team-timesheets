@@ -3,6 +3,8 @@ import store from '../stores/RootStore';
 import { ListItem, List, ListDivider } from '../MaterialUI/list';
 import { IGroupedRegistrations } from '../stores/TimesheetsStore';
 import { observer } from 'mobx-react';
+import { Checkbox } from '../MaterialUI/checkbox';
+import { FlexGroup } from './Layout/flex';
 
 
 export interface IGroupedRegistrationProps {
@@ -30,12 +32,19 @@ export class GroupedRegistration extends React.Component<IGroupedRegistrationPro
 
             const line1 = projectName;
             const line2 = `${taskName} - ${description}`;
+
+            const meta =
+                <FlexGroup>
+                    <div><Checkbox onChange={() => {}}></Checkbox></div>
+                    <div>{time + " hours"}</div>
+                </FlexGroup>;
+
             return (
                 <ListItem
                     icon={icon}
                     key={id}
                     lines={[line1, line2]}
-                    meta={time + " hours"}
+                    meta={meta}
                     onClick={registrationClick.bind(this, id)}>
                 </ListItem>
             );

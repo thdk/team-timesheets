@@ -12,9 +12,10 @@ export interface IShortKey {
 }
 
 export interface IViewAction {
-  icon: string;
-  action: (ids?: string[]) => void;
-  shortKey?: IShortKey;
+  readonly icon: string;
+  readonly action: (ids?: string[]) => void;
+  readonly shortKey?: IShortKey;
+  readonly selection?: ObservableMap<string, null>;
 }
 
 export interface INavigationViewAction extends IViewAction {

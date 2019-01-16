@@ -21,8 +21,11 @@ export class TopAppBar extends React.Component<TopAppBarProps> {
             ? <a href="#" onClick={navigationClick} className="material-icons mdc-top-app-bar__navigation-icon">{navigationIcon}</a>
             : <a href="#" onClick={this.onLeaveContextualMode} className="material-icons mdc-top-app-bar__navigation-icon">close</a>
 
+        const classNames =["mdc-top-app-bar", "app-bar"];
+        if (mode === "contextual") classNames.push("contextual");
+
         return (
-            <header className="mdc-top-app-bar app-bar">
+            <header className={classNames.join(" ")}>
                 <div className="mdc-top-app-bar__row">
                     <section className="mdc-top-app-bar__section mdc-top-app-bar__section--align-start">
                         {primaryAction}
@@ -46,7 +49,8 @@ export class TopAppBar extends React.Component<TopAppBarProps> {
         // TODO: deinit topappbar
     }
 
-    onLeaveContextualMode() {
+    onLeaveContextualMode(e: React.MouseEvent) {
+        e.preventDefault();
         store.view.selection.clear();
     }
 }
@@ -54,7 +58,9 @@ export class TopAppBar extends React.Component<TopAppBarProps> {
 @observer class AppBarActions extends React.Component {
     render() {
         return store.view.actions.map((a, i) => {
-            return <AppBarAction key={i} onClick={a.action.bind(a.action, Array.from(store.view.selection.keys()))} icon={a.icon}></AppBarAction>
+            return a.selection && a.selection.size
+                ? <AppBarAction key={i} onClick={a.action.bind(a.action, Array.from(store.view.selection.keys()))} icon={a.icon}></AppBarAction>
+                : <div key={i}></div>;
         });
     }
 }

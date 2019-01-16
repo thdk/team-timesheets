@@ -2,7 +2,7 @@ import * as React from 'react';
 import { MDCCheckbox } from '@material/checkbox/index';
 
 export interface ICheckboxProps {
-    defaultChecked?: boolean;
+    checked?: boolean;
     disabled?: boolean;
     onClick: (e: React.MouseEvent) => void;
 }
@@ -23,7 +23,7 @@ export class Checkbox extends React.Component<ICheckboxProps> {
                     <input {...this.props}
                         type="checkbox"
                         className="mdc-checkbox__native-control"
-                        id="checkbox-1" />
+                        id="checkbox-1" onChange={() => {}} />
                     <div className="mdc-checkbox__background">
                         <svg className="mdc-checkbox__checkmark"
                             viewBox="0 0 24 24">

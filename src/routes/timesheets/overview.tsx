@@ -4,7 +4,7 @@ import { Timesheets } from '../../components/Timesheets';
 import { transaction } from 'mobx';
 import { beforeEnter, setNavigationContent, goToRouteWithDate } from '../actions';
 import { App } from '../../internal';
-import { IRootStore } from '../../stores/RootStore';
+import store, { IRootStore } from '../../stores/RootStore';
 
 export interface IDate {
     year: number;
@@ -34,9 +34,14 @@ const setActions = (s: IRootStore) => {
         {
             action: ids => console.log(ids),
             icon: "file_copy",
-            shortKey: { ctrlKey: true, key: "s" }
+            shortKey: { ctrlKey: true, key: "s" },
+            selection: store.view.selection
         }
     ]);
+};
+
+const beforeTimesheetExit = (_route: Route, _params: any, s: IRootStore) => {
+    s.view.selection.clear();
 };
 
 const routes = {
@@ -49,7 +54,8 @@ const routes = {
         },
         onParamsChange: routeChanged,
         title: "Timesheet",
-        beforeEnter
+        beforeEnter,
+        beforeExit: beforeTimesheetExit
     }),
     monthOverview: new Route({
         path: path + '/:year/:month',

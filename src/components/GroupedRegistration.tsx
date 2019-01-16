@@ -35,7 +35,7 @@ export class GroupedRegistration extends React.Component<IGroupedRegistrationPro
             const line2 = `${taskName} - ${description}`;
 
             const checkbox = registrationSelect
-                ? <div className="clickable"><Checkbox checked={store.view.selection.has(id)} onClick={registrationSelect.bind(this, id)}></Checkbox></div>
+                ? <div className="clickable"><Checkbox defaultChecked={store.view.selection.has(id)} onClick={registrationSelect.bind(this, id)}></Checkbox></div>
                 : undefined;
 
             const meta =

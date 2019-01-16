@@ -17,7 +17,7 @@ export class TopAppBar extends React.Component<TopAppBarProps> {
     render() {
         const { title, navigationIcon, navigationClick, mode } = this.props;
 
-        const primaryAction= mode === "standard" 
+        const primaryAction = mode === "standard"
             ? <a href="#" onClick={navigationClick} className="material-icons mdc-top-app-bar__navigation-icon">{navigationIcon}</a>
             : <a href="#" onClick={this.onLeaveContextualMode} className="material-icons mdc-top-app-bar__navigation-icon">close</a>
 
@@ -54,12 +54,28 @@ export class TopAppBar extends React.Component<TopAppBarProps> {
 @observer class AppBarActions extends React.Component {
     render() {
         return store.view.actions.map((a, i) => {
-            let className = "rst-action mdc-top-app-bar__action-item mdc-icon-button";
-
-            return <button onClick={a.action} key={i} data-action-id={a.icon} className={className} aria-label={a.icon}
-                aria-hidden="true" aria-pressed="false">
-                <i className="material-icons mdc-icon-button__icon">{a.icon}</i>
-            </button>
+            return <AppBarAction key={i} onClick={a.action.bind(a.action, Array.from(store.view.selection.keys()))} icon={a.icon}></AppBarAction>
         });
+    }
+}
+
+interface IAppBarAction {
+    onClick: (ids?: string[]) => void;
+    icon: string;
+}
+
+class AppBarAction extends React.Component<IAppBarAction> {
+    render() {
+        const { icon } = this.props;
+
+        const className = "rst-action mdc-top-app-bar__action-item mdc-icon-button";
+        return <button onClick={this.onClick.bind(this)} data-action-id={icon} className={className} aria-label={icon}
+            aria-hidden="true" aria-pressed="false">
+            <i className="material-icons mdc-icon-button__icon">{icon}</i>
+        </button>
+    }
+
+    onClick() {
+        this.props.onClick();
     }
 }

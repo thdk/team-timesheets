@@ -2,7 +2,7 @@ import * as React from 'react';
 import { MDCCheckbox } from '@material/checkbox/index';
 
 export interface ICheckboxProps {
-    checked?: boolean;
+    defaultChecked?: boolean;
     disabled?: boolean;
     onClick: (e: React.MouseEvent) => void;
 }

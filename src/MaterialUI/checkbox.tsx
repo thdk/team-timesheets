@@ -4,7 +4,7 @@ import { MDCCheckbox } from '@material/checkbox/index';
 export interface ICheckboxProps {
     checked?: boolean;
     disabled?: boolean;
-    onChange: (e: React.ChangeEvent) => void;
+    onClick: (e: React.MouseEvent) => void;
 }
 
 export class Checkbox extends React.Component<ICheckboxProps> {
@@ -20,7 +20,8 @@ export class Checkbox extends React.Component<ICheckboxProps> {
         return (
             <>
                 <div ref={this.mdcRef} className="mdc-checkbox">
-                    <input onClick={(e) => { console.log("click"); e.preventDefault() }} onChange={(e) => { e.preventDefault(); console.log("change"); } } type="checkbox"
+                    <input {...this.props}
+                        type="checkbox"
                         className="mdc-checkbox__native-control"
                         id="checkbox-1" />
                     <div className="mdc-checkbox__background">

@@ -1,4 +1,4 @@
-import { observable, IObservableArray, action, computed, transaction, reaction } from "mobx";
+import { observable, IObservableArray, action, computed, transaction, reaction, ObservableMap } from "mobx";
 import moment from 'moment-es6';
 import { IRootStore } from "./RootStore";
 import { goToLogin } from "../internal";
@@ -13,7 +13,7 @@ export interface IShortKey {
 
 export interface IViewAction {
   icon: string;
-  action: () => void;
+  action: (ids?: string[]) => void;
   shortKey?: IShortKey;
 }
 
@@ -34,6 +34,7 @@ export interface IViewStore {
   readonly moment: moment.Moment;
   readonly monthMoment: moment.Moment;
   readonly actions: IObservableArray<IViewAction>;
+  readonly selection: ObservableMap<string>;
   navigationAction?: INavigationViewAction;
   setActions: (actions: IViewAction[]) => void;
   setNavigation: (action: INavigationViewAction | "default") => void;
@@ -42,6 +43,8 @@ export interface IViewStore {
 
 export class ViewStore implements IViewStore {
   readonly actions = observable<IViewAction>([]);
+  readonly selection = observable<string>(new Map());
+
   @observable navigationAction?: INavigationViewAction;
   @observable readonly title: string;
   @observable readonly isDrawerOpen: boolean;
@@ -88,7 +91,7 @@ export class ViewStore implements IViewStore {
       if (action) {
         ev.preventDefault();
         ev.stopPropagation();
-        action();
+        action(Array.from(this.selection.keys()));
       }
     });
   }

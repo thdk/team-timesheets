@@ -7,6 +7,7 @@ import store from '../stores/RootStore';
 export interface TopAppBarProps {
     showNavigationIcon: boolean,
     navigationIcon: "menu" | "arrow_back" | "arrow_upward";
+    mode: "contextual" | "standard";
     title?: string;
     navigationClick?: (e: React.MouseEvent) => void;
 }
@@ -14,13 +15,17 @@ export interface TopAppBarProps {
 @observer
 export class TopAppBar extends React.Component<TopAppBarProps> {
     render() {
-        const { title, navigationIcon, navigationClick } = this.props;
+        const { title, navigationIcon, navigationClick, mode } = this.props;
+
+        const primaryAction= mode === "standard" 
+            ? <a href="#" onClick={navigationClick} className="material-icons mdc-top-app-bar__navigation-icon">{navigationIcon}</a>
+            : <a href="#" onClick={this.onLeaveContextualMode} className="material-icons mdc-top-app-bar__navigation-icon">close</a>
 
         return (
             <header className="mdc-top-app-bar app-bar">
                 <div className="mdc-top-app-bar__row">
                     <section className="mdc-top-app-bar__section mdc-top-app-bar__section--align-start">
-                        <a href="#" onClick={navigationClick} className="material-icons mdc-top-app-bar__navigation-icon">{navigationIcon}</a>
+                        {primaryAction}
                         <span className="mdc-top-app-bar__title">{title}</span>
                     </section>
                     <section className="mdc-top-app-bar__section mdc-top-app-bar__section--align-end" role="toolbar">
@@ -39,6 +44,10 @@ export class TopAppBar extends React.Component<TopAppBarProps> {
 
     componentWillUnmount() {
         // TODO: deinit topappbar
+    }
+
+    onLeaveContextualMode() {
+        store.view.selection.clear();
     }
 }
 

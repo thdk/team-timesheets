@@ -10,14 +10,15 @@ import { FlexGroup } from './Layout/flex';
 export interface IGroupedRegistrationProps {
     group: IGroupedRegistrations;
     registrationClick: (id: string) => void;
-    createTotalLabel: (date:Date) => React.ReactNode;
+    registrationToggleSelect?: (id: string) => void;
+    createTotalLabel: (date: Date) => React.ReactNode;
     totalOnTop?: boolean;
 }
 
 @observer
 export class GroupedRegistration extends React.Component<IGroupedRegistrationProps> {
     render() {
-        const {group: {registrations, date, totalTime}, createTotalLabel, totalOnTop, registrationClick} = this.props;
+        const { group: { registrations, date, totalTime }, createTotalLabel, totalOnTop, registrationClick, registrationToggleSelect: registrationSelect } = this.props;
         const listStyle = { width: '100%' };
         const rows = registrations.map(r => {
             if (!r.data) throw new Error("Found registration without Data");
@@ -33,10 +34,14 @@ export class GroupedRegistration extends React.Component<IGroupedRegistrationPro
             const line1 = projectName;
             const line2 = `${taskName} - ${description}`;
 
+            const checkbox = registrationSelect
+                ? <div className="clickable"><Checkbox checked={store.view.selection.has(id)} onClick={registrationSelect.bind(this, id)}></Checkbox></div>
+                : undefined;
+
             const meta =
-                <FlexGroup>
-                    <div><Checkbox onChange={() => {}}></Checkbox></div>
+                <FlexGroup center={true} style={{ justifyContent: "space-between", width: checkbox ? "8em" : "auto" }}>
                     <div>{time + " hours"}</div>
+                    {checkbox}
                 </FlexGroup>;
 
             return (
@@ -49,15 +54,15 @@ export class GroupedRegistration extends React.Component<IGroupedRegistrationPro
                 </ListItem>
             );
         });
-            const totalLabel = createTotalLabel(date);
+        const totalLabel = createTotalLabel(date);
 
-            const total = <ListItem lines={[totalLabel]} meta={totalTime + " hours"} disabled={true}></ListItem>
+        const total = <ListItem lines={[totalLabel]} meta={totalTime + " hours"} disabled={true}></ListItem>
 
-            const totalList = <List style={listStyle}><ListDivider></ListDivider>{total}<ListDivider></ListDivider></List>;
-            const topTotal = totalOnTop ? totalList : undefined;
-            const bottomTotal = totalOnTop ? undefined : totalList;
+        const totalList = <List style={listStyle}><ListDivider></ListDivider>{total}<ListDivider></ListDivider></List>;
+        const topTotal = totalOnTop ? totalList : undefined;
+        const bottomTotal = totalOnTop ? undefined : totalList;
 
-            return (
+        return (
             <React.Fragment>
                 {topTotal}
                 <List isTwoLine={true} style={listStyle}>

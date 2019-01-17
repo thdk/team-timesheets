@@ -19,9 +19,7 @@ export class Timesheets extends React.Component {
     }
 
     registrationSelect = (id: string) => {
-        store.view.selection.has(id)
-            ? store.view.selection.delete(id)
-            : store.view.selection.set(id, null);
+        store.view.toggleSelection(id);
     }
 
     createTotalLabel = (date: Date) => {
@@ -71,7 +69,8 @@ export class Timesheets extends React.Component {
                 <GroupedRegistrations totalOnTop={true}
                     createTotalLabel={this.createTotalLabel}
                     registrationClick={this.registrationClick.bind(this)}
-                    registrationToggleSelect={this.registrationSelect.bind(this)}></GroupedRegistrations>
+                    registrationToggleSelect={this.registrationSelect.bind(this)}>
+                </GroupedRegistrations>
                 {totalList}
             </>;
         }

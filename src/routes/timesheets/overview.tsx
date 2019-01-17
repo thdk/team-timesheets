@@ -4,7 +4,8 @@ import { Timesheets } from '../../components/Timesheets';
 import { transaction } from 'mobx';
 import { beforeEnter, setNavigationContent, goToRouteWithDate } from '../actions';
 import { App } from '../../internal';
-import store, { IRootStore } from '../../stores/RootStore';
+import { IRootStore } from '../../stores/RootStore';
+import { IViewAction } from '../../stores/ViewStore';
 
 export interface IDate {
     year: number;
@@ -29,15 +30,33 @@ const routeChanged = (route: Route, params: IDate, s: IRootStore) => {
     });
 };
 
-const setActions = (s: IRootStore) => {
-    s.view.setActions([
+const setActions = (s: IRootStore, alowInserts = false) => {
+    const actions: IViewAction[] = [
         {
-            action: ids => console.log(ids),
+            action: ids =>  {
+                s.view.selection.clear();
+                s.timesheets.clipboard.replace(ids ? ids.map(id => [id, true]) : []);
+            },
             icon: "file_copy",
-            shortKey: { ctrlKey: true, key: "s" },
-            selection: store.view.selection
+            shortKey: { ctrlKey: true, key: "c" },
+            selection: s.view.selection,
+            contextual: true
         }
-    ]);
+    ];
+
+    if (alowInserts) {
+        actions.push({
+            action: ids =>  {
+                alert(`Not implemented. Trying to clone registrations:\n${ids!.join("\n")}`);
+                s.timesheets.clipboard.clear();
+            },
+            icon: "library_add",
+            shortKey: { ctrlKey: true, key: "v" },
+            selection: s.timesheets.clipboard
+        });
+    }
+
+    s.view.setActions(actions);
 };
 
 const beforeTimesheetExit = (_route: Route, _params: any, s: IRootStore) => {
@@ -50,7 +69,7 @@ const routes = {
         component: <App><Timesheets></Timesheets></App>,
         onEnter: (route: Route, params: IDate, s: IRootStore) => {
             routeChanged(route, params, s);
-            setActions(s);
+            setActions(s, true);
         },
         onParamsChange: routeChanged,
         title: "Timesheet",

@@ -90,8 +90,6 @@ export class UserStore implements IUserStore {
 
     @action
     public setUser(fbUser: firebase.User | null) {
-        console.log(`setUser:`);
-        console.log(fbUser);
         if (!fbUser) {
             this.userId = undefined;
         }
@@ -117,9 +115,6 @@ export class UserStore implements IUserStore {
 
     @action.bound
     getUserSuccess = (user: Doc<IUser>, fbUser: firebase.User) => {
-        console.log(`getUserSuccess:`);
-        console.log(user);
-        console.log(fbUser);
         transaction(() => {
             this.state = StoreState.Done;
             this.userId = user.id;

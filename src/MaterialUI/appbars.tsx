@@ -3,6 +3,7 @@ import * as React from 'react';
 import { MDCTopAppBar } from '@material/top-app-bar/index';
 import { observer } from 'mobx-react';
 import store from '../stores/RootStore';
+import { IViewAction } from '../stores/ViewStore';
 
 export interface TopAppBarProps {
     showNavigationIcon: boolean,
@@ -21,7 +22,7 @@ export class TopAppBar extends React.Component<TopAppBarProps> {
             ? <a href="#" onClick={navigationClick} className="material-icons mdc-top-app-bar__navigation-icon">{navigationIcon}</a>
             : <a href="#" onClick={this.onLeaveContextualMode} className="material-icons mdc-top-app-bar__navigation-icon">close</a>
 
-        const classNames =["mdc-top-app-bar", "app-bar"];
+        const classNames = ["mdc-top-app-bar", "app-bar"];
         if (mode === "contextual") classNames.push("contextual");
 
         return (
@@ -32,7 +33,7 @@ export class TopAppBar extends React.Component<TopAppBarProps> {
                         <span className="mdc-top-app-bar__title">{title}</span>
                     </section>
                     <section className="mdc-top-app-bar__section mdc-top-app-bar__section--align-end" role="toolbar">
-                        <AppBarActions></AppBarActions>
+                        <AppBarActions contextual={mode === "contextual"}></AppBarActions>
                     </section>
                 </div>
             </header>
@@ -55,13 +56,22 @@ export class TopAppBar extends React.Component<TopAppBarProps> {
     }
 }
 
-@observer class AppBarActions extends React.Component {
+export interface IAppBarActionsProps {
+    contextual?: boolean;
+}
+
+@observer class AppBarActions extends React.Component<IAppBarActionsProps> {
     render() {
-        return store.view.actions.map((a, i) => {
+        const { contextual = false } = this.props;
+        return store.view.actions.filter(a => !!a.contextual === contextual).map((a, i) => {
             return a.selection && a.selection.size
-                ? <AppBarAction key={i} onClick={a.action.bind(a.action, Array.from(store.view.selection.keys()))} icon={a.icon}></AppBarAction>
+                ? <AppBarAction key={i} onClick={this.onClick.bind(this, a)} icon={a.icon}></AppBarAction>
                 : <div key={i}></div>;
         });
+    }
+
+    onClick(viewAction: IViewAction) {
+        viewAction.action(viewAction.selection ? Array.from(viewAction.selection.keys()) : undefined);
     }
 }
 

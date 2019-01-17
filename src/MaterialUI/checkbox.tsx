@@ -41,9 +41,6 @@ export class Checkbox extends React.Component<ICheckboxProps> {
     componentDidMount() {
         if (this.mdcRef.current) {
             this.mdcCheckbox = new MDCCheckbox(this.mdcRef.current);
-            this.mdcCheckbox.handleChange = () => {
-                console.log(this.mdcCheckbox.checked);
-            }
         }
     }
 

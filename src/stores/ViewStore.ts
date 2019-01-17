@@ -2,7 +2,6 @@ import { observable, IObservableArray, action, computed, transaction, reaction, 
 import moment from 'moment-es6';
 import { IRootStore } from "./RootStore";
 import { goToLogin } from "../internal";
-
 export interface IShortKey {
   ctrlKey?: boolean;
   altKey?: boolean;
@@ -15,7 +14,8 @@ export interface IViewAction {
   readonly icon: string;
   readonly action: (ids?: string[]) => void;
   readonly shortKey?: IShortKey;
-  readonly selection?: ObservableMap<string, null>;
+  readonly contextual?: boolean;
+  readonly selection?: ObservableMap<string, true>;
 }
 
 export interface INavigationViewAction extends IViewAction {
@@ -30,12 +30,11 @@ export interface IViewStore {
   day?: number;
   month?: number;
   year?: number;
-  calendarDetail: CalendarDetail;
-  setCalendarDetail: (detail: CalendarDetail) => void;
   readonly moment: moment.Moment;
   readonly monthMoment: moment.Moment;
   readonly actions: IObservableArray<IViewAction>;
-  readonly selection: ObservableMap<string>;
+  readonly selection: ObservableMap<string, true>;
+  readonly toggleSelection: (value: string) => void;
   navigationAction?: INavigationViewAction;
   setActions: (actions: IViewAction[]) => void;
   setNavigation: (action: INavigationViewAction | "default") => void;
@@ -44,7 +43,7 @@ export interface IViewStore {
 
 export class ViewStore implements IViewStore {
   readonly actions = observable<IViewAction>([]);
-  readonly selection = observable<string>(new Map());
+  readonly selection = observable(new Map<string, true>());
 
   @observable navigationAction?: INavigationViewAction;
   @observable readonly title: string;
@@ -79,7 +78,7 @@ export class ViewStore implements IViewStore {
     });
 
     document.addEventListener("keydown", ev => {
-      const action = this.actions.filter(a => {
+      const viewAction = this.actions.filter(a => {
         const { key = undefined, ctrlKey = false, altKey = false, shiftKey = false, metaKey = false } = a.shortKey || {};
         return a.shortKey &&
           altKey === ev.altKey &&
@@ -87,12 +86,12 @@ export class ViewStore implements IViewStore {
           metaKey === ev.metaKey &&
           shiftKey === ev.shiftKey &&
           key === ev.key
-      }).map(a => a.action)[0];
+      })[0];
 
-      if (action) {
+      if (viewAction) {
         ev.preventDefault();
         ev.stopPropagation();
-        action(Array.from(this.selection.keys()));
+        viewAction.action(viewAction.selection ? Array.from(viewAction.selection.keys()) : undefined);
       }
     });
   }
@@ -128,5 +127,11 @@ export class ViewStore implements IViewStore {
 
   @action setCalendarDetail(detail: CalendarDetail) {
     this.calendarDetail = detail;
+  }
+
+  @action toggleSelection(value: string) {
+    this.selection.has(value)
+      ? this.selection.delete(value)
+      : this.selection.set(value, true);
   }
 }

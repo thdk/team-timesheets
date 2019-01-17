@@ -8,7 +8,7 @@ export interface IListProps extends IReactProps {
 
 export class List extends React.Component<IListProps> {
     render() {
-        const {isTwoLine, style, isDense} = this.props;
+        const { isTwoLine, style, isDense } = this.props;
 
         const classNames = ["mdc-list"];
         isTwoLine && classNames.push("mdc-list--two-line");
@@ -63,7 +63,13 @@ export class ListItem extends React.Component<IListItemProps> {
 
 
     componentDidMount() {
-        this.props.onClick && this.liRef.current && this.liRef.current.addEventListener("click", this.props.onClick);
+        this.props.onClick && this.liRef.current && this.liRef.current.addEventListener("click", e => {
+            const targetEl = e.target as HTMLElement
+            if (targetEl && targetEl.closest(".clickable")) {
+                return;
+            };
+            this.props.onClick && this.props.onClick()
+        });
     }
 
     componentWillUnmount() {
@@ -83,7 +89,7 @@ export interface IListDividerProps {
 
 export class ListDivider extends React.Component<IListDividerProps> {
     render() {
-        const {type = ListDividerType.standard} = this.props;
+        const { type = ListDividerType.standard } = this.props;
         const classNames = ["mdc-list-divider"];
         if (type === ListDividerType.padded) classNames.push("mdc-list-divider--padded");
         if (type === ListDividerType.inset) classNames.push("mdc-list-divider--inset");

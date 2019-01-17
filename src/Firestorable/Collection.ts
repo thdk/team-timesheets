@@ -115,7 +115,9 @@ export class Collection<T, K = T> implements ICollection<T> {
     // TODO: If realtime is enabled, we can safely fetch from the docs instead of a new get request
     public getAsync(id: string) {
         console.log("Collection:getAsync");
+        console.log("Waiting...");
         return getAsync<K>(this.collectionRef, id).then(doc => {
+            console.log("Collection:getAsync-complete");
             return new Doc<T>(this.collectionRef, this.deserialize(doc), id);
         });
     }

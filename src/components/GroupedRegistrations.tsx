@@ -6,6 +6,7 @@ import { GroupedRegistration } from './GroupedRegistration';
 
 export interface IGroupedRegistrationsProps extends IReactProps {
     registrationClick: (id: string) => void;
+    registrationToggleSelect?: (id: string) => void;
     createTotalLabel: (date: Date) => React.ReactNode;
     totalOnTop?: boolean;
 }

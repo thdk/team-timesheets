@@ -24,8 +24,14 @@ export class TopNavigation extends React.Component {
 
     render() {
         const { navigationAction: { icon: navigationIcon = "menu"} = {}, title } = store.view;
+
+        const selectionLength = Array.from(store.view.selection.keys()).length;
+        const titleText = selectionLength
+         ? `${selectionLength} selected`
+         : title;
+
         return (
-            <TopAppBar navigationIcon={navigationIcon} title={title} navigationClick={this.navigationClick} showNavigationIcon={true}></TopAppBar>
+            <TopAppBar mode={selectionLength ? "contextual" : "standard"} navigationIcon={navigationIcon} title={titleText} navigationClick={this.navigationClick} showNavigationIcon={true}></TopAppBar>
         )
     }
 }

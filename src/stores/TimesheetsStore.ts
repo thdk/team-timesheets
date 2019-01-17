@@ -1,4 +1,4 @@
-import { observable, computed, reaction, when, action, transaction, toJS } from 'mobx';
+import { observable, computed, reaction, when, action, transaction, toJS, ObservableMap } from 'mobx';
 import { Doc } from "../Firestorable/Document";
 
 import * as firebase from 'firebase/app'
@@ -40,6 +40,7 @@ export interface IRegistrationData {
 }
 
 export interface IRegistrationsStore {
+    readonly clipboard: ObservableMap<string, true>;
     readonly registrations: ICollection<IRegistration>;
     readonly registration: Doc<Partial<IRegistration>> | undefined;
     registrationId?: string;
@@ -51,6 +52,7 @@ export interface IRegistrationsStore {
 export class RegistrationStore implements IRegistrationsStore {
     private rootStore: IRootStore;
     readonly registrations: ICollection<IRegistration>;
+    readonly clipboard = observable(new Map<string, true>());
 
     @observable.ref registrationId?: string;
 

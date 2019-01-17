@@ -1,7 +1,6 @@
 import * as React from 'react';
 import { RoutesConfig, Route } from 'mobx-router';
 
-import { path as parentPath } from './overview';
 import { App } from '../../components/App';
 import { Registration } from '../../components/Registration';
 import { setTitleForRoute, setBackToOverview, beforeEnter } from '../actions';
@@ -10,7 +9,7 @@ import { reaction } from '../../../node_modules/mobx';
 import store, { IRootStore } from '../../stores/RootStore';
 import { IViewAction } from '../../stores/ViewStore';
 
-const path = parentPath + "/detail";
+const path = "/timesheetsdetail";
 
 export const goToRegistration = (id?: string) => {
     store.router.goTo(id ? routes.registrationDetail : routes.newRegistration, { id }, store);

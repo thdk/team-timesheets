@@ -6,6 +6,7 @@ import { beforeEnter, setNavigationContent, goToRouteWithDate } from '../actions
 import { App } from '../../internal';
 import { IRootStore } from '../../stores/RootStore';
 import { IViewAction } from '../../stores/ViewStore';
+import { IRegistration } from '../../stores/TimesheetsStore';
 
 export interface IDate {
     year: number;
@@ -47,8 +48,13 @@ const setActions = (s: IRootStore, alowInserts = false) => {
     if (alowInserts) {
         actions.push({
             action: ids =>  {
-                alert(`Not implemented. Trying to clone registrations:\n${ids!.join("\n")}`);
-                s.timesheets.clipboard.clear();
+                if (!ids) return;
+                console.log(`Not implemented. Trying to clone registrations:\n${ids!.join("\n")}`);
+                const docData = Array.from(s.timesheets.registrations.docs.entries())
+                    .filter(d => ids.some(id => d[0] === id && !!d[1].data))
+                    .map(d => d[1].data) as IRegistration[];
+
+                s.timesheets.registrations.addAsync(docData);
             },
             icon: "library_add",
             shortKey: { ctrlKey: true, key: "v" },

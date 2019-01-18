@@ -6,6 +6,7 @@ class Firestorable {
     public readonly firestore: firebase.firestore.Firestore;
     public readonly storage: firebase.storage.Storage;
     public readonly auth: firebase.auth.Auth;
+    public readonly functions: firebase.functions.Functions;
 
     constructor() {
         const app = firebase.initializeApp({
@@ -20,6 +21,7 @@ class Firestorable {
         this.firestore.settings(settings);
 
         this.auth = app.auth();
+        this.functions = app.functions();
     }
 }
 

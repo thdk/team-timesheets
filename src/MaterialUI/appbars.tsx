@@ -71,7 +71,7 @@ export interface IAppBarActionsProps {
     }
 
     onClick(viewAction: IViewAction) {
-        viewAction.action(viewAction.selection ? Array.from(viewAction.selection.keys()) : undefined);
+        viewAction.action(viewAction.selection);
     }
 }
 

@@ -10,19 +10,17 @@ export interface IShortKey {
   key: string;
 }
 
-export interface IViewAction {
+export interface IViewAction<T = any> {
   readonly icon: string;
-  readonly action: (ids?: string[]) => void;
+  readonly action: (selection?: Map<string, T>) => void;
   readonly shortKey?: IShortKey;
   readonly contextual?: boolean;
-  readonly selection?: ObservableMap<string, true>;
+  readonly selection?: ObservableMap<string, any>;
 }
 
 export interface INavigationViewAction extends IViewAction {
   icon: "menu" | "arrow_back" | "arrow_upward";
 }
-
-export type CalendarDetail = "month" | "year" | "decade" | "century";
 
 export interface IViewStore {
   title: string;
@@ -34,7 +32,7 @@ export interface IViewStore {
   readonly monthMoment: moment.Moment;
   readonly actions: IObservableArray<IViewAction>;
   readonly selection: ObservableMap<string, true>;
-  readonly toggleSelection: (value: string) => void;
+  readonly toggleSelection: (id: string, data: any) => void;
   navigationAction?: INavigationViewAction;
   setActions: (actions: IViewAction[]) => void;
   setNavigation: (action: INavigationViewAction | "default") => void;
@@ -51,7 +49,6 @@ export class ViewStore implements IViewStore {
   @observable day?: number;
   @observable month?: number;
   @observable year?: number;
-  @observable calendarDetail: CalendarDetail;
 
   private readonly rootStore: IRootStore;
 
@@ -61,7 +58,6 @@ export class ViewStore implements IViewStore {
     const date = new Date();
     this.title = "";
     this.isDrawerOpen = false;
-    this.calendarDetail = "month";
 
     transaction(() => {
       this.day = date.getDate();
@@ -91,7 +87,7 @@ export class ViewStore implements IViewStore {
       if (viewAction) {
         ev.preventDefault();
         ev.stopPropagation();
-        viewAction.action(viewAction.selection ? Array.from(viewAction.selection.keys()) : undefined);
+        viewAction.action(viewAction.selection);
       }
     });
   }
@@ -125,13 +121,9 @@ export class ViewStore implements IViewStore {
     this.actions.remove(action);
   }
 
-  @action setCalendarDetail(detail: CalendarDetail) {
-    this.calendarDetail = detail;
-  }
-
-  @action toggleSelection(value: string) {
-    this.selection.has(value)
-      ? this.selection.delete(value)
-      : this.selection.set(value, true);
+  @action toggleSelection(id: string, data: any) {
+    this.selection.has(id)
+      ? this.selection.delete(id)
+      : this.selection.set(id, data);
   }
 }

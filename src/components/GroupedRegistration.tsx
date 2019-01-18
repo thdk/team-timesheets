@@ -1,7 +1,7 @@
 import * as React from 'react';
 import store from '../stores/RootStore';
 import { ListItem, List, ListDivider } from '../MaterialUI/list';
-import { IGroupedRegistrations } from '../stores/TimesheetsStore';
+import { IGroupedRegistrations, IRegistration } from '../stores/TimesheetsStore';
 import { observer } from 'mobx-react';
 import { Checkbox } from '../MaterialUI/checkbox';
 import { FlexGroup } from './Layout/flex';
@@ -10,7 +10,7 @@ import { FlexGroup } from './Layout/flex';
 export interface IGroupedRegistrationProps {
     group: IGroupedRegistrations;
     registrationClick: (id: string) => void;
-    registrationToggleSelect?: (id: string) => void;
+    registrationToggleSelect?: (id: string, data: IRegistration) => void;
     createTotalLabel: (date: Date) => React.ReactNode;
     totalOnTop?: boolean;
 }
@@ -35,7 +35,7 @@ export class GroupedRegistration extends React.Component<IGroupedRegistrationPro
             const line2 = `${taskName} - ${description}`;
 
             const checkbox = registrationSelect
-                ? <div className="clickable"><Checkbox checked={store.view.selection.has(id)} onClick={registrationSelect.bind(this, id)}></Checkbox></div>
+                ? <div className="clickable"><Checkbox checked={store.view.selection.has(id)} onClick={registrationSelect.bind(this, id, r.data!)}></Checkbox></div>
                 : undefined;
 
             const meta =

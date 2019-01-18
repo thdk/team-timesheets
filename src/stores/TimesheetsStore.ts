@@ -40,7 +40,7 @@ export interface IRegistrationData {
 }
 
 export interface IRegistrationsStore {
-    readonly clipboard: ObservableMap<string, true>;
+    readonly clipboard: ObservableMap<string, IRegistration>;
     readonly registrations: ICollection<IRegistration>;
     readonly registration: Doc<Partial<IRegistration>> | undefined;
     registrationId?: string;
@@ -53,7 +53,7 @@ export interface IRegistrationsStore {
 export class RegistrationStore implements IRegistrationsStore {
     private rootStore: IRootStore;
     readonly registrations: ICollection<IRegistration>;
-    readonly clipboard = observable(new Map<string, true>());
+    readonly clipboard = observable(new Map<string, IRegistration>());
 
     @observable.ref registrationId?: string;
 

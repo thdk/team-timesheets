@@ -47,6 +47,7 @@ export interface IRegistrationsStore {
     readonly registrationsGroupedByDay: IGroupedRegistrations[];
     readonly save: () => void;
     readonly newRegistration: () => void;
+    readonly cloneRegistration: (source: IRegistration) => IRegistration;
 }
 
 export class RegistrationStore implements IRegistrationsStore {
@@ -134,6 +135,12 @@ export class RegistrationStore implements IRegistrationsStore {
 
 
         return registration;
+    }
+
+    public cloneRegistration(source: IRegistration) {
+        if (!store.view.day) throw new Error("Can't clone a registration without a specific new date");
+
+        return {...source, date: this.toUTC(store.view.moment.toDate())};
     }
 
     @action

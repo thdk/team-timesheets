@@ -42,19 +42,33 @@ const setActions = (s: IRootStore, alowInserts = false) => {
             shortKey: { ctrlKey: true, key: "c" },
             selection: s.view.selection,
             contextual: true
-        }
+        },
+        {
+            action: ids =>  {
+                if (!ids) return;
+
+                s.view.selection.clear();
+                s.timesheets.registrations.deleteAsync(...ids);
+            },
+            icon: "delete",
+            shortKey: { key: "Delete", ctrlKey: true },
+            selection: s.view.selection,
+            contextual: true
+        },
     ];
 
     if (alowInserts) {
         actions.push({
             action: ids =>  {
                 if (!ids) return;
-                console.log(`Not implemented. Trying to clone registrations:\n${ids!.join("\n")}`);
+
                 const docData = Array.from(s.timesheets.registrations.docs.entries())
                     .filter(d => ids.some(id => d[0] === id && !!d[1].data))
-                    .map(d => d[1].data) as IRegistration[];
+                    .map(d => s.timesheets.cloneRegistration(d[1].data!)) as IRegistration[];
 
-                s.timesheets.registrations.addAsync(docData);
+                s.timesheets.registrations.addAsync(docData).then(()=> {
+                    s.timesheets.clipboard.clear();
+                });
             },
             icon: "library_add",
             shortKey: { ctrlKey: true, key: "v" },

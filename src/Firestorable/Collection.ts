@@ -13,9 +13,9 @@ export interface ICollection<T> extends IDisposable {
     getDocs: () => void;
     newDoc: <X extends Partial<T>>(data: X) => Doc<X>;
     updateAsync: (id: string, data: Partial<T>) => Promise<void>;
-    addAsync: (data: T | T[], id?: string) => Promise<string> | Promise<void>;
+    addAsync: (data: T | T[], id?: string) => Promise<string | void>;
     getAsync: (id: string) => Promise<Doc<T>>;
-    deleteAsync: (id: string) => Promise<void>;
+    deleteAsync: (...ids: string[]) => Promise<void>;
     unsubscribeAndClear: () => void;
 }
 
@@ -138,8 +138,9 @@ export class Collection<T, K = T> implements ICollection<T> {
     // Temporary always manually remove the registration from the docs.
     // update: first findings are that when a query is set, there won't be delete snapshot changes
     // so when we have an active query => always manually update the docs
-    public deleteAsync(ids: string | string[]) {
-        if (ids instanceof Array) {
+    public deleteAsync(...ids: string[]) {
+        if (ids.length > 1) {
+            // remove multiple documents
             const batch = firestorable.firestore.batch();
             ids.forEach(id => {
                 batch.delete(this.collectionRef.doc(id));
@@ -147,8 +148,10 @@ export class Collection<T, K = T> implements ICollection<T> {
 
             return batch.commit();
         } else {
-            return this.collectionRef.doc(ids).delete().then(() => {
-                this.query && this.docs.delete(ids);
+            // single remove
+            const id = ids[0];
+            return this.collectionRef.doc(id).delete().then(() => {
+                this.query && this.docs.delete(id);
             }, () => {
                 throw new Error("Could not delete document");
             });

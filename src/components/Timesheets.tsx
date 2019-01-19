@@ -10,6 +10,7 @@ import { goToOverview } from '../routes/timesheets/overview';
 import { GroupedRegistration } from './GroupedRegistration';
 import { GroupedRegistrations } from './GroupedRegistrations';
 import { ListItem, List, ListDivider } from '../MaterialUI/list';
+import { IRegistration } from '../stores/TimesheetsStore';
 
 @observer
 export class Timesheets extends React.Component {
@@ -18,8 +19,8 @@ export class Timesheets extends React.Component {
         goToRegistration(id);
     }
 
-    registrationSelect = (id: string) => {
-        store.view.toggleSelection(id);
+    registrationSelect = (id: string, data: IRegistration) => {
+        store.view.toggleSelection(id, data);
     }
 
     createTotalLabel = (date: Date) => {

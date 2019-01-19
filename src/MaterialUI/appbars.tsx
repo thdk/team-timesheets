@@ -64,14 +64,14 @@ export interface IAppBarActionsProps {
     render() {
         const { contextual = false } = this.props;
         return store.view.actions.filter(a => !!a.contextual === contextual).map((a, i) => {
-            return a.selection && a.selection.size
+            return !a.selection || a.selection.size
                 ? <AppBarAction key={i} onClick={this.onClick.bind(this, a)} icon={a.icon}></AppBarAction>
                 : <div key={i}></div>;
         });
     }
 
     onClick(viewAction: IViewAction) {
-        viewAction.action(viewAction.selection ? Array.from(viewAction.selection.keys()) : undefined);
+        viewAction.action(viewAction.selection);
     }
 }
 

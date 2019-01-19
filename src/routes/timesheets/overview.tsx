@@ -6,6 +6,7 @@ import { beforeEnter, setNavigationContent, goToRouteWithDate } from '../actions
 import { App } from '../../internal';
 import { IRootStore } from '../../stores/RootStore';
 import { IViewAction } from '../../stores/ViewStore';
+import { IRegistration } from '../../stores/TimesheetsStore';
 
 export interface IDate {
     year: number;
@@ -33,27 +34,45 @@ const routeChanged = (route: Route, params: IDate, s: IRootStore) => {
 const setActions = (s: IRootStore, alowInserts = false) => {
     const actions: IViewAction[] = [
         {
-            action: ids =>  {
+            action: selection =>  {
+                s.timesheets.clipboard.replace(selection);
                 s.view.selection.clear();
-                s.timesheets.clipboard.replace(ids ? ids.map(id => [id, true]) : []);
             },
             icon: "file_copy",
             shortKey: { ctrlKey: true, key: "c" },
             selection: s.view.selection,
             contextual: true
-        }
+        },
+        {
+            action: selection =>  {
+                if (!selection) return;
+
+                s.timesheets.registrations.deleteAsync(...Array.from(selection.keys()));
+                s.view.selection.clear();
+            },
+            icon: "delete",
+            shortKey: { key: "Delete", ctrlKey: true },
+            selection: s.view.selection,
+            contextual: true
+        } as IViewAction<IRegistration>,
     ];
 
     if (alowInserts) {
         actions.push({
-            action: ids =>  {
-                alert(`Not implemented. Trying to clone registrations:\n${ids!.join("\n")}`);
-                s.timesheets.clipboard.clear();
+            action: selection =>  {
+                if (!selection) return;
+                
+                const docData = Array.from(selection.values())
+                    .map(reg => s.timesheets.cloneRegistration(reg)) as IRegistration[];
+
+                s.timesheets.registrations.addAsync(docData).then(()=> {
+                    s.timesheets.clipboard.clear();
+                });
             },
             icon: "library_add",
             shortKey: { ctrlKey: true, key: "v" },
             selection: s.timesheets.clipboard
-        });
+        } as IViewAction<IRegistration>);
     }
 
     s.view.setActions(actions);

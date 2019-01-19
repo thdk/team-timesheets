@@ -146,7 +146,10 @@ export class Collection<T, K = T> implements ICollection<T> {
                 batch.delete(this.collectionRef.doc(id));
             })
 
-            return batch.commit();
+            return batch.commit().then(() => {
+                ids.forEach(id => this.docs.delete(id));
+            });
+
         } else {
             // single remove
             const id = ids[0];

@@ -4,61 +4,80 @@ import * as React from 'react';
 import store, { IRootStore } from "../stores/RootStore";
 import { Settings } from "../components/Pages/Settings/Settings";
 import { IViewAction } from "../stores/ViewStore";
-import { IReactionDisposer, reaction, transaction } from "mobx";
-import { canDeleteTask, canDeleteProject } from "../rules/rules";
+import { IReactionDisposer, reaction, transaction, when } from "mobx";
+import { canDeleteTask, canDeleteProject, canDeleteClient } from "../rules/rules";
 
 export const goToSettings = (tab: SettingsTab = "preferences") => {
     store.router.goTo(routes.preferences, {}, store, { tab });
 }
 
-export type SettingsTab = "tasks" | "projects" | "preferences";
+export type SettingsTab = "tasks" | "projects" | "preferences" | "clients";
 
 let reactionDisposer: IReactionDisposer;
 
 const setActions = (tab: SettingsTab, s: IRootStore) => {
-    reactionDisposer && reactionDisposer();
-    switch (tab) {
-        case "tasks": {
-            const deleteAction: IViewAction | undefined = canDeleteTask(store.user.currentUser)
-                ? {
-                    action: () => {
-                        s.config.taskId && s.config.tasks.deleteAsync(s.config.taskId);
-                        s.config.taskId = undefined;
-                    },
-                    icon: "delete",
-                    shortKey: { key: "Delete", ctrlKey: true }
-                }
-                : undefined;
+    when(() => store.user.currentUser !== undefined, () => {
+        // reactionDisposer && reactionDisposer();
+        switch (tab) {
+            case "tasks": {
+                const deleteAction: IViewAction | undefined = canDeleteTask(store.user.currentUser)
+                    ? {
+                        action: () => {
+                            s.config.taskId && s.config.tasks.deleteAsync(s.config.taskId);
+                            s.config.taskId = undefined;
+                        },
+                        icon: "delete",
+                        shortKey: { key: "Delete", ctrlKey: true }
+                    }
+                    : undefined;
 
-            reactionDisposer = reaction(() => s.config.taskId, id => {
-                if (id) s.view.setActions([deleteAction].filter(a => a !== undefined) as IViewAction[]);
-                else s.view.setActions([]);
-            });
-            break;
-        }
-        case "projects": {
-            const deleteAction: IViewAction | undefined = canDeleteProject(store.user.currentUser) ?
-                {
-                    action: () => {
-                        s.config.projectId && s.config.projects.deleteAsync(s.config.projectId);
-                        s.config.projectId = undefined;
-                    },
-                    icon: "delete",
-                    shortKey: { key: "Delete", ctrlKey: true }
-                }
-                : undefined;
+                reactionDisposer = reaction(() => s.config.taskId, id => {
+                    if (id) s.view.setActions([deleteAction].filter(a => a !== undefined) as IViewAction[]);
+                    else s.view.setActions([]);
+                });
+                break;
+            }
+            case "projects": {
+                const deleteAction: IViewAction | undefined = canDeleteProject(store.user.currentUser) ?
+                    {
+                        action: () => {
+                            s.config.projectId && s.config.projects.deleteAsync(s.config.projectId);
+                            s.config.projectId = undefined;
+                        },
+                        icon: "delete",
+                        shortKey: { key: "Delete", ctrlKey: true }
+                    }
+                    : undefined;
 
-            reactionDisposer = reaction(() => s.config.projectId, id => {
-                if (id) s.view.setActions([deleteAction].filter(a => a !== undefined) as IViewAction[]);
-                else s.view.setActions([]);
-            });
-            break;
-        }
-        default: {
-            s.view.setActions([]);
-        }
-    }
+                reactionDisposer = reaction(() => s.config.projectId, id => {
+                    if (id) s.view.setActions([deleteAction].filter(a => a !== undefined) as IViewAction[]);
+                    else s.view.setActions([]);
+                });
+                break;
+            }
+            case "clients": {
+                const deleteAction: IViewAction | undefined = canDeleteClient(store.user.currentUser) ?
+                    {
+                        action: () => {
+                            s.config.clientId && s.config.clients.deleteAsync(s.config.clientId);
+                            s.config.clientId = undefined;
+                        },
+                        icon: "delete",
+                        shortKey: { key: "Delete", ctrlKey: true }
+                    }
+                    : undefined;
 
+                reactionDisposer = reaction(() => s.config.clientId, id => {
+                    if (id) s.view.setActions([deleteAction].filter(a => a !== undefined) as IViewAction[]);
+                    else s.view.setActions([]);
+                });
+                break;
+            }
+            default: {
+                s.view.setActions([]);
+            }
+        }
+    });
 }
 
 const path = '/settings'
@@ -74,6 +93,7 @@ const routes = {
             transaction(() => {
                 s.config.projectId = undefined;
                 s.config.taskId = undefined;
+                s.config.clientId = undefined;
             });
             setActions(queryParams.tab, s);
         },
@@ -82,6 +102,7 @@ const routes = {
             transaction(() => {
                 s.config.projectId = undefined;
                 s.config.taskId = undefined;
+                s.config.clientId = undefined;
             });
 
             reactionDisposer && reactionDisposer();

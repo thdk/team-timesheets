@@ -31,4 +31,8 @@ div.form {
     &.vertical {
         flex-direction: column;
     }
+
+    &.center{
+        align-items: center;
+    }
 }

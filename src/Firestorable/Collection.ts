@@ -5,6 +5,7 @@ import { updateAsync, addAsync, getAsync } from "./FirestoreUtils";
 import { observable, ObservableMap, reaction, transaction } from 'mobx';
 import { Doc } from "./Document";
 import { IDisposable } from "./types";
+import { firestorable } from "./Firestorable";
 
 export interface ICollection<T> extends IDisposable {
     readonly docs: ObservableMap<string, Doc<T>>;
@@ -12,9 +13,9 @@ export interface ICollection<T> extends IDisposable {
     getDocs: () => void;
     newDoc: <X extends Partial<T>>(data: X) => Doc<X>;
     updateAsync: (id: string, data: Partial<T>) => Promise<void>;
-    addAsync: (data: T, id?: string) => Promise<string>;
+    addAsync: (data: T | T[], id?: string) => Promise<string | void>;
     getAsync: (id: string) => Promise<Doc<T>>;
-    deleteAsync: (id: string) => Promise<void>;
+    deleteAsync: (...ids: string[]) => Promise<void>;
     unsubscribeAndClear: () => void;
 }
 
@@ -97,7 +98,7 @@ export class Collection<T, K = T> implements ICollection<T> {
         return this.getAsync(id)
             .then(
                 oldData => {
-                    updateAsync(this.collectionRef, Object.assign(this.serialize({...oldData.data, ...data}), { id }))
+                    updateAsync(this.collectionRef, Object.assign(this.serialize({ ...oldData.data, ...data }), { id }))
                 },
                 () => {
                     // trying to update something that doesn't exist => add it instead
@@ -107,15 +108,27 @@ export class Collection<T, K = T> implements ICollection<T> {
     }
 
     // TODO: when realtime updates is disabled, we must manually update the docs!
-    public addAsync(data: T | null, id?: string) {
-        const firestoreData = data ? this.serialize(data) : {};
-        return addAsync(this.collectionRef, firestoreData, id);
+    public addAsync(data: T | T[], id?: string) {
+        if (data instanceof Array) {
+            const batch = firestorable.firestore.batch();
+            data.forEach(doc => {
+                batch.set(this.collectionRef.doc(), this.serialize(doc));
+            })
+
+            return batch.commit();
+        } else {
+            const firestoreData = data ? this.serialize(data) : {};
+            return addAsync(this.collectionRef, firestoreData, id);
+        }
+
     }
 
     // TODO: If realtime is enabled, we can safely fetch from the docs instead of a new get request
     public getAsync(id: string) {
         console.log("Collection:getAsync");
+        console.log("Waiting...");
         return getAsync<K>(this.collectionRef, id).then(doc => {
+            console.log("Collection:getAsync-complete");
             return new Doc<T>(this.collectionRef, this.deserialize(doc), id);
         });
     }
@@ -125,12 +138,27 @@ export class Collection<T, K = T> implements ICollection<T> {
     // Temporary always manually remove the registration from the docs.
     // update: first findings are that when a query is set, there won't be delete snapshot changes
     // so when we have an active query => always manually update the docs
-    public deleteAsync(id: string) {
-        return this.collectionRef.doc(id).delete().then(() => {
-            this.query && this.docs.delete(id);
-        }, () => {
-            throw new Error("Could not delete document");
-        });
+    public deleteAsync(...ids: string[]) {
+        if (ids.length > 1) {
+            // remove multiple documents
+            const batch = firestorable.firestore.batch();
+            ids.forEach(id => {
+                batch.delete(this.collectionRef.doc(id));
+            })
+
+            return batch.commit().then(() => {
+                ids.forEach(id => this.docs.delete(id));
+            });
+
+        } else {
+            // single remove
+            const id = ids[0];
+            return this.collectionRef.doc(id).delete().then(() => {
+                this.query && this.docs.delete(id);
+            }, () => {
+                throw new Error("Could not delete document");
+            });
+        }
     }
 
     public dispose() {

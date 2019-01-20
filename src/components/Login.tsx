@@ -3,7 +3,6 @@ import * as React from 'react';
 import * as firebase from 'firebase/app';
 import * as firebaseui from 'firebaseui';
 import { firestorable } from '../Firestorable/Firestorable';
-import store from '../stores/RootStore';
 
 export class Login extends React.Component {
     private loginUi?: firebaseui.auth.AuthUI;
@@ -18,8 +17,7 @@ export class Login extends React.Component {
     componentDidMount() {
         const loginUiConfig = {
             callbacks: {
-                signInSuccessWithAuthResult: (authResult: firebase.auth.UserCredential, _redirectUrl: string) => {
-                    store.user.setUser(authResult.user);
+                signInSuccessWithAuthResult: (_authResult: firebase.auth.UserCredential, _redirectUrl: string) => {
                     return false;
                 }
             },

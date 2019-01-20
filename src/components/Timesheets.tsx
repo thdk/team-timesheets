@@ -10,12 +10,17 @@ import { goToOverview } from '../routes/timesheets/overview';
 import { GroupedRegistration } from './GroupedRegistration';
 import { GroupedRegistrations } from './GroupedRegistrations';
 import { ListItem, List, ListDivider } from '../MaterialUI/list';
+import { IRegistration } from '../stores/TimesheetsStore';
 
 @observer
 export class Timesheets extends React.Component {
 
     registrationClick = (id: string) => {
         goToRegistration(id);
+    }
+
+    registrationSelect = (id: string, data: IRegistration) => {
+        store.view.toggleSelection(id, data);
     }
 
     createTotalLabel = (date: Date) => {
@@ -47,7 +52,11 @@ export class Timesheets extends React.Component {
             const group = store.timesheets.registrationsGroupedByDay.filter(g => g.date.getDate() === store.view.day);
 
             regs = group.length
-                ? <GroupedRegistration group={group[0]} createTotalLabel={this.createTotalLabel} registrationClick={this.registrationClick.bind(this)} />
+                ? <GroupedRegistration group={group[0]}
+                    createTotalLabel={this.createTotalLabel}
+                    registrationClick={this.registrationClick.bind(this)}
+                    registrationToggleSelect={this.registrationSelect.bind(this)}
+                />
                 : <></>;
         } else {
             const totalTime = Array.from(store.timesheets.registrations.docs.values())
@@ -58,7 +67,11 @@ export class Timesheets extends React.Component {
             const totalList = <List style={{ width: "100%" }}><ListDivider></ListDivider>{total}<ListDivider></ListDivider></List>;
 
             regs = <>
-                <GroupedRegistrations totalOnTop={true} createTotalLabel={this.createTotalLabel} registrationClick={this.registrationClick.bind(this)}></GroupedRegistrations>
+                <GroupedRegistrations totalOnTop={true}
+                    createTotalLabel={this.createTotalLabel}
+                    registrationClick={this.registrationClick.bind(this)}
+                    registrationToggleSelect={this.registrationSelect.bind(this)}>
+                </GroupedRegistrations>
                 {totalList}
             </>;
         }

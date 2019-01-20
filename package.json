@@ -1,6 +1,6 @@
 {
   "name": "typescript-start",
-  "version": "0.1.1",
+  "version": "0.2.0",
   "description": "A start boiler template for typescript projects",
   "main": "src/js/app.ts",
   "scripts": {
@@ -43,6 +43,7 @@
   },
   "dependencies": {
     "@material/button": "^0.42.0",
+    "@material/checkbox": "^0.43.0",
     "@material/chips": "^0.42.0",
     "@material/drawer": "^0.42.0",
     "@material/fab": "^0.42.0",

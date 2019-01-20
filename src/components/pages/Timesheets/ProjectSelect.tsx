@@ -4,7 +4,6 @@ import { observer } from 'mobx-react';
 import { FormField } from '../../Layout/form';
 import { Select, SelectOption } from '../../../MaterialUI/select';
 import store from '../../../stores/RootStore';
-import { FlexGroup } from '../../Layout/flex';
 import { Doc } from '../../../Firestorable/Document';
 import { IProject } from '../../../stores/ConfigStore';
 
@@ -52,15 +51,11 @@ export default class ProjectSelect extends React.Component {
             }, new Array());
 
         return (
-            <>
-                <FlexGroup extraCssClass="row">
-                    <FormField>
-                        <Select value={project} outlined={true} label="Project" onChange={this.onProjectChange}>
-                            {projects}
-                        </Select>
-                    </FormField>
-                </FlexGroup>
-            </>
+                <FormField>
+                    <Select value={project} outlined={true} label="Project" onChange={this.onProjectChange}>
+                        {projects}
+                    </Select>
+                </FormField>
         );
     }
 

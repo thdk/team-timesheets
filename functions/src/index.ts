@@ -14,7 +14,6 @@ admin.initializeApp();
 
 // Reference report in Firestore
 const db = admin.firestore();
-db.settings({ timestampsInSnapshots: true });
 
 exports.createCSV = functions.firestore
     .document('reports/{reportId}')
@@ -64,10 +63,11 @@ exports.createCSV = functions.firestore
                     const project = projectData ? projectData.name : fireStoreData.project;
                     const task = taskData ? taskData.name : fireStoreData.task;
                     const date = fireStoreData.date.toDate().getDate();
-                    registrations.push({ ...fireStoreData, project, task, date });
+
+                    registrations.push({ client: "", ...fireStoreData, project, task, date });
                 });
 
-                return json2csv(registrations, { fields: ["date", "time", "project", "description", "task"] });
+                return json2csv(registrations, { fields: ["date", "time", "project", "task", "client", "description"] });
             })
             .then(csv => {
                 // Write the file to cloud function tmp storage
@@ -153,7 +153,7 @@ exports.getChart = functions.https.onCall((data, context) => {
             });
 
             registrations.forEach(r => {
-                const project =  projectsMap.get(r.project);
+                const project = projectsMap.get(r.project);
                 if (project) {
                     project.totalTime = project.totalTime + r.time;
                 }

@@ -1,8 +1,7 @@
-import { observable, IObservableArray, action, computed, transaction, reaction } from "mobx";
+import { observable, IObservableArray, action, computed, transaction, reaction, ObservableMap } from "mobx";
 import moment from 'moment-es6';
 import { IRootStore } from "./RootStore";
 import { goToLogin } from "../internal";
-
 export interface IShortKey {
   ctrlKey?: boolean;
   altKey?: boolean;
@@ -11,17 +10,17 @@ export interface IShortKey {
   key: string;
 }
 
-export interface IViewAction {
-  icon: string;
-  action: () => void;
-  shortKey?: IShortKey;
+export interface IViewAction<T = any> {
+  readonly icon: string;
+  readonly action: (selection?: Map<string, T>) => void;
+  readonly shortKey?: IShortKey;
+  readonly contextual?: boolean;
+  readonly selection?: ObservableMap<string, any>;
 }
 
 export interface INavigationViewAction extends IViewAction {
   icon: "menu" | "arrow_back" | "arrow_upward";
 }
-
-export type CalendarDetail = "month" | "year" | "decade" | "century";
 
 export interface IViewStore {
   title: string;
@@ -29,11 +28,11 @@ export interface IViewStore {
   day?: number;
   month?: number;
   year?: number;
-  calendarDetail: CalendarDetail;
-  setCalendarDetail: (detail: CalendarDetail) => void;
   readonly moment: moment.Moment;
   readonly monthMoment: moment.Moment;
   readonly actions: IObservableArray<IViewAction>;
+  readonly selection: ObservableMap<string, true>;
+  readonly toggleSelection: (id: string, data: any) => void;
   navigationAction?: INavigationViewAction;
   setActions: (actions: IViewAction[]) => void;
   setNavigation: (action: INavigationViewAction | "default") => void;
@@ -42,13 +41,14 @@ export interface IViewStore {
 
 export class ViewStore implements IViewStore {
   readonly actions = observable<IViewAction>([]);
+  readonly selection = observable(new Map<string, true>());
+
   @observable navigationAction?: INavigationViewAction;
   @observable readonly title: string;
   @observable readonly isDrawerOpen: boolean;
   @observable day?: number;
   @observable month?: number;
   @observable year?: number;
-  @observable calendarDetail: CalendarDetail;
 
   private readonly rootStore: IRootStore;
 
@@ -58,7 +58,6 @@ export class ViewStore implements IViewStore {
     const date = new Date();
     this.title = "";
     this.isDrawerOpen = false;
-    this.calendarDetail = "month";
 
     transaction(() => {
       this.day = date.getDate();
@@ -75,7 +74,7 @@ export class ViewStore implements IViewStore {
     });
 
     document.addEventListener("keydown", ev => {
-      const action = this.actions.filter(a => {
+      const viewAction = this.actions.filter(a => {
         const { key = undefined, ctrlKey = false, altKey = false, shiftKey = false, metaKey = false } = a.shortKey || {};
         return a.shortKey &&
           altKey === ev.altKey &&
@@ -83,12 +82,12 @@ export class ViewStore implements IViewStore {
           metaKey === ev.metaKey &&
           shiftKey === ev.shiftKey &&
           key === ev.key
-      }).map(a => a.action)[0];
+      })[0];
 
-      if (action) {
+      if (viewAction) {
         ev.preventDefault();
         ev.stopPropagation();
-        action();
+        viewAction.action(viewAction.selection);
       }
     });
   }
@@ -122,7 +121,9 @@ export class ViewStore implements IViewStore {
     this.actions.remove(action);
   }
 
-  @action setCalendarDetail(detail: CalendarDetail) {
-    this.calendarDetail = detail;
+  @action toggleSelection(id: string, data: any) {
+    this.selection.has(id)
+      ? this.selection.delete(id)
+      : this.selection.set(id, data);
   }
 }

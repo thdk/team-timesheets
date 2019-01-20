@@ -4,7 +4,6 @@ import { observer } from "mobx-react";
 import { TextField } from '../MaterialUI/textfield';
 import { Form, FormField } from '../components/Layout/form';
 import { Chip, ChipSet } from '../MaterialUI/chips';
-import { Doc } from '../Firestorable/Document';
 import { FlexGroup } from './Layout/flex';
 import store from '../stores/RootStore';
 import ProjectSelect from './Pages/Timesheets/ProjectSelect';
@@ -12,7 +11,7 @@ import ProjectSelect from './Pages/Timesheets/ProjectSelect';
 @observer
 export class Registration extends React.Component {
     render() {
-        if (!store.timesheets.registration ||!store.user.user) {
+        if (!store.timesheets.registration || !store.user.user) {
             return <></>;
         }
 
@@ -22,7 +21,8 @@ export class Registration extends React.Component {
         const { task,
             description,
             time,
-            date
+            date,
+            client
         } = store.timesheets.registration.data;
 
         const tasks = Array.from(store.config.tasks.docs.values())
@@ -57,6 +57,9 @@ export class Registration extends React.Component {
                     </FlexGroup>
                     <FlexGroup>
                         <ProjectSelect></ProjectSelect>
+                        <FormField first={false}>
+                            <TextField outlined={true} tabIndex={0} onChange={this.onClientChange} value={client} id="client" hint="Client" fullWidth={false}></TextField>
+                        </FormField>
                     </FlexGroup>
                     <FlexGroup extraCssClass="row">
                         <FlexGroup direction="vertical">
@@ -72,17 +75,22 @@ export class Registration extends React.Component {
     }
 
     onDescriptionChange = (value: string) => {
-        if (store.timesheets.registration && store.timesheets.registration instanceof (Doc) && store.timesheets.registration.data)
+        if (store.timesheets.registration && store.timesheets.registration.data)
             store.timesheets.registration.data.description = value;
     }
 
     onTimeChange = (value: string) => {
-        if (store.timesheets.registration && store.timesheets.registration instanceof (Doc) && store.timesheets.registration.data)
+        if (store.timesheets.registration && store.timesheets.registration.data)
             store.timesheets.registration.data.time = +value;
     }
 
     taskClicked = (taskId: string) => {
-        if (store.timesheets.registration && store.timesheets.registration instanceof (Doc) && store.timesheets.registration.data)
+        if (store.timesheets.registration && store.timesheets.registration.data)
             store.timesheets.registration.data.task = taskId;
+    }
+
+    onClientChange = (value: string) => {
+        if (store.timesheets.registration && store.timesheets.registration.data)
+            store.timesheets.registration.data.client = value;
     }
 }

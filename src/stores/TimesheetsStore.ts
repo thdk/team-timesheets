@@ -1,4 +1,4 @@
-import { observable, computed, reaction, when, action, transaction, toJS } from 'mobx';
+import { observable, computed, reaction, when, action, transaction, toJS, ObservableMap } from 'mobx';
 import { Doc } from "../Firestorable/Document";
 
 import * as firebase from 'firebase/app'
@@ -18,14 +18,14 @@ export interface IDocumentData {
     deleted?: boolean;
 }
 
-export interface IRegistration extends IDocumentData {
+export interface IRegistration {
     description?: string;
     time?: number;
     project?: string;
     task?: string;
+    client?: string;
     date: Date;
     userId: string;
-    deleted?: boolean; // TODO: should not be needed here as the app only needs to work with non deleted docs
 }
 
 export interface IRegistrationData {
@@ -33,23 +33,27 @@ export interface IRegistrationData {
     time: number;
     project: string;
     task: string;
+    client: string;
     date: firebase.firestore.Timestamp;
     userId: string;
     deleted: boolean;
 }
 
 export interface IRegistrationsStore {
+    readonly clipboard: ObservableMap<string, IRegistration>;
     readonly registrations: ICollection<IRegistration>;
     readonly registration: Doc<Partial<IRegistration>> | undefined;
     registrationId?: string;
     readonly registrationsGroupedByDay: IGroupedRegistrations[];
     readonly save: () => void;
     readonly newRegistration: () => void;
+    readonly cloneRegistration: (source: IRegistration) => IRegistration;
 }
 
 export class RegistrationStore implements IRegistrationsStore {
     private rootStore: IRootStore;
     readonly registrations: ICollection<IRegistration>;
+    readonly clipboard = observable(new Map<string, IRegistration>());
 
     @observable.ref registrationId?: string;
 
@@ -96,6 +100,7 @@ export class RegistrationStore implements IRegistrationsStore {
                 const bTime = b.data!.date.getTime();
                 return aTime > bTime ? 1 : aTime < bTime ? -1 : 0;
             });
+
         if (registrations.length === 0) return [];
         return registrations
             .slice(1)
@@ -132,6 +137,12 @@ export class RegistrationStore implements IRegistrationsStore {
         return registration;
     }
 
+    public cloneRegistration(source: IRegistration) {
+        if (!store.view.day) throw new Error("Can't clone a registration without a specific new date");
+
+        return {...source, date: this.toUTC(store.view.moment.toDate())};
+    }
+
     @action
     public newRegistration() {
         if (!store.user.user) throw new Error("User must be set");
@@ -150,8 +161,7 @@ export class RegistrationStore implements IRegistrationsStore {
             ),
             task: defaultTask,
             userId,
-            project: recentProjects.length ? recentProjects[0] : undefined,
-            deleted: false
+            project: recentProjects.length ? recentProjects[0] : undefined
         });
 
         transaction(() => {

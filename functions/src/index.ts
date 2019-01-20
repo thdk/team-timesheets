@@ -14,7 +14,6 @@ admin.initializeApp();
 
 // Reference report in Firestore
 const db = admin.firestore();
-db.settings({ timestampsInSnapshots: true });
 
 exports.createCSV = functions.firestore
     .document('reports/{reportId}')

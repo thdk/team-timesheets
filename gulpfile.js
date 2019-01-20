@@ -23,14 +23,22 @@ const configuration = {
                 './src/style/*.scss'
             ],
             js: 'src/app.ts',
-            manifest: 'src/manifest.json'
+            manifest: 'src/manifest.json',
+            browserconfig: 'src/browserconfig.xml',
+            safari: 'src/images/icons/safari-pinned-tab.svg',
+            favicon: './src/images/icons/favicon.ico',
         },
         dist: './dist'
     }
 };
 
 gulp.task('root', function() {
-    return gulp.src([configuration.paths.src.manifest])
+    return gulp.src([
+        configuration.paths.src.manifest,
+        configuration.paths.src.browserconfig,
+        configuration.paths.src.safari,
+        configuration.paths.src.favicon
+    ])
         .pipe(gulp.dest(configuration.paths.dist));
 });
 

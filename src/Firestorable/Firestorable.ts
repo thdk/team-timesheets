@@ -17,8 +17,6 @@ class Firestorable {
         });
         this.firestore = app.firestore();
         this.storage = app.storage();
-        const settings = { timestampsInSnapshots: true };
-        this.firestore.settings(settings);
 
         this.auth = app.auth();
         this.functions = app.functions();

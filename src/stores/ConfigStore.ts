@@ -5,18 +5,24 @@ import { IRootStore } from './RootStore';
 export interface IConfigStore {
     projects: ICollection<IProject>;
     tasks: ICollection<ITask>;
+    clients: ICollection<IClient>;
     taskId?: string;
     projectId?: string;
+    clientId?: string;
 }
 
-export interface IProject {
+export interface INameWithIcon {
     name: string;
     icon?: string;
 }
 
-export interface ITask {
-    name: string;
-    icon?: string;
+export interface IProject extends INameWithIcon {
+}
+
+export interface ITask extends INameWithIcon {
+}
+
+export interface IClient extends INameWithIcon {
 }
 
 export class ConfigStore implements IConfigStore {
@@ -24,9 +30,11 @@ export class ConfigStore implements IConfigStore {
 
     readonly projects: ICollection<IProject>;
     readonly tasks: ICollection<IProject>;
+    readonly clients: ICollection<IClient>;
 
     @observable.ref taskId?: string;
     @observable.ref projectId?: string;
+    @observable.ref clientId?: string;
 
     constructor(_rootStore: IRootStore, getCollection: (name: string) => firebase.firestore.CollectionReference) {
         // this._rootStore = rootStore;
@@ -34,8 +42,13 @@ export class ConfigStore implements IConfigStore {
             realtime: true,
             query: ref => ref.orderBy("name")
         }));
-        
+
         this.tasks = observable(new Collection<ITask>(getCollection.bind(this, "tasks"), {
+            realtime: true,
+            query: ref => ref.orderBy("name")
+        }));
+
+        this.clients = observable(new Collection<ITask>(getCollection.bind(this, "clients"), {
             realtime: true,
             query: ref => ref.orderBy("name")
         }));

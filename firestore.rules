@@ -18,6 +18,11 @@ service cloud.firestore {
             allow update, delete: if getRole('admin') == true
         }
 
+         match /clients/{document} {
+            allow read, create;
+            allow update, delete: if getRole('admin') == true
+        }
+
         match /tasks/{document} {
             allow read;
             allow create, update, delete: if getRole('admin') == true;

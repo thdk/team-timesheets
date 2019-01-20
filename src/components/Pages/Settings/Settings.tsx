@@ -1,6 +1,7 @@
 import * as React from 'react';
-import { TapBar, Tab } from '../../../MaterialUI/tabbar';
 import { observer } from 'mobx-react';
+
+import { TapBar, Tab } from '../../../MaterialUI/tabbar';
 import { Preferences } from '../Preferences';
 import { Icon } from '../../../MaterialUI/icon';
 import store from '../../../stores/RootStore';
@@ -8,6 +9,7 @@ import { TaskList } from './Tasks/TaskList';
 import { ProjectList } from './Projects/ProjectList';
 import { SettingsTab } from '../../../routes/settings';
 import { goToSettings } from '../../../internal';
+import { ClientList } from './Clients/ClientsList';
 
 interface ITabData {
     id: SettingsTab;
@@ -21,7 +23,8 @@ export class Settings extends React.Component {
         const tabData: ITabData[] = [
             { id: "preferences", text: "Preferences" },
             { id: "tasks", text: "Tasks" },
-            { id: "projects", text: "Projects" }
+            { id: "projects", text: "Projects" },
+            { id: "clients", text: "Clients" }
         ];
 
         const query: { tab: SettingsTab } = store.router.queryParams;
@@ -41,6 +44,9 @@ export class Settings extends React.Component {
                 break;
             case "tasks":
                 content = <TaskList></TaskList>;
+                break;
+            case "clients":
+                content = <ClientList></ClientList>
                 break;
         }
 

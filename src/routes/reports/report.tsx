@@ -22,7 +22,6 @@ const routes = {
         component: <App><Reports></Reports></App>,
         onEnter: (route: Route, params: IDate, s: IRootStore) => {
             routeChanged(route, params, s);
-            s.view.setCalendarDetail("year");
         },
         onParamsChange: routeChanged,
         title: "Export timesheet",

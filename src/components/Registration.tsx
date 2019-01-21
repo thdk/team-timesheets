@@ -7,6 +7,7 @@ import { Chip, ChipSet } from '../MaterialUI/chips';
 import { FlexGroup } from './Layout/flex';
 import store from '../stores/RootStore';
 import ProjectSelect from './Pages/Timesheets/ProjectSelect';
+import ClientSelect from './Pages/Timesheets/ClientSelect';
 
 @observer
 export class Registration extends React.Component {
@@ -22,7 +23,6 @@ export class Registration extends React.Component {
             description,
             time,
             date,
-            client
         } = store.timesheets.registration.data;
 
         const tasks = Array.from(store.config.tasks.docs.values())
@@ -57,9 +57,7 @@ export class Registration extends React.Component {
                     </FlexGroup>
                     <FlexGroup>
                         <ProjectSelect></ProjectSelect>
-                        <FormField first={false}>
-                            <TextField outlined={true} tabIndex={0} onChange={this.onClientChange} value={client} id="client" hint="Client" fullWidth={false}></TextField>
-                        </FormField>
+                        <ClientSelect></ClientSelect>
                     </FlexGroup>
                     <FlexGroup extraCssClass="row">
                         <FlexGroup direction="vertical">

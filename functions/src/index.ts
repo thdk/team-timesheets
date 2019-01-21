@@ -14,6 +14,7 @@ admin.initializeApp();
 
 // Reference report in Firestore
 const db = admin.firestore();
+db.settings({ timestampsInSnapshots: true });
 
 exports.createCSV = functions.firestore
     .document('reports/{reportId}')
@@ -38,6 +39,7 @@ exports.createCSV = functions.firestore
 
         let projectsMap: Map<string, any>;
         let tasksMap: Map<string, any>;
+        let clientsMap: Map<string, any>;
 
         const startMonent = moment(`${year}-${month}`, 'YYYY-MM');
         const endDate = startMonent.clone().endOf("month").toDate();
@@ -45,7 +47,8 @@ exports.createCSV = functions.firestore
 
         return Promise.all([
             db.collection('projects').get().then(s => projectsMap = new Map(s.docs.map((d): [string, any] => [d.id, d.data()]))),
-            db.collection('tasks').get().then(s => tasksMap = new Map(s.docs.map((d): [string, any] => [d.id, d.data()])))
+            db.collection('tasks').get().then(s => tasksMap = new Map(s.docs.map((d): [string, any] => [d.id, d.data()]))),
+            db.collection('clients').get().then(s => clientsMap = new Map(s.docs.map((d): [string, any] => [d.id, d.data()])))
         ]).then(() => db.collection('registrations')
             .where("deleted", "==", false)
             .where("date", ">", startDate)
@@ -58,13 +61,17 @@ exports.createCSV = functions.firestore
                 // create array of registration data
                 querySnapshot.forEach(doc => {
                     const fireStoreData = doc.data();
+
                     const projectData = projectsMap.get(fireStoreData.project);
                     const taskData = tasksMap.get(fireStoreData.task);
+                    const clientData = clientsMap.get(fireStoreData.client);
+
                     const project = projectData ? projectData.name : fireStoreData.project;
                     const task = taskData ? taskData.name : fireStoreData.task;
-                    const date = fireStoreData.date.toDate().getDate();
+                    const client = clientData ? clientData.name : fireStoreData.client;
+                    const date = fireStoreData.date ? fireStoreData.date.toDate().getDate() : "";
 
-                    registrations.push({ client: "", ...fireStoreData, project, task, date });
+                    registrations.push({ ...fireStoreData, project, task, date, client });
                 });
 
                 return json2csv(registrations, { fields: ["date", "time", "project", "task", "client", "description"] });

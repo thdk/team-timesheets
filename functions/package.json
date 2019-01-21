@@ -12,7 +12,7 @@
   "main": "lib/index.js",
   "dependencies": {
     "@google-cloud/storage": "^2.3.4",
-    "firebase-admin": "~6.0.0",
+    "firebase-admin": "~6.5.0",
     "firebase-functions": "^2.0.3",
     "fs-extra": "^7.0.1",
     "json2csv": "^4.3.2",
@@ -23,8 +23,8 @@
   "devDependencies": {
     "@types/json2csv": "^4.2.0",
     "@types/fs-extra": "^5.0.4",
-    "tslint": "~5.8.0",
-    "typescript": "~2.8.3"
+    "tslint": "~5.12.1",
+    "typescript": "~3.2.4"
   },
   "private": true
 }

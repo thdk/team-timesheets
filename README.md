@@ -95,6 +95,9 @@ Build everything (outputs will live in `dist/`-directory)
 
     npm run build
 
+    // run build for production (default is development)
+    npm run build -- --env=production
+
 Start development server (open `http://localhost:3000/`)
 
     npm run server

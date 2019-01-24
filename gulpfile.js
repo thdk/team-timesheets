@@ -13,6 +13,8 @@ const autoprefixer = require('autoprefixer');
 
 const source = require('vinyl-source-stream');
 
+const argv = require('minimist')(process.argv.slice(2));
+
 // Configuration
 const configuration = {
     paths: {
@@ -104,9 +106,14 @@ gulp.task('clean-dist', function (cb) {
     return del(['dist'], cb);
 });
 
+gulp.task('set-node-env', function(done) {
+    process.env.NODE_ENV = argv.env;
+    done();
+});
+
 // Gulp default task
 gulp.task('default', gulp.series(
-    gulp.series('clean-dist'),
+    gulp.parallel('clean-dist', 'set-node-env'),
     gulp.parallel('bundle', 'scss'),
     gulp.parallel('inject', 'root', 'images')
 ));

@@ -32,6 +32,7 @@
     "gulp-sass": "^4.0.2",
     "gulp-typescript": "^5.0.0",
     "lite-server": "^2.4.0",
+    "minimist": "^1.2.0",
     "rollup-plugin-commonjs": "8.3.0",
     "rollup-plugin-node-resolve": "^3.4.0",
     "rollup-plugin-replace": "^2.1.0",

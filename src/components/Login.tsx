@@ -15,6 +15,7 @@ export class Login extends React.Component {
     }
 
     componentDidMount() {
+        // TODO: loginUIConfig should take settings from a config file!        
         const loginUiConfig = {
             callbacks: {
                 signInSuccessWithAuthResult: (_authResult: firebase.auth.UserCredential, _redirectUrl: string) => {
@@ -24,8 +25,8 @@ export class Login extends React.Component {
             signInOptions: [
                 // Leave the lines as is for the providers you want to offer your users.
                 firebase.auth.GoogleAuthProvider.PROVIDER_ID,
-                firebase.auth.EmailAuthProvider.PROVIDER_ID,
-                firebaseui.auth.AnonymousAuthProvider.PROVIDER_ID
+                // firebase.auth.EmailAuthProvider.PROVIDER_ID,
+                // firebaseui.auth.AnonymousAuthProvider.PROVIDER_ID
             ],
             // tosUrl and privacyPolicyUrl accept either url string or a callback
             // function.

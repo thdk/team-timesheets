@@ -1,8 +1,5 @@
 {
   "hosting": {
-    "predeploy": [
-      "npm run build"
-    ],
     "target": "site",
     "public": "dist",
     "ignore": [

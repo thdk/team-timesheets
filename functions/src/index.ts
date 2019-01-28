@@ -1,5 +1,7 @@
 import * as functions from 'firebase-functions';
 import * as admin from 'firebase-admin';
+// tslint:disable-next-line
+import 'firebase-functions';
 
 import moment from 'moment-es6';
 
@@ -9,6 +11,10 @@ import * as os from 'os';
 import * as path from 'path';
 import * as fs from 'fs-extra';
 import * as gcs from '@google-cloud/storage';
+
+const adminConfig = JSON.parse(process.env.FIREBASE_CONFIG);
+
+const bucketName = adminConfig.storageBucket;
 
 admin.initializeApp();
 
@@ -35,7 +41,7 @@ exports.createCSV = functions.firestore
         // Create a root reference
         const store = new gcs.Storage();
 
-        const storage = store.bucket('timesheets-ffc4b.appspot.com');
+        const storage = store.bucket(bucketName); // test
 
         let projectsMap: Map<string, any>;
         let tasksMap: Map<string, any>;

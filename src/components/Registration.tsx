@@ -74,7 +74,7 @@ export class Registration extends React.Component {
 
     onDescriptionChange = (value: string) => {
         if (store.timesheets.registration && store.timesheets.registration.data)
-            store.timesheets.registration.data.description = value;
+            store.timesheets.registration.data.description = value.trimLeft();
     }
 
     onTimeChange = (value: string) => {

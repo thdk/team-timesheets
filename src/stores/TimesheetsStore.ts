@@ -26,6 +26,7 @@ export interface IRegistration {
     client?: string;
     date: Date;
     userId: string;
+    isPersisted: boolean;
 }
 
 export interface IRegistrationData {
@@ -95,6 +96,7 @@ export class RegistrationStore implements IRegistrationsStore {
 
     @computed get registrationsGroupedByDay() {
         const registrations = Array.from(this.registrations.docs.values())
+            .filter(doc => doc.data!.isPersisted) // don't display drafts
             .sort((a, b) => {
                 const aTime = a.data!.date.getTime();
                 const bTime = b.data!.date.getTime();
@@ -103,10 +105,9 @@ export class RegistrationStore implements IRegistrationsStore {
 
         if (registrations.length === 0) return [];
         return registrations
-            .slice(1)
-            .reduce((p, c) => {
+            .reduce<IGroupedRegistrations[]>((p, c) => {
                 const currentDayGroup = p[p.length - 1];
-                if (c.data!.date.getTime() === currentDayGroup.date.getTime()) {
+                if (currentDayGroup && c.data!.date.getTime() === currentDayGroup.date.getTime()) {
                     currentDayGroup.registrations.push(c);
                     currentDayGroup.totalTime = (currentDayGroup.totalTime || 0) + (c.data!.time || 0);
                 } else {
@@ -118,11 +119,7 @@ export class RegistrationStore implements IRegistrationsStore {
                 }
 
                 return p;
-            }, [{
-                date: registrations[0].data!.date,
-                registrations: [registrations[0]],
-                totalTime: registrations[0].data!.time || 0
-            }]);
+            }, []);
     }
 
     @computed
@@ -140,7 +137,7 @@ export class RegistrationStore implements IRegistrationsStore {
     public cloneRegistration(source: IRegistration) {
         if (!store.view.day) throw new Error("Can't clone a registration without a specific new date");
 
-        return {...source, date: this.toUTC(store.view.moment.toDate())};
+        return { ...source, date: this.toUTC(store.view.moment.toDate()) };
     }
 
     @action
@@ -161,7 +158,8 @@ export class RegistrationStore implements IRegistrationsStore {
             ),
             task: defaultTask,
             userId,
-            project: recentProjects.length ? recentProjects[0] : undefined
+            project: recentProjects.length ? recentProjects[0] : undefined,
+            isPersisted: false
         });
 
         transaction(() => {

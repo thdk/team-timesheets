@@ -61,12 +61,13 @@ const setActions = (s: IRootStore, alowInserts = false) => {
         actions.push({
             action: selection =>  {
                 if (!selection) return;
-                
+
                 const docData = Array.from(selection.values())
                     .map(reg => s.timesheets.cloneRegistration(reg)) as IRegistration[];
 
                 s.timesheets.registrations.addAsync(docData).then(()=> {
-                    s.timesheets.clipboard.clear();
+                    // uncomment to clear clipboard on paste
+                    // s.timesheets.clipboard.clear();
                 });
             },
             icon: "library_add",

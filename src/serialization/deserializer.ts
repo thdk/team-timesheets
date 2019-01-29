@@ -9,7 +9,8 @@ export const convertRegistration = (firestoreData: IRegistrationData) => {
         task: firestoreData.task,
         time: firestoreData.time || 0,
         userId: firestoreData.userId,
-        client: firestoreData.client
+        client: firestoreData.client,
+        isPersisted: true
     };
 
     return registration;

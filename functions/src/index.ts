@@ -12,9 +12,8 @@ import * as path from 'path';
 import * as fs from 'fs-extra';
 import * as gcs from '@google-cloud/storage';
 
-const adminConfig = JSON.parse(process.env.FIREBASE_CONFIG);
-
-const bucketName = adminConfig.storageBucket;
+const adminConfig = process.env.FIREBASE_CONFIG && JSON.parse(process.env.FIREBASE_CONFIG);
+const bucketName = adminConfig ? adminConfig.storageBucket : "";
 
 admin.initializeApp();
 

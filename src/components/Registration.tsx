@@ -23,6 +23,7 @@ export class Registration extends React.Component {
             description,
             time,
             date,
+            client
         } = store.timesheets.registration.data;
 
         const tasks = Array.from(store.config.tasks.docs.values())
@@ -57,7 +58,7 @@ export class Registration extends React.Component {
                     </FlexGroup>
                     <FlexGroup>
                         <ProjectSelect></ProjectSelect>
-                        <ClientSelect></ClientSelect>
+                        <ClientSelect onChange={this.onClientChange} value={client}></ClientSelect>
                     </FlexGroup>
                     <FlexGroup extraCssClass="row">
                         <FlexGroup direction="vertical">
@@ -74,7 +75,7 @@ export class Registration extends React.Component {
 
     onDescriptionChange = (value: string) => {
         if (store.timesheets.registration && store.timesheets.registration.data)
-            store.timesheets.registration.data.description = value;
+            store.timesheets.registration.data.description = value.trimLeft();
     }
 
     onTimeChange = (value: string) => {

@@ -96,13 +96,13 @@ Build everything (outputs will live in `dist/`-directory)
     npm run build
 
     // run build for production (default is development)
-    npm run build -- --env=production
+    npm run build:production
 
 Start development server (open `http://localhost:3000/`)
 
     npm run server
 
-Build everything and watch scss and ts files
+Build (development) and watch scss and ts files
 
     npm start
 
@@ -115,21 +115,28 @@ Build everything and watch scss and ts files
 The whole project is set up to be deployed with firebase.
 
 Running `firebase deploy` will deploy:
-* Hosting: Everything in the dist folder will be deployed in a firebase hosting site. **Warning this will deploy to both production and develop environment!!! (See Hosting below)**
+* Hosting: Everything in the dist folder will be deployed in a firebase hosting site.
 * Firestore: Will set up read, write, update and delete rules from firestore.rules file on the active Firebase Firestore database. Will also set up the database indexes from *firestore.indexes.json*
 * Functions: All functions from the functions subpackage of this project will be build and deployed as Firebase functions.
 
+**WARNING: Set the environment and build before deployment:**
+
+```
+npm run deploy:development
+npm run deploy:production
+```
+
+These commands will both build the code ánd deploy to all firebase services used by this project.
+
 ## Hosting
 
-To deploy you site to the development/production environment run:
+To deploy the timesheets application to firebase hosting run:
 
+WARNING: Always build the code for the save environment before deploying!
 ```
-firebase deploy --only hosting:dev
-firebase deploy --only hosting:production
+firebase deploy --only hosting
 ```
 
-**REMARK**
-Running firebase deploy or firebase deploy --only hosting will deploy the same data to both develop and production environment! DON'T do that.
 
 ## Built With
 
@@ -139,6 +146,7 @@ Running firebase deploy or firebase deploy --only hosting will deploy the same d
 * Rollup
 * Gulp
 * Material Design ([Material Components for the web](https://github.com/material-components/material-components-web))
+* Firebase
 
 ## Contributing
 

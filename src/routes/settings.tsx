@@ -59,7 +59,7 @@ const setActions = (tab: SettingsTab, s: IRootStore) => {
                 const deleteAction: IViewAction | undefined = canDeleteClient(store.user.currentUser) ?
                     {
                         action: () => {
-                            s.config.clientId && s.config.clients.deleteAsync(s.config.clientId);
+                            s.config.clientId && s.config.clientsCollection.deleteAsync(s.config.clientId);
                             s.config.clientId = undefined;
                         },
                         icon: "delete",

@@ -22,7 +22,8 @@ export const convertUser = (firestoreData: IUserData) => {
         roles: firestoreData.roles || {},
         name: firestoreData.name || "Unknown time traveller",
         defaultTask: firestoreData.defaultTask,
-        recentProjects: firestoreData.recentProjects || []
+        recentProjects: firestoreData.recentProjects || [],
+        defaultClient: firestoreData.defaultClient || undefined
     };
 
     return user;

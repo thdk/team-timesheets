@@ -1,11 +1,12 @@
-import { observable } from 'mobx';
+import { observable, computed } from 'mobx';
 import { Collection, ICollection } from "../Firestorable/Collection";
 import { IRootStore } from './RootStore';
 
 export interface IConfigStore {
     projects: ICollection<IProject>;
     tasks: ICollection<ITask>;
-    clients: ICollection<IClient>;
+    clientsCollection: ICollection<IClient>;
+    clients: (IClient & {id: string})[];
     taskId?: string;
     projectId?: string;
     clientId?: string;
@@ -30,7 +31,7 @@ export class ConfigStore implements IConfigStore {
 
     readonly projects: ICollection<IProject>;
     readonly tasks: ICollection<IProject>;
-    readonly clients: ICollection<IClient>;
+    readonly clientsCollection: ICollection<IClient>;
 
     @observable.ref taskId?: string;
     @observable.ref projectId?: string;
@@ -48,9 +49,15 @@ export class ConfigStore implements IConfigStore {
             query: ref => ref.orderBy("name")
         }));
 
-        this.clients = observable(new Collection<ITask>(getCollection.bind(this, "clients"), {
+        this.clientsCollection = observable(new Collection<ITask>(getCollection.bind(this, "clients"), {
             realtime: true,
             query: ref => ref.orderBy("name")
         }));
+    }
+
+    @computed
+    public get clients() {
+        return Array.from(this.clientsCollection.docs.values())
+            .map(doc => ({ ...doc.data!, id: doc.id }));
     }
 }

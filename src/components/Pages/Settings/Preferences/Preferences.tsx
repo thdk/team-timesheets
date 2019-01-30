@@ -1,16 +1,17 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
-import store from '../../stores/RootStore';
-import { Chip, ChipSet } from '../../MaterialUI/chips';
-import { Box } from '../Layout/box';
-import { UserTasks } from './Settings/Preferences/UserTasks';
+import store from '../../../../stores/RootStore';
+import { Chip, ChipSet } from '../../../../MaterialUI/chips';
+import { UserTasks } from './UserTasks';
+import { Box } from '../../../Layout/box';
+import ClientSelect from '../../Timesheets/ClientSelect';
 
 @observer
 export class Preferences extends React.Component {
     render() {
         if (!store.user.user) return null;
 
-        const { tasks: userTasks = new Map(), defaultTask = undefined } = store.user.user.data || {};
+        const { tasks: userTasks = new Map(), defaultTask = undefined, defaultClient = undefined } = store.user.user.data || {};
         const tasks = Array.from(store.config.tasks.docs.values())
             .reduce((p, c) => {
                 if (c.data) {
@@ -30,13 +31,18 @@ export class Preferences extends React.Component {
             : undefined;
 
         return (
-            <Box>
-                <h3 className="mdc-typography--subtitle1">Pick your tasks</h3>
-                <p>Only selected tasks will be available for you when adding a new regisration.</p>
-                <ChipSet chips={tasks} type="filter"></ChipSet>
+            <>
+                <Box>
+                    <h3 className="mdc-typography--subtitle1">Pick your tasks</h3>
+                    <p>Only selected tasks will be available for you when adding a new regisration.</p>
+                    <ChipSet chips={tasks} type="filter"></ChipSet>
 
-                {userTasksChips}
-            </Box>
+                    {userTasksChips}
+
+                    <h3 className="mdc-typography--subtitle1">Pick default client</h3>
+                    <ClientSelect onChange={this.defaultClientChanged} label="Default client" value={defaultClient}></ClientSelect>
+                </Box>
+            </>
         );
     }
 
@@ -54,10 +60,18 @@ export class Preferences extends React.Component {
     }
 
     defaultTaskChanged = (defaultTask: string) => {
-        if (!store.user.user || !store.user.user.data) return;
+        if (!store.user.userId) return;
 
         store.user.users.updateAsync(store.user.userId!, {
             defaultTask
+        });
+    }
+
+    defaultClientChanged = (defaultClient: string) => {
+        if (!store.user.userId) return;
+
+        store.user.users.updateAsync(store.user.userId!, {
+            defaultClient
         });
     }
 }

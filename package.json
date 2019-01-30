@@ -1,12 +1,16 @@
 {
   "name": "typescript-start",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "description": "A start boiler template for typescript projects",
   "main": "src/js/app.ts",
   "scripts": {
-    "build": "gulp",
+    "build": "npm run build:development",
+    "build:development": "gulp --env=development",
+    "build:production": "gulp --env=production",
     "server": "lite-server --baseDir ./dist",
-    "start": "gulp watch"
+    "start": "gulp watch --env=development",
+    "deploy:development": "npm run build:development && firebase deploy",
+    "deploy:production": "npm run build:production && firebase deploy"
   },
   "repository": {
     "type": "git",

@@ -63,7 +63,7 @@ export class Timesheets extends React.Component {
                 .reduce((p, c) => p + (c.data!.time || 0), 0);
 
             const totalLabel = `Total in ${store.view.moment.format('MMMM')}`;
-            const total = <ListItem key={`total-month`} lines={[totalLabel]} meta={totalTime + " hours"} disabled={true}></ListItem>
+            const total = <ListItem key={`total-month`} lines={[totalLabel]} meta={parseFloat(totalTime.toFixed(2)) + " hours"} disabled={true}></ListItem>
             const totalList = <List style={{ width: "100%" }}><ListDivider></ListDivider>{total}<ListDivider></ListDivider></List>;
 
             regs = <>

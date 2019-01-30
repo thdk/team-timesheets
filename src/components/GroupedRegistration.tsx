@@ -43,7 +43,7 @@ export class GroupedRegistration extends React.Component<IGroupedRegistrationPro
 
             const meta =
                 <FlexGroup center={true} style={{ justifyContent: "space-between", width: checkbox ? "8em" : "auto" }}>
-                    <div>{`${time ? time.toFixed(2) : 0}`}</div>
+                    <div>{`${time ? parseFloat(time.toFixed(2)) : 0}`}</div>
                     {checkbox}
                 </FlexGroup>;
 
@@ -59,7 +59,7 @@ export class GroupedRegistration extends React.Component<IGroupedRegistrationPro
         });
         const totalLabel = createTotalLabel(date);
 
-        const total = <ListItem lines={[totalLabel]} meta={totalTime.toFixed(2) + " hours"} disabled={true}></ListItem>
+        const total = <ListItem lines={[totalLabel]} meta={parseFloat(totalTime.toFixed(2)) + " hours"} disabled={true}></ListItem>
 
         const totalList = <List style={listStyle}><ListDivider></ListDivider>{total}<ListDivider></ListDivider></List>;
         const topTotal = totalOnTop ? totalList : undefined;

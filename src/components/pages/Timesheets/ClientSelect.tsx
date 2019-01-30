@@ -2,7 +2,7 @@ import * as React from 'react';
 import { FormField } from '../../Layout/form';
 import store from '../../../stores/RootStore';
 import { observer } from 'mobx-react';
-import CollectionSelect from '../../Controls/CollectionList';
+import CollectionSelect from '../../Controls/CollectionSelect';
 
 export interface IClientSelectProps {
     value?: string;

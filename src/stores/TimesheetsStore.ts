@@ -147,7 +147,8 @@ export class RegistrationStore implements IRegistrationsStore {
         const {
             data: {
                 recentProjects = [],
-                defaultTask = store.config.tasks.docs.size ? Array.from(store.config.tasks.docs.keys())[0] : undefined
+                defaultTask: task = store.config.tasks.docs.size ? Array.from(store.config.tasks.docs.keys())[0] : undefined,
+                defaultClient: client = undefined
             } = {}
             , id: userId
         } = store.user.user;
@@ -156,10 +157,11 @@ export class RegistrationStore implements IRegistrationsStore {
             date: this.toUTC(
                 this.rootStore.view.moment.toDate()
             ),
-            task: defaultTask,
+            task,
+            client,
             userId,
             project: recentProjects.length ? recentProjects[0] : undefined,
-            isPersisted: false
+            isPersisted: false,
         });
 
         transaction(() => {

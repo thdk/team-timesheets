@@ -23,16 +23,19 @@ export class GroupedRegistration extends React.Component<IGroupedRegistrationPro
         const rows = registrations.map(r => {
             if (!r.data) throw new Error("Found registration without Data");
 
-            const { id, data: { description = "...", project, time, task } } = r;
+            const { id, data: { description = "...", project, time, task, client } } = r;
 
             const projectData = project ? store.config.projects.docs.get(project) : null;
             const { data: { name: projectName = "" } = {} } = projectData || {};
 
             const taskData = task ? store.config.tasks.docs.get(task) : null;
-            const { data: { name: taskName = "N/A", icon = undefined } = {} } = taskData || {};
+            const { data: { icon = undefined } = {} } = taskData || {};
+
+            const clientData = client ? store.config.clientsCollection.docs.get(client) : null;
+            const { data: { name: clientName = undefined } = {} } = clientData || {};
 
             const line1 = projectName;
-            const line2 = `${taskName} - ${description}`;
+            const line2 = `${clientName ? clientName + " - " : ""}${description}`;
 
             const checkbox = registrationSelect
                 ? <div className="clickable"><Checkbox checked={store.view.selection.has(id)} onClick={registrationSelect.bind(this, id, r.data!)}></Checkbox></div>

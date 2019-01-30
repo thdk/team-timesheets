@@ -2,7 +2,7 @@ import * as React from 'react';
 import { observer } from 'mobx-react';
 
 import { TapBar, Tab } from '../../../MaterialUI/tabbar';
-import { Preferences } from '../Preferences';
+import { Preferences } from '../Settings/Preferences/Preferences';
 import { Icon } from '../../../MaterialUI/icon';
 import store from '../../../stores/RootStore';
 import { TaskList } from './Tasks/TaskList';

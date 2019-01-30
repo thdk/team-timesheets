@@ -30,6 +30,7 @@ export interface IUser {
     name: string;
     defaultTask?: string;
     recentProjects: RecentlyUsedProjects;
+    defaultClient?: string;
 }
 
 export interface IUserData {
@@ -37,6 +38,7 @@ export interface IUserData {
     roles?: IRoles;
     name?: string;
     defaultTask: string;
+    defaultClient?: string;
     recentProjects?: RecentlyUsedProjects;
 }
 

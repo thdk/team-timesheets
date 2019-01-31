@@ -12,7 +12,7 @@ export default class ProjectSelect extends React.Component {
     render() {
         const project = store.timesheets.registration ? store.timesheets.registration.data!.project : "";
 
-        const userRecentProjects = store.user.user ? store.user.user.data!.recentProjects : [];
+        const userRecentProjects = store.user.currentUser ? store.user.currentUser.recentProjects : [];
 
         const recentProjects = userRecentProjects.slice(0, 5).reduce((p, c) => {
             const projectData = store.config.projects.docs.get(c);

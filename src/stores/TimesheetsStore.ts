@@ -124,7 +124,7 @@ export class RegistrationStore implements IRegistrationsStore {
 
     @computed
     public get registration() {
-        if (!store.user.user) throw new Error("User must be set");
+        if (!store.user.currentUser) throw new Error("User must be set");
 
         const registration = this.registrationId
             ? this.registrations.docs.get(this.registrationId)
@@ -142,16 +142,13 @@ export class RegistrationStore implements IRegistrationsStore {
 
     @action
     public newRegistration() {
-        if (!store.user.user) throw new Error("User must be set");
+        if (!store.user.currentUser || !store.user.userId) throw new Error("User must be set");
 
         const {
-            data: {
-                recentProjects = [],
-                defaultTask: task = store.config.tasks.docs.size ? Array.from(store.config.tasks.docs.keys())[0] : undefined,
-                defaultClient: client = undefined
-            } = {}
-            , id: userId
-        } = store.user.user;
+            recentProjects = [],
+            defaultTask: task = store.config.tasks.docs.size ? Array.from(store.config.tasks.docs.keys())[0] : undefined,
+            defaultClient: client = undefined
+        } = store.user.currentUser || {};
 
         const registration = this.registrations.newDoc<IRegistration>({
             date: this.toUTC(
@@ -159,7 +156,7 @@ export class RegistrationStore implements IRegistrationsStore {
             ),
             task,
             client,
-            userId,
+            userId: store.user.userId,
             project: recentProjects.length ? recentProjects[0] : undefined,
             isPersisted: false,
         });
@@ -179,8 +176,8 @@ export class RegistrationStore implements IRegistrationsStore {
                     const { project = undefined } = registration.data || {};
                     // TODO: move set recent project to firebase function
                     // triggering for every update/insert of a registration?
-                    if (store.user.userId && store.user.user && project) {
-                        const recentProjects = toJS(store.user.user.data!.recentProjects);
+                    if (store.user.userId && store.user.currentUser && project) {
+                        const recentProjects = toJS(store.user.currentUser.recentProjects);
                         const oldProjectIndex = recentProjects.indexOf(project);
 
                         // don't update the user document if the current project was already most recent

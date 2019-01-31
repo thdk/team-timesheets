@@ -12,13 +12,13 @@ import ClientSelect from './Pages/Timesheets/ClientSelect';
 @observer
 export class Registration extends React.Component {
     render() {
-        if (!store.timesheets.registration || !store.user.user) {
+        if (!store.timesheets.registration || !store.user.currentUser) {
             return <></>;
         }
 
         if (!store.timesheets.registration.data || !store.user.userId) return <></>;
 
-        const userTasks = Array.from(store.user.user!.data!.tasks.keys());
+        const userTasks = Array.from(store.user.currentUser.tasks.keys());
         const { task,
             description,
             time,

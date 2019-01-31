@@ -6,14 +6,16 @@ import { observer } from 'mobx-react';
 
 export interface IUserTasksProps extends IReactProps {
     onChange: (taskId: string) => void;
-    value?: string; 
+    value?: string;
 }
 
 @observer
 export class UserTasks extends React.Component<IUserTasksProps> {
 
     render() {
-        const userTasks = store.user.user!.data!.tasks;
+        if (!store.user.currentUser) return<></>;
+
+        const userTasks = store.user.currentUser.tasks;
         const userTasksChips = Array.from(userTasks.keys()).map(t => {
             const taskData = store.config.tasks.docs.get(t);
             const { id: taskId = "", data: { name: taskName = "ARCHIVED" } = {} } = taskData || {};

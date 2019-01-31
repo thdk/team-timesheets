@@ -5,7 +5,6 @@ import { App, goToOverview, setNavigationContent } from '../internal';
 import { getLoggedInUserAsync } from '../Firestorable/Firestorable';
 import { IRootStore } from '../stores/RootStore';
 import { when } from 'mobx';
-import { Doc } from '../Firestorable/Document';
 
 const path = "/login";
 
@@ -18,7 +17,7 @@ const routes = {
         path,
         component: <App><Login></Login></App>,
         onEnter: (route: Route, _params: any, s: IRootStore) => {
-            when(() => (s.user.user instanceof(Doc)), () => goToOverview(s));
+            when(() => !!s.user.currentUser, () => goToOverview(s));
             setNavigationContent(route, false);
         },
         title: "Login",

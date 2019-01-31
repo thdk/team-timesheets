@@ -8,7 +8,7 @@ export class Drawer extends React.Component {
     private mdcDrawer?: any;
 
     render() {
-        const displayName = store.user.user ? store.user.user!.displayName || "Guest" : "";
+        const displayName = store.user.currentUser ? store.user.currentUser.name || "Guest" : "";
         return (<>
             <aside className="mdc-drawer mdc-drawer--dismissible">
                 <div className="mdc-drawer__header">

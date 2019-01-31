@@ -75,7 +75,7 @@ exports.createCSV = functions.firestore
                     const task = taskData ? taskData.name : fireStoreData.task;
                     const client = clientData ? clientData.name : fireStoreData.client;
                     const date = fireStoreData.date ? fireStoreData.date.toDate().getDate() : "";
-                    const time = fireStoreData.time ? fireStoreData.time.toFixed(2) : 0;
+                    const time = fireStoreData.time ? parseFloat(fireStoreData.time.toFixed(2)) : 0;
 
                     registrations.push({ ...fireStoreData, project, task, date, client, time });
                 });

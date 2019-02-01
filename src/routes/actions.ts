@@ -5,12 +5,15 @@ import store, { IRootStore } from "../stores/RootStore";
 import { goToLogin } from "./login";
 import { when, transaction } from "mobx";
 
-export const goToRouteWithDate = (route: Route, s: IRootStore, date?: IDate) => {
+export const goToRouteWithDate = (route: Route, s: IRootStore, date?: IDate, trackOptions?: { track?: boolean, currentDate?: number }) => {
+    const { track = undefined, currentDate = undefined } = trackOptions || {};
+
+    s.view.track = track;
     s.router.goTo(route, date || {
         year: s.view.year,
         month: s.view.month,
-        day: s.view.day
-    }, s);
+        day: s.view.day,
+    }, s, { last: currentDate });
 }
 
 export const routeWithDateChanged = (_route: Route, params: IDate, s: IRootStore) => {

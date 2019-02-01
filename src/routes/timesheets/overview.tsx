@@ -16,14 +16,15 @@ export interface IDate {
 
 export const path = "/timesheets";
 
-export const goToOverview = (s: IRootStore, date?: IDate) => {
+export const goToOverview = (s: IRootStore, date?: IDate, trackOptions?: { track?: boolean, currentDate?: number }) => {
     const route = (date && date.day) || (!date && s.view.day) ? routes.overview : routes.monthOverview;
 
-    goToRouteWithDate(route, s, date);
+    goToRouteWithDate(route, s, date, trackOptions);
 };
 
 const routeChanged = (route: Route, params: IDate, s: IRootStore) => {
     setNavigationContent(route, false);
+
     transaction(() => {
         s.view.year = +params.year;
         s.view.month = +params.month;
@@ -34,7 +35,7 @@ const routeChanged = (route: Route, params: IDate, s: IRootStore) => {
 const setActions = (s: IRootStore, alowInserts = false) => {
     const actions: IViewAction[] = [
         {
-            action: selection =>  {
+            action: selection => {
                 s.timesheets.clipboard.replace(selection);
                 s.view.selection.clear();
             },
@@ -44,7 +45,7 @@ const setActions = (s: IRootStore, alowInserts = false) => {
             contextual: true
         },
         {
-            action: selection =>  {
+            action: selection => {
                 if (!selection) return;
 
                 s.timesheets.registrations.deleteAsync(...Array.from(selection.keys()));
@@ -59,13 +60,13 @@ const setActions = (s: IRootStore, alowInserts = false) => {
 
     if (alowInserts) {
         actions.push({
-            action: selection =>  {
+            action: selection => {
                 if (!selection) return;
 
                 const docData = Array.from(selection.values())
                     .map(reg => s.timesheets.cloneRegistration(reg)) as IRegistration[];
 
-                s.timesheets.registrations.addAsync(docData).then(()=> {
+                s.timesheets.registrations.addAsync(docData).then(() => {
                     // uncomment to clear clipboard on paste
                     // s.timesheets.clipboard.clear();
                 });

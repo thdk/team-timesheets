@@ -35,7 +35,7 @@ export class Timesheets extends React.Component {
             year: date.getFullYear(),
             month: date.getMonth() + 1,
             day: date.getDate()
-        })
+        }, { track: true })
     }
 
     goToMonth(e: React.MouseEvent) {
@@ -43,7 +43,7 @@ export class Timesheets extends React.Component {
         goToOverview(store, {
             year: store.view.year!,
             month: store.view.month!
-        });
+        }, { currentDate: store.view.track ? store.view.day! : undefined });
     }
 
     render() {

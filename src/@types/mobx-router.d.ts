@@ -8,7 +8,7 @@ declare module 'mobx-router' {
         params: any;
         currentPath: any;
         queryParams: any;
-        goTo: any;
+        goTo: (view: any, paramsObj: any, store: any, queryParamsObj?: any) => void;
     };
 
     export type RoutesConfig = {[index: string]: Route};

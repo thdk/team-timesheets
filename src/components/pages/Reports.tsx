@@ -19,11 +19,12 @@ export class Reports extends React.Component {
 
     goToDate(e: React.MouseEvent, date: Date) {
         e.preventDefault();
+        store.view.track = true;
         goToOverview(store, {
             year: date.getFullYear(),
             month: date.getMonth() + 1,
             day: date.getDate()
-        })
+        }, {track: true});
     }
 
     createTotalLabel = (date: Date) => {
@@ -48,7 +49,7 @@ export class Reports extends React.Component {
             ? <a href={store.reports.reportUrl}>Download report</a>
             : store.reports.report.data.status : undefined;
         const downloadReport = download &&
-            <FlexGroup direction={"vertical"} style={{ paddingRight:"1em", alignItems: "flex-end"}}>{download}</FlexGroup>
+            <FlexGroup direction={"vertical"} style={{ paddingRight: "1em", alignItems: "flex-end" }}>{download}</FlexGroup>
 
         return (
             <>

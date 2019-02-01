@@ -13,12 +13,13 @@ export interface IGroupedRegistrationProps {
     registrationToggleSelect?: (id: string, data: IRegistration) => void;
     createTotalLabel: (date: Date) => React.ReactNode;
     totalOnTop?: boolean;
+    denseList?: boolean;
 }
 
 @observer
 export class GroupedRegistration extends React.Component<IGroupedRegistrationProps> {
     render() {
-        const { group: { registrations, date, totalTime }, createTotalLabel, totalOnTop, registrationClick, registrationToggleSelect: registrationSelect } = this.props;
+        const { denseList, group: { registrations, date, totalTime }, createTotalLabel, totalOnTop, registrationClick, registrationToggleSelect: registrationSelect } = this.props;
         const listStyle = { width: '100%' };
         const rows = registrations.map(r => {
             if (!r.data) throw new Error("Found registration without Data");
@@ -61,14 +62,14 @@ export class GroupedRegistration extends React.Component<IGroupedRegistrationPro
 
         const total = <ListItem lines={[totalLabel]} meta={parseFloat(totalTime.toFixed(2)) + " hours"} disabled={true}></ListItem>
 
-        const totalList = <List style={listStyle}><ListDivider></ListDivider>{total}<ListDivider></ListDivider></List>;
+        const totalList = <List isDense={denseList} style={listStyle}><ListDivider></ListDivider>{total}<ListDivider></ListDivider></List>;
         const topTotal = totalOnTop ? totalList : undefined;
         const bottomTotal = totalOnTop ? undefined : totalList;
 
         return (
             <React.Fragment>
                 {topTotal}
-                <List isTwoLine={true} style={listStyle}>
+                <List isDense={denseList} isTwoLine={true} style={listStyle}>
                     {rows}
                 </List>
                 {bottomTotal}

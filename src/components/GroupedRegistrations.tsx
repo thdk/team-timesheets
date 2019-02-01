@@ -16,7 +16,7 @@ export interface IGroupedRegistrationsProps extends IReactProps {
 export class GroupedRegistrations extends React.Component<IGroupedRegistrationsProps> {
     render() {
         return store.timesheets.registrationsGroupedByDay.map((g, i) => {
-            return <GroupedRegistration key={`group-${i}`} group={g} {...this.props}></GroupedRegistration>
+            return <GroupedRegistration denseList={true} key={`group-${i}`} group={g} {...this.props}></GroupedRegistration>
         });
     }
 }

@@ -14,7 +14,6 @@ import { IRegistration } from '../stores/TimesheetsStore';
 
 @observer
 export class Timesheets extends React.Component {
-
     registrationClick = (id: string) => {
         goToRegistration(id);
     }
@@ -48,6 +47,8 @@ export class Timesheets extends React.Component {
 
     render() {
         let regs: React.ReactNode;
+        const query: { last: number | undefined} = store.router.queryParams || {};
+
         if (store.view.day) {
             const group = store.timesheets.registrationsGroupedByDay.filter(g => g.date.getDate() === store.view.day);
 
@@ -67,7 +68,7 @@ export class Timesheets extends React.Component {
             const totalList = <List style={{ width: "100%" }}><ListDivider></ListDivider>{total}<ListDivider></ListDivider></List>;
 
             regs = <>
-                <GroupedRegistrations totalOnTop={true}
+                <GroupedRegistrations activeDate={query.last} totalOnTop={true}
                     createTotalLabel={this.createTotalLabel}
                     registrationClick={this.registrationClick.bind(this)}
                     registrationToggleSelect={this.registrationSelect.bind(this)}>

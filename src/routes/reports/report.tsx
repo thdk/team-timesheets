@@ -8,7 +8,7 @@ import { Reports } from '../../components/Pages/Reports';
 const path = "/reports";
 
 export const goToReports = (s: IRootStore, date?: IDate) => {
-    goToRouteWithDate(routes.report, s, date);
+    goToRouteWithDate(routes.report, s, date, { track: false });
 }
 
 const routeChanged = (route: Route, params: IDate, s: IRootStore) => {

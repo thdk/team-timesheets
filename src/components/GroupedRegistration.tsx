@@ -18,6 +18,12 @@ export interface IGroupedRegistrationProps {
 
 @observer
 export class GroupedRegistration extends React.Component<IGroupedRegistrationProps> {
+    private registrationRef: React.RefObject<HTMLDivElement>;
+    constructor(props: IGroupedRegistrationProps) {
+        super(props);
+        this.registrationRef = React.createRef();
+    }
+
     render() {
         const { denseList, group: { registrations, date, totalTime }, createTotalLabel, totalOnTop, registrationClick, registrationToggleSelect: registrationSelect } = this.props;
         const listStyle = { width: '100%' };
@@ -67,13 +73,17 @@ export class GroupedRegistration extends React.Component<IGroupedRegistrationPro
         const bottomTotal = totalOnTop ? undefined : totalList;
 
         return (
-            <React.Fragment>
+            <div ref={this.registrationRef}>
                 {topTotal}
                 <List isDense={denseList} isTwoLine={true} style={listStyle}>
                     {rows}
                 </List>
                 {bottomTotal}
-            </React.Fragment>
+            </div>
         );
+    }
+
+    public scrollIntoView() {
+        this.registrationRef.current && this.registrationRef.current.scrollIntoView({ behavior: "smooth" });
     }
 }

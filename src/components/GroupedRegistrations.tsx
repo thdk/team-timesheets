@@ -10,13 +10,23 @@ export interface IGroupedRegistrationsProps extends IReactProps {
     registrationToggleSelect?: (id: string, data: IRegistration) => void;
     createTotalLabel: (date: Date) => React.ReactNode;
     totalOnTop?: boolean;
+    activeDate?: number;
 }
 
 @observer
 export class GroupedRegistrations extends React.Component<IGroupedRegistrationsProps> {
+    private activeRegistrationRef: React.RefObject<GroupedRegistration>;
+    constructor(props: IGroupedRegistrationsProps) {
+        super(props);
+        this.activeRegistrationRef = React.createRef<GroupedRegistration>();
+    }
     render() {
         return store.timesheets.registrationsGroupedByDay.map((g, i) => {
-            return <GroupedRegistration denseList={true} key={`group-${i}`} group={g} {...this.props}></GroupedRegistration>
+            return <GroupedRegistration ref={g.date.getDate() === this.props.activeDate ? this.activeRegistrationRef : null} denseList={true} key={`group-${i}`} group={g} {...this.props}></GroupedRegistration>
         });
+    }
+
+    componentDidMount() {
+        this.activeRegistrationRef.current && this.activeRegistrationRef.current.scrollIntoView();
     }
 }

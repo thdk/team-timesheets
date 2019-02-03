@@ -4,7 +4,7 @@ import { Timesheets } from '../../components/Timesheets';
 import { transaction } from 'mobx';
 import { beforeEnter, setNavigationContent, goToRouteWithDate } from '../actions';
 import { App } from '../../internal';
-import { IRootStore } from '../../stores/RootStore';
+import store, { IRootStore } from '../../stores/RootStore';
 import { IViewAction } from '../../stores/ViewStore';
 import { IRegistration } from '../../stores/TimesheetsStore';
 
@@ -19,7 +19,7 @@ export const path = "/timesheets";
 export const goToOverview = (s: IRootStore, date?: IDate, trackOptions?: { track?: boolean, currentDate?: number }) => {
     const route = (date && date.day) || (!date && s.view.day) ? routes.overview : routes.monthOverview;
 
-    goToRouteWithDate(route, s, date, trackOptions);
+    goToRouteWithDate(route, s, date, { track: store.view.track, ...trackOptions });
 };
 
 const routeChanged = (route: Route, params: IDate, s: IRootStore) => {

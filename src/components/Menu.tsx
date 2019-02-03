@@ -9,20 +9,14 @@ import Calendar, { CalendarTileProperties } from 'react-calendar/dist/entry.nost
 export class Menu extends React.Component {
 
     dateChanged = (dates: Date | Date[]) => {
-        const date = dates instanceof(Date) ? dates : dates[0];
-        goToOverview(store, { year: date.getFullYear(), day: date.getDate(), month: date.getMonth() + 1 });
+        const date = dates instanceof (Date) ? dates : dates[0];
+        goToOverview(store, { year: date.getFullYear(), day: date.getDate(), month: date.getMonth() + 1 }, { track: false });
     }
 
     navigateToOverview = (e: React.MouseEvent) => {
         e.preventDefault();
         const date = new Date();
-        goToOverview(store, { day: date.getDate(), month: date.getMonth() + 1, year: date.getFullYear() });
-    }
-
-    navigateToCurrentMonth = (e: React.MouseEvent) => {
-        e.preventDefault();
-        const today = new Date();
-        goToOverview(store, { year: today.getFullYear(), month: today.getMonth() + 1 });
+        goToOverview(store, { day: date.getDate(), month: date.getMonth() + 1, year: date.getFullYear() }, { track: false });
     }
 
     toggleLogin = (e: React.MouseEvent) => {
@@ -65,12 +59,12 @@ export class Menu extends React.Component {
                     <hr className="mdc-list-divider" />
 
                     <h6 className="mdc-list-group__subheader">Reports</h6>
-                    <a className="mdc-list-item" onClick={e => this.navigate(e, () => {e.preventDefault(); goToReports(store);})} href="#">
+                    <a className="mdc-list-item" onClick={e => this.navigate(e, () => { e.preventDefault(); goToReports(store); })} href="#">
                         <i className="material-icons mdc-list-item__graphic" aria-hidden="true">list</i>
                         <span className="mdc-list-item__text">Export</span>
                     </a>
 
-                    <a className="mdc-list-item" onClick={e => this.navigate(e, () => {e.preventDefault(); goToDashboard(store);})} href="#">
+                    <a className="mdc-list-item" onClick={e => this.navigate(e, () => { e.preventDefault(); goToDashboard(store); })} href="#">
                         <i className="material-icons mdc-list-item__graphic" aria-hidden="true">bar_chart</i>
                         <span className="mdc-list-item__text">Dashboard</span>
                     </a>

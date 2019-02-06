@@ -39,7 +39,9 @@ export class Button extends React.Component<IButtonProps> {
         type === ButtonType.Unelevated && classNames.push("mdc-button--unelevated ");
         return (
             <button onClick={onClick} style={style} ref={this.buttonRef} className={classNames.join(" ")}>
-                {this.props.children}
+                <span className="mdc-button__label">
+                    {this.props.children}
+                </span>
             </button>
         );
     }

@@ -75,7 +75,6 @@ export interface IChipSetProps {
 }
 
 export class ChipSet extends React.Component<IChipSetProps> {
-    private chipset: any;
     private mdcChipSet: React.RefObject<HTMLDivElement>;
     constructor(props: IChipSetProps) {
         super(props);
@@ -101,12 +100,7 @@ export class ChipSet extends React.Component<IChipSetProps> {
         );
     }
 
-    componentDidUpdate() {
-        this.chipset.destroy();
-        this.chipset = new MDCChipSet(this.mdcChipSet.current);
-    }
-
     componentDidMount() {
-        this.chipset = new MDCChipSet(this.mdcChipSet.current);
+        MDCChipSet.attachTo(this.mdcChipSet.current);
     }
 }

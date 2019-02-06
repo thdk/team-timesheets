@@ -15,11 +15,12 @@ import * as gcs from '@google-cloud/storage';
 const adminConfig = process.env.FIREBASE_CONFIG && JSON.parse(process.env.FIREBASE_CONFIG);
 const bucketName = adminConfig ? adminConfig.storageBucket : "";
 
+console.log({ adminConfig });
+
 admin.initializeApp();
 
 // Reference report in Firestore
 const db = admin.firestore();
-db.settings({ timestampsInSnapshots: true });
 
 exports.createCSV = functions.firestore
     .document('reports/{reportId}')
@@ -29,6 +30,8 @@ exports.createCSV = functions.firestore
         if (!reportData) return new Promise(resolve => resolve());
 
         const { year, month, userId } = reportData;
+        console.log("report data:");
+        console.log({ reportData });
 
         const reportId = snapshot.id;
         const fileName = `reports/${year}/${month}/${userId}.csv`;
@@ -46,9 +49,12 @@ exports.createCSV = functions.firestore
         let tasksMap: Map<string, any>;
         let clientsMap: Map<string, any>;
 
-        const startMonent = moment(`${year}-${month}`, 'YYYY-MM');
-        const endDate = startMonent.clone().endOf("month").toDate();
-        const startDate = startMonent.clone().startOf("month").toDate();
+        const startMoment = moment(`${year}-${month}`, 'YYYY-MM');
+        const endDate = startMoment.clone().endOf("month").toDate();
+        const startDate = startMoment.clone().startOf("month").toDate();
+
+        console.log({ startDate });
+        console.log({ endDate });
 
         return Promise.all([
             db.collection('projects').get().then(s => projectsMap = new Map(s.docs.map((d): [string, any] => [d.id, d.data()]))),
@@ -56,11 +62,12 @@ exports.createCSV = functions.firestore
             db.collection('clients').get().then(s => clientsMap = new Map(s.docs.map((d): [string, any] => [d.id, d.data()])))
         ]).then(() => db.collection('registrations')
             .where("deleted", "==", false)
-            .where("date", ">", startDate)
+            .where("date", ">=", startDate)
             .where("date", "<=", endDate)
             .where("userId", "==", userId)
             .get()
             .then(querySnapshot => {
+                console.log("Snapshot size: " + querySnapshot.size);
                 const registrations: any[] = [];
 
                 // create array of registration data

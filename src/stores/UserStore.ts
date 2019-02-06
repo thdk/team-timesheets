@@ -1,4 +1,4 @@
-import { observable, action, transaction, computed, IObservableValue } from "mobx";
+import { observable, action, transaction, computed, IObservableValue, observe } from "mobx";
 import { ICollection, Collection } from "../Firestorable/Collection";
 import { Doc } from "../Firestorable/Document";
 import { firestorable } from "../Firestorable/Firestorable";
@@ -9,8 +9,8 @@ import * as serializer from '../serialization/serializer';
 export interface IUserStore {
     readonly userId?: string;
     readonly currentUser?: IUser;
-    readonly setUser: (fbUser: firebase.User | null) => void;
     readonly users: ICollection<IUser>;
+    readonly updateUser: (userData: Partial<IUser>) => void;
 }
 
 export interface IRoles {
@@ -59,6 +59,11 @@ export class UserStore implements IUserStore {
 
         this.user = observable.box();
         firestorable.auth.onAuthStateChanged(this.setUser.bind(this));
+
+        observe(this.user, change => {
+            change.newValue && this.userId &&
+                this.users.updateAsync(this.userId, change.newValue);
+        });
     }
 
     @computed public get currentUser() {
@@ -66,7 +71,13 @@ export class UserStore implements IUserStore {
     }
 
     @action
-    public setUser(fbUser: firebase.User | null) {
+    public updateUser(userData: Partial<IUser>) {
+        const user = this.user.get();
+        if (user) this.user.set({ ...user, ...userData });
+    }
+
+    @action
+    private setUser(fbUser: firebase.User | null) {
         if (!fbUser) {
             this.userId = undefined;
             this.user.set(undefined);

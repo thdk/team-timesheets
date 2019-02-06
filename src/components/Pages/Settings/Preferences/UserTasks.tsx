@@ -13,7 +13,7 @@ export interface IUserTasksProps extends IReactProps {
 export class UserTasks extends React.Component<IUserTasksProps> {
 
     render() {
-        if (!store.user.currentUser) return<></>;
+        if (!store.user.currentUser || store.config.tasks.docs.size === 0) return<></>;
 
         const userTasks = store.user.currentUser.tasks;
         const userTasksChips = Array.from(userTasks.keys()).map(t => {

@@ -194,7 +194,7 @@ export class RegistrationStore implements IRegistrationsStore {
                                 recentProjects.unshift(project);
                             }
 
-                            store.user.userId && store.user.users.updateAsync(store.user.userId, { recentProjects })
+                            store.user.updateUser({ recentProjects });
                         }
                     }
                 });

@@ -9,7 +9,7 @@ import ClientSelect from '../../Timesheets/ClientSelect';
 @observer
 export class Preferences extends React.Component {
     render() {
-        if (!store.user.currentUser) return null;
+        if (!store.user.currentUser || store.config.tasks.docs.size === 0) return null;
 
         const { tasks: userTasks = new Map(), defaultTask = undefined, defaultClient = undefined } = store.user.currentUser || {};
         const tasks = Array.from(store.config.tasks.docs.values())
@@ -54,23 +54,19 @@ export class Preferences extends React.Component {
         if (selected) tasks.set(id, true);
         else tasks.delete(id);
 
-        store.user.users.updateAsync(store.user.userId!, {
+        store.user.updateUser({
             tasks,
         });
     }
 
     defaultTaskChanged = (defaultTask: string) => {
-        if (!store.user.userId) return;
-
-        store.user.users.updateAsync(store.user.userId!, {
+        store.user.updateUser({
             defaultTask
         });
     }
 
     defaultClientChanged = (defaultClient: string) => {
-        if (!store.user.userId) return;
-
-        store.user.users.updateAsync(store.user.userId!, {
+        store.user.updateUser( {
             defaultClient
         });
     }

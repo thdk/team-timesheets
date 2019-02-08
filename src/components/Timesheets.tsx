@@ -49,7 +49,7 @@ export class Timesheets extends React.Component {
     render() {
         let regs: React.ReactNode;
         if (store.view.day) {
-            const group = store.timesheets.registrationsGroupedByDay.filter(g => g.date.getDate() === store.view.day);
+            const group = store.timesheets.registrationsGroupedByDay.filter(g => g.groupKey.getDate() === store.view.day);
 
             regs = group.length
                 ? <GroupedRegistration group={group[0]}

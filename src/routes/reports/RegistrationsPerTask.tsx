@@ -77,7 +77,7 @@ const getData = (year: number) => {
         firestorable.firestore.collection('tasks').get().then(s => tasksMap = new Map(s.docs.map((d): [string, any] => [d.id, { ...d.data(), totalTime: 0 }])))
     ]).then(() => firestorable.firestore.collection('registrations')
         .where("deleted", "==", false)
-        .where("date", ">", startDate)
+        .where("date", ">=", startDate)
         .where("date", "<=", endDate)
         .where("userId", "==", store.user.userId)
         .get()

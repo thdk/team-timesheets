@@ -43,9 +43,9 @@ export class Menu extends React.Component {
             // However due to a timezone issue it not always gives the required results!
             // below code is NOT ready for production
             const tileHasData = store.timesheets.registrationsGroupedByDay.some(g =>
-                g.date.getDate() === tile.date.getDate()
-                && g.date.getMonth() === tile.date.getMonth()
-                && g.date.getFullYear() === tile.date.getFullYear());
+                g.groupKey.getDate() === tile.date.getDate()
+                && g.groupKey.getMonth() === tile.date.getMonth()
+                && g.groupKey.getFullYear() === tile.date.getFullYear());
             if (tileHasData) classNames.push("has-data");
         }
 

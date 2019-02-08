@@ -22,6 +22,15 @@ export const chartColors = {
     yellow: "rgb(255, 205, 86)"
 }
 
+export const chartColorsArray = [
+    chartColors.red,
+    chartColors.orange,
+    chartColors.yellow,
+    chartColors.green,
+    chartColors.blue,
+    chartColors.purple
+];
+
 export class RegistrationsPerProject extends React.Component<IReactProps, { data: chartjs.ChartData }> {
     private ref: React.RefObject<any>;
     private legendRef: React.RefObject<HTMLDivElement>;
@@ -92,7 +101,7 @@ const getData = (year: number) => {
         firestorable.firestore.collection('tasks').get().then(s => tasksMap = new Map(s.docs.map((d): [string, any] => [d.id, { ...d.data(), totalTime: 0 }])))
     ]).then(() => firestorable.firestore.collection('registrations')
         .where("deleted", "==", false)
-        .where("date", ">", startDate)
+        .where("date", ">=", startDate)
         .where("date", "<=", endDate)
         .where("userId", "==", store.user.userId)
         .get()

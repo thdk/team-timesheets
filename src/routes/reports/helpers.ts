@@ -1,6 +1,7 @@
+import { chartColorsArray } from "../../components/Pages/Reports/RegistrationsPerUser";
+
 export const legendCallback = (chart: any) => {
     const text = [];
-    text.push('<ul class="' + chart.id + '-legend">');
 
     const data = chart.data;
     const datasets = data.datasets;
@@ -20,6 +21,9 @@ export const legendCallback = (chart: any) => {
         }
     }
 
-    text.push('</ul>');
-    return text.join('');
+    return [
+        `<ul class='${chart.id}-legend'>`,
+        ...text.slice(0, 3 * chartColorsArray.length),
+        '</ul>'
+    ].join("");
 }

@@ -1,10 +1,14 @@
 import * as React from 'react';
 import { FlexGroup } from '../../Layout/flex';
-import { RegistrationsPerProject } from '../../../routes/reports/RegistrationsPerProject';
-import { RegistrationsPerTask } from '../../../routes/reports/RegistrationsPerTask';
-import { RegistrationsPerUser } from './RegistrationsPerUser';
+import { RegistrationsPerUser, IRegistrationPerUserProps, IRegistrationsChartProps, ChartType } from './RegistrationsPerUser';
 import store from '../../../stores/RootStore';
-import { when, IReactionDisposer } from 'mobx';
+import { IReactionDisposer } from 'mobx';
+import CollectionSelect from '../../Controls/CollectionSelect';
+import { observer } from 'mobx-react';
+import { IProject, ITask } from '../../../stores/ConfigStore';
+import { Box } from '../../Layout/box';
+import { FormField } from '../../Layout/form';
+import { canReadUsers } from '../../../rules/rules';
 
 export const chartColors = {
     blue: "rgb(54, 162, 235)",
@@ -16,45 +20,100 @@ export const chartColors = {
     yellow: "rgb(255, 205, 86)"
 }
 
+@observer
 export class Dashboard extends React.Component {
     private getUsersReactionDisposer?: IReactionDisposer;
 
     render() {
-        const getUserLabels = () => new Promise<{
-            [key: string]: string
-        }>(resolve => {
-            if (!store.user.users.docs.size) store.user.users.getDocs()
+        const userChartProps: IRegistrationPerUserProps = {
+            title: "Time / user in 2019",
+            data: store.dashboard.registrationsGroupedByUser,
+            labelCollection: store.user.users,
+            getLabel: user => user.name,
+            chart: ChartType.Bar
+        };
 
-            this.getUsersReactionDisposer = when(() => !!store.user.users.docs.size, () =>
-                resolve(Array.from(store.user.users.docs.values())
-                    .reduce((p, c) => {
-                        p[c.id] = c.data!.name;
-                        return p;
-                    }, {} as {
-                        [key: string]: string
-                    })
-                )
-            );
-        });
+        const projectChartProps: IRegistrationsChartProps<IProject> = {
+            title: "Time / project in 2019",
+            data: store.dashboard.registrationsGroupedByProject,
+            labelCollection: store.config.projects,
+            getLabel: project => project.name,
+            chart: ChartType.Doughnut
+        };
+
+        const taskChartProps: IRegistrationsChartProps<ITask> = {
+            title: "Time / task in 2019",
+            data: store.dashboard.registrationsGroupedByTask,
+            labelCollection: store.config.tasks,
+            getLabel: task => task.name,
+            chart: ChartType.Doughnut
+        };
+
+        const userFilter = canReadUsers(store.user.currentUser)
+            ? <FormField first={false}>
+                <CollectionSelect value={store.dashboard.userFilterValue}
+                    label="User"
+                    onChange={this.onUserFilterChange}
+                    items={
+                        Array.from(store.user.users.docs.values())
+                            .map(doc => ({ name: doc.data!.name, id: doc.id }))
+                    }>
+                </CollectionSelect>
+            </FormField>
+            : null;
+
+        const registrationsPerUserChart = canReadUsers(store.user.currentUser)
+            ? <RegistrationsPerUser {...userChartProps}>
+            </RegistrationsPerUser>
+            : null;
 
         return (
             <>
-                <FlexGroup>
-                    <RegistrationsPerProject></RegistrationsPerProject>
-                    <RegistrationsPerTask></RegistrationsPerTask>
-                </FlexGroup>
-                <FlexGroup>
-                    <RegistrationsPerUser data={store.dashboard.registrationsGroupedByUser} getLabels={getUserLabels} ></RegistrationsPerUser>
+                <Box>
+                    <FlexGroup>
+                        <FormField>
+                            <CollectionSelect value={store.dashboard.projectFilterValue}
+                                label="Project"
+                                onChange={this.onProjectFilterChange}
+                                items={
+                                    Array.from(store.config.projects.docs.values())
+                                        .map(doc => ({ name: doc.data!.name, id: doc.id }))
+                                }>
+                            </CollectionSelect>
+                        </FormField>
+                        {userFilter}
+                    </FlexGroup>
+                </Box>
+                <FlexGroup style={{ flexWrap: "wrap" }}>
+                    <RegistrationsPerUser {...projectChartProps}>
+                    </RegistrationsPerUser>
+                    <RegistrationsPerUser {...taskChartProps}>
+                    </RegistrationsPerUser>
+                    {registrationsPerUserChart}
                 </FlexGroup>
             </>
         );
     }
 
     componentDidMount() {
-        store.dashboard.setUserFilter(store.user.userId!);
+        store.dashboard.setUserFilter(undefined);
+        store.dashboard.setTaskFilter(undefined);
+        store.dashboard.setProjectFilter(undefined);
     }
 
     componentWillUnmount() {
         this.getUsersReactionDisposer && this.getUsersReactionDisposer();
+    }
+
+    onProjectFilterChange(value: string) {
+        store.dashboard.setProjectFilter(value);
+    }
+
+    onUserFilterChange(value: string) {
+        store.dashboard.setUserFilter(value);
+    }
+
+    onTaskFilterChange(value: string) {
+        store.dashboard.setTaskFilter(value);
     }
 }

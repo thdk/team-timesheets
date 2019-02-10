@@ -1,4 +1,4 @@
-import { chartColorsArray } from "../../components/Pages/Reports/RegistrationsPerUser";
+import { chartColorsArray } from "../../components/Pages/Reports/RegistrationsChart";
 
 export const legendCallback = (chart: any) => {
     const text = [];

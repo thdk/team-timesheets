@@ -39,11 +39,11 @@ export interface IRegistrationsChartProps<T> {
     chart: ChartType;
 }
 
-export interface IRegistrationPerUserProps extends IRegistrationsChartProps<IUser> {
+export interface IUserRegistrationsChartProps extends IRegistrationsChartProps<IUser> {
     data: IGroupedRegistrations<string>[];
 }
 
-export class RegistrationsPerUser<T> extends React.Component<IRegistrationsChartProps<T>, { data: chartjs.ChartData, isLoading: boolean }> {
+export class RegistrationsChart<T> extends React.Component<IRegistrationsChartProps<T>, { data: chartjs.ChartData, isLoading: boolean }> {
     private ref: React.RefObject<any>;
     private legendRef: React.RefObject<HTMLDivElement>;
 

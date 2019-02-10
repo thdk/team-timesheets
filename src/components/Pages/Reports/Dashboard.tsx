@@ -1,6 +1,5 @@
 import * as React from 'react';
 import { FlexGroup } from '../../Layout/flex';
-import { RegistrationsPerUser, IRegistrationPerUserProps, IRegistrationsChartProps, ChartType } from './RegistrationsPerUser';
 import store from '../../../stores/RootStore';
 import { IReactionDisposer } from 'mobx';
 import CollectionSelect from '../../Controls/CollectionSelect';
@@ -9,6 +8,7 @@ import { IProject, ITask } from '../../../stores/ConfigStore';
 import { Box } from '../../Layout/box';
 import { FormField } from '../../Layout/form';
 import { canReadUsers } from '../../../rules/rules';
+import { IUserRegistrationsChartProps, ChartType, IRegistrationsChartProps, RegistrationsChart } from './RegistrationsChart';
 
 export const chartColors = {
     blue: "rgb(54, 162, 235)",
@@ -25,7 +25,7 @@ export class Dashboard extends React.Component {
     private getUsersReactionDisposer?: IReactionDisposer;
 
     render() {
-        const userChartProps: IRegistrationPerUserProps = {
+        const userChartProps: IUserRegistrationsChartProps = {
             title: "Time / user in 2019",
             data: store.dashboard.registrationsGroupedByUser,
             labelCollection: store.user.users,
@@ -63,8 +63,8 @@ export class Dashboard extends React.Component {
             : null;
 
         const registrationsPerUserChart = canReadUsers(store.user.currentUser)
-            ? <RegistrationsPerUser {...userChartProps}>
-            </RegistrationsPerUser>
+            ? <RegistrationsChart {...userChartProps}>
+            </RegistrationsChart>
             : null;
 
         return (
@@ -85,10 +85,10 @@ export class Dashboard extends React.Component {
                     </FlexGroup>
                 </Box>
                 <FlexGroup style={{ flexWrap: "wrap" }}>
-                    <RegistrationsPerUser {...projectChartProps}>
-                    </RegistrationsPerUser>
-                    <RegistrationsPerUser {...taskChartProps}>
-                    </RegistrationsPerUser>
+                    <RegistrationsChart {...projectChartProps}>
+                    </RegistrationsChart>
+                    <RegistrationsChart {...taskChartProps}>
+                    </RegistrationsChart>
                     {registrationsPerUserChart}
                 </FlexGroup>
             </>

@@ -26,7 +26,7 @@ export class Dashboard extends React.Component {
 
     render() {
         const userChartProps: IUserRegistrationsChartProps = {
-            title: "Time / user in 2019",
+            title: "Time / user",
             data: store.dashboard.registrationsGroupedByUser,
             labelCollection: store.user.users,
             getLabel: user => user.name,
@@ -34,7 +34,7 @@ export class Dashboard extends React.Component {
         };
 
         const projectChartProps: IRegistrationsChartProps<IProject> = {
-            title: "Time / project in 2019",
+            title: "Time / project",
             data: store.dashboard.registrationsGroupedByProject,
             labelCollection: store.config.projects,
             getLabel: project => project.name,
@@ -42,7 +42,7 @@ export class Dashboard extends React.Component {
         };
 
         const taskChartProps: IRegistrationsChartProps<ITask> = {
-            title: "Time / task in 2019",
+            title: "Time / task",
             data: store.dashboard.registrationsGroupedByTask,
             labelCollection: store.config.tasks,
             getLabel: task => task.name,

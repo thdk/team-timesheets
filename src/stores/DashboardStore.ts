@@ -1,15 +1,19 @@
-import { observable, reaction, computed, IObservableValue, action } from "mobx";
+import { observable, reaction, computed, action } from "mobx";
 import { ICollection, Collection } from "../Firestorable/Collection";
+
+import moment from 'moment-es6';
 
 import { IRootStore } from "./RootStore";
 import { IRegistration, IRegistrationData, IGroupedRegistrations } from "./TimesheetsStore";
 import * as deserializer from '../serialization/deserializer';
 import * as serializer from '../serialization/serializer';
+import { TimePeriod } from "../components/Controls/TimePeriodSelect";
 
 export interface IDashboardStore {
     readonly setProjectFilter: (projectId: string | undefined) => void;
     readonly setUserFilter: (userId: string | undefined) => void;
     readonly setTaskFilter: (taskId: string | undefined) => void;
+    readonly setTimePeriodFilter: (timePeriod: TimePeriod) => void;
 
     readonly registrationsGroupedByUser: IGroupedRegistrations<string>[];
     readonly registrationsGroupedByTask: IGroupedRegistrations<string>[];
@@ -18,16 +22,16 @@ export interface IDashboardStore {
     readonly projectFilterValue?: string;
     readonly taskFilterValue?: string;
     readonly userFilterValue?: string;
+    readonly timePeriodFilterValue?: TimePeriod;
 }
 
 export class DashboardStore implements IDashboardStore {
     private readonly registrationsField: ICollection<IRegistration>;
 
-    @observable private startDate: IObservableValue<Date | undefined> = observable.box();
-    @observable private endDate: IObservableValue<Date | undefined> = observable.box();
     @observable.ref private userFilterValueField: string | undefined = undefined;
     @observable.ref private taskFilterValueField: string | undefined = undefined;
     @observable.ref private projectFilterValueField: string | undefined = undefined;
+    @observable.ref private timePeriodFilterField: TimePeriod | undefined = undefined;
 
     constructor(rootStore: IRootStore) {
         this.registrationsField = observable(new Collection<IRegistration, IRegistrationData>(() => rootStore.getCollection("registrations"),
@@ -63,13 +67,13 @@ export class DashboardStore implements IDashboardStore {
 
     @computed
     private get startDateFilter() {
-        const startDate = this.startDate.get()
+        const startDate = this.startDate;
         return (query: firebase.firestore.Query) => startDate ? query.where("date", ">=", startDate) : query;
     }
 
     @computed
     private get endDateFilter() {
-        const endDate = this.endDate.get()
+        const endDate = this.endDate;
         return (query: firebase.firestore.Query) => endDate ? query.where("date", "<=", endDate) : query;
     }
 
@@ -110,6 +114,44 @@ export class DashboardStore implements IDashboardStore {
             .sort((a, b) => b.totalTime - a.totalTime);
     }
 
+    @computed
+    private get startDate() {
+        const today = moment(new Date());
+        switch (this.timePeriodFilterField) {
+            case TimePeriod.ThisWeek:
+                return today.clone().startOf('week').toDate();
+            case TimePeriod.ThisMonth:
+                return today.clone().startOf('month').toDate();
+            case TimePeriod.LastMonth:
+                return today.clone().subtract(1, 'months').startOf('month').toDate();
+            case TimePeriod.ThisYear:
+                return today.clone().startOf('year').toDate();
+            case TimePeriod.LastYear:
+                return today.clone().subtract(1, 'years').startOf('year').toDate();
+            default:
+                return undefined;
+        }
+    }
+
+    @computed
+    private get endDate() {
+        const today = moment(new Date());
+        switch (this.timePeriodFilterField) {
+            case TimePeriod.ThisWeek:
+                return today.clone().endOf('week').toDate();
+            case TimePeriod.ThisMonth:
+                return today.clone().endOf('month').toDate();
+            case TimePeriod.LastMonth:
+                return today.clone().subtract(1, 'months').endOf('month').toDate();
+            case TimePeriod.ThisYear:
+                return today.clone().endOf('year').toDate();
+            case TimePeriod.LastYear:
+                return today.clone().subtract(1, 'years').endOf('year').toDate();
+            default:
+                return undefined;
+        }
+    }
+
     public get taskFilterValue() {
         return this.taskFilterValueField;
     }
@@ -120,6 +162,10 @@ export class DashboardStore implements IDashboardStore {
 
     public get projectFilterValue() {
         return this.projectFilterValueField;
+    }
+
+    public get timePeriodFilterValue() {
+        return this.timePeriodFilterField;
     }
 
     @computed
@@ -141,6 +187,10 @@ export class DashboardStore implements IDashboardStore {
     @action
     public setUserFilter(userId: string | undefined) {
         this.userFilterValueField = userId;
+    }
+
+    @action setTimePeriodFilter(timePeriod: TimePeriod) {
+        this.timePeriodFilterField = timePeriod;
     }
 
     private createRegistrationsGroup = <T>(keySelector: (reg: IRegistration) => T): IGroupedRegistrations<T>[] => {

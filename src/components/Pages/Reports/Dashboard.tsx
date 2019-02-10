@@ -9,6 +9,7 @@ import { Box } from '../../Layout/box';
 import { FormField } from '../../Layout/form';
 import { canReadUsers } from '../../../rules/rules';
 import { IUserRegistrationsChartProps, ChartType, IRegistrationsChartProps, RegistrationsChart } from './RegistrationsChart';
+import { TimePeriodSelect, TimePeriod } from '../../Controls/TimePeriodSelect';
 
 export const chartColors = {
     blue: "rgb(54, 162, 235)",
@@ -50,16 +51,20 @@ export class Dashboard extends React.Component {
         };
 
         const userFilter = canReadUsers(store.user.currentUser)
-            ? <FormField first={false}>
-                <CollectionSelect value={store.dashboard.userFilterValue}
-                    label="User"
-                    onChange={this.onUserFilterChange}
-                    items={
-                        Array.from(store.user.users.docs.values())
-                            .map(doc => ({ name: doc.data!.name, id: doc.id }))
-                    }>
-                </CollectionSelect>
-            </FormField>
+            ? <>
+                <FlexGroup>
+                    <FormField first={false}>
+                        <CollectionSelect value={store.dashboard.userFilterValue}
+                            label="User"
+                            onChange={this.onUserFilterChange}
+                            items={
+                                Array.from(store.user.users.docs.values())
+                                    .map(doc => ({ name: doc.data!.name, id: doc.id }))
+                            }>
+                        </CollectionSelect>
+                    </FormField>
+                </FlexGroup>
+            </>
             : null;
 
         const registrationsPerUserChart = canReadUsers(store.user.currentUser)
@@ -70,27 +75,37 @@ export class Dashboard extends React.Component {
         return (
             <>
                 <Box>
-                    <FlexGroup>
-                        <FormField>
-                            <CollectionSelect value={store.dashboard.projectFilterValue}
-                                label="Project"
-                                onChange={this.onProjectFilterChange}
-                                items={
-                                    Array.from(store.config.projects.docs.values())
-                                        .map(doc => ({ name: doc.data!.name, id: doc.id }))
-                                }>
-                            </CollectionSelect>
-                        </FormField>
+                    <FlexGroup style={{ justifyContent: "space-between" }}>
+                        <FlexGroup>
+                            <FormField>
+                                <TimePeriodSelect value={
+                                    store.dashboard.timePeriodFilterValue === undefined
+                                        ? TimePeriod.ThisMonth
+                                        : store.dashboard.timePeriodFilterValue}
+                                    onChange={this.onTimePeriodechange}></TimePeriodSelect>
+                            </FormField>
+                            <FormField first={false}>
+                                <CollectionSelect value={store.dashboard.projectFilterValue}
+                                    label="Project"
+                                    onChange={this.onProjectFilterChange}
+                                    items={
+                                        Array.from(store.config.projects.docs.values())
+                                            .map(doc => ({ name: doc.data!.name, id: doc.id }))
+                                    }>
+                                </CollectionSelect>
+                            </FormField>
+                        </FlexGroup>
                         {userFilter}
                     </FlexGroup>
+
+                    <FlexGroup style={{ flexWrap: "wrap" }}>
+                        <RegistrationsChart {...projectChartProps}>
+                        </RegistrationsChart>
+                        <RegistrationsChart {...taskChartProps}>
+                        </RegistrationsChart>
+                        {registrationsPerUserChart}
+                    </FlexGroup>
                 </Box>
-                <FlexGroup style={{ flexWrap: "wrap" }}>
-                    <RegistrationsChart {...projectChartProps}>
-                    </RegistrationsChart>
-                    <RegistrationsChart {...taskChartProps}>
-                    </RegistrationsChart>
-                    {registrationsPerUserChart}
-                </FlexGroup>
             </>
         );
     }
@@ -103,6 +118,10 @@ export class Dashboard extends React.Component {
 
     componentWillUnmount() {
         this.getUsersReactionDisposer && this.getUsersReactionDisposer();
+    }
+
+    onTimePeriodechange(value: TimePeriod) {
+        store.dashboard.setTimePeriodFilter(value);
     }
 
     onProjectFilterChange(value: string) {

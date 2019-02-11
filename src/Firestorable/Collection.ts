@@ -36,6 +36,8 @@ export class Collection<T, K = T> implements ICollection<T> {
     private readonly deserialize: (firestoreData: K) => T;
     private readonly serialize: (appData: Partial<T>) => Partial<K>;
 
+    private canClearCollection = true;
+
     constructor(getFirestoreCollection: () => firebase.firestore.CollectionReference, options: ICollectionOptions<T, K> = {}) {
         const {
             realtime = false,
@@ -60,14 +62,19 @@ export class Collection<T, K = T> implements ICollection<T> {
     }
 
     public getDocs() {
+        this.canClearCollection = true;
         if (this.unsubscribeFirestore) this.unsubscribeFirestore();
-
         this.unsubscribeFirestore = (this.query ? this.query(this.collectionRef) : this.collectionRef)
             .onSnapshot(snapshot => {
                 if (!this.isRealtime) this.unsubscribeFirestore!();
 
                 transaction(() => {
-                    if (this.docs.size) this.docs.clear();
+                    if (this.canClearCollection) {
+                        this.canClearCollection = false;
+                        if (this.docs.size) {
+                            this.docs.clear();
+                        }
+                    }
 
                     if (!snapshot.empty) {
 

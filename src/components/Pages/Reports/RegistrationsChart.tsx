@@ -66,7 +66,7 @@ export class RegistrationsChart<T> extends React.Component<IRegistrationsChartPr
 
         const { labelCollection, data, getLabel } = this.props;
 
-        if (!this.state.data.datasets!.length || (this.state.data.datasets![0].data! as unknown as number[]).reduce((p, c) => p+=c) !== data.reduce((p, c) => p+=c.totalTime, 0))
+        if (!this.state.data.datasets!.length || (this.state.data.datasets![0].data! as unknown as number[]).reduce((p, c) => p += c, 0) !== data.reduce((p, c) => p += c.totalTime, 0))
             this.setState({
                 data: {
                     datasets: [

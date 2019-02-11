@@ -62,27 +62,27 @@ export class Collection<T, K = T> implements ICollection<T> {
     public getDocs() {
         if (this.unsubscribeFirestore) this.unsubscribeFirestore();
 
-        if (this.docs.size) this.docs.clear();
-
         this.unsubscribeFirestore = (this.query ? this.query(this.collectionRef) : this.collectionRef)
             .onSnapshot(snapshot => {
                 if (!this.isRealtime) this.unsubscribeFirestore!();
 
-                if (snapshot.empty)
-                    return;
-
                 transaction(() => {
-                    snapshot.docChanges().forEach(change => {
-                        const { doc: { id }, doc } = change;
-                        if (change.type === "added" || change.type === "modified") {
-                            const firestoreData = doc.data() as K;
-                            const data = this.deserialize(firestoreData);
-                            this.docs.set(id, new Doc<T>(this.collectionRef, data, id));
-                        }
-                        else if (change.type === "removed") {
-                            this.docs.delete(id);
-                        }
-                    });
+                    if (this.docs.size) this.docs.clear();
+
+                    if (!snapshot.empty) {
+
+                        snapshot.docChanges().forEach(change => {
+                            const { doc: { id }, doc } = change;
+                            if (change.type === "added" || change.type === "modified") {
+                                const firestoreData = doc.data() as K;
+                                const data = this.deserialize(firestoreData);
+                                this.docs.set(id, new Doc<T>(this.collectionRef, data, id));
+                            }
+                            else if (change.type === "removed") {
+                                this.docs.delete(id);
+                            }
+                        });
+                    }
                 })
 
             });

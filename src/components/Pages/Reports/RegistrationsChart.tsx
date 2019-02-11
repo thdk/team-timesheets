@@ -66,7 +66,7 @@ export class RegistrationsChart<T> extends React.Component<IRegistrationsChartPr
 
         const { labelCollection, data, getLabel } = this.props;
 
-        if (!this.state.data.datasets!.length || this.state.data.datasets![0].data!.length !== data.length)
+        if (!this.state.data.datasets!.length || (this.state.data.datasets![0].data! as unknown as number[]).reduce((p, c) => p+=c) !== data.reduce((p, c) => p+=c.totalTime, 0))
             this.setState({
                 data: {
                     datasets: [
@@ -80,7 +80,7 @@ export class RegistrationsChart<T> extends React.Component<IRegistrationsChartPr
                         return label ? getLabel(label.data!) : "Archived";
                     })
                 }
-            })
+            });
     }
 
     componentDidMount() {
@@ -109,7 +109,7 @@ export class RegistrationsChart<T> extends React.Component<IRegistrationsChartPr
         };
 
         let chart: React.ReactNode;
-        switch(chartType) {
+        switch (chartType) {
             case ChartType.Bar:
                 chart = <Bar {...chartProps}></Bar>;
                 break;
@@ -119,7 +119,7 @@ export class RegistrationsChart<T> extends React.Component<IRegistrationsChartPr
         }
 
         return (
-            <div className="chart-container" style={{ position: "relative"}}>
+            <div className="chart-container" style={{ position: "relative" }}>
                 {chart}
                 <div className="legend" ref={this.legendRef}></div>
             </div>

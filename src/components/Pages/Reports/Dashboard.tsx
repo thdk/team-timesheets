@@ -29,7 +29,7 @@ export class Dashboard extends React.Component {
         super(props);
 
         if (!store.dashboard.timePeriodFilterValue) {
-            when(() => !!store.user.currentUser, () => {
+            when(() => !!store.user.userId, () => {
                 transaction(() => {
                     store.dashboard.setUserFilter(store.user.userId);
                     store.dashboard.setTimePeriodFilter(TimePeriod.ThisMonth);
@@ -124,7 +124,6 @@ export class Dashboard extends React.Component {
     }
 
     componentDidMount() {
-        store.dashboard.setUserFilter(undefined);
         store.dashboard.setTaskFilter(undefined);
         store.dashboard.setProjectFilter(undefined);
     }

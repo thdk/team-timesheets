@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { FlexGroup } from '../../Layout/flex';
 import store from '../../../stores/RootStore';
-import { IReactionDisposer } from 'mobx';
+import { IReactionDisposer, transaction, when } from 'mobx';
 import CollectionSelect from '../../Controls/CollectionSelect';
 import { observer } from 'mobx-react';
 import { IProject, ITask } from '../../../stores/ConfigStore';
@@ -25,7 +25,22 @@ export const chartColors = {
 export class Dashboard extends React.Component {
     private getUsersReactionDisposer?: IReactionDisposer;
 
+    constructor(props: any) {
+        super(props);
+
+        if (!store.dashboard.timePeriodFilterValue) {
+            when(() => !!store.user.currentUser, () => {
+                transaction(() => {
+                    store.dashboard.setUserFilter(store.user.userId);
+                    store.dashboard.setTimePeriodFilter(TimePeriod.ThisMonth);
+                });
+            });
+        }
+    }
+
     render() {
+        if (store.dashboard.timePeriodFilterValue === undefined) return null;
+
         const userChartProps: IUserRegistrationsChartProps = {
             title: "Time / user",
             data: store.dashboard.registrationsGroupedByUser,
@@ -67,7 +82,7 @@ export class Dashboard extends React.Component {
             </>
             : null;
 
-        const registrationsPerUserChart = canReadUsers(store.user.currentUser)
+        const registrationsPerUserChart = canReadUsers(store.user.currentUser) && store.user.users.docs.size
             ? <RegistrationsChart {...userChartProps}>
             </RegistrationsChart>
             : null;
@@ -79,9 +94,7 @@ export class Dashboard extends React.Component {
                         <FlexGroup>
                             <FormField>
                                 <TimePeriodSelect value={
-                                    store.dashboard.timePeriodFilterValue === undefined
-                                        ? TimePeriod.ThisMonth
-                                        : store.dashboard.timePeriodFilterValue}
+                                    store.dashboard.timePeriodFilterValue}
                                     onChange={this.onTimePeriodechange}></TimePeriodSelect>
                             </FormField>
                             <FormField first={false}>

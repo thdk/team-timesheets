@@ -1,4 +1,4 @@
-import { observable, reaction, computed, action } from "mobx";
+import { observable, reaction, computed, action, when } from "mobx";
 import { ICollection, Collection } from "../Firestorable/Collection";
 
 import moment from 'moment-es6';
@@ -34,6 +34,7 @@ export class DashboardStore implements IDashboardStore {
     @observable.ref private timePeriodFilterField: TimePeriod | undefined = undefined;
 
     constructor(rootStore: IRootStore) {
+
         this.registrationsField = observable(new Collection<IRegistration, IRegistrationData>(() => rootStore.getCollection("registrations"),
             {
                 realtime: true,
@@ -62,7 +63,11 @@ export class DashboardStore implements IDashboardStore {
         reaction(() => this.userFilterValue, updateRegistrationQuery);
         reaction(() => this.projectFilterValue, updateRegistrationQuery);
 
-        this.registrationsField.getDocs();
+        // don't load docs without filters!!!! 
+        // otherwise firebase quoata will fly pretty fast
+        when(() => !!rootStore.user.currentUser && !!this.timePeriodFilterValue, () => {
+            this.registrationsField.getDocs();
+        });
     }
 
     @computed

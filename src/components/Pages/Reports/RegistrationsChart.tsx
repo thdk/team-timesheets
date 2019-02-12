@@ -104,7 +104,19 @@ export class RegistrationsChart<T> extends React.Component<IRegistrationsChartPr
 
         const chartProps = {
             ref: this.ref,
-            options: { legendCallback, legend: { display: false }, title: { text: title, display: true }, responsive: true },
+            options: {
+                legendCallback,
+                legend: { display: false },
+                title: { text: title, display: true },
+                responsive: true,
+                scales: {
+                    yAxes: [{
+                        ticks: {
+                            beginAtZero: true
+                        }
+                    }]
+                }
+            },
             data: this.state.data
         };
 

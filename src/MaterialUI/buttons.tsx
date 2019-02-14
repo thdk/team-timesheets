@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { IReactProps } from '../types';
-import { MDCRipple } from '@material/ripple';
+import { MDCRipple } from '@material/ripple/index';
 
 export class Fab extends React.Component<{ icon: string, name: string, onClick: (e: React.MouseEvent) => void }> {
     render() {

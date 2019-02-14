@@ -16,17 +16,17 @@ export const SelectOption = (props: ISelectOptionProps) => {
     );
 };
 
-export interface ISelectProps extends IReactProps {
+export interface ISelectProps<T = string> extends IReactProps {
     label: string;
-    value?: string;
-    onChange: (value: string) => void;
+    value?: T;
+    onChange: (value: T) => void;
     outlined?: boolean;
 }
 
-export class Select extends React.Component<ISelectProps> {
+export class Select<T extends string> extends React.Component<ISelectProps<T>> {
     private readonly mdcSelect: React.RefObject<HTMLDivElement>;
 
-    constructor(props: ISelectProps) {
+    constructor(props: ISelectProps<T>) {
         super(props);
         this.mdcSelect = React.createRef();
     }

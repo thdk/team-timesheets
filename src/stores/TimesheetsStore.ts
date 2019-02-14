@@ -8,9 +8,9 @@ import * as deserializer from '../serialization/deserializer';
 import * as serializer from '../serialization/serializer';
 import { getLoggedInUserAsync } from '../Firestorable/Firestorable';
 
-export interface IGroupedRegistrations {
+export interface IGroupedRegistrations<T> {
     readonly registrations: Doc<IRegistration>[];
-    readonly date: Date;
+    readonly groupKey: T;
     totalTime: number;
 }
 
@@ -45,7 +45,7 @@ export interface IRegistrationsStore {
     readonly registrations: ICollection<IRegistration>;
     readonly registration: Doc<Partial<IRegistration>> | undefined;
     registrationId?: string;
-    readonly registrationsGroupedByDay: IGroupedRegistrations[];
+    readonly registrationsGroupedByDay: IGroupedRegistrations<Date>[];
     readonly save: () => void;
     readonly newRegistration: () => void;
     readonly cloneRegistration: (source: IRegistration) => IRegistration;
@@ -105,14 +105,14 @@ export class RegistrationStore implements IRegistrationsStore {
 
         if (registrations.length === 0) return [];
         return registrations
-            .reduce<IGroupedRegistrations[]>((p, c) => {
+            .reduce<IGroupedRegistrations<Date>[]>((p, c) => {
                 const currentDayGroup = p[p.length - 1];
-                if (currentDayGroup && c.data!.date.getTime() === currentDayGroup.date.getTime()) {
+                if (currentDayGroup && c.data!.date.getTime() === currentDayGroup.groupKey.getTime()) {
                     currentDayGroup.registrations.push(c);
                     currentDayGroup.totalTime = (currentDayGroup.totalTime || 0) + (c.data!.time || 0);
                 } else {
                     p.push({
-                        date: c.data!.date,
+                        groupKey: c.data!.date,
                         registrations: [c],
                         totalTime: c.data!.time || 0
                     });

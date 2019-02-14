@@ -8,7 +8,7 @@ import { FlexGroup } from './Layout/flex';
 
 
 export interface IGroupedRegistrationProps {
-    group: IGroupedRegistrations;
+    group: IGroupedRegistrations<Date>;
     registrationClick: (id: string) => void;
     registrationToggleSelect?: (id: string, data: IRegistration) => void;
     createTotalLabel: (date: Date) => React.ReactNode;
@@ -19,7 +19,7 @@ export interface IGroupedRegistrationProps {
 @observer
 export class GroupedRegistration extends React.Component<IGroupedRegistrationProps> {
     render() {
-        const { denseList, group: { registrations, date, totalTime }, createTotalLabel, totalOnTop, registrationClick, registrationToggleSelect: registrationSelect } = this.props;
+        const { denseList, group: { registrations, groupKey, totalTime }, createTotalLabel, totalOnTop, registrationClick, registrationToggleSelect: registrationSelect } = this.props;
         const listStyle = { width: '100%' };
         const rows = registrations.map(r => {
             if (!r.data) throw new Error("Found registration without Data");
@@ -58,7 +58,7 @@ export class GroupedRegistration extends React.Component<IGroupedRegistrationPro
                 </ListItem>
             );
         });
-        const totalLabel = createTotalLabel(date);
+        const totalLabel = createTotalLabel(groupKey);
 
         const total = <ListItem lines={[totalLabel]} meta={parseFloat(totalTime.toFixed(2)) + " hours"} disabled={true}></ListItem>
 

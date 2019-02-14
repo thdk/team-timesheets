@@ -15,3 +15,5 @@ export const canDeleteProject = (user?: IUser) => isAdmin(user);
 export const canAddClient = (user?: IUser) => isAdmin(user);
 export const canEditClient = (user?: IUser) => isAdmin(user);
 export const canDeleteClient = (user?: IUser) => isAdmin(user);
+
+export const canReadUsers = (user?: IUser) => isAdmin(user);

@@ -25,9 +25,14 @@ export interface INavigationViewAction extends IViewAction {
 export interface IViewStore {
   title: string;
   isDrawerOpen: boolean;
+
+  // todo: day, month and year should be set with an action setDate(year, month, day)
   day?: number;
   month?: number;
   year?: number;
+
+  track?: boolean;
+
   readonly moment: moment.Moment;
   readonly monthMoment: moment.Moment;
   readonly actions: IObservableArray<IViewAction>;
@@ -50,6 +55,8 @@ export class ViewStore implements IViewStore {
   @observable month?: number;
   @observable year?: number;
 
+  public track?: boolean;
+
   private readonly rootStore: IRootStore;
 
   constructor(rootStore: IRootStore) {
@@ -67,12 +74,18 @@ export class ViewStore implements IViewStore {
 
     this.setNavigation("default");
 
-    reaction(() => rootStore.user.userId, userId => {
+    this.init();
+  }
+
+  private init() {
+    // redirect to login when user logs out
+    reaction(() => this.rootStore.user.userId, userId => {
       if (!userId) {
-        goToLogin(rootStore);
+        goToLogin(this.rootStore);
       }
     });
 
+    // listen for keyboard event which can fire viewactions
     document.addEventListener("keydown", ev => {
       const viewAction = this.actions.filter(a => {
         const { key = undefined, ctrlKey = false, altKey = false, shiftKey = false, metaKey = false } = a.shortKey || {};

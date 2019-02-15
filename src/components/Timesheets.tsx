@@ -14,7 +14,6 @@ import { IRegistration } from '../stores/TimesheetsStore';
 
 @observer
 export class Timesheets extends React.Component {
-
     registrationClick = (id: string) => {
         goToRegistration(id);
     }
@@ -35,7 +34,7 @@ export class Timesheets extends React.Component {
             year: date.getFullYear(),
             month: date.getMonth() + 1,
             day: date.getDate()
-        })
+        }, { track: true })
     }
 
     goToMonth(e: React.MouseEvent) {
@@ -43,11 +42,15 @@ export class Timesheets extends React.Component {
         goToOverview(store, {
             year: store.view.year!,
             month: store.view.month!
-        });
+        }, { track: false, currentDate: store.view.track ? store.view.day! : undefined });
     }
 
     render() {
+        if (!store.view.moment) return null;
+        
         let regs: React.ReactNode;
+        const query: { last: number | undefined } = store.router.queryParams || {};
+
         if (store.view.day) {
             const group = store.timesheets.registrationsGroupedByDay.filter(g => g.groupKey.getDate() === store.view.day);
 
@@ -67,7 +70,7 @@ export class Timesheets extends React.Component {
             const totalList = <List style={{ width: "100%" }}><ListDivider></ListDivider>{total}<ListDivider></ListDivider></List>;
 
             regs = <>
-                <GroupedRegistrations totalOnTop={true}
+                <GroupedRegistrations activeDate={query.last} totalOnTop={true}
                     createTotalLabel={this.createTotalLabel}
                     registrationClick={this.registrationClick.bind(this)}
                     registrationToggleSelect={this.registrationSelect.bind(this)}>

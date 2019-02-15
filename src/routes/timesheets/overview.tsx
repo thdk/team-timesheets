@@ -4,7 +4,7 @@ import { Timesheets } from '../../components/Timesheets';
 import { transaction } from 'mobx';
 import { beforeEnter, setNavigationContent, goToRouteWithDate } from '../actions';
 import { App } from '../../internal';
-import { IRootStore } from '../../stores/RootStore';
+import store, { IRootStore } from '../../stores/RootStore';
 import { IViewAction } from '../../stores/ViewStore';
 import { IRegistration } from '../../stores/TimesheetsStore';
 
@@ -16,14 +16,19 @@ export interface IDate {
 
 export const path = "/timesheets";
 
-export const goToOverview = (s: IRootStore, date?: IDate) => {
-    const route = (date && date.day) || (!date && s.view.day) ? routes.overview : routes.monthOverview;
+export const goToOverview = (s: IRootStore, date?: IDate, trackOptions?: { track?: boolean, currentDate?: number }) => {
+    let route = routes.monthOverview;
+    if ((date && date.day) || (!date && s.view.day)) {
+        route = routes.overview;
+        trackOptions = { ...trackOptions, currentDate: undefined };
+    }
 
-    goToRouteWithDate(route, s, date);
+    goToRouteWithDate(route, s, date, trackOptions);
 };
 
 const routeChanged = (route: Route, params: IDate, s: IRootStore) => {
-    setNavigationContent(route, false);
+    setNavigationContent(route, !!s.view.track, s.view.track && store.view.moment ? { year: store.view.year!, month: store.view.month! } : undefined, params.day ? +params.day : undefined);
+
     transaction(() => {
         s.view.year = +params.year;
         s.view.month = +params.month;
@@ -34,7 +39,7 @@ const routeChanged = (route: Route, params: IDate, s: IRootStore) => {
 const setActions = (s: IRootStore, alowInserts = false) => {
     const actions: IViewAction[] = [
         {
-            action: selection =>  {
+            action: selection => {
                 s.timesheets.clipboard.replace(selection);
                 s.view.selection.clear();
             },
@@ -44,7 +49,7 @@ const setActions = (s: IRootStore, alowInserts = false) => {
             contextual: true
         },
         {
-            action: selection =>  {
+            action: selection => {
                 if (!selection) return;
 
                 s.timesheets.registrations.deleteAsync(...Array.from(selection.keys()));
@@ -59,13 +64,13 @@ const setActions = (s: IRootStore, alowInserts = false) => {
 
     if (alowInserts) {
         actions.push({
-            action: selection =>  {
+            action: selection => {
                 if (!selection) return;
 
                 const docData = Array.from(selection.values())
                     .map(reg => s.timesheets.cloneRegistration(reg)) as IRegistration[];
 
-                s.timesheets.registrations.addAsync(docData).then(()=> {
+                s.timesheets.registrations.addAsync(docData).then(() => {
                     // uncomment to clear clipboard on paste
                     // s.timesheets.clipboard.clear();
                 });
@@ -100,6 +105,7 @@ const routes = {
         path: path + '/:year/:month',
         component: <App><Timesheets></Timesheets></App>,
         onEnter: (route: Route, params: IDate, s: IRootStore) => {
+            store.view.track = false;
             routeChanged(route, params, s);
             setActions(s);
         },

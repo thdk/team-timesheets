@@ -4,7 +4,7 @@ import moment from 'moment-es6';
 import { goToRegistration } from '../../internal';
 import store from '../../stores/RootStore';
 import { FlexGroup } from '../Layout/flex';
-import { GroupedRegistrations } from '../GroupedRegistrations';
+import { GroupedRegistrations, SortOrder } from '../GroupedRegistrations';
 import { goToOverview } from '../../routes/timesheets/overview';
 import { List, ListItem, ListDivider } from '../../MaterialUI/list';
 import { DateSelect } from '../Controls/DateSelect';
@@ -36,7 +36,7 @@ export class Reports extends React.Component {
 
     render() {
         if (!store.view.moment) return null;
-        
+
         const totalTime = Array.from(store.timesheets.registrations.docs.values())
             .reduce((p, c) => p + (c.data!.time || 0), 0);
 
@@ -61,7 +61,7 @@ export class Reports extends React.Component {
                         <Button onClick={this.export} style={{ margin: "1em" }} type={ButtonType.Outlined}>Export</Button>
                     </FlexGroup>
                     {downloadReport}
-                    <GroupedRegistrations totalOnTop={true} createTotalLabel={this.createTotalLabel} registrationClick={this.registrationClick.bind(this)} />
+                    <GroupedRegistrations sortOrder={SortOrder.Ascending} totalOnTop={true} createTotalLabel={this.createTotalLabel} registrationClick={this.registrationClick.bind(this)} />
                     {totalList}
                 </FlexGroup>
             </>

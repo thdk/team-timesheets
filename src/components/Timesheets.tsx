@@ -8,7 +8,7 @@ import store from '../stores/RootStore';
 import { FlexGroup } from './Layout/flex';
 import { goToOverview } from '../routes/timesheets/overview';
 import { GroupedRegistration } from './GroupedRegistration';
-import { GroupedRegistrations } from './GroupedRegistrations';
+import { GroupedRegistrations, SortOrder } from './GroupedRegistrations';
 import { ListItem, List, ListDivider } from '../MaterialUI/list';
 import { IRegistration } from '../stores/TimesheetsStore';
 
@@ -47,7 +47,7 @@ export class Timesheets extends React.Component {
 
     render() {
         if (!store.view.moment) return null;
-        
+
         let regs: React.ReactNode;
         const query: { last: number | undefined } = store.router.queryParams || {};
 
@@ -62,8 +62,8 @@ export class Timesheets extends React.Component {
                 />
                 : <></>;
         } else {
-            const totalTime = Array.from(store.timesheets.registrations.docs.values())
-                .reduce((p, c) => p + (c.data!.time || 0), 0);
+            const totalTime = Array.from(store.timesheets.registrationsGroupedByDay)
+                .reduce((p, c) => p + c.totalTime, 0);
 
             const totalLabel = `Total in ${store.view.moment.format('MMMM')}`;
             const total = <ListItem key={`total-month`} lines={[totalLabel]} meta={parseFloat(totalTime.toFixed(2)) + " hours"} disabled={true}></ListItem>
@@ -73,7 +73,8 @@ export class Timesheets extends React.Component {
                 <GroupedRegistrations activeDate={query.last} totalOnTop={true}
                     createTotalLabel={this.createTotalLabel}
                     registrationClick={this.registrationClick.bind(this)}
-                    registrationToggleSelect={this.registrationSelect.bind(this)}>
+                    registrationToggleSelect={this.registrationSelect.bind(this)}
+                    sortOrder={SortOrder.Descending}>
                 </GroupedRegistrations>
                 {totalList}
             </>;

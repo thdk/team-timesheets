@@ -85,7 +85,7 @@ const setActions = (s: IRootStore, alowInserts = false) => {
 };
 
 const beforeTimesheetExit = (_route: Route, _params: any, s: IRootStore) => {
-    s.view.selection.clear();
+    s.view.selection.size && s.view.selection.clear();
 };
 
 const routes = {
@@ -111,7 +111,8 @@ const routes = {
         },
         onParamsChange: routeChanged,
         title: "Timesheet",
-        beforeEnter
+        beforeEnter,
+        beforeExit: beforeTimesheetExit
     })
 };
 

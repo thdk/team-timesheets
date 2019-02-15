@@ -24,9 +24,15 @@ export const routeWithDateChanged = (_route: Route, params: IDate, s: IRootStore
     });
 }
 
-export const setNavigationContent = (route: Route, isChildRoute = true) => {
-    if (isChildRoute) setBackToOverview();
-    else store.view.setNavigation("default");
+export const setNavigationContent = (route: Route, isChildRoute = true, targetDate?: IDate, currentDate?: number) => {
+    if (isChildRoute) {
+        setBackToOverview(undefined, currentDate, targetDate);
+        store.view.track = true;
+    }
+    else {
+        store.view.setNavigation("default");
+        store.view.track = false;
+    }
     setTitleForRoute(route);
 }
 
@@ -43,11 +49,11 @@ export const setTitleForRoute = (route: Route) => {
     store.view.title = route.title || "";
 }
 
-export const setBackToOverview = (action?: () => void) => {
+export const setBackToOverview = (action?: () => void, currentDate?: number, targetDate?: IDate) => {
     store.view.setNavigation({
         action: () => {
             action && action();
-            goToOverview(store);
+            goToOverview(store, targetDate, { track: store.view.track, currentDate });
         },
         icon: "arrow_back"
     });

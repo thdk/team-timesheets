@@ -35,6 +35,8 @@ export class Reports extends React.Component {
     }
 
     render() {
+        if (!store.view.moment) return null;
+        
         const totalTime = Array.from(store.timesheets.registrations.docs.values())
             .reduce((p, c) => p + (c.data!.time || 0), 0);
 

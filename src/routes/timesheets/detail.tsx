@@ -49,7 +49,7 @@ const onEnter = (route: Route, params: { id?: string }, s: IRootStore) => {
         deleteAction
     ]);
 
-    setBackToOverview(() => s.timesheets.save());
+    setBackToOverview(() => s.timesheets.save(), s.timesheets.registration && s.timesheets.registration.data!.date!.getDate());
     setTitleForRoute(route);
 
     const u = reaction(() => s.timesheets.registration, () => {

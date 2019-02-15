@@ -17,13 +17,17 @@ export interface IDate {
 export const path = "/timesheets";
 
 export const goToOverview = (s: IRootStore, date?: IDate, trackOptions?: { track?: boolean, currentDate?: number }) => {
-    const route = (date && date.day) || (!date && s.view.day) ? routes.overview : routes.monthOverview;
+    let route = routes.monthOverview;
+    if ((date && date.day) || (!date && s.view.day)) {
+        route = routes.overview;
+        trackOptions = { ...trackOptions, currentDate: undefined };
+    }
 
-    goToRouteWithDate(route, s, date, { track: store.view.track, ...trackOptions });
+    goToRouteWithDate(route, s, date, trackOptions);
 };
 
 const routeChanged = (route: Route, params: IDate, s: IRootStore) => {
-    setNavigationContent(route, false);
+    setNavigationContent(route, !!s.view.track, s.view.track && store.view.moment ? { year: store.view.year!, month: store.view.month! } : undefined, params.day ? +params.day : undefined);
 
     transaction(() => {
         s.view.year = +params.year;
@@ -101,6 +105,7 @@ const routes = {
         path: path + '/:year/:month',
         component: <App><Timesheets></Timesheets></App>,
         onEnter: (route: Route, params: IDate, s: IRootStore) => {
+            store.view.track = false;
             routeChanged(route, params, s);
             setActions(s);
         },

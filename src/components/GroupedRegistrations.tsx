@@ -22,7 +22,7 @@ export class GroupedRegistrations extends React.Component<IGroupedRegistrationsP
     }
     render() {
         return store.timesheets.registrationsGroupedByDay.map((g, i) => {
-            return <GroupedRegistration ref={g.date && g.date.getDate() === this.props.activeDate ? this.activeRegistrationRef : null} denseList={true} key={`group-${i}`} group={g} {...this.props}></GroupedRegistration>
+            return <GroupedRegistration ref={g.groupKey && g.groupKey.getDate() === this.props.activeDate ? this.activeRegistrationRef : null} denseList={true} key={`group-${i}`} group={g} {...this.props}></GroupedRegistration>
         });
     }
 

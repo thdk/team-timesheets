@@ -42,12 +42,14 @@ export class Timesheets extends React.Component {
         goToOverview(store, {
             year: store.view.year!,
             month: store.view.month!
-        }, { currentDate: store.view.track ? store.view.day! : undefined });
+        }, { track: false, currentDate: store.view.track ? store.view.day! : undefined });
     }
 
     render() {
+        if (!store.view.moment) return null;
+        
         let regs: React.ReactNode;
-        const query: { last: number | undefined} = store.router.queryParams || {};
+        const query: { last: number | undefined } = store.router.queryParams || {};
 
         if (store.view.day) {
             const group = store.timesheets.registrationsGroupedByDay.filter(g => g.date.getDate() === store.view.day);

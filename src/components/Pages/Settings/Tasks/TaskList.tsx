@@ -4,7 +4,7 @@ import { ReactNode } from 'react';
 import { IReactProps } from '../../../../types';
 import store from '../../../../stores/RootStore';
 import { AddListItem, IListItemData } from '../../../Controls/AddListItem';
-import { ListItem, List } from '../../../../MaterialUI/list';
+import { ListItem, List } from '../../../../mdc/list';
 import { canAddTask, canEditTask, canDeleteTask } from '../../../../rules/rules';
 
 export interface ITaskListState {

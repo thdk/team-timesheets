@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { FlexGroup } from '../Layout/flex';
 import moment from 'moment-es6';
-import { Select, SelectOption } from '../../MaterialUI/select';
+import { Select, SelectOption } from '../../mdc/select';
 import { FormField } from '../Layout/form';
 import { IReactProps } from '../../types';
 

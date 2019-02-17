@@ -7,6 +7,7 @@ import store, { IRootStore } from './RootStore';
 import * as deserializer from '../serialization/deserializer';
 import * as serializer from '../serialization/serializer';
 import { getLoggedInUserAsync } from '../Firestorable/Firestorable';
+import { SortOrder } from '../components/GroupedRegistrations';
 
 export interface IGroupedRegistrations<T> {
     readonly registrations: Doc<IRegistration>[];
@@ -46,6 +47,9 @@ export interface IRegistrationsStore {
     readonly registration: Doc<Partial<IRegistration>> | undefined;
     registrationId?: string;
     readonly registrationsGroupedByDay: IGroupedRegistrations<Date>[];
+    readonly registrationsGroupedByDayReversed: IGroupedRegistrations<Date>[];
+    readonly registrationsGroupedByDaySortOrder: SortOrder;
+    readonly setRegistrationsGroupedByDaySortOrder: (sortOrder: SortOrder) => void;
     readonly save: () => void;
     readonly newRegistration: () => void;
     readonly cloneRegistration: (source: IRegistration) => IRegistration;
@@ -57,6 +61,9 @@ export class RegistrationStore implements IRegistrationsStore {
     readonly clipboard = observable(new Map<string, IRegistration>());
 
     @observable.ref registrationId?: string;
+
+    @observable
+    private registrationsGroupedByDaySortOrderField = SortOrder.Descending;
 
     constructor(rootStore: IRootStore) {
         this.rootStore = rootStore;
@@ -94,17 +101,35 @@ export class RegistrationStore implements IRegistrationsStore {
         });
     }
 
+    @computed
+    public get registrationsGroupedByDaySortOrder() {
+        return this.registrationsGroupedByDaySortOrderField;
+    }
+
+    @action
+    public setRegistrationsGroupedByDaySortOrder(sortOrder: SortOrder) {
+        this.registrationsGroupedByDaySortOrderField = sortOrder;
+    }
+
+    @computed get registrationsGroupedByDayReversed() {
+        return this.getGroupedRegistrations(this.registrations, SortOrder.Descending);
+    }
+
     @computed get registrationsGroupedByDay() {
-        const registrations = Array.from(this.registrations.docs.values())
+        return this.getGroupedRegistrations(this.registrations);
+    }
+
+    private getGroupedRegistrations(registrations: ICollection<IRegistration>, sortOrder = SortOrder.Ascending) {
+        const regs = Array.from(registrations.docs.values())
             .filter(doc => doc.data!.isPersisted) // don't display drafts
             .sort((a, b) => {
                 const aTime = a.data!.date.getTime();
                 const bTime = b.data!.date.getTime();
-                return aTime > bTime ? 1 : aTime < bTime ? -1 : 0;
+                return aTime > bTime ? 1 * sortOrder : aTime < bTime ? -1 * sortOrder : 0;
             });
 
-        if (registrations.length === 0) return [];
-        return registrations
+        if (regs.length === 0) return [];
+        return regs
             .reduce<IGroupedRegistrations<Date>[]>((p, c) => {
                 const currentDayGroup = p[p.length - 1];
                 if (currentDayGroup && c.data!.date.getTime() === currentDayGroup.groupKey.getTime()) {

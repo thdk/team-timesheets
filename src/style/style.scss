@@ -16,9 +16,10 @@
 @import "@material/tab-indicator/mdc-tab-indicator";
 @import "@material/tab/mdc-tab";
 @import "@material/checkbox/mdc-checkbox";
+@import "@material/icon-button/mdc-icon-button";
 
-@import '../MaterialUI/styles/list';
-@import '../MaterialUI/styles/app-bar';
+@import '../mdc/styles/list';
+@import '../mdc/styles/app-bar';
 
 @import './calendar';
 @import './chart';

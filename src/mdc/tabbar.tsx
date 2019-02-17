@@ -71,3 +71,13 @@ export const TabIndicator = (props: { isActive?: boolean }) => {
         </>
     );
 }
+
+export interface IIconProps {
+    icon: string;
+}
+
+export const TabIcon = (props: IIconProps) => {
+    return (
+        <span className="mdc-tab__icon material-icons" aria-hidden="true">{props.icon}</span>
+    );
+}

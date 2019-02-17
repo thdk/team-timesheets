@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { INameWithIcon } from '../../../stores/ConfigStore';
 import { AddListItem, IListItemData } from '../../Controls/AddListItem';
-import { ListItem, List } from '../../../MaterialUI/list';
+import { ListItem, List } from '../../../mdc/list';
 
 export interface ISettingsItem extends INameWithIcon {
     id: string;

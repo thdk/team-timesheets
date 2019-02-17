@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import store from '../../../../stores/RootStore';
-import { ListItem, List } from '../../../../MaterialUI/list';
+import { ListItem, List } from '../../../../mdc/list';
 import { IListItemData, AddListItem } from '../../../Controls/AddListItem';
 import { canAddProject, canEditProject } from '../../../../rules/rules';
 

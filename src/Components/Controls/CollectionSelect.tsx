@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
-import { SelectOption, Select } from '../../MaterialUI/select';
+import { SelectOption, Select } from '../../mdc/select';
 
 export interface ICollectionList {
     label: string;

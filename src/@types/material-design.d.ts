@@ -6,3 +6,9 @@ declare module '@material/top-app-bar/index';
 declare module '@material/tab-bar/index';
 declare module '@material/ripple/index';
 declare module '@material/checkbox/index';
+declare module '@material/icon-toggle/index';
+declare module '@material/icon-button/index';
+
+interface HTMLElementEventMap {
+    "MDCIconToggle:change": { detail: { isOn: boolean } } & Event
+}

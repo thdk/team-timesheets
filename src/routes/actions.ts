@@ -55,6 +55,6 @@ export const setBackToOverview = (action?: () => void, currentDate?: number, tar
             action && action();
             goToOverview(store, targetDate, { track: store.view.track, currentDate });
         },
-        icon: "arrow_back"
+        icon: { label: "Back", content: "arrow_back" }
     });
 }

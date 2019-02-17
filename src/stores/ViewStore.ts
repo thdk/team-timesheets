@@ -2,6 +2,8 @@ import { observable, IObservableArray, action, computed, transaction, reaction, 
 import moment from 'moment-es6';
 import { IRootStore } from "./RootStore";
 import { goToLogin } from "../internal";
+import { IIconData } from "../mdc/buttons/iconButtons";
+
 export interface IShortKey {
   ctrlKey?: boolean;
   altKey?: boolean;
@@ -11,7 +13,9 @@ export interface IShortKey {
 }
 
 export interface IViewAction<T = any> {
-  readonly icon: string;
+  readonly icon: IIconData;
+  readonly iconActive?: IIconData;
+  readonly isActive?: boolean;
   readonly action: (selection?: Map<string, T>) => void;
   readonly shortKey?: IShortKey;
   readonly contextual?: boolean;
@@ -19,7 +23,7 @@ export interface IViewAction<T = any> {
 }
 
 export interface INavigationViewAction extends IViewAction {
-  icon: "menu" | "arrow_back" | "arrow_upward";
+  icon: { label: "Menu", content: "menu" } | { label: "Back", content: "arrow_back" } | { label: "Up", content: "arrow_upward" };
 }
 
 export interface IViewStore {
@@ -111,7 +115,7 @@ export class ViewStore implements IViewStore {
       action: () => {
         this.rootStore.view.isDrawerOpen = !this.rootStore.view.isDrawerOpen;
       },
-      icon: "menu",
+      icon: { content: "menu", label: "Menu" },
     } : action;
   }
 

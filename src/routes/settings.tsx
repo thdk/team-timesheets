@@ -26,7 +26,7 @@ const setActions = (tab: SettingsTab, s: IRootStore) => {
                             s.config.taskId && s.config.tasks.deleteAsync(s.config.taskId);
                             s.config.taskId = undefined;
                         },
-                        icon: "delete",
+                        icon: { label: "Delete", content: "delete" },
                         shortKey: { key: "Delete", ctrlKey: true }
                     }
                     : undefined;
@@ -44,7 +44,7 @@ const setActions = (tab: SettingsTab, s: IRootStore) => {
                             s.config.projectId && s.config.projects.deleteAsync(s.config.projectId);
                             s.config.projectId = undefined;
                         },
-                        icon: "delete",
+                        icon: { label: "Delete", content: "delete" },
                         shortKey: { key: "Delete", ctrlKey: true }
                     }
                     : undefined;
@@ -62,7 +62,7 @@ const setActions = (tab: SettingsTab, s: IRootStore) => {
                             s.config.clientId && s.config.clientsCollection.deleteAsync(s.config.clientId);
                             s.config.clientId = undefined;
                         },
-                        icon: "delete",
+                        icon: { label: "Delete", content: "delete" },
                         shortKey: { key: "Delete", ctrlKey: true }
                     }
                     : undefined;

@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { IReactProps } from '../../../../types';
 import store from '../../../../stores/RootStore';
-import { Chip, ChipSet } from '../../../../MaterialUI/chips';
+import { Chip, ChipSet } from '../../../../mdc/chips';
 import { observer } from 'mobx-react';
 
 export interface IUserTasksProps extends IReactProps {

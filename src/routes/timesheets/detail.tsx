@@ -31,7 +31,7 @@ const onEnter = (route: Route, params: { id?: string }, s: IRootStore) => {
             s.timesheets.registrationId && s.timesheets.registrations.deleteAsync(s.timesheets.registrationId);
             goToOverview(s);
         },
-        icon: "delete",
+        icon:  { label: "Delete", content: "delete" },
         shortKey: { key: "Delete", ctrlKey: true }
     }
 
@@ -40,7 +40,7 @@ const onEnter = (route: Route, params: { id?: string }, s: IRootStore) => {
             s.timesheets.save();
             goToOverview(s);
         },
-        icon: "save",
+        icon:  { label: "Save", content: "save" },
         shortKey: { key: "s", ctrlKey: true }
     }
 

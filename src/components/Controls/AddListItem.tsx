@@ -1,9 +1,9 @@
 import * as React from 'react';
-import { IListItemProps, ListItem } from '../../MaterialUI/list';
+import { IListItemProps, ListItem } from '../../mdc/list';
 import { FlexGroup } from '../Layout/flex';
 import { FormField } from '../Layout/form';
-import { TextField } from '../../MaterialUI/textfield';
-import { Button } from '../../MaterialUI/buttons';
+import { TextField } from '../../mdc/textfield';
+import { Button } from '../../mdc/buttons/button';
 
 export interface IListItemData { icon?: string, name?: string };
 

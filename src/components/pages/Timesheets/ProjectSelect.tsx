@@ -2,7 +2,7 @@ import * as React from 'react';
 import { observer } from 'mobx-react';
 
 import { FormField } from '../../Layout/form';
-import { Select, SelectOption } from '../../../MaterialUI/select';
+import { Select, SelectOption } from '../../../mdc/select';
 import store from '../../../stores/RootStore';
 import { Doc } from '../../../Firestorable/Document';
 import { IProject } from '../../../stores/ConfigStore';

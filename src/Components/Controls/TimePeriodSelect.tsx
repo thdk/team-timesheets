@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Select, SelectOption, ISelectProps } from '../../MaterialUI/select';
+import { Select, SelectOption, ISelectProps } from '../../mdc/select';
 
 export enum TimePeriod {
     ThisWeek = 0,

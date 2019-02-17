@@ -1,9 +1,9 @@
 import * as React from 'react';
 import { observer } from '../../node_modules/mobx-react';
-import { TopAppBar } from '../MaterialUI/appbars';
+import { TopAppBar } from '../mdc/appbars';
 import store from '../stores/RootStore';
 
-// TODO: move to  MaterialUI/TopAppBar
+// TODO: move to  mdc/TopAppBar
 export interface ITopAppBarProps {
     navigation: JSX.Element;
 }
@@ -23,7 +23,7 @@ export class TopNavigation extends React.Component {
     }
 
     render() {
-        const { navigationAction: { icon: navigationIcon = "menu"} = {}, title } = store.view;
+        const { navigationAction: { icon: navigationIcon = {content: "menu", label: "Menu"}} = {}, title } = store.view;
 
         const selectionLength = Array.from(store.view.selection.keys()).length;
         const titleText = selectionLength
@@ -31,7 +31,7 @@ export class TopNavigation extends React.Component {
          : title;
 
         return (
-            <TopAppBar mode={selectionLength ? "contextual" : "standard"} navigationIcon={navigationIcon} title={titleText} navigationClick={this.navigationClick} showNavigationIcon={true}></TopAppBar>
+            <TopAppBar mode={selectionLength ? "contextual" : "standard"} navigationIcon={navigationIcon.content} title={titleText} navigationClick={this.navigationClick} showNavigationIcon={true}></TopAppBar>
         )
     }
 }

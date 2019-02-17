@@ -1,9 +1,8 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 
-import { TapBar, Tab } from '../../../MaterialUI/tabbar';
+import { TapBar, Tab, TabIcon } from '../../../mdc/tabbar';
 import { Preferences } from '../Settings/Preferences/Preferences';
-import { Icon } from '../../../MaterialUI/icon';
 import store from '../../../stores/RootStore';
 import { TaskList } from './Tasks/TaskList';
 import { ProjectList } from './Projects/ProjectList';
@@ -30,7 +29,7 @@ export class Settings extends React.Component {
         const query: { tab: SettingsTab } = store.router.queryParams;
         const { tab: activeTab = undefined } = query || {};
         const tabs = tabData.map(t => {
-            const icon = t.icon ? <Icon icon={t.icon}></Icon> : undefined;
+            const icon = t.icon ? <TabIcon icon={t.icon}></TabIcon> : undefined;
             return <Tab onClick={goToSettings.bind(this, t.id)} isActive={activeTab === t.id} key={t.id} {...t} icon={icon}></Tab>
         });
 

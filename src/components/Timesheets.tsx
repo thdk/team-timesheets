@@ -1,15 +1,15 @@
 import * as React from 'react';
 import { observer } from "mobx-react";
 import moment from 'moment-es6';
-import { Fab } from "../MaterialUI/buttons";
+import { Fab } from "../mdc/buttons/fab";
 import routes from '../routes/index';
 import { goToRegistration } from '../internal';
 import store from '../stores/RootStore';
 import { FlexGroup } from './Layout/flex';
 import { goToOverview } from '../routes/timesheets/overview';
 import { GroupedRegistration } from './GroupedRegistration';
-import { GroupedRegistrations, SortOrder } from './GroupedRegistrations';
-import { ListItem, List, ListDivider } from '../MaterialUI/list';
+import { GroupedRegistrations } from './GroupedRegistrations';
+import { ListItem, List, ListDivider } from '../mdc/list';
 import { IRegistration } from '../stores/TimesheetsStore';
 
 @observer
@@ -74,7 +74,7 @@ export class Timesheets extends React.Component {
                     createTotalLabel={this.createTotalLabel}
                     registrationClick={this.registrationClick.bind(this)}
                     registrationToggleSelect={this.registrationSelect.bind(this)}
-                    sortOrder={SortOrder.Descending}>
+                    sortOrder={store.timesheets.registrationsGroupedByDaySortOrder}>
                 </GroupedRegistrations>
                 {totalList}
             </>;

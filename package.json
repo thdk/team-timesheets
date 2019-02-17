@@ -53,6 +53,8 @@
     "@material/chips": "^0.44.0",
     "@material/drawer": "^0.44.0",
     "@material/fab": "^0.44.0",
+    "@material/icon-button": "^0.44.0",
+    "@material/icon-toggle": "^0.44.0",
     "@material/list": "^0.44.0",
     "@material/ripple": "0.44.0",
     "@material/select": "^0.44.0",

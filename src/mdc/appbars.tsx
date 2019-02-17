@@ -4,10 +4,11 @@ import { MDCTopAppBar } from '@material/top-app-bar/index';
 import { observer } from 'mobx-react';
 import store from '../stores/RootStore';
 import { IViewAction } from '../stores/ViewStore';
+import { IIconData, IconButtonToggle } from './buttons/iconButtons';
 
 export interface TopAppBarProps {
     showNavigationIcon: boolean,
-    navigationIcon: "menu" | "arrow_back" | "arrow_upward";
+    navigationIcon: string;
     mode: "contextual" | "standard";
     title?: string;
     navigationClick?: (e: React.MouseEvent) => void;
@@ -60,12 +61,13 @@ export interface IAppBarActionsProps {
     contextual?: boolean;
 }
 
-@observer class AppBarActions extends React.Component<IAppBarActionsProps> {
+@observer
+class AppBarActions extends React.Component<IAppBarActionsProps> {
     render() {
         const { contextual = false } = this.props;
         return store.view.actions.filter(a => !!a.contextual === contextual).map((a, i) => {
             return !a.selection || a.selection.size
-                ? <AppBarAction key={i} onClick={this.onClick.bind(this, a)} icon={a.icon}></AppBarAction>
+                ? <AppBarAction key={i} onClick={this.onClick.bind(this, a)} icon={a.icon} iconActive={a.iconActive} isActive={a.isActive}></AppBarAction>
                 : <div key={i}></div>;
         });
     }
@@ -77,17 +79,25 @@ export interface IAppBarActionsProps {
 
 interface IAppBarAction {
     onClick: (ids?: string[]) => void;
-    icon: string;
+    icon: IIconData;
+    iconActive?: IIconData;
+    isActive?: boolean;
 }
 
 class AppBarAction extends React.Component<IAppBarAction> {
     render() {
-        const { icon } = this.props;
+        const { icon, iconActive, isActive } = this.props;
+
+        // ? <IconToggle isActive={!!isActive} onChange={this.onClick.bind(this)} toggleOn={iconActive} toggleOff={icon}></IconToggle>
+        if (iconActive) {
+            return <IconButtonToggle isActive={!!isActive} icon={icon} iconActive={iconActive} label="Sort" onClick={this.onClick.bind(this)} ></IconButtonToggle>;
+        }
+        const iconEl = <i className="material-icons mdc-icon-button__icon">{icon.content}</i>;
 
         const className = "rst-action mdc-top-app-bar__action-item mdc-icon-button";
-        return <button onClick={this.onClick.bind(this)} data-action-id={icon} className={className} aria-label={icon}
+        return <button onClick={iconActive ? undefined : this.onClick.bind(this)} className={className} aria-label={!iconActive ? icon.label : undefined}
             aria-hidden="true" aria-pressed="false">
-            <i className="material-icons mdc-icon-button__icon">{icon}</i>
+            {iconEl}
         </button>
     }
 

@@ -6,9 +6,9 @@ import store from '../../stores/RootStore';
 import { FlexGroup } from '../Layout/flex';
 import { GroupedRegistrations, SortOrder } from '../GroupedRegistrations';
 import { goToOverview } from '../../routes/timesheets/overview';
-import { List, ListItem, ListDivider } from '../../MaterialUI/list';
+import { List, ListItem, ListDivider } from '../../mdc/list';
 import { DateSelect } from '../Controls/DateSelect';
-import { Button, ButtonType } from '../../MaterialUI/buttons';
+import { ButtonType, Button } from '../../mdc/buttons/button';
 
 @observer
 export class Reports extends React.Component {

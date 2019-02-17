@@ -1,9 +1,9 @@
 import * as React from 'react';
 import { observer } from "mobx-react";
 
-import { TextField } from '../MaterialUI/textfield';
+import { TextField } from '../mdc/textfield';
 import { Form, FormField } from '../components/Layout/form';
-import { Chip, ChipSet } from '../MaterialUI/chips';
+import { Chip, ChipSet } from '../mdc/chips';
 import { FlexGroup } from './Layout/flex';
 import store from '../stores/RootStore';
 import ProjectSelect from './Pages/Timesheets/ProjectSelect';

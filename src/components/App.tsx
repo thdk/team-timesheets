@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Drawer } from '../MaterialUI/drawer';
+import { Drawer } from '../mdc/drawer';
 import { Menu } from './Menu';
 import { observe } from 'mobx';
 import { IViewStore } from '../stores/ViewStore';

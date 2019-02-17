@@ -43,7 +43,7 @@ const setActions = (s: IRootStore, alowInserts = false) => {
                 s.timesheets.clipboard.replace(selection);
                 s.view.selection.clear();
             },
-            icon: "file_copy",
+            icon: { content: "file_copy", label: "Copy" },
             shortKey: { ctrlKey: true, key: "c" },
             selection: s.view.selection,
             contextual: true
@@ -55,12 +55,13 @@ const setActions = (s: IRootStore, alowInserts = false) => {
                 s.timesheets.registrations.deleteAsync(...Array.from(selection.keys()));
                 s.view.selection.clear();
             },
-            icon: "delete",
+            icon: { content: "delete", label: "Delete" },
             shortKey: { key: "Delete", ctrlKey: true },
             selection: s.view.selection,
             contextual: true
-        } as IViewAction<IRegistration>,
+        } as IViewAction<IRegistration>
     ];
+
 
     if (alowInserts) {
         actions.push({
@@ -75,17 +76,33 @@ const setActions = (s: IRootStore, alowInserts = false) => {
                     // s.timesheets.clipboard.clear();
                 });
             },
-            icon: "library_add",
+            icon: { content: "library_add", label: "Paste" },
             shortKey: { ctrlKey: true, key: "v" },
             selection: s.timesheets.clipboard
         } as IViewAction<IRegistration>);
+    }
+
+    else {
+        actions.push(
+            {
+                action: () => {
+                    s.timesheets.setRegistrationsGroupedByDaySortOrder(s.timesheets.registrationsGroupedByDaySortOrder * -1)
+                },
+                icon: { content: "arrow_upward", label: "Sort descending" }, // -1
+                iconActive: { content: "arrow_downward", label: "Sort ascending" }, // 1
+                isActive: s.timesheets.registrationsGroupedByDaySortOrder === 1
+            } as IViewAction<IRegistration>
+        )
     }
 
     s.view.setActions(actions);
 };
 
 const beforeTimesheetExit = (_route: Route, _params: any, s: IRootStore) => {
-    s.view.selection.size && s.view.selection.clear();
+    transaction(() => {
+        s.view.selection.size && s.view.selection.clear();
+        s.view.setActions([]);
+    });
 };
 
 const routes = {

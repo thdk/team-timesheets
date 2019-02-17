@@ -8,7 +8,6 @@ import * as deserializer from '../serialization/deserializer';
 import * as serializer from '../serialization/serializer';
 import { getLoggedInUserAsync } from '../Firestorable/Firestorable';
 import { SortOrder } from '../components/GroupedRegistrations';
-import { Registration } from '../components/Registration';
 
 export interface IGroupedRegistrations<T> {
     readonly registrations: Doc<IRegistration>[];
@@ -49,6 +48,8 @@ export interface IRegistrationsStore {
     registrationId?: string;
     readonly registrationsGroupedByDay: IGroupedRegistrations<Date>[];
     readonly registrationsGroupedByDayReversed: IGroupedRegistrations<Date>[];
+    readonly registrationsGroupedByDaySortOrder: SortOrder;
+    readonly setRegistrationsGroupedByDaySortOrder: (sortOrder: SortOrder) => void;
     readonly save: () => void;
     readonly newRegistration: () => void;
     readonly cloneRegistration: (source: IRegistration) => IRegistration;
@@ -60,6 +61,9 @@ export class RegistrationStore implements IRegistrationsStore {
     readonly clipboard = observable(new Map<string, IRegistration>());
 
     @observable.ref registrationId?: string;
+
+    @observable
+    private registrationsGroupedByDaySortOrderField = SortOrder.Descending;
 
     constructor(rootStore: IRootStore) {
         this.rootStore = rootStore;
@@ -95,6 +99,16 @@ export class RegistrationStore implements IRegistrationsStore {
             );
             else this.registrations.unsubscribeAndClear();
         });
+    }
+
+    @computed
+    public get registrationsGroupedByDaySortOrder() {
+        return this.registrationsGroupedByDaySortOrderField;
+    }
+
+    @action
+    public setRegistrationsGroupedByDaySortOrder(sortOrder: SortOrder) {
+        this.registrationsGroupedByDaySortOrderField = sortOrder;
     }
 
     @computed get registrationsGroupedByDayReversed() {

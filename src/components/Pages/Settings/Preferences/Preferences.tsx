@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import store from '../../../../stores/RootStore';
-import { Chip, ChipSet } from '../../../../MaterialUI/chips';
+import { Chip, ChipSet } from '../../../../mdc/chips';
 import { UserTasks } from './UserTasks';
 import { Box } from '../../../Layout/box';
 import ClientSelect from '../../Timesheets/ClientSelect';

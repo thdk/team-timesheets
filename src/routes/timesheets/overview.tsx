@@ -88,10 +88,18 @@ const setActions = (s: IRootStore, alowInserts = false) => {
                 action: () => {
                     s.timesheets.setRegistrationsGroupedByDaySortOrder(s.timesheets.registrationsGroupedByDaySortOrder * -1)
                 },
-                icon: { content: "arrow_upward", label: "Sort descending" }, // -1
-                iconActive: { content: "arrow_downward", label: "Sort ascending" }, // 1
+                icon: { content: "arrow_downward", label: "Sort ascending" },
+                iconActive: { content: "arrow_upward", label: "Sort descending" },
                 isActive: s.timesheets.registrationsGroupedByDaySortOrder === 1
-            } as IViewAction<IRegistration>
+            } as IViewAction<IRegistration>,
+            {
+                action: () => {
+                    s.timesheets.areGroupedRegistrationsCollapsed = !s.timesheets.areGroupedRegistrationsCollapsed;
+                },
+                icon: { content: "unfold_more", label: "Unfold groups" },
+                iconActive: { content: "unfold_less", label: "Fold groups" },
+                isActive: s.timesheets.areGroupedRegistrationsCollapsed === false
+            }
         )
     }
 

@@ -49,6 +49,7 @@ export interface IRegistrationsStore {
     readonly registrationsGroupedByDay: IGroupedRegistrations<Date>[];
     readonly registrationsGroupedByDayReversed: IGroupedRegistrations<Date>[];
     readonly registrationsGroupedByDaySortOrder: SortOrder;
+    areGroupedRegistrationsCollapsed: boolean;
     readonly setRegistrationsGroupedByDaySortOrder: (sortOrder: SortOrder) => void;
     readonly save: () => void;
     readonly newRegistration: () => void;
@@ -64,6 +65,8 @@ export class RegistrationStore implements IRegistrationsStore {
 
     @observable
     private registrationsGroupedByDaySortOrderField = SortOrder.Descending;
+    @observable
+    public areGroupedRegistrationsCollapsed = true;
 
     constructor(rootStore: IRootStore) {
         this.rootStore = rootStore;

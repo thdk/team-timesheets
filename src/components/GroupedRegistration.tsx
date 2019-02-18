@@ -14,18 +14,28 @@ export interface IGroupedRegistrationProps {
     createTotalLabel: (date: Date) => React.ReactNode;
     totalOnTop?: boolean;
     denseList?: boolean;
+    isCollapsed?: boolean;
+    isCollapsable?: boolean;
+}
+
+interface IGroupedRegistrationState {
+    isCollapsed: boolean;
 }
 
 @observer
-export class GroupedRegistration extends React.Component<IGroupedRegistrationProps> {
+export class GroupedRegistration extends React.Component<IGroupedRegistrationProps, IGroupedRegistrationState> {
     private registrationRef: React.RefObject<HTMLDivElement>;
     constructor(props: IGroupedRegistrationProps) {
         super(props);
         this.registrationRef = React.createRef();
+
+        this.state = { isCollapsed: !!props.isCollapsed };
     }
 
     render() {
-        const { denseList, group: { registrations, groupKey, totalTime }, createTotalLabel, totalOnTop, registrationClick, registrationToggleSelect: registrationSelect } = this.props;
+        const { isCollapsable = false, denseList, group: { registrations, groupKey, totalTime }, createTotalLabel, totalOnTop, registrationClick, registrationToggleSelect: registrationSelect } = this.props;
+        const { isCollapsed } = this.state;
+
         const listStyle = { width: '100%' };
         const rows = registrations.map(r => {
             if (!r.data) throw new Error("Found registration without Data");
@@ -66,17 +76,29 @@ export class GroupedRegistration extends React.Component<IGroupedRegistrationPro
         });
         const totalLabel = createTotalLabel(groupKey);
 
-        const total = <ListItem lines={[totalLabel]} meta={parseFloat(totalTime.toFixed(2)) + " hours"} disabled={true}></ListItem>
+        const total = <ListItem
+            onClick={isCollapsable ? this.setState.bind(this, { isCollapsed: !isCollapsed }) : undefined}
+            lines={[totalLabel]}
+            icon={isCollapsable ? isCollapsed ? "chevron_right" : "expand_more" : undefined}
+            meta={parseFloat(totalTime.toFixed(2)) + " hours"}
+            disabled={true}>
+        </ListItem>
 
-        const totalList = <List isDense={denseList} style={listStyle}><ListDivider></ListDivider>{total}<ListDivider></ListDivider></List>;
+        const extraStylingForTotalList = {
+            ...(isCollapsable ? { cursor: "pointer" } : {}),
+            ...({ paddingTop: 0, paddingBottom: 0 })
+        };
+
+        const totalList = <List isDense={denseList} style={{ ...listStyle, ...extraStylingForTotalList }}>{total}<ListDivider></ListDivider></List>;
         const topTotal = totalOnTop ? totalList : undefined;
         const bottomTotal = totalOnTop ? undefined : totalList;
 
         return (
             <div ref={this.registrationRef}>
                 {topTotal}
-                <List isDense={denseList} isTwoLine={true} style={listStyle}>
+                <List isDense={denseList} isTwoLine={true} style={{ ...listStyle, display: isCollapsed ? "none" : "block" }}>
                     {rows}
+                    <ListDivider></ListDivider>
                 </List>
                 {bottomTotal}
             </div>
@@ -85,5 +107,11 @@ export class GroupedRegistration extends React.Component<IGroupedRegistrationPro
 
     public scrollIntoView() {
         this.registrationRef.current && this.registrationRef.current.scrollIntoView({ behavior: "smooth" });
+    }
+
+    componentDidUpdate(_prevProps: IGroupedRegistrationProps, prevState: IGroupedRegistrationState) {
+        if (prevState.isCollapsed !== this.props.isCollapsed) {
+            this.setState({ isCollapsed: !!this.props.isCollapsed });
+        }
     }
 }

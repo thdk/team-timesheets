@@ -59,6 +59,7 @@ export class Timesheets extends React.Component {
                     createTotalLabel={this.createTotalLabel}
                     registrationClick={this.registrationClick.bind(this)}
                     registrationToggleSelect={this.registrationSelect.bind(this)}
+                    isCollapsed={false}
                 />
                 : <></>;
         } else {
@@ -67,14 +68,17 @@ export class Timesheets extends React.Component {
 
             const totalLabel = `Total in ${store.view.moment.format('MMMM')}`;
             const total = <ListItem key={`total-month`} lines={[totalLabel]} meta={parseFloat(totalTime.toFixed(2)) + " hours"} disabled={true}></ListItem>
-            const totalList = <List style={{ width: "100%" }}><ListDivider></ListDivider>{total}<ListDivider></ListDivider></List>;
+            const totalList = <List style={{ width: "100%" }}>{total}<ListDivider></ListDivider></List>;
 
             regs = <>
                 <GroupedRegistrations activeDate={query.last} totalOnTop={true}
                     createTotalLabel={this.createTotalLabel}
                     registrationClick={this.registrationClick.bind(this)}
                     registrationToggleSelect={this.registrationSelect.bind(this)}
-                    sortOrder={store.timesheets.registrationsGroupedByDaySortOrder}>
+                    sortOrder={store.timesheets.registrationsGroupedByDaySortOrder}
+                    isCollapsed={store.timesheets.areGroupedRegistrationsCollapsed}
+                    isCollapsable={true}
+                >
                 </GroupedRegistrations>
                 {totalList}
             </>;

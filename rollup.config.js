@@ -1,6 +1,10 @@
 import resolve from 'rollup-plugin-node-resolve';
 import commonJS from 'rollup-plugin-commonjs';
-import typescript from 'rollup-plugin-typescript2';
+
+// current both rollup-plugin-typescript and rollup-plugin-typescript2 are listed as dependency in tsconfig
+// rollup-plugin-typescript2 takes too long time (30+seconds) but will display ts error on build
+// need to split up the codebase with typescript project references and see if rollup-plugin-typescript2 can be used
+import typescript from 'rollup-plugin-typescript';
 import replace from 'rollup-plugin-replace';
 
 export default {

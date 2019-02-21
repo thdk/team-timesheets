@@ -10,7 +10,7 @@ import { goToOverview } from '../routes/timesheets/overview';
 import { GroupedRegistration } from './GroupedRegistration';
 import { GroupedRegistrations } from './GroupedRegistrations';
 import { ListItem, List, ListDivider } from '../mdc/list';
-import { IRegistration } from '../stores/TimesheetsStore';
+import { IRegistration } from '../../common/dist';
 
 @observer
 export class Timesheets extends React.Component {

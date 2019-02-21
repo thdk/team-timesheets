@@ -1,10 +1,11 @@
 import * as React from 'react';
 import store from '../stores/RootStore';
 import { ListItem, List, ListDivider } from '../mdc/list';
-import { IGroupedRegistrations, IRegistration } from '../stores/TimesheetsStore';
+import { IGroupedRegistrations } from '../stores/TimesheetsStore';
 import { observer } from 'mobx-react';
 import { Checkbox } from '../mdc/checkbox';
 import { FlexGroup } from './Layout/flex';
+import { IRegistration } from '../../common/dist';
 
 
 export interface IGroupedRegistrationProps {

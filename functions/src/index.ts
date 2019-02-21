@@ -11,6 +11,7 @@ import * as os from 'os';
 import * as path from 'path';
 import * as fs from 'fs-extra';
 import * as gcs from '@google-cloud/storage';
+import { IRegistrationData } from '../../common';
 
 const adminConfig = process.env.FIREBASE_CONFIG && JSON.parse(process.env.FIREBASE_CONFIG);
 const bucketName = adminConfig ? adminConfig.storageBucket : "";
@@ -72,7 +73,7 @@ exports.createCSV = functions.firestore
 
                 // create array of registration data
                 querySnapshot.forEach(doc => {
-                    const fireStoreData = doc.data();
+                    const fireStoreData = doc.data() as IRegistrationData;
 
                     const projectData = projectsMap.get(fireStoreData.project);
                     const taskData = tasksMap.get(fireStoreData.task);

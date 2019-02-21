@@ -1,5 +1,5 @@
-import { IRegistrationData, IRegistration } from "../stores/TimesheetsStore";
 import { IUser, IUserData } from "../stores/UserStore";
+import { IRegistrationData, IRegistration } from "../../common/dist";
 
 export const convertRegistration = (firestoreData: IRegistrationData) => {
     const registration: IRegistration = {

@@ -70,3 +70,5 @@ src/config.ts
 .firebase/
 
 functions/lib
+
+.rpt2_cache/

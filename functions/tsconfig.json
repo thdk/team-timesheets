@@ -11,5 +11,8 @@
   "compileOnSave": true,
   "include": [
     "src"
-  ]
+  ],
+  "references": [{
+    "path": "../common"
+  }]
 }

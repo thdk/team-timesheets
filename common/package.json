@@ -1,0 +1,18 @@
+{
+  "name": "common",
+  "version": "1.0.0",
+  "description": "\"Common code for timesheets app, firebase functions, chrome extension,...\"",
+  "main": "",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "ts-version": "tsc --version"
+  },
+  "author": "thdk",
+  "license": "ISC",
+  "dependencies": {
+    "@firebase/firestore": "^1.0.3"
+  }
+}

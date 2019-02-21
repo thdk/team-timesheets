@@ -4,10 +4,11 @@ import { ICollection, Collection } from "../Firestorable/Collection";
 import moment from 'moment-es6';
 
 import { IRootStore } from "./RootStore";
-import { IRegistration, IRegistrationData, IGroupedRegistrations } from "./TimesheetsStore";
+import { IGroupedRegistrations } from "./TimesheetsStore";
 import * as deserializer from '../serialization/deserializer';
 import * as serializer from '../serialization/serializer';
 import { TimePeriod } from "../components/Controls/TimePeriodSelect";
+import { IRegistration, IRegistrationData } from "../../common/dist";
 
 export interface IDashboardStore {
     readonly setProjectFilter: (projectId: string | undefined) => void;
@@ -63,7 +64,7 @@ export class DashboardStore implements IDashboardStore {
         reaction(() => this.userFilterValue, updateRegistrationQuery);
         reaction(() => this.projectFilterValue, updateRegistrationQuery);
 
-        // don't load docs without filters!!!! 
+        // don't load docs without filters!!!!
         // otherwise firebase quoata will fly pretty fast
         when(() => !!rootStore.user.currentUser && !!this.timePeriodFilterValue, () => {
             this.registrationsField.getDocs();

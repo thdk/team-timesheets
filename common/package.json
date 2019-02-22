@@ -12,7 +12,10 @@
   },
   "author": "thdk",
   "license": "ISC",
-  "dependencies": {
-    "@firebase/firestore": "^1.0.3"
+  "dependencies": {},
+  "devDependencies": {
+    "@firebase/app-types": "^0.3.4",
+    "@firebase/firestore-types": "^1.0.2",
+    "typescript": "^3.3.3333"
   }
 }

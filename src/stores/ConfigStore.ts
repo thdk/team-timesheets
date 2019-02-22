@@ -1,6 +1,7 @@
 import { observable, computed } from 'mobx';
 import { Collection, ICollection } from "../Firestorable/Collection";
 import { IRootStore } from './RootStore';
+import { IProject, ITask, IClient } from '../../common/dist';
 
 export interface IConfigStore {
     projects: ICollection<IProject>;
@@ -10,20 +11,6 @@ export interface IConfigStore {
     taskId?: string;
     projectId?: string;
     clientId?: string;
-}
-
-export interface INameWithIcon {
-    name: string;
-    icon?: string;
-}
-
-export interface IProject extends INameWithIcon {
-}
-
-export interface ITask extends INameWithIcon {
-}
-
-export interface IClient extends INameWithIcon {
 }
 
 export class ConfigStore implements IConfigStore {

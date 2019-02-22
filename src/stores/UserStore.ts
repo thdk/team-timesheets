@@ -5,37 +5,13 @@ import { firestorable } from "../Firestorable/Firestorable";
 import { IRootStore } from "./RootStore";
 import * as deserializer from '../serialization/deserializer';
 import * as serializer from '../serialization/serializer';
+import { IUser } from "../../common/dist";
 
 export interface IUserStore {
     readonly userId?: string;
     readonly currentUser?: IUser;
     readonly users: ICollection<IUser>;
     readonly updateUser: (userData: Partial<IUser>) => void;
-}
-
-export interface IRoles {
-    admin?: boolean;
-    user?: boolean;
-}
-
-export type RecentlyUsedProjects = string[];
-
-export interface IUser {
-    tasks: Map<string, true>;
-    roles: IRoles;
-    name: string;
-    defaultTask?: string;
-    recentProjects: RecentlyUsedProjects;
-    defaultClient?: string;
-}
-
-export interface IUserData {
-    tasks?: string[];
-    roles?: IRoles;
-    name?: string;
-    defaultTask: string;
-    defaultClient?: string;
-    recentProjects?: RecentlyUsedProjects;
 }
 
 export enum StoreState {

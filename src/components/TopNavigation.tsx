@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { observer } from '../../node_modules/mobx-react';
+import { observer } from 'mobx-react';
 import { TopAppBar } from '../mdc/appbars';
 import store from '../stores/RootStore';
 

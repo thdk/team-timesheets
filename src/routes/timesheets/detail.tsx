@@ -1,11 +1,11 @@
 import * as React from 'react';
 import { RoutesConfig, Route } from 'mobx-router';
+import { reaction } from 'mobx';
 
 import { App } from '../../components/App';
 import { Registration } from '../../components/Registration';
 import { setTitleForRoute, setBackToOverview, beforeEnter } from '../actions';
 import { goToOverview } from '../../internal';
-import { reaction } from '../../../node_modules/mobx';
 import store, { IRootStore } from '../../stores/RootStore';
 import { IViewAction } from '../../stores/ViewStore';
 

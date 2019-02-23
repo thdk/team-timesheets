@@ -5,7 +5,7 @@ import { FormField } from '../../Layout/form';
 import { Select, SelectOption } from '../../../mdc/select';
 import store from '../../../stores/RootStore';
 import { Doc } from '../../../Firestorable/Document';
-import { IProject } from '../../../stores/ConfigStore';
+import { IProject } from '../../../../common/dist';
 
 @observer
 export default class ProjectSelect extends React.Component {

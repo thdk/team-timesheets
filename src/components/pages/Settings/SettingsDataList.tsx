@@ -1,7 +1,7 @@
-import * as React from 'react';
-import { INameWithIcon } from '../../../stores/ConfigStore';
+import * as React from 'react';;
 import { AddListItem, IListItemData } from '../../Controls/AddListItem';
 import { ListItem, List } from '../../../mdc/list';
+import { INameWithIcon } from '../../../../common/dist';
 
 export interface ISettingsItem extends INameWithIcon {
     id: string;

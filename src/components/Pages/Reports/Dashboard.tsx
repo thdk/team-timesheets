@@ -4,12 +4,12 @@ import store from '../../../stores/RootStore';
 import { IReactionDisposer, transaction, when } from 'mobx';
 import CollectionSelect from '../../Controls/CollectionSelect';
 import { observer } from 'mobx-react';
-import { IProject, ITask } from '../../../stores/ConfigStore';
 import { Box } from '../../Layout/box';
 import { FormField } from '../../Layout/form';
 import { canReadUsers } from '../../../rules/rules';
 import { IUserRegistrationsChartProps, ChartType, IRegistrationsChartProps, RegistrationsChart } from './RegistrationsChart';
 import { TimePeriodSelect, TimePeriod } from '../../Controls/TimePeriodSelect';
+import { IProject, ITask } from '../../../../common/dist';
 
 export const chartColors = {
     blue: "rgb(54, 162, 235)",

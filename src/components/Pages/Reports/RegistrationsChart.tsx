@@ -5,7 +5,7 @@ import { IGroupedRegistrations } from '../../../stores/TimesheetsStore';
 import { Doughnut, Bar } from 'react-chartjs-2';
 import { legendCallback } from '../../../routes/reports/helpers';
 import { ICollection } from '../../../Firestorable/Collection';
-import { IUser } from '../../../stores/UserStore';
+import { IUser } from '../../../../common/dist';
 
 export enum ChartType {
     Doughnut,

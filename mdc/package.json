@@ -1,0 +1,33 @@
+{
+  "name": "mdc",
+  "version": "1.0.0",
+  "description": "Custom react components for Material Design Web Components",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@material/button": "^0.44.0",
+    "@material/checkbox": "^0.44.0",
+    "@material/chips": "^0.44.0",
+    "@material/drawer": "0.44.0",
+    "@material/fab": "^0.44.0",
+    "@material/icon-button": "^0.44.0",
+    "@material/icon-toggle": "^0.44.0",
+    "@material/list": "^0.44.0",
+    "@material/ripple": "^0.44.0",
+    "@material/select": "^0.44.0",
+    "@material/tab-bar": "^0.44.0",
+    "@material/textfield": "^0.44.0",
+    "@material/top-app-bar": "^0.44.0",
+    "@material/typography": "^0.44.0",
+    "react": "^16.8.3",
+    "react-dom": "^16.8.3"
+  },
+  "peerDependencies": {
+    "react": "^16.8.3"
+  }
+}

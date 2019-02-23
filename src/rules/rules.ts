@@ -1,4 +1,4 @@
-import { IUser } from "../stores/UserStore";
+import { IUser } from "../../common/dist";
 
 const isAdmin = (user?: IUser) => {
     return !!(user && user.roles.admin);

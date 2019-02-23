@@ -6,7 +6,7 @@ import { beforeEnter, setNavigationContent, goToRouteWithDate } from '../actions
 import { App } from '../../internal';
 import store, { IRootStore } from '../../stores/RootStore';
 import { IViewAction } from '../../stores/ViewStore';
-import { IRegistration } from '../../stores/TimesheetsStore';
+import { IRegistration } from '../../../common/dist';
 
 export interface IDate {
     year: number;

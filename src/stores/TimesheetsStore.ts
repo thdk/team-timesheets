@@ -1,44 +1,18 @@
 import { observable, computed, reaction, when, action, transaction, toJS, ObservableMap } from 'mobx';
 import { Doc } from "../Firestorable/Document";
 
-import * as firebase from 'firebase/app'
 import { ICollection, Collection } from "../Firestorable/Collection";
 import store, { IRootStore } from './RootStore';
 import * as deserializer from '../serialization/deserializer';
 import * as serializer from '../serialization/serializer';
 import { getLoggedInUserAsync } from '../Firestorable/Firestorable';
 import { SortOrder } from '../components/GroupedRegistrations';
+import { IRegistration, IRegistrationData } from '../../common/dist';
 
 export interface IGroupedRegistrations<T> {
     readonly registrations: Doc<IRegistration>[];
     readonly groupKey: T;
     totalTime: number;
-}
-
-export interface IDocumentData {
-    deleted?: boolean;
-}
-
-export interface IRegistration {
-    description?: string;
-    time?: number;
-    project?: string;
-    task?: string;
-    client?: string;
-    date: Date;
-    userId: string;
-    isPersisted: boolean;
-}
-
-export interface IRegistrationData {
-    description: string;
-    time: number;
-    project: string;
-    task: string;
-    client: string;
-    date: firebase.firestore.Timestamp;
-    userId: string;
-    deleted: boolean;
 }
 
 export interface IRegistrationsStore {

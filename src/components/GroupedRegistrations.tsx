@@ -3,7 +3,7 @@ import store from '../stores/RootStore';
 import { IReactProps } from '../types';
 import { observer } from 'mobx-react';
 import { GroupedRegistration } from './GroupedRegistration';
-import { IRegistration } from '../stores/TimesheetsStore';
+import { IRegistration } from '../../common/dist';
 
 export enum SortOrder {
     Ascending = 1,

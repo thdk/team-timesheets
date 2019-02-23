@@ -5,19 +5,12 @@ import { reaction, computed, observable, action } from "mobx";
 import * as firebase from 'firebase/app';
 import { Doc } from "../Firestorable/Document";
 import { firestorable } from "../Firestorable/Firestorable";
+import { IReport } from "../../common/dist";
 
 export interface IReportStore {
     requestReport: (userId: string, year: number, month: number) => void;
     report: Doc<IReport> | undefined;
     reportUrl?: string;
-}
-
-export interface IReport {
-    userId: string;
-    month: number;
-    year: number;
-    status: "waiting" | "error" | "complete";
-    created: firebase.firestore.FieldValue; // TODO move to serialization / deserialization
 }
 
 export class ReportStore implements IReportStore {

@@ -1,3 +1,5 @@
+import { CollectionReference } from '@firebase/firestore-types';
+
 import { observable, computed, action } from "mobx";
 
 export class Doc<T> {
@@ -7,7 +9,7 @@ export class Doc<T> {
     private hasData = false;
 
     // TODO: don't allow null as a type for data
-    constructor(collectionRef: firebase.firestore.CollectionReference, data: T | null, id?: string) {
+    constructor(collectionRef: CollectionReference, data: T | null, id?: string) {
         this.ref = id ? collectionRef.doc(id) : collectionRef.doc();
         this.id = this.ref.id;
         this.setData(data);

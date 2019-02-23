@@ -2,14 +2,30 @@ import resolve from 'rollup-plugin-node-resolve';
 import commonJS from 'rollup-plugin-commonjs';
 import typescript from 'rollup-plugin-typescript';
 import replace from 'rollup-plugin-replace';
+// import sizes from "rollup-plugin-sizes";
+
+const external = [
+  "moment",
+  "firebase/app",
+  "@firebase/firestore",
+  "firebaseui",
+  "chart.js",
+  "mobx",
+];
 
 export default {
-  external: ["firebase/app", "firebaseui"],
+  // modules listed as external will no be included in app bundle
+  // they must either be included as script in html
+  // or copied into dist/lib in gulp task copy:libs
+  external,
   input: 'src/app.ts', // can be a typescript file if we have a rollup typescript plugin
   format: 'iife',
   globals: {
     'firebase/app': 'firebase',
-    'firebaseui': 'firebaseui'
+    'firebaseui': 'firebaseui',
+    'moment': 'moment',
+    'chart.js': 'Chart',
+    'mobx': 'mobx',
   },
   plugins: [
     replace({
@@ -23,7 +39,8 @@ export default {
         'node_modules/react-dom/index.js': ['findDOMNode', 'unstable_batchedUpdates', 'render']
       }
     }),
-    typescript()
+    typescript(),
+    // sizes() // uncomment to analyse packages sizes included in the bundle
   ],
   onwarn: function (warning) {
     // Suppress this error message:

@@ -1,4 +1,4 @@
-import { firestore } from "firebase";
+import { Query, CollectionReference } from '@firebase/firestore-types';
 import 'firebase/firestore';
 
 import { updateAsync, addAsync, getAsync } from "./FirestoreUtils";
@@ -9,7 +9,7 @@ import { firestorable } from "./Firestorable";
 
 export interface ICollection<T> extends IDisposable {
     readonly docs: ObservableMap<string, Doc<T>>;
-    query?: (ref: firestore.CollectionReference) => firestore.Query;
+    query?: (ref: CollectionReference) => Query;
     getDocs: () => void;
     newDoc: <X extends Partial<T>>(data: X) => Doc<X>;
     updateAsync: (id: string, data: Partial<T>) => Promise<void>;
@@ -21,14 +21,14 @@ export interface ICollection<T> extends IDisposable {
 
 export interface ICollectionOptions<T, K> {
     realtime?: boolean;
-    query?: (ref: firestore.CollectionReference) => firestore.Query;
+    query?: (ref: CollectionReference) => Query;
     deserialize?: (firestoreData: K) => T;
     serialize?: (appData: Partial<T>) => Partial<K>;
 }
 
 export class Collection<T, K = T> implements ICollection<T> {
     public docs: ObservableMap<string, Doc<T>> = observable(new Map);
-    @observable public query?: (ref: firestore.CollectionReference) => firestore.Query;
+    @observable public query?: (ref: CollectionReference) => Query;
     private readonly collectionRef: firebase.firestore.CollectionReference;
     private readonly isRealtime: boolean;
     private unsubscribeFirestore?: () => void;

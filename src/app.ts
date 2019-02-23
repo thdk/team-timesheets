@@ -1,5 +1,5 @@
 import * as React from 'react';
-import * as ReactDOM from 'react-dom';
+import { render } from 'react-dom';
 
 import { Provider } from 'mobx-react';
 import { MobxRouter, startRouter } from 'mobx-router';
@@ -10,7 +10,7 @@ startRouter(routes, store);
 
 (window as any)["routes"] = routes;
 
-ReactDOM.render(
+render(
     React.createElement(
         Provider,
         { store },

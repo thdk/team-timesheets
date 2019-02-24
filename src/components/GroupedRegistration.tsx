@@ -15,7 +15,7 @@ export interface IGroupedRegistrationProps {
     createTotalLabel: (date: Date) => React.ReactNode;
     totalOnTop?: boolean;
     denseList?: boolean;
-    isCollapsed?: boolean;
+    isCollapsed: boolean;
     isCollapsable?: boolean;
 }
 

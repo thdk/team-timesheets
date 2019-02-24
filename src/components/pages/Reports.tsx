@@ -61,7 +61,7 @@ export class Reports extends React.Component {
                         <Button onClick={this.export} style={{ margin: "1em" }} type={ButtonType.Outlined}>Export</Button>
                     </FlexGroup>
                     {downloadReport}
-                    <GroupedRegistrations sortOrder={SortOrder.Ascending} totalOnTop={true} createTotalLabel={this.createTotalLabel} registrationClick={this.registrationClick.bind(this)} />
+                    <GroupedRegistrations isCollapsed={false} sortOrder={SortOrder.Ascending} totalOnTop={true} createTotalLabel={this.createTotalLabel} registrationClick={this.registrationClick.bind(this)} />
                     {totalList}
                 </FlexGroup>
             </>

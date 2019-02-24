@@ -42,7 +42,7 @@ export class Timesheets extends React.Component {
         goToOverview(store, {
             year: store.view.year!,
             month: store.view.month!
-        });
+        }, { track: false, currentDate: store.view.track ? store.view.day! : undefined });
     }
 
     render() {

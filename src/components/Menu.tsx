@@ -13,10 +13,10 @@ export class Menu extends React.Component {
         goToOverview(store, { year: date.getFullYear(), day: date.getDate(), month: date.getMonth() + 1 }, { track: false });
     }
 
-    navigateToOverview = (e: React.MouseEvent) => {
+    navigateToOverview = (e: React.MouseEvent, month = false) => {
         e.preventDefault();
         const date = new Date();
-        goToOverview(store, { day: date.getDate(), month: date.getMonth() + 1, year: date.getFullYear() }, { track: false });
+        goToOverview(store, { day: month ? undefined : date.getDate(), month: date.getMonth() + 1, year: date.getFullYear() }, { track: false });
     }
 
     toggleLogin = (e: React.MouseEvent) => {
@@ -54,6 +54,11 @@ export class Menu extends React.Component {
                     <a className="mdc-list-item" onClick={this.navigateToOverview} href="/" aria-selected="true">
                         <i className="material-icons mdc-list-item__graphic" aria-hidden="true">today</i>
                         <span className="mdc-list-item__text">Today</span>
+                    </a>
+
+                    <a className="mdc-list-item" onClick={e => this.navigateToOverview(e, true)} href="/" aria-selected="true">
+                        <i className="material-icons mdc-list-item__graphic" aria-hidden="true">calendar_today</i>
+                        <span className="mdc-list-item__text">This month</span>
                     </a>
 
                     <hr className="mdc-list-divider" />

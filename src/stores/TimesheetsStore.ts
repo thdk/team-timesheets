@@ -8,6 +8,7 @@ import * as serializer from '../serialization/serializer';
 import { getLoggedInUserAsync } from '../Firestorable/Firestorable';
 import { SortOrder } from '../components/GroupedRegistrations';
 import { IRegistration, IRegistrationData } from '../../common/dist';
+import moment from 'moment-es6';
 
 export interface IGroupedRegistrations<T> {
     readonly registrations: Doc<IRegistration>[];
@@ -26,7 +27,7 @@ export interface IRegistrationsStore {
     areGroupedRegistrationsCollapsed: boolean;
     readonly setRegistrationsGroupedByDaySortOrder: (sortOrder: SortOrder) => void;
     readonly save: () => void;
-    readonly newRegistration: () => void;
+    readonly newRegistration: (moment?: moment.Moment) => void;
     readonly cloneRegistration: (source: IRegistration) => IRegistration;
 }
 
@@ -143,7 +144,7 @@ export class RegistrationStore implements IRegistrationsStore {
     }
 
     @action
-    public newRegistration() {
+    public newRegistration(moment?: moment.Moment) {
         if (!store.user.currentUser || !store.user.userId) throw new Error("User must be set");
 
         const {
@@ -154,7 +155,7 @@ export class RegistrationStore implements IRegistrationsStore {
 
         const registration = this.registrations.newDoc<IRegistration>({
             date: this.toUTC(
-                this.rootStore.view.moment.toDate()
+                moment ? moment.toDate() : this.rootStore.view.moment.toDate()
             ),
             task,
             client,

@@ -8,7 +8,7 @@ import store from '../stores/RootStore';
 import { FlexGroup } from './Layout/flex';
 import { goToOverview } from '../routes/timesheets/overview';
 import { GroupedRegistration } from './GroupedRegistration';
-import { GroupedRegistrations } from './GroupedRegistrations';
+import { GroupedRegistrations, SortOrder } from './GroupedRegistrations';
 import { ListItem, List, ListDivider } from '../mdc/list';
 import { IRegistration } from '../../common/dist';
 
@@ -70,12 +70,18 @@ export class Timesheets extends React.Component {
             const total = <ListItem key={`total-month`} lines={[totalLabel]} meta={parseFloat(totalTime.toFixed(2)) + " hours"} disabled={true}></ListItem>
             const totalList = <List style={{ width: "100%" }}>{total}<ListDivider></ListDivider></List>;
 
+            const sortOrder = store.timesheets.registrationsGroupedByDaySortOrder;
+            const today = new Date();
+            const activeDate = query.last !== undefined 
+                ? query.last
+                : sortOrder === SortOrder.Descending && store.view.month && (store.view.month - 1) === today.getMonth() ? today.getDate() : undefined;
+
             regs = <>
-                <GroupedRegistrations activeDate={query.last} totalOnTop={true}
+                <GroupedRegistrations  activeDate={activeDate} totalOnTop={true}
                     createTotalLabel={this.createTotalLabel}
                     registrationClick={this.registrationClick.bind(this)}
                     registrationToggleSelect={this.registrationSelect.bind(this)}
-                    sortOrder={store.timesheets.registrationsGroupedByDaySortOrder}
+                    sortOrder={sortOrder}
                     isCollapsed={store.timesheets.areGroupedRegistrationsCollapsed}
                     isCollapsable={true}
                 >
@@ -98,7 +104,7 @@ export class Timesheets extends React.Component {
                     </div>
                     {regs}
                 </FlexGroup>
-                {store.view.day && <Fab onClick={this.addRegistration} icon="add" name="Add new registration"></Fab>}
+                <Fab onClick={this.addRegistration} icon="add" name="Add new registration"></Fab>
             </>
         );
     }

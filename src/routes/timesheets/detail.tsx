@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { RoutesConfig, Route } from 'mobx-router';
-import { reaction } from 'mobx';
+import { reaction, transaction } from 'mobx';
 
 import { App } from '../../components/App';
 import { Registration } from '../../components/Registration';
@@ -8,6 +8,7 @@ import { setTitleForRoute, setBackToOverview, beforeEnter } from '../actions';
 import { goToOverview } from '../../internal';
 import store, { IRootStore } from '../../stores/RootStore';
 import { IViewAction } from '../../stores/ViewStore';
+import moment from 'moment-es6';
 
 const path = "/timesheetsdetail";
 
@@ -31,7 +32,7 @@ const onEnter = (route: Route, params: { id?: string }, s: IRootStore) => {
             s.timesheets.registrationId && s.timesheets.registrations.deleteAsync(s.timesheets.registrationId);
             goToOverview(s);
         },
-        icon:  { label: "Delete", content: "delete" },
+        icon: { label: "Delete", content: "delete" },
         shortKey: { key: "Delete", ctrlKey: true }
     }
 
@@ -40,17 +41,19 @@ const onEnter = (route: Route, params: { id?: string }, s: IRootStore) => {
             s.timesheets.save();
             goToOverview(s);
         },
-        icon:  { label: "Save", content: "save" },
+        icon: { label: "Save", content: "save" },
         shortKey: { key: "s", ctrlKey: true }
     }
 
-    s.view.setActions([
-        saveAction,
-        deleteAction
-    ]);
+    transaction(() => {
+        s.view.setActions([
+            saveAction,
+            deleteAction
+        ]);
 
-    setBackToOverview(() => s.timesheets.save(), s.timesheets.registration && s.timesheets.registration.data!.date!.getDate());
-    setTitleForRoute(route);
+        setBackToOverview(() => s.timesheets.save(), s.timesheets.registration && s.timesheets.registration.data!.date!.getDate());
+        setTitleForRoute(route);
+    });
 
     const u = reaction(() => s.timesheets.registration, () => {
         // use icon as unique id of action
@@ -74,7 +77,7 @@ const routes = {
         beforeEnter: (route: Route, params: any, s: IRootStore) => {
             return beforeEnter(route, params, s)
                 .then(() => {
-                    s.timesheets.newRegistration();
+                    s.timesheets.newRegistration(s.view.day === undefined ? moment().startOf("day") : undefined);
 
                     return true;
                 })

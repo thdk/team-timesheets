@@ -17,7 +17,7 @@ export interface IGroupedRegistrationsProps extends IReactProps {
     totalOnTop?: boolean;
     sortOrder?: SortOrder
     activeDate?: number;
-    isCollapsed?: boolean;
+    isCollapsed: boolean;
     isCollapsable?: boolean;
 }
 
@@ -36,7 +36,7 @@ export class GroupedRegistrations extends React.Component<IGroupedRegistrationsP
             return <GroupedRegistration ref={isLastOpenedGroup ? this.activeRegistrationRef : null}
                 denseList={true} key={`group-${i}`}
                 group={g}
-                {...{...this.props, isCollapsed: isLastOpenedGroup ? false :this.props.isCollapsed}}>
+                {...{ ...this.props, isCollapsed: isLastOpenedGroup ? false : this.props.isCollapsed }}>
             </GroupedRegistration>
         });
     }

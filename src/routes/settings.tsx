@@ -38,7 +38,7 @@ const setActions = (tab: SettingsTab, s: IRootStore) => {
                 break;
             }
             case "projects": {
-                const deleteAction: IViewAction | undefined = canDeleteProject(store.user.currentUser) ?
+                const deleteAction: IViewAction | undefined =
                     {
                         action: () => {
                             s.config.projectId && s.config.projects.deleteAsync(s.config.projectId);
@@ -46,11 +46,12 @@ const setActions = (tab: SettingsTab, s: IRootStore) => {
                         },
                         icon: { label: "Delete", content: "delete" },
                         shortKey: { key: "Delete", ctrlKey: true }
-                    }
-                    : undefined;
+                    };
 
                 reactionDisposer = reaction(() => s.config.projectId, id => {
-                    if (id) s.view.setActions([deleteAction].filter(a => a !== undefined) as IViewAction[]);
+                    if (id && canDeleteProject(s.config.projects.docs.get(id)!.data!, s.user.currentUser, s.user.userId)) {
+                        s.view.setActions([deleteAction].filter(a => a !== undefined) as IViewAction[]);
+                    }
                     else s.view.setActions([]);
                 });
                 break;

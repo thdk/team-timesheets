@@ -65,7 +65,7 @@ export class Dashboard extends React.Component {
             chart: ChartType.Doughnut
         };
 
-        const userFilter = canReadUsers(store.user.currentUser)
+        const userFilter = canReadUsers(store.user.authenticatedUser)
             ? <>
                 <FlexGroup>
                     <FormField first={false}>
@@ -82,7 +82,7 @@ export class Dashboard extends React.Component {
             </>
             : null;
 
-        const registrationsPerUserChart = canReadUsers(store.user.currentUser) && store.user.users.docs.size
+        const registrationsPerUserChart = canReadUsers(store.user.authenticatedUser) && store.user.users.docs.size
             ? <RegistrationsChart {...userChartProps}>
             </RegistrationsChart>
             : null;

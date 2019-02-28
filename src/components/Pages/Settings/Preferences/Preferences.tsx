@@ -9,9 +9,9 @@ import ClientSelect from '../../Timesheets/ClientSelect';
 @observer
 export class Preferences extends React.Component {
     render() {
-        if (!store.user.currentUser || store.config.tasks.docs.size === 0) return null;
+        if (!store.user.authenticatedUser || store.config.tasks.docs.size === 0) return null;
 
-        const { tasks: userTasks = new Map(), defaultTask = undefined, defaultClient = undefined } = store.user.currentUser || {};
+        const { tasks: userTasks = new Map(), defaultTask = undefined, defaultClient = undefined } = store.user.authenticatedUser || {};
         const tasks = Array.from(store.config.tasks.docs.values())
             .reduce((p, c) => {
                 if (c.data) {
@@ -26,7 +26,7 @@ export class Preferences extends React.Component {
             }, new Array());
 
         // TODO: create computed value on user store containing the data of the user tasks
-        const userTasksChips = store.user.currentUser.tasks.size > 1
+        const userTasksChips = store.user.authenticatedUser.tasks.size > 1
             ? <UserTasks value={defaultTask} onChange={this.defaultTaskChanged}></UserTasks>
             : undefined;
 
@@ -47,9 +47,9 @@ export class Preferences extends React.Component {
     }
 
     taskClicked = (id: string, selected: boolean) => {
-        if (!store.user.currentUser) return;
+        if (!store.user.authenticatedUser) return;
 
-        const { tasks } = store.user.currentUser;
+        const { tasks } = store.user.authenticatedUser;
 
         if (selected) tasks.set(id, true);
         else tasks.delete(id);

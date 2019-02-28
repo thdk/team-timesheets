@@ -1,6 +1,7 @@
 export interface IRoles {
     admin?: boolean;
     user?: boolean;
+    editor?: boolean;
 }
 
 export type RecentlyUsedProjects = string[];

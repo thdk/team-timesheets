@@ -18,12 +18,19 @@ export const goToRegistration = (id?: string) => {
 
 const onEnter = (route: Route, params: { id?: string }, s: IRootStore) => {
     if (params.id) {
-        s.timesheets.registrationId = params.id;
-        if (!s.timesheets.registration) {
+        if (!s.timesheets.registration && params.id !== undefined) {
             // registration not in memory yet, request it
             s.timesheets.registrations
                 .getAsync(params.id)
-                .then(() => s.timesheets.registrationId = params.id);
+                .then(doc => {
+                    transaction(() => {
+                        s.timesheets.registrationId = params.id;
+                        s.timesheets.registrations.docs.set(params.id!, doc);
+                    });
+                });
+        }
+        else {
+            s.timesheets.registrationId = params.id;
         }
     }
 
@@ -55,10 +62,11 @@ const onEnter = (route: Route, params: { id?: string }, s: IRootStore) => {
         setTitleForRoute(route);
     });
 
-    const u = reaction(() => s.timesheets.registration, () => {
-        // use icon as unique id of action
-        s.view.actions.replace([]);
-        u();
+    const u = reaction(() => s.timesheets.registration, reg => {
+        if (!reg) {
+            s.view.actions.replace([]);
+            u();
+        }
     });
 };
 

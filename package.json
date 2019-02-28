@@ -70,7 +70,7 @@
     "@types/chart.js": "^2.7.42",
     "chart.js": "^2.7.3",
     "firebase": "^5.6.0",
-    "firebase-tools": "^6.1.2",
+    "firebase-tools": "^6.4.0",
     "firebaseui": "^3.4.1",
     "g": "^2.0.1",
     "mobx": "^5.7.0",

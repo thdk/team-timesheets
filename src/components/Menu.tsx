@@ -21,7 +21,7 @@ export class Menu extends React.Component {
 
     toggleLogin = (e: React.MouseEvent) => {
         e.preventDefault();
-        store.user.currentUser ? firestorable.auth.signOut() : goToLogin(store);
+        store.user.authenticatedUser ? firestorable.auth.signOut() : goToLogin(store);
     }
 
     navigate = (e: React.MouseEvent, navigate: () => void) => {

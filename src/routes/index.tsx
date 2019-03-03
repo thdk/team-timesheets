@@ -1,9 +1,11 @@
 import * as React from 'react';
 import { App } from '../internal';
 import { Route, RoutesConfig } from 'mobx-router';
-import timesheetsRoutes from './timesheets/index';
+import timesheetsRoutes from './timesheets';
 import settingsRoutes from './settings';
-import reportRoutes from './reports/index';
+import reportRoutes from './reports';
+import userRoutes from './users';
+
 import { goToOverview } from '../internal';
 import store from '../stores/RootStore';
 
@@ -19,6 +21,7 @@ const routes: RoutesConfig = {
   }),
   ...timesheetsRoutes,
   ...settingsRoutes,
-  ...reportRoutes
+  ...reportRoutes,
+  ...userRoutes
 };
 export default routes;

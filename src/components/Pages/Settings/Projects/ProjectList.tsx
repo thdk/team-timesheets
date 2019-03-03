@@ -12,7 +12,7 @@ export class ProjectList extends React.Component {
             .reduce((p, c) => {
                 if (c.data) {
                     const { id, data: { icon, name }} = c;
-                    p.push(id === store.config.projectId && canEditProject(c.data, store.user.currentUser, store.user.userId)
+                    p.push(id === store.config.projectId && canEditProject(c.data, store.user.authenticatedUser, store.user.userId)
                         ? <AddListItem key={id} onCancel={this.unselectItem} onSave={(data) => this.saveListItem(data, id)} data={c.data} onClick={this.selectItem.bind(this, id)}></AddListItem>
                         : <ListItem onClick={this.selectItem.bind(this, id)} icon={icon} key={id} lines={[name!]}></ListItem>
                     );
@@ -20,7 +20,7 @@ export class ProjectList extends React.Component {
                 return p;
             }, new Array());
 
-        const addProject = canAddProject(store.user.currentUser)
+        const addProject = canAddProject(store.user.authenticatedUser)
             ? <AddListItem labels={{add: "Add project"}} onSave={this.saveListItem.bind(this)} ></AddListItem>
             : undefined;
 

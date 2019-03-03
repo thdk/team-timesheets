@@ -8,6 +8,7 @@ declare module '@material/ripple/index';
 declare module '@material/checkbox/index';
 declare module '@material/icon-toggle/index';
 declare module '@material/icon-button/index';
+declare module '@material/switch/index';
 
 interface HTMLElementEventMap {
     "MDCIconToggle:change": { detail: { isOn: boolean } } & Event

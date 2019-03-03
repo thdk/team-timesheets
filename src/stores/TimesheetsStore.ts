@@ -127,7 +127,7 @@ export class RegistrationStore implements IRegistrationsStore {
 
     @computed
     public get registration() {
-        if (!store.user.currentUser) throw new Error("User must be set");
+        if (!store.user.authenticatedUser) throw new Error("User must be set");
 
         const registration = this.registrationId
             ? this.registrations.docs.get(this.registrationId)
@@ -145,13 +145,13 @@ export class RegistrationStore implements IRegistrationsStore {
 
     @action
     public newRegistration(moment?: moment.Moment) {
-        if (!store.user.currentUser || !store.user.userId) throw new Error("User must be set");
+        if (!store.user.authenticatedUser || !store.user.userId) throw new Error("User must be set");
 
         const {
             recentProjects = [],
             defaultTask: task = store.config.tasks.docs.size ? Array.from(store.config.tasks.docs.keys())[0] : undefined,
             defaultClient: client = undefined
-        } = store.user.currentUser || {};
+        } = store.user.authenticatedUser || {};
 
         const registration = this.registrations.newDoc<IRegistration>({
             date: this.toUTC(
@@ -179,8 +179,8 @@ export class RegistrationStore implements IRegistrationsStore {
                     const { project = undefined } = registration.data || {};
                     // TODO: move set recent project to firebase function
                     // triggering for every update/insert of a registration?
-                    if (store.user.userId && store.user.currentUser && project) {
-                        const recentProjects = toJS(store.user.currentUser.recentProjects);
+                    if (store.user.userId && store.user.authenticatedUser && project) {
+                        const recentProjects = toJS(store.user.authenticatedUser.recentProjects);
                         const oldProjectIndex = recentProjects.indexOf(project);
 
                         // don't update the user document if the current project was already most recent

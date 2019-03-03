@@ -32,6 +32,7 @@ service cloud.firestore {
         match /users/{userId} {
             allow read: if getRole('admin') == true || request.auth.uid == userId;
             allow create, update: if getRole('admin') == true || !request.resource.keys().hasAny(["roles"]);
+            allow delete: if getRole('admin') == true;
         }
   	}
 }

@@ -1,8 +1,7 @@
 import * as React from 'react';
-import { IReactProps } from '../types';
 import { MDCTabBar } from '@material/tab-bar/index';
 
-export interface ITabBarProps extends IReactProps {
+export interface ITabBarProps extends React.HTMLProps<HTMLDivElement> {
     children: React.ReactNode;
 }
 
@@ -32,7 +31,7 @@ export class TapBar extends React.Component<ITabBarProps> {
 }
 
 
-export interface ITabProps extends IReactProps {
+export interface ITabProps extends React.HTMLProps<HTMLButtonElement> {
     isActive?: boolean;
     icon?: React.ReactNode;
     text?: string;

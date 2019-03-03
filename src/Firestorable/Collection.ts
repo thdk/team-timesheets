@@ -28,7 +28,10 @@ export interface ICollectionOptions<T, K> {
 
 export class Collection<T, K = T> implements ICollection<T> {
     public docs: ObservableMap<string, Doc<T>> = observable(new Map);
-    @observable public query?: (ref: CollectionReference) => Query;
+
+    @observable
+    public query?: (ref: CollectionReference) => Query;
+
     private readonly collectionRef: firebase.firestore.CollectionReference;
     private readonly isRealtime: boolean;
     private unsubscribeFirestore?: () => void;
@@ -53,7 +56,6 @@ export class Collection<T, K = T> implements ICollection<T> {
         this.collectionRef = getFirestoreCollection();
 
         this.queryReactionDisposable = reaction(() => this.query, this.getDocs.bind(this));
-
         // setting a query immediately in the constructor will also trigger the above reaction
         // => no need to manually call getDocs when a query is provided in the constructor of the collection
         if (query) {
@@ -64,35 +66,41 @@ export class Collection<T, K = T> implements ICollection<T> {
     public getDocs() {
         this.canClearCollection = true;
         if (this.unsubscribeFirestore) this.unsubscribeFirestore();
-        this.unsubscribeFirestore = (this.query ? this.query(this.collectionRef) : this.collectionRef)
+
+        this.unsubscribeFirestore =
+            this.filter(this.collectionRef)
             .onSnapshot(snapshot => {
-                if (!this.isRealtime) this.unsubscribeFirestore!();
+                    if (!this.isRealtime) this.unsubscribeFirestore!();
 
-                transaction(() => {
-                    if (this.canClearCollection) {
-                        this.canClearCollection = false;
-                        if (this.docs.size) {
-                            this.docs.clear();
+                    transaction(() => {
+                        if (this.canClearCollection) {
+                            this.canClearCollection = false;
+                            if (this.docs.size) {
+                                this.docs.clear();
+                            }
                         }
-                    }
 
-                    if (!snapshot.empty) {
+                        if (!snapshot.empty) {
 
-                        snapshot.docChanges().forEach(change => {
-                            const { doc: { id }, doc } = change;
-                            if (change.type === "added" || change.type === "modified") {
-                                const firestoreData = doc.data() as K;
-                                const data = this.deserialize(firestoreData);
-                                this.docs.set(id, new Doc<T>(this.collectionRef, data, id));
-                            }
-                            else if (change.type === "removed") {
-                                this.docs.delete(id);
-                            }
-                        });
-                    }
-                })
+                            snapshot.docChanges().forEach(change => {
+                                const { doc: { id }, doc } = change;
+                                if (change.type === "added" || change.type === "modified") {
+                                    const firestoreData = doc.data() as K;
+                                    const data = this.deserialize(firestoreData);
+                                    this.docs.set(id, new Doc<T>(this.collectionRef, data, id));
+                                }
+                                else if (change.type === "removed") {
+                                    this.docs.delete(id);
+                                }
+                            });
+                        }
+                    })
 
-            });
+                });
+    }
+
+    private filter(collectionRef: CollectionReference) {
+        return this.query ? this.query(collectionRef) : collectionRef;
     }
 
     public newDoc<X extends Partial<T>>(data: X) {

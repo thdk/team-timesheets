@@ -66,7 +66,7 @@ export class DashboardStore implements IDashboardStore {
 
         // don't load docs without filters!!!!
         // otherwise firebase quoata will fly pretty fast
-        when(() => !!rootStore.user.currentUser && !!this.timePeriodFilterValue, () => {
+        when(() => !!rootStore.user.authenticatedUser && !!this.timePeriodFilterValue, () => {
             this.registrationsField.getDocs();
         });
     }

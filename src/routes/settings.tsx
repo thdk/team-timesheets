@@ -11,16 +11,16 @@ export const goToSettings = (tab: SettingsTab = "preferences") => {
     store.router.goTo(routes.preferences, {}, store, { tab });
 }
 
-export type SettingsTab = "tasks" | "projects" | "preferences" | "clients";
+export type SettingsTab = "tasks" | "projects" | "preferences" | "clients" | "users";
 
 let reactionDisposer: IReactionDisposer;
 
 const setActions = (tab: SettingsTab, s: IRootStore) => {
-    when(() => store.user.currentUser !== undefined, () => {
+    when(() => store.user.authenticatedUser !== undefined, () => {
         // reactionDisposer && reactionDisposer();
         switch (tab) {
             case "tasks": {
-                const deleteAction: IViewAction | undefined = canDeleteTask(store.user.currentUser)
+                const deleteAction: IViewAction | undefined = canDeleteTask(store.user.authenticatedUser)
                     ? {
                         action: () => {
                             s.config.taskId && s.config.tasks.deleteAsync(s.config.taskId);
@@ -49,7 +49,7 @@ const setActions = (tab: SettingsTab, s: IRootStore) => {
                     };
 
                 reactionDisposer = reaction(() => s.config.projectId, id => {
-                    if (id && canDeleteProject(s.config.projects.docs.get(id)!.data!, s.user.currentUser, s.user.userId)) {
+                    if (id && canDeleteProject(s.config.projects.docs.get(id)!.data!, s.user.authenticatedUser, s.user.userId)) {
                         s.view.setActions([deleteAction].filter(a => a !== undefined) as IViewAction[]);
                     }
                     else s.view.setActions([]);
@@ -57,7 +57,7 @@ const setActions = (tab: SettingsTab, s: IRootStore) => {
                 break;
             }
             case "clients": {
-                const deleteAction: IViewAction | undefined = canDeleteClient(store.user.currentUser) ?
+                const deleteAction: IViewAction | undefined = canDeleteClient(store.user.authenticatedUser) ?
                     {
                         action: () => {
                             s.config.clientId && s.config.clientsCollection.deleteAsync(s.config.clientId);

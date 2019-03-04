@@ -6,6 +6,7 @@ import store from "../../../../stores/RootStore";
 import { ListItem, List } from "../../../../mdc/list";
 import { canReadUsers } from "../../../../rules/rules";
 import { goToUser } from "../../../../routes/users/detail";
+import { IRoles } from "../../../../../common";
 
 export interface IUserListProps {
 
@@ -17,14 +18,18 @@ export class UserList extends React.Component<IUserListProps> {
         if (!store.user.users.docs.size) return <></>;
 
         const userItems = Array.from(store.user.users.docs.entries()).map(([id, doc]) => {
+            const { name, roles } = doc.data!;
+
+            const activeRoles = (Object.keys(roles) as (keyof IRoles)[]).filter(r => !!roles[r]);
+
             return <ListItem
                 key={id}
                 icon={"person_outline"}
                 onClick={this.userClick.bind(this, id)}
-                lines={[doc.data!.name]}></ListItem>
+                lines={[name, this.capitalizeFirstLetter(activeRoles.join(', '))]}></ListItem>
         });
         return (
-            <List>
+            <List isTwoLine={true}>
                 {userItems}
             </List>
         );
@@ -40,5 +45,9 @@ export class UserList extends React.Component<IUserListProps> {
                 store.user.users.getDocs();
             });
         }
+    }
+
+    private capitalizeFirstLetter(input: string) {
+        return input && input.charAt(0).toUpperCase() + input.slice(1);
     }
 }

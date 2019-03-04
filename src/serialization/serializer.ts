@@ -42,7 +42,8 @@ export const convertUser = (appData: Partial<IUser>) => {
         roles: appData.roles,
         defaultTask: appData.defaultTask || "",
         recentProjects: appData.recentProjects,
-        defaultClient: appData.defaultClient
+        defaultClient: appData.defaultClient,
+        team: appData.team
     }
 
     // Todo: automatically remove undefined values for all keys
@@ -52,6 +53,7 @@ export const convertUser = (appData: Partial<IUser>) => {
     if (!user.tasks) delete user.tasks;
     if (!user.recentProjects) delete user.recentProjects;
     if (user.defaultClient === undefined) delete user.defaultClient;
+    if (user.team === undefined) delete user.team;
 
     return user;
 }

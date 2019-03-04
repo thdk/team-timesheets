@@ -20,4 +20,9 @@ export const canAddClient = (user?: IUser) => isAdmin(user);
 export const canEditClient = (user?: IUser) => isAdmin(user);
 export const canDeleteClient = (user?: IUser) => isAdmin(user);
 
+export const canManageTeams = (user?: IUser) => isAdmin(user);
+export const canAddTeam = (user?: IUser) => isAdmin(user);
+export const canEditTeam = (user?: IUser) => isAdmin(user);
+export const canDeleteTeam = (user?: IUser) => isAdmin(user);
+
 export const canReadUsers = (user?: IUser) => isAdmin(user);

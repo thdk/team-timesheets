@@ -11,7 +11,7 @@ export const goToSettings = (tab: SettingsTab = "preferences") => {
     store.router.goTo(routes.preferences, {}, store, { tab });
 }
 
-export type SettingsTab = "tasks" | "projects" | "preferences" | "clients" | "users";
+export type SettingsTab = "tasks" | "projects" | "preferences" | "clients" | "users" | "teams";
 
 let reactionDisposer: IReactionDisposer;
 

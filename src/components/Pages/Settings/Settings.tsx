@@ -10,7 +10,8 @@ import { SettingsTab } from '../../../routes/settings';
 import { goToSettings } from '../../../internal';
 import { ClientList } from './Clients/ClientsList';
 import { UserList } from './Users/UserList';
-import { canReadUsers } from '../../../rules/rules';
+import { canReadUsers, canManageTeams } from '../../../rules/rules';
+import { TeamList } from './Teams/TeamList';
 
 interface ITabData {
     id: SettingsTab;
@@ -25,9 +26,10 @@ export class Settings extends React.Component {
     render() {
         const tabData: ITabData[] = [
             { id: "preferences", text: "Preferences", canOpen: () => !!store.user.authenticatedUser, tabContent: <Preferences /> },
-            { id: "tasks", text: "Tasks", tabContent: <TaskList /> },
             { id: "projects", text: "Projects", tabContent: <ProjectList /> },
+            { id: "tasks", text: "Tasks", tabContent: <TaskList /> },
             { id: "clients", text: "Clients", tabContent: <ClientList /> },
+            { id: "teams", text: "Teams", canOpen: () => canManageTeams(store.user.authenticatedUser), tabContent: <TeamList /> },
             { id: "users", text: "Users", canOpen: () => canReadUsers(store.user.authenticatedUser), tabContent: <UserList /> }
         ];
 

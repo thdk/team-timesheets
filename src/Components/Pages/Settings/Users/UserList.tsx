@@ -18,7 +18,10 @@ export class UserList extends React.Component<IUserListProps> {
         if (!store.user.users.docs.size) return <></>;
 
         const userItems = Array.from(store.user.users.docs.entries()).map(([id, doc]) => {
-            const { name, roles } = doc.data!;
+            const { name, roles, team } = doc.data!;
+
+            const teamData = team ? store.config.teamsCollection.docs.get(team) : undefined;
+            const {name: teamName = "Archived"} = teamData ? teamData.data || {} : {};
 
             const activeRoles = (Object.keys(roles) as (keyof IRoles)[]).filter(r => !!roles[r]);
 
@@ -26,7 +29,7 @@ export class UserList extends React.Component<IUserListProps> {
                 key={id}
                 icon={"person_outline"}
                 onClick={this.userClick.bind(this, id)}
-                lines={[name, this.capitalizeFirstLetter(activeRoles.join(', '))]}></ListItem>
+                lines={[name, (teamData ? `${teamName} - ` : '') + this.capitalizeFirstLetter(activeRoles.join(', '))]}></ListItem>
         });
         return (
             <List isTwoLine={true}>

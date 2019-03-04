@@ -7,4 +7,5 @@ export interface IUserData {
     defaultTask: string;
     defaultClient?: string;
     recentProjects?: RecentlyUsedProjects;
+    team?: string;
 }

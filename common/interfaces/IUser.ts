@@ -13,4 +13,5 @@ export interface IUser {
     defaultTask?: string;
     recentProjects: RecentlyUsedProjects;
     defaultClient?: string;
+    team?: string;
 }

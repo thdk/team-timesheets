@@ -1,16 +1,19 @@
 import { observable, computed } from 'mobx';
 import { Collection, ICollection } from "../Firestorable/Collection";
 import { IRootStore } from './RootStore';
-import { IProject, ITask, IClient } from '../../common/dist';
+import { IProject, ITask, IClient, ITeam } from '../../common/dist';
 
 export interface IConfigStore {
     projects: ICollection<IProject>;
     tasks: ICollection<ITask>;
     clientsCollection: ICollection<IClient>;
+    teamsCollection: ICollection<IClient>;
     clients: (IClient & {id: string})[];
+    teams: (ITeam & {id: string, isSelected: boolean})[];
     taskId?: string;
     projectId?: string;
     clientId?: string;
+    teamId?: string;
 }
 
 export class ConfigStore implements IConfigStore {
@@ -19,10 +22,12 @@ export class ConfigStore implements IConfigStore {
     readonly projects: ICollection<IProject>;
     readonly tasks: ICollection<IProject>;
     readonly clientsCollection: ICollection<IClient>;
+    readonly teamsCollection: ICollection<ITeam>;
 
     @observable.ref taskId?: string;
     @observable.ref projectId?: string;
     @observable.ref clientId?: string;
+    @observable.ref teamId?: string;
 
     constructor(_rootStore: IRootStore, getCollection: (name: string) => firebase.firestore.CollectionReference) {
         // this._rootStore = rootStore;
@@ -40,11 +45,22 @@ export class ConfigStore implements IConfigStore {
             realtime: true,
             query: ref => ref.orderBy("name")
         }));
+
+        this.teamsCollection = observable(new Collection<ITeam>(getCollection.bind(this, "teams"), {
+            realtime: true,
+            query: ref => ref.orderBy("name")
+        }));
     }
 
     @computed
     public get clients() {
         return Array.from(this.clientsCollection.docs.values())
             .map(doc => ({ ...doc.data!, id: doc.id }));
+    }
+
+    @computed
+    public get teams() {
+        return Array.from(this.teamsCollection.docs.values())
+            .map(doc => ({ ...doc.data!, id: doc.id, isSelected: doc.id === this.teamId }));
     }
 }

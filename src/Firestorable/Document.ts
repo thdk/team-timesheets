@@ -1,18 +1,32 @@
 import { CollectionReference } from '@firebase/firestore-types';
 
 import { observable, computed, action } from "mobx";
+import { typeSnapshot } from './FirestoreUtils';
 
-export class Doc<T> {
+export interface IDocOptions<T, K> {
+    deserialize: (firestoreData: K) => T;
+    watch?: boolean;
+}
+
+export class Doc<T, K = T> {
+    @observable
+    private dataField: T | {} = {};
+
     private ref: firebase.firestore.DocumentReference;
     public readonly id: string;
-    @observable private dataField: T | {} = {};
     private hasData = false;
+    private deserialize: IDocOptions<T, K>["deserialize"];
+    private unwatchDocument?: () => void;
 
     // TODO: don't allow null as a type for data
-    constructor(collectionRef: CollectionReference, data: T | null, id?: string) {
+    constructor(collectionRef: CollectionReference, data: K | null, options: IDocOptions<T, K>, id?: string) {
+        const { deserialize, watch } = options;
+        this.deserialize = deserialize;
         this.ref = id ? collectionRef.doc(id) : collectionRef.doc();
         this.id = this.ref.id;
-        this.setData(data);
+        this.setData(data ? deserialize(data) : null);
+
+        if (watch) this.watch();
     }
 
     @action
@@ -28,5 +42,16 @@ export class Doc<T> {
 
     private hasDataGuard(_doc: any): _doc is T {
         return this.hasData;
+    }
+
+    public watch() {
+        this.unwatchDocument = this.ref.onSnapshot(snapshot => {
+            const data = typeSnapshot<K>(snapshot);
+            if (data) this.dataField = this.deserialize(data);
+        });
+    }
+
+    public unwatch() {
+        this.unwatchDocument && this.unwatchDocument();
     }
 }

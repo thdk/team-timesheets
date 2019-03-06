@@ -5,7 +5,7 @@ import { IGroupedRegistrations } from '../../../stores/TimesheetsStore';
 import { Doughnut, Bar } from 'react-chartjs-2';
 import { legendCallback } from '../../../routes/reports/helpers';
 import { ICollection } from '../../../Firestorable/Collection';
-import { IUser } from '../../../../common/dist';
+import { IUser, IUserData } from '../../../../common/dist';
 
 export enum ChartType {
     Doughnut,
@@ -31,25 +31,25 @@ export const chartColorsArray = [
     chartColors.purple
 ];
 
-export interface IRegistrationsChartProps<T> {
-    labelCollection: ICollection<T>;
+export interface IRegistrationsChartProps<T, K = T> {
+    labelCollection: ICollection<T, K>;
     getLabel: (data: T) => string;
     data: IGroupedRegistrations<any>[];
     title: string;
     chart: ChartType;
 }
 
-export interface IUserRegistrationsChartProps extends IRegistrationsChartProps<IUser> {
+export interface IUserRegistrationsChartProps extends IRegistrationsChartProps<IUser, IUserData> {
     data: IGroupedRegistrations<string>[];
 }
 
-export class RegistrationsChart<T> extends React.Component<IRegistrationsChartProps<T>, { data: chartjs.ChartData, isLoading: boolean }> {
+export class RegistrationsChart<T, K> extends React.Component<IRegistrationsChartProps<T, K>, { data: chartjs.ChartData, isLoading: boolean }> {
     private ref: React.RefObject<any>;
     private legendRef: React.RefObject<HTMLDivElement>;
 
     private disposables: (() => void)[] = [];
 
-    constructor(props: IRegistrationsChartProps<T>) {
+    constructor(props: IRegistrationsChartProps<T, K>) {
         super(props);
 
         this.ref = React.createRef();

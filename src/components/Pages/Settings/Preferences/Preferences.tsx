@@ -54,19 +54,19 @@ export class Preferences extends React.Component {
         if (selected) tasks.set(id, true);
         else tasks.delete(id);
 
-        store.user.updateUser({
+        store.user.updateAuthenticatedUser({
             tasks,
         });
     }
 
     defaultTaskChanged = (defaultTask: string) => {
-        store.user.updateUser({
+        store.user.updateAuthenticatedUser({
             defaultTask
         });
     }
 
     defaultClientChanged = (defaultClient: string) => {
-        store.user.updateUser( {
+        store.user.updateAuthenticatedUser( {
             defaultClient
         });
     }

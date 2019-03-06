@@ -8,7 +8,6 @@ import { setTitleForRoute, setBackToOverview, beforeEnter } from '../actions';
 import { goToOverview } from '../../internal';
 import store, { IRootStore } from '../../stores/RootStore';
 import { IViewAction } from '../../stores/ViewStore';
-import moment from 'moment-es6';
 
 const path = "/timesheetsdetail";
 
@@ -18,20 +17,7 @@ export const goToRegistration = (id?: string) => {
 
 const onEnter = (route: Route, params: { id?: string }, s: IRootStore) => {
     if (params.id) {
-        if (!s.timesheets.registration && params.id !== undefined) {
-            // registration not in memory yet, request it
-            s.timesheets.registrations
-                .getAsync(params.id)
-                .then(doc => {
-                    transaction(() => {
-                        s.timesheets.registrationId = params.id;
-                        s.timesheets.registrations.docs.set(params.id!, doc);
-                    });
-                });
-        }
-        else {
-            s.timesheets.registrationId = params.id;
-        }
+        s.timesheets.setSelectedRegistrationId(params.id);
     }
 
     const deleteAction: IViewAction = {
@@ -45,7 +31,7 @@ const onEnter = (route: Route, params: { id?: string }, s: IRootStore) => {
 
     const saveAction: IViewAction = {
         action: () => {
-            s.timesheets.save();
+            s.timesheets.saveSelectedRegistration();
             goToOverview(s);
         },
         icon: { label: "Save", content: "save" },
@@ -58,7 +44,7 @@ const onEnter = (route: Route, params: { id?: string }, s: IRootStore) => {
             deleteAction
         ]);
 
-        setBackToOverview(() => s.timesheets.save(), s.timesheets.registration && s.timesheets.registration.data!.date!.getDate());
+        setBackToOverview(() => s.timesheets.saveSelectedRegistration(), s.timesheets.registration && s.timesheets.registration.date!.getDate());
         setTitleForRoute(route);
     });
 
@@ -71,7 +57,7 @@ const onEnter = (route: Route, params: { id?: string }, s: IRootStore) => {
 };
 
 const beforeExit = (_route: Route, _params: any, s: IRootStore) => {
-    s.timesheets.registrationId = undefined;
+    s.timesheets.setSelectedRegistrationId(undefined);
     s.view.setNavigation("default");
 };
 
@@ -85,7 +71,7 @@ const routes = {
         beforeEnter: (route: Route, params: any, s: IRootStore) => {
             return beforeEnter(route, params, s)
                 .then(() => {
-                    s.timesheets.newRegistration(s.view.day === undefined ? moment().startOf("day") : undefined);
+                    s.timesheets.setSelectedRegistrationDefault();
 
                     return true;
                 })

@@ -10,7 +10,7 @@ import { IProject } from '../../../../common/dist';
 @observer
 export default class ProjectSelect extends React.Component {
     render() {
-        const project = store.timesheets.registration ? store.timesheets.registration.data!.project : "";
+        const project = store.timesheets.registration ? store.timesheets.registration.project : "";
 
         const userRecentProjects = store.user.authenticatedUser ? store.user.authenticatedUser.recentProjects : [];
 
@@ -61,13 +61,13 @@ export default class ProjectSelect extends React.Component {
 
     projectClicked = (id: string, selected: boolean) => {
         if (selected) {
-            if (store.timesheets.registration && store.timesheets.registration.data)
-                store.timesheets.registration.data.project = id;
+            if (store.timesheets.registration && store.timesheets.registration)
+                store.timesheets.registration.project = id;
         }
     };
 
     onProjectChange = (value: string) => {
-        if (store.timesheets.registration && store.timesheets.registration.data)
-            store.timesheets.registration.data.project = value;
+        if (store.timesheets.registration && store.timesheets.registration)
+            store.timesheets.registration.project = value;
     }
 }

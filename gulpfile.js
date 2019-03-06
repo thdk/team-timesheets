@@ -76,13 +76,18 @@ gulp.task('clean:libs', gulp.series(function (done) {
 }));
 
 gulp.task("copy:libs", gulp.series("clean:libs", function () {
+    const production = process.env.NODE_ENV === "production";
+    const mobxLib = production ? "mobx/lib/mobx.umd.min.js" : "mobx/lib/mobx.umd.js"
+    const momentLib = production ? "moment/min/moment.min.js" : "moment/moment.js";
+    const chartjsLib = production ? "chart.js/dist/Chart.min.js" : "chart.js/dist/Chart.js"
     const libs = [];
+
     libs.push(
-        gulp.src(configuration.paths.node_modules + "moment/moment.js")
+        gulp.src(configuration.paths.node_modules + momentLib)
             .pipe(gulp.dest(configuration.paths.dist + "/lib/moment")),
-        gulp.src(configuration.paths.node_modules + "chart.js/dist/Chart.min.js")
+        gulp.src(configuration.paths.node_modules + chartjsLib)
             .pipe(gulp.dest(configuration.paths.dist + "/lib/chartjs")),
-        gulp.src(configuration.paths.node_modules + "mobx/lib/mobx.umd.min.js")
+        gulp.src(configuration.paths.node_modules + mobxLib)
             .pipe(gulp.dest(configuration.paths.dist + "/lib/mobx"))
     );
 
@@ -101,13 +106,6 @@ gulp.task('tswatch', gulp.series(function (done) {
     gulp.watch(['./src/**/*.ts', './src/**/*.tsx'], gulp.series('clean-js', 'bundle', 'inject'));
     done();
 }));
-
-
-const libOrder = [
-    "moment\\moment.js",
-    "chartjs\\Chart.min.js",
-    "mobx\\mobx.umd.min.js"
-];
 
 gulp.task('inject', function (done) {
     const appStream = gulp.src(['./dist/**/*.js',

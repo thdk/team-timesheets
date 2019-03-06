@@ -16,7 +16,7 @@ export class Registration extends React.Component {
             return <></>;
         }
 
-        if (!store.timesheets.registration.data || !store.user.userId) return <></>;
+        if (!store.timesheets.registration || !store.user.userId) return <></>;
 
         const userTasks = Array.from(store.user.authenticatedUser.tasks.keys());
         const { task,
@@ -24,7 +24,7 @@ export class Registration extends React.Component {
             time,
             date,
             client
-        } = store.timesheets.registration.data;
+        } = store.timesheets.registration;
 
         const tasks = Array.from(store.config.tasks.docs.values())
             .filter(t => userTasks.length ? userTasks.some(userTaskId => userTaskId === t.id) : true)
@@ -74,22 +74,22 @@ export class Registration extends React.Component {
     }
 
     onDescriptionChange = (value: string) => {
-        if (store.timesheets.registration && store.timesheets.registration.data)
-            store.timesheets.registration.data.description = value.trimLeft();
+        if (store.timesheets.registration && store.timesheets.registration)
+            store.timesheets.registration.description = value.trimLeft();
     }
 
     onTimeChange = (value: string) => {
-        if (store.timesheets.registration && store.timesheets.registration.data)
-            store.timesheets.registration.data.time = +value;
+        if (store.timesheets.registration && store.timesheets.registration)
+            store.timesheets.registration.time = +value;
     }
 
     taskClicked = (taskId: string) => {
-        if (store.timesheets.registration && store.timesheets.registration.data)
-            store.timesheets.registration.data.task = taskId;
+        if (store.timesheets.registration && store.timesheets.registration)
+            store.timesheets.registration.task = taskId;
     }
 
     onClientChange = (value: string) => {
-        if (store.timesheets.registration && store.timesheets.registration.data)
-            store.timesheets.registration.data.client = value;
+        if (store.timesheets.registration && store.timesheets.registration)
+            store.timesheets.registration.client = value;
     }
 }

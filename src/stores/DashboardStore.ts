@@ -27,7 +27,7 @@ export interface IDashboardStore {
 }
 
 export class DashboardStore implements IDashboardStore {
-    private readonly registrationsField: ICollection<IRegistration>;
+    private readonly registrationsField: ICollection<IRegistration, IRegistrationData>;
 
     @observable.ref private userFilterValueField: string | undefined = undefined;
     @observable.ref private taskFilterValueField: string | undefined = undefined;

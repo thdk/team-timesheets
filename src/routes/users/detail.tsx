@@ -27,7 +27,7 @@ const routes = {
         onEnter: (route: Route, _params: {id?: string}, s: IRootStore) => {
             const saveAction: IViewAction = {
                 action: () => {
-                    s.timesheets.save();
+                    s.user.saveSelectedUser();
                     goToSettings("users");
                 },
                 icon: { label: "Save", content: "save" },

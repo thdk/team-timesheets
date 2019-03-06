@@ -1,4 +1,4 @@
-import { observable, computed, reaction, when, action, transaction, toJS, ObservableMap } from 'mobx';
+import { observable, computed, reaction, when, action, toJS, ObservableMap, observe } from 'mobx';
 import { Doc } from "../Firestorable/Document";
 
 import { ICollection, Collection } from "../Firestorable/Collection";
@@ -11,32 +11,39 @@ import { IRegistration, IRegistrationData } from '../../common/dist';
 import moment from 'moment-es6';
 
 export interface IGroupedRegistrations<T> {
-    readonly registrations: Doc<IRegistration>[];
+    readonly registrations: Doc<IRegistration, IRegistrationData>[];
     readonly groupKey: T;
     totalTime: number;
 }
 
 export interface IRegistrationsStore {
     readonly clipboard: ObservableMap<string, IRegistration>;
-    readonly registrations: ICollection<IRegistration>;
-    readonly registration: Doc<Partial<IRegistration>> | undefined;
-    registrationId?: string;
+    readonly registrations: ICollection<IRegistration, IRegistrationData>;
+
+    readonly registration: IRegistration | undefined;
+    readonly registrationId?: string;
+    readonly setSelectedRegistrationId: (id: string | undefined) => void;
+    readonly saveSelectedRegistration: () => void;
+    readonly updateSelectedRegistration: (data: Partial<IRegistration>) => void;
+    readonly setSelectedRegistrationDefault: () => void;
+
     readonly registrationsGroupedByDay: IGroupedRegistrations<Date>[];
     readonly registrationsGroupedByDayReversed: IGroupedRegistrations<Date>[];
     readonly registrationsGroupedByDaySortOrder: SortOrder;
     areGroupedRegistrationsCollapsed: boolean;
     readonly setRegistrationsGroupedByDaySortOrder: (sortOrder: SortOrder) => void;
-    readonly save: () => void;
-    readonly newRegistration: (moment?: moment.Moment) => void;
     readonly cloneRegistration: (source: IRegistration) => IRegistration;
 }
 
 export class RegistrationStore implements IRegistrationsStore {
     private rootStore: IRootStore;
-    readonly registrations: ICollection<IRegistration>;
+    readonly registrations: ICollection<IRegistration, IRegistrationData>;
     readonly clipboard = observable(new Map<string, IRegistration>());
 
-    @observable.ref registrationId?: string;
+    @observable
+    private _selectedRegistration = observable.box<IRegistration | undefined>();
+    @observable
+    private _selectedRegistrationId = observable.box<string | undefined>();
 
     @observable
     private registrationsGroupedByDaySortOrderField = SortOrder.Descending;
@@ -77,6 +84,8 @@ export class RegistrationStore implements IRegistrationsStore {
             );
             else this.registrations.unsubscribeAndClear();
         });
+
+        observe(this._selectedRegistrationId, change => this.setSelectedRegistration(change.newValue), true);
     }
 
     @computed
@@ -97,7 +106,7 @@ export class RegistrationStore implements IRegistrationsStore {
         return this.getGroupedRegistrations(this.registrations);
     }
 
-    private getGroupedRegistrations(registrations: ICollection<IRegistration>, sortOrder = SortOrder.Ascending) {
+    private getGroupedRegistrations(registrations: ICollection<IRegistration, IRegistrationData>, sortOrder = SortOrder.Ascending) {
         const regs = Array.from(registrations.docs.values())
             .filter(doc => doc.data!.isPersisted) // don't display drafts
             .sort((a, b) => {
@@ -127,14 +136,48 @@ export class RegistrationStore implements IRegistrationsStore {
 
     @computed
     public get registration() {
-        if (!store.user.authenticatedUser) throw new Error("User must be set");
+        return this._selectedRegistration.get();
+    }
 
-        const registration = this.registrationId
-            ? this.registrations.docs.get(this.registrationId)
-            : undefined;
+    @computed
+    public get registrationId() {
+        return this._selectedRegistrationId.get();
+    }
 
+    @action
+    public setSelectedRegistrationId(id: string | undefined) {
+        this._selectedRegistrationId.set(id);
+    }
 
-        return registration;
+    public updateSelectedRegistration(data: Partial<IRegistration> | undefined) {
+        this.registration && this._selectedRegistration.set(data ? { ...this.registration, ...data } : undefined);
+    }
+
+    @action
+    private setSelectedRegistration(id: string | undefined) {
+        const registration = id ? this.registrations.docs.get(id) : undefined;
+
+        if (id && !registration) {
+            // fetch the registration manually
+            this.registrations.getAsync(id)
+                .then(regDoc => this.setSelectedRegistrationObservable(regDoc.data))
+        } else if (registration) {
+            this.setSelectedRegistrationObservable(registration.data!);
+        } else {
+            this.setSelectedRegistrationObservable(undefined);
+        }
+    }
+
+    @action
+    public setSelectedRegistrationDefault() {
+        this.getNewRegistrationDataAsync().then(data => {
+            this.setSelectedRegistrationObservable(data);
+        });
+    }
+
+    @action.bound
+    private setSelectedRegistrationObservable(registration: IRegistration | undefined) {
+        this._selectedRegistration.set(registration);
     }
 
     public cloneRegistration(source: IRegistration) {
@@ -143,40 +186,39 @@ export class RegistrationStore implements IRegistrationsStore {
         return { ...source, date: this.toUTC(store.view.moment.toDate()) };
     }
 
-    @action
-    public newRegistration(moment?: moment.Moment) {
-        if (!store.user.authenticatedUser || !store.user.userId) throw new Error("User must be set");
+    private getNewRegistrationDataAsync(): Promise<IRegistration> {
+        return when(() => !!this.rootStore.user.authenticatedUser)
+            .then(() => {
+                const regMoment = this.rootStore.view.day === undefined ? moment().startOf("day") : undefined;
 
-        const {
-            recentProjects = [],
-            defaultTask: task = store.config.tasks.docs.size ? Array.from(store.config.tasks.docs.keys())[0] : undefined,
-            defaultClient: client = undefined
-        } = store.user.authenticatedUser || {};
+                if (!this.rootStore.user.authenticatedUser || !this.rootStore.user.userId) throw new Error("User must be set");
 
-        const registration = this.registrations.newDoc<IRegistration>({
-            date: this.toUTC(
-                moment ? moment.toDate() : this.rootStore.view.moment.toDate()
-            ),
-            task,
-            client,
-            userId: store.user.userId,
-            project: recentProjects.length ? recentProjects[0] : undefined,
-            isPersisted: false,
-        });
+                const {
+                    recentProjects = [],
+                    defaultTask: task = this.rootStore.config.tasks.docs.size ? Array.from(this.rootStore.config.tasks.docs.keys())[0] : undefined,
+                    defaultClient: client = undefined
+                } = this.rootStore.user.authenticatedUser || {};
 
-        transaction(() => {
-            this.registrationId = registration.id;
-            this.registrations.docs.set(registration.id, registration);
-        });
+                return {
+                    date: this.toUTC(
+                        regMoment ? regMoment.toDate() : this.rootStore.view.moment.toDate()
+                    ),
+                    task,
+                    client,
+                    userId: this.rootStore.user.userId,
+                    project: recentProjects.length ? recentProjects[0] : undefined,
+                    isPersisted: false,
+                };
+            });
     }
 
-    public save() {
-        if (store.timesheets.registration) {
-            const registration = store.timesheets.registration;
-            store.timesheets.registrations
-                .updateAsync(registration.id, registration.data!)
+    public saveSelectedRegistration() {
+        if (this.registration) {
+            const { registration } = this;
+            this.registrations
+                .updateAsync(undefined, registration)
                 .then(() => {
-                    const { project = undefined } = registration.data || {};
+                    const { project = undefined } = registration || {};
                     // TODO: move set recent project to firebase function
                     // triggering for every update/insert of a registration?
                     if (store.user.userId && store.user.authenticatedUser && project) {
@@ -197,7 +239,7 @@ export class RegistrationStore implements IRegistrationsStore {
                                 recentProjects.unshift(project);
                             }
 
-                            store.user.updateUser({ recentProjects });
+                            store.user.updateAuthenticatedUser({ recentProjects });
                         }
                     }
                 });

@@ -7,14 +7,13 @@ import { Doc } from "./Document";
 import { IDisposable } from "./types";
 import { firestorable } from "./Firestorable";
 
-export interface ICollection<T> extends IDisposable {
-    readonly docs: ObservableMap<string, Doc<T>>;
+export interface ICollection<T, K = T> extends IDisposable {
+    readonly docs: ObservableMap<string, Doc<T, K>>;
     query?: (ref: CollectionReference) => Query;
     getDocs: () => void;
-    newDoc: <X extends Partial<T>>(data: X) => Doc<X>;
-    updateAsync: (id: string, data: Partial<T>) => Promise<void>;
+    updateAsync: (id: string | undefined, data: Partial<T>) => Promise<void>;
     addAsync: (data: T | T[], id?: string) => Promise<string | void>;
-    getAsync: (id: string) => Promise<Doc<T>>;
+    getAsync: (id: string, watch?: boolean) => Promise<Doc<T, K>>;
     deleteAsync: (...ids: string[]) => Promise<void>;
     unsubscribeAndClear: () => void;
 }
@@ -26,8 +25,8 @@ export interface ICollectionOptions<T, K> {
     serialize?: (appData: Partial<T>) => Partial<K>;
 }
 
-export class Collection<T, K = T> implements ICollection<T> {
-    public docs: ObservableMap<string, Doc<T>> = observable(new Map);
+export class Collection<T, K = T> implements ICollection<T, K> {
+    public docs: ObservableMap<string, Doc<T, K>> = observable(new Map);
 
     @observable
     public query?: (ref: CollectionReference) => Query;
@@ -69,7 +68,7 @@ export class Collection<T, K = T> implements ICollection<T> {
 
         this.unsubscribeFirestore =
             this.filter(this.collectionRef)
-            .onSnapshot(snapshot => {
+                .onSnapshot(snapshot => {
                     if (!this.isRealtime) this.unsubscribeFirestore!();
 
                     transaction(() => {
@@ -86,8 +85,14 @@ export class Collection<T, K = T> implements ICollection<T> {
                                 const { doc: { id }, doc } = change;
                                 if (change.type === "added" || change.type === "modified") {
                                     const firestoreData = doc.data() as K;
-                                    const data = this.deserialize(firestoreData);
-                                    this.docs.set(id, new Doc<T>(this.collectionRef, data, id));
+                                    this.docs.set(id, new Doc<T, K>(this.collectionRef,
+                                        firestoreData,
+                                        {
+                                            deserialize: this.deserialize,
+                                            watch: false
+                                        },
+                                        id)
+                                    );
                                 }
                                 else if (change.type === "removed") {
                                     this.docs.delete(id);
@@ -103,23 +108,26 @@ export class Collection<T, K = T> implements ICollection<T> {
         return this.query ? this.query(collectionRef) : collectionRef;
     }
 
-    public newDoc<X extends Partial<T>>(data: X) {
-        return new Doc<X>(this.collectionRef, data);
-    }
-
     // TODO: when realtime updates is disabled, we must manually update the docs!
     // TODO: add update settings: Merge | Overwrite
-    public updateAsync(id: string, data: Partial<T>) {
-        return this.getAsync(id)
-            .then(
-                oldData => {
-                    updateAsync(this.collectionRef, Object.assign(this.serialize({ ...oldData.data, ...data }), { id }))
-                },
-                () => {
-                    // trying to update something that doesn't exist => add it instead
-                    addAsync(this.collectionRef, this.serialize(data), id)
-                        .then(() => { }) // convert Promise<string> into Promise<void> :(
-                });
+    public updateAsync(id: string | undefined, data: Partial<T>) {
+        if (id) {
+            return this.getAsync(id)
+                .then(
+                    oldData => {
+                        updateAsync(this.collectionRef, Object.assign(this.serialize({ ...oldData.data, ...data }), { id }))
+                    },
+                    () => {
+                        // trying to update something that doesn't exist => add it instead
+                        addAsync(this.collectionRef, this.serialize(data), id)
+                            .then(() => { }) // convert Promise<string> into Promise<void> :(
+                    });
+        }
+        else {
+            return addAsync(this.collectionRef, this.serialize(data), id)
+            .then(() => { })
+        }
+
     }
 
     // TODO: when realtime updates is disabled, we must manually update the docs!
@@ -139,12 +147,14 @@ export class Collection<T, K = T> implements ICollection<T> {
     }
 
     // TODO: If realtime is enabled, we can safely fetch from the docs instead of a new get request
-    public getAsync(id: string) {
+    public getAsync(id: string, watch = true) {
         console.log("Collection:getAsync");
         console.log("Waiting...");
         return getAsync<K>(this.collectionRef, id).then(doc => {
             console.log("Collection:getAsync-complete");
-            return new Doc<T>(this.collectionRef, this.deserialize(doc), id);
+
+            const { deserialize } = this;
+            return new Doc<T, K>(this.collectionRef, doc, { deserialize, watch }, id);
         });
     }
 

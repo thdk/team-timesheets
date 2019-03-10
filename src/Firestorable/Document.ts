@@ -1,7 +1,7 @@
 import { CollectionReference } from '@firebase/firestore-types';
 
 import { observable, computed, action } from "mobx";
-import { typeSnapshot } from './FirestoreUtils';
+import { typeSnapshot } from 'firestore-ts-utils';
 
 export interface IDocOptions<T, K> {
     deserialize: (firestoreData: K) => T;

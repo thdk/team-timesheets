@@ -1,7 +1,7 @@
 import { Query, CollectionReference } from '@firebase/firestore-types';
 import 'firebase/firestore';
 
-import { updateAsync, addAsync, getAsync } from "./FirestoreUtils";
+import { updateAsync, addAsync, getAsync } from "firestore-ts-utils";
 import { observable, ObservableMap, reaction, transaction } from 'mobx';
 import { Doc } from "./Document";
 import { IDisposable } from "./types";

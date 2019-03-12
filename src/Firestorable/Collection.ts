@@ -112,7 +112,7 @@ export class Collection<T, K = T> implements ICollection<T, K> {
     // TODO: add update settings: Merge | Overwrite
     public updateAsync(id: string | undefined, data: Partial<T>) {
         if (id) {
-            return this.getAsync(id)
+            return this.getAsync(id, false)
                 .then(
                     oldData => {
                         updateAsync(this.collectionRef, Object.assign(this.serialize({ ...oldData.data, ...data }), { id }))

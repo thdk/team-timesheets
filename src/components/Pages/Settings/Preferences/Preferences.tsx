@@ -1,7 +1,8 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
+import { Chip, ChipSet } from '@material/react-chips';
+
 import store from '../../../../stores/RootStore';
-import { Chip, ChipSet } from '../../../../mdc/chips';
 import { UserTasks } from './UserTasks';
 import { Box } from '../../../Layout/box';
 import ClientSelect from '../../Timesheets/ClientSelect';
@@ -11,15 +12,13 @@ export class Preferences extends React.Component {
     render() {
         if (!store.user.authenticatedUser || store.config.tasks.docs.size === 0) return null;
 
-        const { tasks: userTasks = new Map(), defaultTask = undefined, defaultClient = undefined } = store.user.authenticatedUser || {};
+        const { tasks: userTasks = new Map<string, true>(), defaultTask = undefined, defaultClient = undefined } = store.user.authenticatedUser || {};
         const tasks = Array.from(store.config.tasks.docs.values())
             .reduce((p, c) => {
                 if (c.data) {
                     const { id: taskId, data: { name: taskName } } = c;
-
-                    const isSelected = userTasks && userTasks.get(taskId) === true;
                     p.push(
-                        <Chip type="filter" onClick={this.taskClicked} id={taskId} text={taskName!} key={taskId} isSelected={isSelected}></Chip>
+                        <Chip handleSelect={this.taskClicked} id={taskId} label={taskName!} key={taskId}></Chip>
                     );
                 }
                 return p;
@@ -35,7 +34,7 @@ export class Preferences extends React.Component {
                 <Box>
                     <h3 className="mdc-typography--subtitle1">Pick your tasks</h3>
                     <p>Only selected tasks will be available for you when adding a new regisration.</p>
-                    <ChipSet chips={tasks} type="filter"></ChipSet>
+                    <ChipSet selectedChipIds={Array.from(userTasks.keys())} filter={true}>{tasks}</ChipSet>
 
                     {userTasksChips}
 
@@ -50,6 +49,8 @@ export class Preferences extends React.Component {
         if (!store.user.authenticatedUser) return;
 
         const { tasks } = store.user.authenticatedUser;
+
+        if (selected === !!tasks.get(id)) return;
 
         if (selected) tasks.set(id, true);
         else tasks.delete(id);

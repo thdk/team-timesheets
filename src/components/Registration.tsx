@@ -1,9 +1,9 @@
 import * as React from 'react';
 import { observer } from "mobx-react";
+import { Chip, ChipSet } from '@material/react-chips';
 
 import { TextField } from '../mdc/textfield';
 import { Form, FormField } from '../components/Layout/form';
-import { Chip, ChipSet } from '../mdc/chips';
 import { FlexGroup } from './Layout/flex';
 import store from '../stores/RootStore';
 import ProjectSelect from './Pages/Timesheets/ProjectSelect';
@@ -27,18 +27,14 @@ export class Registration extends React.Component {
         } = store.timesheets.registration;
 
         const tasks = Array.from(store.config.tasks.docs.values())
-            .filter(t => userTasks.length ? userTasks.some(userTaskId => userTaskId === t.id) : true)
+            .filter(t => t.data && userTasks.length ? userTasks.some(userTaskId => userTaskId === t.id) : true)
             .map(t => {
-                if (!t.data) return;
-
-                const { id: taskId, data: { name: taskName } } = t;
+                const { id: taskId, data: { name: taskName = "N/A"} = {} } = t;
 
                 return (
-                    <Chip onClick={this.taskClicked} id={taskId} {...t.data} text={taskName!} key={taskId} isSelected={taskId === task}></Chip>
+                    <Chip handleSelect={this.taskClicked} id={taskId} label={taskName!} key={taskId}></Chip>
                 );
             });
-
-
 
         return (
             <>
@@ -64,7 +60,7 @@ export class Registration extends React.Component {
                         <FlexGroup direction="vertical">
                             <h3 className="mdc-typography--subtitle1">Select one of your standard tasks</h3>
                             <FormField>
-                                <ChipSet chips={tasks} type="choice"></ChipSet>
+                                <ChipSet selectedChipIds={task ? [task] : undefined} choice={true}>{tasks}</ChipSet>
                             </FormField>
                         </FlexGroup>
                     </FlexGroup>
@@ -83,8 +79,8 @@ export class Registration extends React.Component {
             store.timesheets.registration.time = +value;
     }
 
-    taskClicked = (taskId: string) => {
-        if (store.timesheets.registration && store.timesheets.registration)
+    taskClicked = (taskId: string, selected: boolean) => {
+        if (store.timesheets.registration && store.timesheets.registration.task !== taskId && selected)
             store.timesheets.registration.task = taskId;
     }
 

@@ -19,19 +19,17 @@ export class UserTasks extends React.Component<IUserTasksProps> {
         const userTasksChips = Array.from(userTasks.keys()).map(t => {
             const taskData = store.config.tasks.docs.get(t);
             const { id: taskId = "", data: { name: taskName = "ARCHIVED" } = {} } = taskData || {};
-            const isSelected = this.props.value === taskId;
             return <Chip label={taskName}
                 handleSelect={this.onClick.bind(this)}
                 id={taskId}
-                key={taskId}
-                selected={isSelected}>
+                key={taskId}>
             </Chip>;
         })
         return (
             <>
                 <h3 className="mdc-typography--subtitle1">Pick your default task</h3>
                 <p>This task will be selected by default when you create a new registration.</p>
-                <ChipSet choice={true}>{userTasksChips}</ChipSet>
+                <ChipSet selectedChipIds={Array.from(userTasks.keys())} choice={true}>{userTasksChips}</ChipSet>
             </>
         );
     }

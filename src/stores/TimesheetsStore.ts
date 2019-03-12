@@ -216,7 +216,7 @@ export class RegistrationStore implements IRegistrationsStore {
         if (this.registration) {
             const { registration } = this;
             this.registrations
-                .updateAsync(undefined, registration)
+                .updateAsync(this.registrationId, registration)
                 .then(() => {
                     const { project = undefined } = registration || {};
                     // TODO: move set recent project to firebase function

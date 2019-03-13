@@ -18,7 +18,7 @@ export class Preferences extends React.Component {
                 if (c.data) {
                     const { id: taskId, data: { name: taskName } } = c;
                     p.push(
-                        <Chip handleSelect={this.taskClicked} id={taskId} label={taskName!} key={taskId}></Chip>
+                        <Chip handleSelect={this.handleTaskSelect} id={taskId} label={taskName!} key={taskId}></Chip>
                     );
                 }
                 return p;
@@ -45,7 +45,7 @@ export class Preferences extends React.Component {
         );
     }
 
-    taskClicked = (id: string, selected: boolean) => {
+    handleTaskSelect = (id: string, selected: boolean) => {
         if (!store.user.authenticatedUser) return;
 
         const { tasks } = store.user.authenticatedUser;

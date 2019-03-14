@@ -40,7 +40,8 @@ export default {
       include: 'node_modules/**',
       namedExports: {
         'node_modules/react/index.js': ['createRef', 'Component', 'PureComponent', 'Fragment', 'Children', 'createElement', 'forwardRef'],
-        'node_modules/react-dom/index.js': ['findDOMNode', 'unstable_batchedUpdates', 'render']
+        'node_modules/react-dom/index.js': ['findDOMNode', 'unstable_batchedUpdates', 'render'],
+        '@material/react-chips': ["Chip", "ChipSet"]
       }
     }),
     typescript(),

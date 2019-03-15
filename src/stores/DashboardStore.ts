@@ -5,8 +5,8 @@ import moment from 'moment-es6';
 
 import { IRootStore } from "./RootStore";
 import { IGroupedRegistrations } from "./TimesheetsStore";
-import * as deserializer from '../serialization/deserializer';
-import * as serializer from '../serialization/serializer';
+import * as deserializer from '../../common/serialization/deserializer';
+import * as serializer from '../../common/serialization/serializer';
 import { TimePeriod } from "../components/Controls/TimePeriodSelect";
 import { IRegistration, IRegistrationData } from "../../common/dist";
 

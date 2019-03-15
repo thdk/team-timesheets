@@ -3,8 +3,8 @@ import { ICollection, Collection } from "../Firestorable/Collection";
 import { Doc } from "../Firestorable/Document";
 import { firestorable } from "../Firestorable/Firestorable";
 import { IRootStore } from "./RootStore";
-import * as deserializer from '../serialization/deserializer';
-import * as serializer from '../serialization/serializer';
+import * as deserializer from '../../common/serialization/deserializer';
+import * as serializer from '../../common/serialization/serializer';
 import { IUser, IUserData } from "../../common/dist";
 import { canReadUsers } from "../rules/rules";
 

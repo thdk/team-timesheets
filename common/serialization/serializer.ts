@@ -1,5 +1,5 @@
 import * as firebase from 'firebase/app';
-import { IRegistration, IRegistrationData, IUserData, IUser } from '../../common/dist';
+import { IRegistration, IRegistrationData, IUser, IUserData } from '../interfaces';
 
 export const convertRegistration = (appData: Partial<IRegistration> | "delete") => {
     let registration: Partial<IRegistrationData>;

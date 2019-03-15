@@ -3,8 +3,8 @@ import { Doc } from "../Firestorable/Document";
 
 import { ICollection, Collection } from "../Firestorable/Collection";
 import store, { IRootStore } from './RootStore';
-import * as deserializer from '../serialization/deserializer';
-import * as serializer from '../serialization/serializer';
+import * as deserializer from '../../common/serialization/deserializer';
+import * as serializer from '../../common/serialization/serializer';
 import { getLoggedInUserAsync } from '../Firestorable/Firestorable';
 import { SortOrder } from '../components/GroupedRegistrations';
 import { IRegistration, IRegistrationData } from '../../common/dist';

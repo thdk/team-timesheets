@@ -1,4 +1,5 @@
-import { IRegistrationData, IRegistration, IUserData, IUser } from "../../common/dist";
+import { IRegistrationData, IRegistration, IUserData, IUser } from "../interfaces";
+
 
 export const convertRegistration = (firestoreData: IRegistrationData) => {
     const registration: IRegistration = {

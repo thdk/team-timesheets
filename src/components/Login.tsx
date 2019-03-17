@@ -2,9 +2,9 @@ import * as React from 'react';
 
 import * as firebase from 'firebase/app';
 import * as firebaseui from 'firebaseui';
-import { firestorable } from '../Firestorable/Firestorable';
 
 import { config, LoginProvider } from '../config';
+import { auth } from '../firebase/myFirebase';
 
 export class Login extends React.Component {
     private loginUi?: firebaseui.auth.AuthUI;
@@ -40,7 +40,7 @@ export class Login extends React.Component {
         };
 
         // Initialize the FirebaseUI Widget using Firebase.
-        this.loginUi = new firebaseui.auth.AuthUI(firestorable.auth);
+        this.loginUi = new firebaseui.auth.AuthUI(auth);
         // The start method will wait until the DOM is loaded.
         this.loginUi.start('#firebaseui-auth-container', loginUiConfig);
     }

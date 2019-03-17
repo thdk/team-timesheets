@@ -4,7 +4,7 @@ import { observer } from 'mobx-react';
 import { FormField } from '../../Layout/form';
 import { Select, SelectOption } from '../../../mdc/select';
 import store from '../../../stores/RootStore';
-import { Doc } from '../../../Firestorable/Document';
+import { Doc } from "firestorable";
 import { IProject } from '../../../../common/dist';
 
 @observer

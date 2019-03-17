@@ -1,7 +1,8 @@
 import { observable, computed } from 'mobx';
-import { Collection, ICollection } from "../Firestorable/Collection";
+import { Collection, ICollection } from "firestorable";
 import { IRootStore } from './RootStore';
 import { IProject, ITask, IClient, ITeam } from '../../common/dist';
+import { firestore } from '../firebase/myFirebase';
 
 export interface IConfigStore {
     projects: ICollection<IProject>;
@@ -31,22 +32,22 @@ export class ConfigStore implements IConfigStore {
 
     constructor(_rootStore: IRootStore, getCollection: (name: string) => firebase.firestore.CollectionReference) {
         // this._rootStore = rootStore;
-        this.projects = observable(new Collection<IProject>(getCollection.bind(this, "projects"), {
+        this.projects = observable(new Collection<IProject>(firestore, getCollection.bind(this, "projects"), {
             realtime: true,
             query: ref => ref.orderBy("name")
         }));
 
-        this.tasks = observable(new Collection<ITask>(getCollection.bind(this, "tasks"), {
+        this.tasks = observable(new Collection<ITask>(firestore, getCollection.bind(this, "tasks"), {
             realtime: true,
             query: ref => ref.orderBy("name")
         }));
 
-        this.clientsCollection = observable(new Collection<ITask>(getCollection.bind(this, "clients"), {
+        this.clientsCollection = observable(new Collection<ITask>(firestore, getCollection.bind(this, "clients"), {
             realtime: true,
             query: ref => ref.orderBy("name")
         }));
 
-        this.teamsCollection = observable(new Collection<ITeam>(getCollection.bind(this, "teams"), {
+        this.teamsCollection = observable(new Collection<ITeam>(firestore, getCollection.bind(this, "teams"), {
             realtime: true,
             query: ref => ref.orderBy("name")
         }));

@@ -1,7 +1,5 @@
 import { observable, action, transaction, computed, observe, when, intercept } from "mobx";
-import { ICollection, Collection } from "../Firestorable/Collection";
-import { Doc } from "../Firestorable/Document";
-import { firestorable } from "../Firestorable/Firestorable";
+import { ICollection, Collection, Doc } from 'firestorable';
 import { IRootStore } from "./RootStore";
 import * as deserializer from '../../common/serialization/deserializer';
 import * as serializer from '../../common/serialization/serializer';
@@ -9,6 +7,7 @@ import { IUser, IUserData } from "../../common/dist";
 import { canReadUsers } from "../rules/rules";
 
 import { UndefinedValue, isUndefinedValue, Undefined } from "mobx-undefined-value";
+import { firestore, auth } from "../firebase/myFirebase";
 
 export interface IUserStore {
     readonly userId?: string;
@@ -20,6 +19,7 @@ export interface IUserStore {
     readonly updateSelectedUser: (data: Partial<IUser>) => void;
     readonly users: ICollection<IUser, IUserData>;
     readonly updateAuthenticatedUser: (userData: Partial<IUser>) => void;
+    readonly signout: () => void;
 }
 
 export enum StoreState {
@@ -43,7 +43,7 @@ export class UserStore implements IUserStore {
 
     public readonly users: ICollection<IUser, IUserData>;
     constructor(rootStore: IRootStore) {
-        this.users = new Collection(rootStore.getCollection.bind(this, "users"), {
+        this.users = new Collection(firestore, rootStore.getCollection.bind(this, "users"), {
             realtime: true,
             serialize: serializer.convertUser,
             deserialize: deserializer.convertUser
@@ -55,8 +55,9 @@ export class UserStore implements IUserStore {
             }
         });
 
-        firestorable.auth.onAuthStateChanged(this.setUser.bind(this));
+        auth.onAuthStateChanged(this.setUser.bind(this));
 
+        // TODO: move to Firestorable/Document?
         intercept(this._authUser, change => {
             if (change.type === "update") {
                 if (isUndefinedValue(change.newValue)) {
@@ -169,5 +170,9 @@ export class UserStore implements IUserStore {
     getUserError = (error: any) => {
         console.log(error);
         this.state = StoreState.Error;
+    }
+
+    signout() {
+        auth.signOut();
     }
 }

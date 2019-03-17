@@ -1,11 +1,10 @@
-import { ICollection, Collection } from "../Firestorable/Collection";
+import { ICollection, Collection, Doc } from "firestorable";
 import { IRootStore } from "./RootStore";
 import { reaction, computed, observable, action } from "mobx";
 
 import * as firebase from 'firebase/app';
-import { Doc } from "../Firestorable/Document";
-import { firestorable } from "../Firestorable/Firestorable";
 import { IReport } from "../../common/dist";
+import { firestore, storage } from "../firebase/myFirebase";
 
 export interface IReportStore {
     requestReport: (userId: string, year: number, month: number) => void;
@@ -19,7 +18,7 @@ export class ReportStore implements IReportStore {
     @observable.ref reportUrl?: string;
     constructor(rootStore: IRootStore) {
         // this.rootStore = rootStore;
-        this.reports = new Collection(rootStore.getCollection.bind(this, "reports"), {
+        this.reports = new Collection(firestore, rootStore.getCollection.bind(this, "reports"), {
             realtime: true,
         });
 
@@ -42,7 +41,7 @@ export class ReportStore implements IReportStore {
             if (r && r.data && r.data.status === "complete") {
                 const { month, year } = rootStore.view;
                 const {userId} = rootStore.user;
-                firestorable.storage.ref(`reports/${year}/${month}/${userId}.csv`).getDownloadURL()
+                storage.ref(`reports/${year}/${month}/${userId}.csv`).getDownloadURL()
                     .then(url => this.reportUrl = url);
             }
         })

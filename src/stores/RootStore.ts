@@ -3,9 +3,9 @@ import { IConfigStore, ConfigStore } from "./ConfigStore";
 import { IUserStore, UserStore } from "./UserStore";
 import { IViewStore, ViewStore } from "./ViewStore";
 import { RouterStore } from "mobx-router";
-import { firestorable } from "../Firestorable/Firestorable";
 import { IReportStore, ReportStore } from "./ReportStore";
 import { DashboardStore, IDashboardStore } from "./DashboardStore";
+import { firestore } from "../firebase/myFirebase";
 
 export interface IRootStore {
 
@@ -41,7 +41,7 @@ export class Store implements IRootStore {
     }
 };
 
-const store = (window as any)["store"] = new Store(name => firestorable.firestore.collection(name));
+const store = (window as any)["store"] = new Store(name => firestore.collection(name));
 
 export default store;
 

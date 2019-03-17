@@ -1,5 +1,5 @@
 import { observable, reaction, computed, action, when } from "mobx";
-import { ICollection, Collection } from "../Firestorable/Collection";
+import { ICollection, Collection } from "firestorable";
 
 import moment from 'moment-es6';
 
@@ -9,6 +9,7 @@ import * as deserializer from '../../common/serialization/deserializer';
 import * as serializer from '../../common/serialization/serializer';
 import { TimePeriod } from "../components/Controls/TimePeriodSelect";
 import { IRegistration, IRegistrationData } from "../../common/dist";
+import { firestore } from "../firebase/myFirebase";
 
 export interface IDashboardStore {
     readonly setProjectFilter: (projectId: string | undefined) => void;
@@ -36,7 +37,7 @@ export class DashboardStore implements IDashboardStore {
 
     constructor(rootStore: IRootStore) {
 
-        this.registrationsField = observable(new Collection<IRegistration, IRegistrationData>(() => rootStore.getCollection("registrations"),
+        this.registrationsField = observable(new Collection<IRegistration, IRegistrationData>(firestore, () => rootStore.getCollection("registrations"),
             {
                 realtime: true,
                 deserialize: deserializer.convertRegistration,

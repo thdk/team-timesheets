@@ -1,9 +1,10 @@
 import { Route } from "mobx-router";
 import { goToOverview, IDate } from './timesheets/overview';
-import { getLoggedInUserAsync } from "../Firestorable/Firestorable";
 import store, { IRootStore } from "../stores/RootStore";
 import { goToLogin } from "./login";
 import { when, transaction } from "mobx";
+import { getLoggedInUserAsync } from "../firebase/firebase-utils";
+import { auth } from "../firebase/myFirebase";
 
 export const goToRouteWithDate = (route: Route, s: IRootStore, date?: IDate, trackOptions?: { track?: boolean, currentDate?: number }) => {
     const { track = undefined, currentDate = undefined } = trackOptions || {};
@@ -37,7 +38,7 @@ export const setNavigationContent = (route: Route, isChildRoute = true, targetDa
 }
 
 export const beforeEnter = (_route: Route, _params: any, s: IRootStore) => {
-    return getLoggedInUserAsync().then(() => {
+    return getLoggedInUserAsync(auth).then(() => {
         return when(() => !!s.user.userId)
     }, () => {
         goToLogin(s);

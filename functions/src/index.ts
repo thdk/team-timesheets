@@ -1,5 +1,8 @@
 import * as functions from 'firebase-functions';
 import * as admin from 'firebase-admin';
+
+const { BigQuery } = require('@google-cloud/bigquery');
+
 // tslint:disable-next-line
 import 'firebase-functions';
 
@@ -12,16 +15,19 @@ import * as path from 'path';
 import * as fs from 'fs-extra';
 import * as gcs from '@google-cloud/storage';
 import { IRegistrationData } from '../../common';
+import { IFirebaseConfig } from './interfaces';
+import { exportToBigQuery } from './bigquery/export';
 
-const adminConfig = process.env.FIREBASE_CONFIG && JSON.parse(process.env.FIREBASE_CONFIG);
-const bucketName = adminConfig ? adminConfig.storageBucket : "";
-
-console.log({ adminConfig });
+const adminConfig: IFirebaseConfig | undefined = process.env.FIREBASE_CONFIG && JSON.parse(process.env.FIREBASE_CONFIG);
+if (!adminConfig) {
+    throw new Error("Firebase functions should have process.env.FIREBASE_CONFIG set.");
+}
+const bucketName = adminConfig.storageBucket;
 
 admin.initializeApp();
 
 // Reference report in Firestore
-const db = admin.firestore();
+const db = admin.firestore() as FirebaseFirestore.Firestore;
 
 exports.createCSV = functions.firestore
     .document('reports/{reportId}')
@@ -31,8 +37,6 @@ exports.createCSV = functions.firestore
         if (!reportData) return new Promise(resolve => resolve());
 
         const { year, month, userId } = reportData;
-        console.log("report data:");
-        console.log({ reportData });
 
         const reportId = snapshot.id;
         const fileName = `reports/${year}/${month}/${userId}.csv`;
@@ -54,9 +58,6 @@ exports.createCSV = functions.firestore
         const endDate = startMoment.clone().endOf("month").toDate();
         const startDate = startMoment.clone().startOf("month").toDate();
 
-        console.log({ startDate });
-        console.log({ endDate });
-
         return Promise.all([
             db.collection('projects').get().then(s => projectsMap = new Map(s.docs.map((d): [string, any] => [d.id, d.data()]))),
             db.collection('tasks').get().then(s => tasksMap = new Map(s.docs.map((d): [string, any] => [d.id, d.data()]))),
@@ -68,7 +69,6 @@ exports.createCSV = functions.firestore
             .where("userId", "==", userId)
             .get()
             .then(querySnapshot => {
-                console.log("Snapshot size: " + querySnapshot.size);
                 const registrations: any[] = [];
 
                 // create array of registration data
@@ -110,6 +110,8 @@ exports.createCSV = functions.firestore
                 throw new Error(error)
             }));
     });
+
+exports.exportToBigQuery = functions.https.onCall(() => exportToBigQuery(new BigQuery({ projectId: adminConfig.projectId }), db));
 
 
 

@@ -47,7 +47,10 @@ export class ProjectList extends React.Component {
 
         store.config.projectId = undefined;
         if (data.name) {
-            store.config.projects.addAsync({ name: data.name, icon: data.icon, createdBy: store.user.userId }, id);
+            store.config.projects.addAsync({ name: data.name,
+                icon: data.icon,
+                createdBy: store.user.userId
+             }, id);
         }
     }
 }

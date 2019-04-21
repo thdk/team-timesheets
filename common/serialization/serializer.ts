@@ -1,5 +1,6 @@
 import * as firebase from 'firebase/app';
-import { IRegistration, IRegistrationData, IUser, IUserData } from '../interfaces';
+import { IRegistration, IRegistrationData, IUser, IUserData, ITeam, ITeamData, IProject, IProjectData } from '../interfaces';
+import { INameWithIconData, INameWithIcon } from '../interfaces/base';
 
 export const convertRegistration = (appData: Partial<IRegistration> | "delete") => {
     let registration: Partial<IRegistrationData>;
@@ -14,6 +15,8 @@ export const convertRegistration = (appData: Partial<IRegistration> | "delete") 
         if (!appData.userId) throw new Error("Registrations must have a userId set.");
         // end validation
 
+        const now = new Date();
+
         registration = {
             date: firebase.firestore.Timestamp.fromDate(appData.date),
             description: appData.description,
@@ -22,7 +25,9 @@ export const convertRegistration = (appData: Partial<IRegistration> | "delete") 
             time: appData.time,
             userId: appData.userId,
             client: appData.client,
-            deleted: false
+            deleted: false,
+            modified: firebase.firestore.Timestamp.fromDate(now),
+            created: firebase.firestore.Timestamp.fromDate(appData.created || now),
         };
     }
 
@@ -31,11 +36,15 @@ export const convertRegistration = (appData: Partial<IRegistration> | "delete") 
     if (undefined === registration.time) delete registration.time;
     if (undefined === registration.task) delete registration.task;
     if (undefined === registration.client) delete registration.client;
+    if (undefined === registration.created) delete registration.created;
+    if (undefined === registration.modified) delete registration.modified;
 
     return registration;
 }
 
 export const convertUser = (appData: Partial<IUser>) => {
+    const now = new Date();
+
     const user: IUserData = {
         tasks: appData.tasks ? Array.from(appData.tasks.keys()) : undefined,
         name: appData.name,
@@ -43,7 +52,9 @@ export const convertUser = (appData: Partial<IUser>) => {
         defaultTask: appData.defaultTask || "",
         recentProjects: appData.recentProjects,
         defaultClient: appData.defaultClient,
-        team: appData.team
+        team: appData.team,
+        modified: firebase.firestore.Timestamp.fromDate(now),
+        created: firebase.firestore.Timestamp.fromDate(appData.created || now)
     }
 
     // Todo: automatically remove undefined values for all keys
@@ -56,4 +67,25 @@ export const convertUser = (appData: Partial<IUser>) => {
     if (user.team === undefined) delete user.team;
 
     return user;
+}
+
+export function convertTeam(appData: Partial<ITeam>): Partial<ITeamData> {
+    return convertNameWithIcon(appData);
+}
+
+export function convertProject(appData: Partial<IProject>): Partial<IProjectData> {
+    return convertNameWithIcon(appData);
+}
+
+export function convertNameWithIcon(appData: Partial<INameWithIcon>): Partial<INameWithIconData> {
+    const now = new Date();
+
+    const data: Partial<INameWithIconData> = {
+        name: appData.name,
+        icon: appData.icon,
+        created: firebase.firestore.Timestamp.fromDate(appData.created || now),
+        modified: firebase.firestore.Timestamp.fromDate(now)
+    };
+
+    return data;
 }

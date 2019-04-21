@@ -7,4 +7,5 @@ export interface IRegistration {
     date: Date;
     userId: string;
     isPersisted: boolean;
+    created?: Date;
 }

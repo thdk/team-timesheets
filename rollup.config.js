@@ -41,7 +41,8 @@ export default {
       namedExports: {
         'node_modules/react/index.js': ['createRef', 'Component', 'PureComponent', 'Fragment', 'Children', 'createElement', 'forwardRef'],
         'node_modules/react-dom/index.js': ['findDOMNode', 'unstable_batchedUpdates', 'render'],
-        '@material/react-chips': ["Chip", "ChipSet"]
+        '@material/react-chips': ["Chip", "ChipSet"],
+        'firestorable': ['Collection', 'Document']
       }
     }),
     typescript(),

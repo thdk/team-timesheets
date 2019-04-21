@@ -1,7 +1,6 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import { goToOverview, goToLogin, goToSettings, goToReports, goToDashboard } from "../internal";
-import { firestorable } from '../Firestorable/Firestorable';
 import store from '../stores/RootStore';
 import Calendar, { CalendarTileProperties } from 'react-calendar/dist/entry.nostyle';
 
@@ -21,7 +20,7 @@ export class Menu extends React.Component {
 
     toggleLogin = (e: React.MouseEvent) => {
         e.preventDefault();
-        store.user.authenticatedUser ? firestorable.auth.signOut() : goToLogin(store);
+        store.user.authenticatedUser ? store.user.signout() : goToLogin(store);
     }
 
     navigate = (e: React.MouseEvent, navigate: () => void) => {

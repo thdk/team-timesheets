@@ -3,7 +3,6 @@
 Web base timesheet app. Built to replace old school excel timesheets.
 
 Demo:
-* Develop branch - [Latest version](https://dev-timesheets.firebaseapp.com)
 * Master branch - [Latest release](https://timesheets-ffc4b.firebaseapp.com)
 
 ## Getting Started

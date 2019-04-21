@@ -1,14 +1,13 @@
 import { observable, computed, reaction, when, action, toJS, ObservableMap, observe } from 'mobx';
-import { Doc } from "../Firestorable/Document";
-
-import { ICollection, Collection } from "../Firestorable/Collection";
+import { Doc, ICollection, Collection } from "firestorable";
 import store, { IRootStore } from './RootStore';
 import * as deserializer from '../../common/serialization/deserializer';
 import * as serializer from '../../common/serialization/serializer';
-import { getLoggedInUserAsync } from '../Firestorable/Firestorable';
 import { SortOrder } from '../components/GroupedRegistrations';
 import { IRegistration, IRegistrationData } from '../../common/dist';
 import moment from 'moment-es6';
+import { firestore, auth } from '../firebase/myFirebase';
+import { getLoggedInUserAsync } from '../firebase/firebase-utils';
 
 export interface IGroupedRegistrations<T> {
     readonly registrations: Doc<IRegistration, IRegistrationData>[];
@@ -52,7 +51,7 @@ export class RegistrationStore implements IRegistrationsStore {
 
     constructor(rootStore: IRootStore) {
         this.rootStore = rootStore;
-        this.registrations = observable(new Collection<IRegistration, IRegistrationData>(() => rootStore.getCollection("registrations"),
+        this.registrations = observable(new Collection<IRegistration, IRegistrationData>(firestore, () => rootStore.getCollection("registrations"),
             {
                 realtime: true,
                 deserialize: deserializer.convertRegistration,
@@ -79,7 +78,7 @@ export class RegistrationStore implements IRegistrationsStore {
         // -- the logged in user changes
         reaction(() => rootStore.view.monthMoment, updateRegistrationQuery);
         reaction(() => rootStore.user.userId, userId => {
-            if (userId) getLoggedInUserAsync().then(() =>
+            if (userId) getLoggedInUserAsync(auth).then(() =>
                 updateRegistrationQuery()
             );
             else this.registrations.unsubscribeAndClear();

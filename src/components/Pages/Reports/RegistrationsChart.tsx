@@ -4,7 +4,7 @@ import * as chartjs from 'chart.js';
 import { IGroupedRegistrations } from '../../../stores/TimesheetsStore';
 import { Doughnut, Bar } from 'react-chartjs-2';
 import { legendCallback } from '../../../routes/reports/helpers';
-import { ICollection } from '../../../Firestorable/Collection';
+import { ICollection } from "firestorable";
 import { IUser, IUserData } from '../../../../common/dist';
 
 export enum ChartType {

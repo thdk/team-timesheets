@@ -4,7 +4,7 @@ import { Checkbox } from '../../../mdc/checkbox';
 import { FlexGroup } from '../../Layout/flex';
 import { ListItem } from '../../../mdc/list';
 import { observer } from 'mobx-react';
-import { Doc } from '../../../Firestorable/Document';
+import { Doc } from "firestorable";
 import { IRegistration, IRegistrationData } from '../../../../common';
 
 export interface IGroupedRegistrationItemsProps extends React.HTMLProps<HTMLElement> {

@@ -2,9 +2,10 @@ import * as React from 'react';
 import { Route } from 'mobx-router';
 import { Login } from '../components/Login';
 import { App, goToOverview, setNavigationContent } from '../internal';
-import { getLoggedInUserAsync } from '../Firestorable/Firestorable';
 import { IRootStore } from '../stores/RootStore';
 import { when } from 'mobx';
+import { getLoggedInUserAsync } from '../firebase/firebase-utils';
+import { auth } from '../firebase/myFirebase';
 
 const path = "/login";
 
@@ -22,7 +23,7 @@ const routes = {
         },
         title: "Login",
         beforeEnter: (_route: Route, _params: any, s: IRootStore) => {
-            return getLoggedInUserAsync().then(() => {
+            return getLoggedInUserAsync(auth).then(() => {
                 goToOverview(s);
                 return false;
             }, () => true);

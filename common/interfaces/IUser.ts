@@ -14,4 +14,5 @@ export interface IUser {
     recentProjects: RecentlyUsedProjects;
     defaultClient?: string;
     team?: string;
+    created?: Date;
 }

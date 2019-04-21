@@ -1,6 +1,7 @@
 import { IRoles, RecentlyUsedProjects } from "./IUser";
+import { IPersistedEntity } from "./base";
 
-export interface IUserData {
+export interface IUserData extends IPersistedEntity{
     tasks?: string[];
     roles?: IRoles;
     name?: string;

@@ -1,14 +1,17 @@
 import { observable, computed } from 'mobx';
 import { Collection, ICollection } from "firestorable";
 import { IRootStore } from './RootStore';
-import { IProject, ITask, IClient, ITeam } from '../../common/dist';
 import { firestore } from '../firebase/myFirebase';
+import { IProject, ITask, IClient, ITeam, ITeamData, IProjectData, ITaskData } from '../../common/dist';
+
+import * as serializer from '../../common/serialization/serializer';
+import * as deserializer from '../../common/serialization/deserializer';
 
 export interface IConfigStore {
-    projects: ICollection<IProject>;
-    tasks: ICollection<ITask>;
+    projects: ICollection<IProject, IProjectData>;
+    tasks: ICollection<ITask, ITaskData>;
     clientsCollection: ICollection<IClient>;
-    teamsCollection: ICollection<IClient>;
+    teamsCollection: ICollection<ITeam, ITeamData>;
     clients: (IClient & {id: string})[];
     teams: (ITeam & {id: string, isSelected: boolean})[];
     taskId?: string;
@@ -20,10 +23,10 @@ export interface IConfigStore {
 export class ConfigStore implements IConfigStore {
     //private readonly _rootStore: IRootStore;
 
-    readonly projects: ICollection<IProject>;
-    readonly tasks: ICollection<IProject>;
+    readonly projects: ICollection<IProject, IProjectData>;
+    readonly tasks: ICollection<IProject, ITaskData>;
     readonly clientsCollection: ICollection<IClient>;
-    readonly teamsCollection: ICollection<ITeam>;
+    readonly teamsCollection: ICollection<ITeam, ITeamData>;
 
     @observable.ref taskId?: string;
     @observable.ref projectId?: string;
@@ -32,12 +35,22 @@ export class ConfigStore implements IConfigStore {
 
     constructor(_rootStore: IRootStore, getCollection: (name: string) => firebase.firestore.CollectionReference) {
         // this._rootStore = rootStore;
+<<<<<<< HEAD
         this.projects = observable(new Collection<IProject>(firestore, getCollection.bind(this, "projects"), {
+=======
+        this.projects = observable(new Collection<IProject, IProjectData>(getCollection.bind(this, "projects"), {
+>>>>>>> timestamp-fields
             realtime: true,
-            query: ref => ref.orderBy("name")
+            query: ref => ref.orderBy("name"),
+            serialize: serializer.convertProject,
+            deserialize: deserializer.convertProject
         }));
 
+<<<<<<< HEAD
         this.tasks = observable(new Collection<ITask>(firestore, getCollection.bind(this, "tasks"), {
+=======
+        this.tasks = observable(new Collection<ITask, ITaskData>(getCollection.bind(this, "tasks"), {
+>>>>>>> timestamp-fields
             realtime: true,
             query: ref => ref.orderBy("name")
         }));
@@ -47,7 +60,11 @@ export class ConfigStore implements IConfigStore {
             query: ref => ref.orderBy("name")
         }));
 
+<<<<<<< HEAD
         this.teamsCollection = observable(new Collection<ITeam>(firestore, getCollection.bind(this, "teams"), {
+=======
+        this.teamsCollection = observable(new Collection<ITeam, ITeamData>(getCollection.bind(this, "teams"), {
+>>>>>>> timestamp-fields
             realtime: true,
             query: ref => ref.orderBy("name")
         }));

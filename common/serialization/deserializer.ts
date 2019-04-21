@@ -1,4 +1,5 @@
-import { IRegistrationData, IRegistration, IUserData, IUser } from "../interfaces";
+import { IRegistrationData, IRegistration, IUserData, IUser, ITeamData, ITeam, IProjectData, IProject, ITaskData, ITask } from "../interfaces";
+import { INameWithIconData } from "../interfaces/base";
 
 
 export const convertRegistration = (firestoreData: IRegistrationData) => {
@@ -10,7 +11,8 @@ export const convertRegistration = (firestoreData: IRegistrationData) => {
         time: firestoreData.time || 0,
         userId: firestoreData.userId,
         client: firestoreData.client,
-        isPersisted: true
+        isPersisted: true,
+        created: firestoreData.created ? firestoreData.created.toDate() : undefined,
     };
 
     return registration;
@@ -24,8 +26,31 @@ export const convertUser = (firestoreData: IUserData) => {
         defaultTask: firestoreData.defaultTask,
         recentProjects: firestoreData.recentProjects || [],
         defaultClient: firestoreData.defaultClient || undefined,
-        team: firestoreData.team || undefined
+        team: firestoreData.team || undefined,
+        created: firestoreData.created ? firestoreData.created.toDate() : undefined,
     };
 
     return user;
 }
+
+export const convertTeam = (firestoreData: ITeamData) => {
+    return convertNameWithIcon(firestoreData) as ITeam;
+}
+
+export const convertProject = (firestoreData: IProjectData) => {
+    return convertNameWithIcon(firestoreData) as IProject;
+}
+
+export const convertTask = (firestoreData: ITaskData) => {
+    return convertNameWithIcon(firestoreData) as ITask;
+}
+
+export const convertNameWithIcon = (firestoreData: INameWithIconData) => {
+    const data = {
+        name: firestoreData.name,
+        icon: firestoreData.icon,
+        created: firestoreData.created ? firestoreData.created.toDate() : undefined,
+    };
+
+    return data;
+};

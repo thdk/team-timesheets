@@ -12,6 +12,7 @@
   "main": "lib/index.js",
   "dependencies": {
     "@google-cloud/bigquery": "^3.0.0",
+    "@google-cloud/firestore": "^1.2.0",
     "@google-cloud/storage": "^2.3.4",
     "firebase-admin": "^7.3.0",
     "firebase-functions": "^2.3.0",

@@ -2,14 +2,18 @@
   "name": "common",
   "version": "1.0.0",
   "description": "\"Common code for timesheets app, firebase functions, chrome extension,...\"",
-  "main": "",
-  "files": [
-    "dist"
-  ],
+  "main": "lib/index.js",
+  "module": "es/index.js",
+  "jsnext:main": "es/index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "ts-version": "tsc --version"
+    "build": "tsc",
+    "build:commonjs": "tsc --module CommonJS --outDir lib",
+    "build:es": "tsc"
   },
+  "files": [
+    "es",
+    "lib"
+  ],
   "author": "thdk",
   "license": "ISC",
   "dependencies": {},

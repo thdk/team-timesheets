@@ -11,9 +11,11 @@
   },
   "main": "lib/index.js",
   "dependencies": {
+    "@google-cloud/bigquery": "^3.0.0",
     "@google-cloud/storage": "^2.3.4",
-    "firebase-admin": "~7.0.0",
-    "firebase-functions": "^2.0.3",
+    "firebase-admin": "^7.3.0",
+    "firebase-functions": "^2.3.0",
+    "firestorable": "0.0.3",
     "fs-extra": "^7.0.1",
     "json2csv": "^4.3.2",
     "moment-es6": "^1.0.0",

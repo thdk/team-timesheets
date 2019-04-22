@@ -35,22 +35,14 @@ export class ConfigStore implements IConfigStore {
 
     constructor(_rootStore: IRootStore, getCollection: (name: string) => firebase.firestore.CollectionReference) {
         // this._rootStore = rootStore;
-<<<<<<< HEAD
-        this.projects = observable(new Collection<IProject>(firestore, getCollection.bind(this, "projects"), {
-=======
-        this.projects = observable(new Collection<IProject, IProjectData>(getCollection.bind(this, "projects"), {
->>>>>>> timestamp-fields
+        this.projects = observable(new Collection<IProject, IProjectData>(firestore, getCollection.bind(this, "projects"), {
             realtime: true,
             query: ref => ref.orderBy("name"),
             serialize: serializer.convertProject,
             deserialize: deserializer.convertProject
         }));
 
-<<<<<<< HEAD
-        this.tasks = observable(new Collection<ITask>(firestore, getCollection.bind(this, "tasks"), {
-=======
-        this.tasks = observable(new Collection<ITask, ITaskData>(getCollection.bind(this, "tasks"), {
->>>>>>> timestamp-fields
+        this.tasks = observable(new Collection<ITask, ITaskData>(firestore, getCollection.bind(this, "tasks"), {
             realtime: true,
             query: ref => ref.orderBy("name")
         }));
@@ -60,11 +52,7 @@ export class ConfigStore implements IConfigStore {
             query: ref => ref.orderBy("name")
         }));
 
-<<<<<<< HEAD
-        this.teamsCollection = observable(new Collection<ITeam>(firestore, getCollection.bind(this, "teams"), {
-=======
-        this.teamsCollection = observable(new Collection<ITeam, ITeamData>(getCollection.bind(this, "teams"), {
->>>>>>> timestamp-fields
+        this.teamsCollection = observable(new Collection<ITeam, ITeamData>(firestore, getCollection.bind(this, "teams"), {
             realtime: true,
             query: ref => ref.orderBy("name")
         }));

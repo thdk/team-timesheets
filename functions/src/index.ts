@@ -15,9 +15,8 @@ import * as path from 'path';
 import * as fs from 'fs-extra';
 import * as gcs from '@google-cloud/storage';
 import { IFirebaseConfig } from './interfaces';
-import { exportToBigQuery, ExportToBigQueryTask } from './bigquery/export';
+import { exportToBigQuery, ExportToBigQueryTask, convertRegistration, convertProject } from './bigquery/export';
 import { IRegistrationData } from './interfaces/IRegistrationData';
-import { IProjectData } from './interfaces/IProjectData';
 
 const adminConfig: IFirebaseConfig | undefined = process.env.FIREBASE_CONFIG && JSON.parse(process.env.FIREBASE_CONFIG);
 if (!adminConfig) {
@@ -112,91 +111,71 @@ exports.createCSV = functions.firestore
             }));
     });
 
-const convertRegistration = (firebaseChange) => {
-    const reg = firebaseChange.data() as unknown as IRegistrationData;
-    return {
-        id: firebaseChange.id,
-        description: reg.description,
-        time: reg.time,
-        date: reg.date ? reg.date.toDate().toISOString().replace('Z', '') : null,
-        task: reg.task,
-        project: reg.project,
-        client: reg.client,
-        userId: reg.userId,
-        created: reg.created ? reg.created.toDate().toISOString().replace('Z', '') : null,
-        modified: reg.modified ? reg.modified.toDate().toISOString().replace('Z', '') : null,
-    };
-};
-
-const convertProject = (firebaseChange) => {
-    const project = firebaseChange.data() as unknown as IProjectData;
-    return {
-        name: project.name,
-        icon: project.icon,
-        createdBy: project.createdBy,
-        created: project.created ? project.created.toDate().toISOString().replace('Z', '') : null,
-        modified: project.modified ? project.modified.toDate().toISOString().replace('Z', '') : null,
-    }
-}
-
 const exportTasks: ExportToBigQueryTask[] = [
     {
         collection: "registrations",
-        convertToBigQuery: convertRegistration
     },
     {
         collection: "projects",
-        convertToBigQuery: convertProject
     }
 ]
 
 const performExportToBigQuery = () => exportToBigQuery(exportTasks, new BigQuery({ projectId: adminConfig.projectId }), db);
 exports.exportToBigQuery = functions.https.onCall(performExportToBigQuery);
 
-exports.scheduledExportToBigQuery = functions.pubsub.schedule('every 5 minutes').onRun(() => performExportToBigQuery());
+exports.scheduledExportToBigQuery = functions.pubsub.schedule('every day 06:00').onRun(() => performExportToBigQuery());
 
 // Temporary function to add timestamps to data already in database
 exports.initTimestampsForRegistrations = functions.https.onCall(() => {
-    const registrationsRef = db.collection("registrations");
-    registrationsRef.get().then(snapshot => {
-        const updates: {ref: FirebaseFirestore.DocumentReference, data: any}[] = snapshot.docs.reduce((p, doc) => {
-            const data = doc.data();
-            let shouldUpdate = false;
+    const collections = ["registrations", "projects"];
+    return Promise.all(collections.reduce((previousPromises, c) => {
+        const collectionRef = db.collection(c);
+        collectionRef.get().then(snapshot => {
+            const updates: { ref: FirebaseFirestore.DocumentReference, data: any }[] = snapshot.docs.reduce((p, doc) => {
+                const data = doc.data();
+                let shouldUpdate = false;
 
-            const newData = {};
-            if (!data.created) {
-                Object.assign(newData, { created: data.date || FirebaseFirestore.FieldValue.serverTimestamp() });
-                shouldUpdate = true;
+                const newData = {};
+                if (!data.created) {
+                    Object.assign(newData, { created: data.date || admin.firestore.FieldValue.serverTimestamp() });
+                    shouldUpdate = true;
+                }
+
+                if (!data.modified) {
+                    Object.assign(newData, { modified: data.date || admin.firestore.FieldValue.serverTimestamp() });
+                    shouldUpdate = true;
+                }
+
+                if (shouldUpdate) {
+                    p.push({ ref: doc.ref, data: newData });
+                }
+
+                return p;
+
+            }, []);
+
+            let i: number;
+            let temparray: { ref: FirebaseFirestore.DocumentReference, data: any }[];
+            const chunk = 500; // max 500 records in a batch
+
+            const j = updates.length;
+
+            const results = [];
+            for (i = 0; i < j; i += chunk) {
+                temparray = updates.slice(i, i + chunk);
+                const batch = db.batch();
+                temparray.forEach(update => {
+                    batch.update(update.ref, update.data);
+                });
+                results.push(batch.commit());
             }
 
-            if (!data.modified) {
-                Object.assign(newData, { modified: data.date || FirebaseFirestore.FieldValue.serverTimestamp() });
-                shouldUpdate = true;
-            }
+            return Promise.all(results);
 
-            if (shouldUpdate) {
-                p.push({ ref: doc.ref, data: newData });
-            }
+        });
+        return previousPromises;
+    }, []));
 
-            return p;
-
-        }, []);
-
-        let i: number;
-        let temparray: {ref: FirebaseFirestore.DocumentReference, data: any}[];
-        const chunk = 500; // max 500 records in a batch
-
-        const j = updates.length;
-        for (i = 0;  i < j; i += chunk) {
-            temparray = updates.slice(i, i + chunk);
-            const batch = db.batch();
-            temparray.forEach(update => {
-                batch.update(update.ref, update.data);
-            });
-            batch.commit();
-        }
-
-    });
 });
 
 

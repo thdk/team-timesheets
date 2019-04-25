@@ -15,7 +15,7 @@ import * as path from 'path';
 import * as fs from 'fs-extra';
 import * as gcs from '@google-cloud/storage';
 import { IFirebaseConfig } from './interfaces';
-import { exportToBigQuery, ExportToBigQueryTask, convertRegistration, convertProject } from './bigquery/export';
+import { exportToBigQuery, ExportToBigQueryTask } from './bigquery/export';
 import { IRegistrationData } from './interfaces/IRegistrationData';
 
 const adminConfig: IFirebaseConfig | undefined = process.env.FIREBASE_CONFIG && JSON.parse(process.env.FIREBASE_CONFIG);

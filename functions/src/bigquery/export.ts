@@ -1,6 +1,7 @@
 import { firestore } from "firebase-admin";
 import { IProjectData } from "../interfaces/IProjectData";
 import { IRegistrationData } from "../interfaces/IRegistrationData";
+import { BigQueryField, insertRows } from "./utils";
 
 // Imports the Google Cloud client library
 const { BigQuery } = require('@google-cloud/bigquery');
@@ -24,6 +25,7 @@ export const convertRegistration = (firebaseChange) => {
 export const convertProject = (firebaseChange) => {
     const project = firebaseChange.data() as unknown as IProjectData;
     return {
+        id: firebaseChange.id,
         name: project.name,
         icon: project.icon,
         createdBy: project.createdBy,
@@ -32,18 +34,40 @@ export const convertProject = (firebaseChange) => {
     }
 }
 
-const firestoreBigQueryMap: { [collection: string]: { convert: (change: FirebaseFirestore.DocumentData) => any, schema: string, dateField?: string } } = {
+const projectSchema: BigQueryField[] = [
+    { "name": "icon", "type": "STRING" },
+    { "name": "name", "type": "STRING" },
+    { "name": "created", "type": "TIMESTAMP" },
+    { "name": "modified", "type": "TIMESTAMP" },
+    { "name": "createdBy", "type": "STRING" },
+    { "name": "id", "type": "STRING" }
+];
+
+const registrationSchema: BigQueryField[] = [
+    { "name": "id", "type": "STRING" },
+    { "name": "created", "type": "TIMESTAMP" },
+    { "name": "deleted", "type": "BOOLEAN" },
+    { "name": "date", "type": "TIMESTAMP" },
+    { "name": "description", "type": "STRING" },
+    { "name": "modified", "type": "TIMESTAMP" },
+    { "name": "project", "type": "STRING" },
+    { "name": "task", "type": "STRING" },
+    { "name": "client", "type": "STRING" },
+    { "name": "time", "type": "FLOAT" },
+    { "name": "userId", "type": "STRING" },
+];
+
+const firestoreBigQueryMap: { [collection: string]: { convert: (change: FirebaseFirestore.DocumentData) => any, schema: BigQueryField[], dateField?: string } } = {
     "registrations": {
         convert: convertRegistration,
-        schema: "id:string, created: timestamp, date: timestamp, deleted:boolean, description, modified:timestamp, project, task, client, time:float, userId"
+        schema: registrationSchema
     },
     "projects": {
         convert: convertProject,
-        schema: "icon, name, created:timestamp, modified: timestamp, createdBy"
+        schema: projectSchema
     }
 }
 
-export type BigQueryConfig = { dataSetId: string; tableId: string; tableIdPrefix: string };
 export type ExportToBigQueryTask = {
     collection: string;
 }
@@ -80,53 +104,13 @@ export const exportToBigQuery = (tasks: ExportToBigQueryTask[], bigquery: typeof
         .then(changeSets => {
             console.log(`Number of collections with changes: ${changeSets.length}`);
             return Promise.all(
-                changeSets.map(set => insertRows(bigquery,
-                    Object.assign(biqQueryOptions, { tableId: set.task.collection }),
-                    firestoreBigQueryMap[set.task.collection].convert ? set.result.docs.map(firestoreBigQueryMap[set.task.collection].convert) : set.result.docs
-                ))
+                changeSets.map(set => {
+                    const config = firestoreBigQueryMap[set.task.collection];
+                    return insertRows(bigquery,
+                        Object.assign(biqQueryOptions, { tableId: set.task.collection, schema: config.schema }),
+                        config.convert ? set.result.docs.map(config.convert) : set.result.docs
+                    );
+                })
             );
         });
 };
-
-function insertRows<T>(bigquery: typeof BigQuery, options: BigQueryConfig, rows: ReadonlyArray<T>) {
-    console.log(`Inserting ${rows.length} rows`);
-    const { dataSetId, tableId, tableIdPrefix = "" } = options;
-
-    const insertOptions = {
-        schema: firestoreBigQueryMap[tableId].schema,
-        location: 'US'
-    };
-
-    if (!rows.length) return new Promise(resolve => resolve());
-
-    // TODO: create dataset only once since insertRows can be called multiple times simultaneously!
-    return bigquery
-        .dataset(dataSetId)
-        .get({ autoCreate: true })
-        .then(([dataset]) => {
-            console.log("dataset created");
-            return dataset.table(`${tableIdPrefix}${tableId}`)
-                .get({ autoCreate: true, ...insertOptions })
-                .then(([table]) => table.insert(rows)
-                    .then(() => {
-                        console.log(`Inserted ${rows.length} rows`);
-                        return `Inserted ${rows.length} rows`;
-                    }, (error: { errors: string[], name: string, response: any, message: string }) => {
-                        console.log(error.name);
-                        console.log(error.message);
-                        error.errors && error.errors.forEach(e => {
-                            console.log(`${Object.keys(e).join(", ")}`);
-                        });
-
-                        console.log(error.response);
-                    }, (e) => {
-                        console.log(e);
-                        console.log("Table could not be created");
-                    }))
-        }, (e) => {
-            console.log(e);
-            console.log("Dataset could not be created");
-        });
-
-
-}

@@ -123,7 +123,9 @@ const exportTasks: ExportToBigQueryTask[] = [
 const performExportToBigQuery = () => exportToBigQuery(exportTasks, new BigQuery({ projectId: adminConfig.projectId }), db);
 exports.exportToBigQuery = functions.https.onCall(performExportToBigQuery);
 
-exports.scheduledExportToBigQuery = functions.pubsub.schedule('every day 06:00').onRun(() => performExportToBigQuery());
+exports.scheduledExportToBigQuery = functions.pubsub.schedule('every day 09:00')
+    .timeZone('Europe/Brussels')
+    .onRun(() => performExportToBigQuery());
 
 // Temporary function to add timestamps to data already in database
 exports.initTimestampsForRegistrations = functions.https.onCall(() => {

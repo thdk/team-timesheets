@@ -123,7 +123,7 @@ const exportTasks: ExportToBigQueryTask[] = [
 const performExportToBigQuery = () => exportToBigQuery(exportTasks, new BigQuery({ projectId: adminConfig.projectId }), db);
 exports.exportToBigQuery = functions.https.onCall(performExportToBigQuery);
 
-exports.scheduledExportToBigQuery = functions.pubsub.schedule('every day 09:15')
+exports.scheduledExportToBigQuery = functions.pubsub.schedule('every day 06:00')
     .timeZone('Europe/Brussels')
     .onRun(() => performExportToBigQuery());
 

@@ -52,7 +52,7 @@ const setActions = (s: IRootStore, alowInserts = false) => {
             action: selection => {
                 if (!selection) return;
 
-                s.timesheets.registrations.deleteAsync(...Array.from(selection.keys()));
+                s.timesheets.deleteRegistrationsAsync(...Array.from(selection.keys()));
                 s.view.selection.clear();
             },
             icon: { content: "delete", label: "Delete" },

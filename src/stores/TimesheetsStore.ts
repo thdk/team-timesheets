@@ -25,6 +25,7 @@ export interface IRegistrationsStore {
     readonly saveSelectedRegistration: () => void;
     readonly updateSelectedRegistration: (data: Partial<IRegistration>) => void;
     readonly setSelectedRegistrationDefault: () => void;
+    readonly deleteRegistrationsAsync: (...ids: string[]) => Promise<void[]>;
 
     readonly registrationsGroupedByDay: IGroupedRegistrations<Date>[];
     readonly registrationsGroupedByDayReversed: IGroupedRegistrations<Date>[];
@@ -177,6 +178,11 @@ export class RegistrationStore implements IRegistrationsStore {
     @action.bound
     private setSelectedRegistrationObservable(registration: IRegistration | undefined) {
         this._selectedRegistration.set(registration);
+    }
+
+    public deleteRegistrationsAsync(...ids: string[]) {
+        // Todo: make updateAsync with data === "delete" use a batch in firestorable package.
+        return Promise.all(ids.map(id => this.registrations.updateAsync(id, "delete")));
     }
 
     public cloneRegistration(source: IRegistration) {

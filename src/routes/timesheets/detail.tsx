@@ -22,7 +22,7 @@ const onEnter = (route: Route, params: { id?: string }, s: IRootStore) => {
 
     const deleteAction: IViewAction = {
         action: () => {
-            s.timesheets.registrationId && s.timesheets.registrations.deleteAsync(s.timesheets.registrationId);
+            s.timesheets.registrationId && s.timesheets.deleteRegistrationsAsync(s.timesheets.registrationId);
             goToOverview(s);
         },
         icon: { label: "Delete", content: "delete" },

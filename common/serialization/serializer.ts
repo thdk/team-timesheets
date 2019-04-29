@@ -4,18 +4,18 @@ import { INameWithIconData, INameWithIcon } from '../interfaces/base';
 
 export const convertRegistration = (appData: Partial<IRegistration> | "delete") => {
     let registration: Partial<IRegistrationData>;
+    const now = new Date();
     if (appData === "delete") {
-        registration = { deleted: true };
+        registration = { deleted: true,  modified: firebase.firestore.Timestamp.fromDate(now)};
     }
     else {
 
         // validation
-        if (!appData.date) throw new Error("Regisrations must have a date set.");
+        if (!appData.date) throw new Error("Registrations must have a date set.");
 
         if (!appData.userId) throw new Error("Registrations must have a userId set.");
         // end validation
 
-        const now = new Date();
 
         registration = {
             date: firebase.firestore.Timestamp.fromDate(appData.date),

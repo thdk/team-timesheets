@@ -19,6 +19,7 @@ export const convertRegistration = (firebaseChange) => {
         userId: reg.userId,
         created: reg.created ? reg.created.toDate().toISOString().replace('Z', '') : null,
         modified: reg.modified ? reg.modified.toDate().toISOString().replace('Z', '') : null,
+        deleted: reg.deleted
     };
 };
 

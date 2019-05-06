@@ -110,8 +110,8 @@ export class RegistrationStore implements IRegistrationsStore {
         const regs = Array.from(registrations.docs.values())
             .filter(doc => doc.data!.isPersisted) // don't display drafts
             .sort((a, b) => {
-                const aTime = a.data!.date.getTime();
-                const bTime = b.data!.date.getTime();
+                const aTime = (a.data!.created || a.data!.date).getTime();
+                const bTime = (b.data!.created || b.data!.date).getTime();
                 return aTime > bTime ? 1 * sortOrder : aTime < bTime ? -1 * sortOrder : 0;
             });
 

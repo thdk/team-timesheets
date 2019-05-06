@@ -52,10 +52,10 @@ export class Timesheets extends React.Component {
         const query: { last: number | undefined } = store.router.queryParams || {};
 
         if (store.view.day) {
-            const group = store.timesheets.registrationsGroupedByDay.filter(g => g.groupKey.getDate() === store.view.day);
+            const group = store.timesheets.registrationsGroupedByDay.find(g => g.groupKey.getDate() === store.view.day);
 
-            regs = group.length
-                ? <GroupedRegistration group={group[0]}
+            regs = group
+                ? <GroupedRegistration group={group}
                     createTotalLabel={this.createTotalLabel}
                     registrationClick={this.registrationClick.bind(this)}
                     registrationToggleSelect={this.registrationSelect.bind(this)}
@@ -72,7 +72,7 @@ export class Timesheets extends React.Component {
 
             const sortOrder = store.timesheets.registrationsGroupedByDaySortOrder;
             const today = new Date();
-            const activeDate = query.last !== undefined 
+            const activeDate = query.last !== undefined
                 ? query.last
                 : sortOrder === SortOrder.Descending && store.view.month && (store.view.month - 1) === today.getMonth() ? today.getDate() : undefined;
 

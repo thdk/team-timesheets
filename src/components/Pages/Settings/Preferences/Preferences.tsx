@@ -16,9 +16,10 @@ export class Preferences extends React.Component {
         const tasks = Array.from(store.config.tasks.docs.values())
             .reduce((p, c) => {
                 if (c.data) {
-                    const { id: taskId, data: { name: taskName } } = c;
+                    const { id: taskId, data: { name: taskName, icon: taskIcon = undefined } } = c;
+                    const leadingIcon = taskIcon ? <i className="material-icons mdc-chip__icon mdc-chip__icon--leading">{taskIcon}</i> : undefined;
                     p.push(
-                        <Chip handleSelect={this.handleTaskSelect} id={taskId} label={taskName!} key={taskId}></Chip>
+                        <Chip leadingIcon={leadingIcon} handleSelect={this.handleTaskSelect} id={taskId} label={taskName!} key={taskId}></Chip>
                     );
                 }
                 return p;
@@ -67,7 +68,7 @@ export class Preferences extends React.Component {
     }
 
     defaultClientChanged = (defaultClient: string) => {
-        store.user.updateAuthenticatedUser( {
+        store.user.updateAuthenticatedUser({
             defaultClient
         });
     }

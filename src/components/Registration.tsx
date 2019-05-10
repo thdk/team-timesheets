@@ -29,10 +29,10 @@ export class Registration extends React.Component {
         const tasks = Array.from(store.config.tasks.docs.values())
             .filter(t => t.data && userTasks.length ? userTasks.some(userTaskId => userTaskId === t.id) : true)
             .map(t => {
-                const { id: taskId, data: { name: taskName = "N/A"} = {} } = t;
-
+                const { id: taskId, data: { name: taskName = "N/A", icon: taskIcon = undefined } = {} } = t;
+                const leadingIcon = taskIcon ? <i className="material-icons mdc-chip__icon mdc-chip__icon--leading">{taskIcon}</i> : undefined;
                 return (
-                    <Chip handleSelect={this.taskClicked} id={taskId} label={taskName!} key={taskId}></Chip>
+                    <Chip leadingIcon={leadingIcon} handleSelect={this.taskClicked} id={taskId} label={taskName!} key={taskId}></Chip>
                 );
             });
 

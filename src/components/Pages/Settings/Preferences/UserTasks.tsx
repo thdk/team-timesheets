@@ -18,8 +18,10 @@ export class UserTasks extends React.Component<IUserTasksProps> {
         const { tasks: userTasks, defaultTask } = store.user.authenticatedUser;
         const userTasksChips = Array.from(userTasks.keys()).map(t => {
             const taskData = store.config.tasks.docs.get(t);
-            const { id: taskId = "", data: { name: taskName = "ARCHIVED" } = {} } = taskData || {};
+            const { id: taskId = "", data: { name: taskName = "ARCHIVED", icon: taskIcon = undefined } = {} } = taskData || {};
+            const leadingIcon = taskIcon ? <i className="material-icons mdc-chip__icon mdc-chip__icon--leading">{taskIcon}</i> : undefined;
             return <Chip label={taskName}
+                leadingIcon={leadingIcon}
                 id={taskId}
                 key={taskId}>
             </Chip>;

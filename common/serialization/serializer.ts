@@ -6,7 +6,7 @@ export const convertRegistration = (appData: Partial<IRegistration> | "delete") 
     let registration: Partial<IRegistrationData>;
     const now = new Date();
     if (appData === "delete") {
-        registration = { deleted: true,  modified: firebase.firestore.Timestamp.fromDate(now)};
+        registration = { deleted: true, modified: firebase.firestore.Timestamp.fromDate(now) };
     }
     else {
 
@@ -73,8 +73,10 @@ export function convertTeam(appData: Partial<ITeam>): Partial<ITeamData> {
     return convertNameWithIcon(appData);
 }
 
-export function convertProject(appData: Partial<IProject>): Partial<IProjectData> {
-    return convertNameWithIcon(appData);
+export function convertProject(appData: Partial<IProject> | "delete"): Partial<IProjectData> {
+    if (appData === "delete") throw new Error("Soft 'delete' is not supported for projects. The document must be deleted");
+
+    return { ...convertNameWithIcon(appData), createdBy: appData.createdBy };
 }
 
 export function convertNameWithIcon(appData: Partial<INameWithIcon>): Partial<INameWithIconData> {

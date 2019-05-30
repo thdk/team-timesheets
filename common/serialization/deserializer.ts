@@ -38,7 +38,7 @@ export const convertTeam = (firestoreData: ITeamData) => {
 }
 
 export const convertProject = (firestoreData: IProjectData) => {
-    return convertNameWithIcon(firestoreData) as IProject;
+    return { ...convertNameWithIcon(firestoreData), createdBy: firestoreData.createdBy } as IProject;
 }
 
 export const convertTask = (firestoreData: ITaskData) => {

@@ -10,7 +10,7 @@ import { firestore, auth } from '../firebase/myFirebase';
 import { getLoggedInUserAsync } from '../firebase/firebase-utils';
 
 export interface IGroupedRegistrations<T> {
-    readonly registrations: Doc<IRegistration, IRegistrationData>[];
+    registrations: Doc<IRegistration, IRegistrationData>[];
     readonly groupKey: T;
     totalTime: number;
 }
@@ -121,6 +121,14 @@ export class RegistrationStore implements IRegistrationsStore {
                 const currentDayGroup = p[p.length - 1];
                 if (currentDayGroup && c.data!.date.getTime() === currentDayGroup.groupKey.getTime()) {
                     currentDayGroup.registrations.push(c);
+
+                    // Always make sure that the order within a group is stable
+                    // Oldest on top
+                    currentDayGroup.registrations = currentDayGroup.registrations.sort((a, b) => {
+                        const aTime = a.data!.created!.getTime();
+                        const bTime = b.data!.created!.getTime();
+                        return aTime > bTime ? 1 : aTime < bTime ? -1 : 0;
+                    })
                     currentDayGroup.totalTime = (currentDayGroup.totalTime || 0) + (c.data!.time || 0);
                 } else {
                     p.push({

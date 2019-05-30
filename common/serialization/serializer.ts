@@ -83,7 +83,7 @@ export function convertNameWithIcon(appData: Partial<INameWithIcon>): Partial<IN
     const now = new Date();
 
     const data: Partial<INameWithIconData> = {
-        name: appData.name,
+        name: (appData.name || "").trim(),
         icon: appData.icon,
         created: firebase.firestore.Timestamp.fromDate(appData.created || now),
         modified: firebase.firestore.Timestamp.fromDate(now)

@@ -58,6 +58,14 @@ exports.createCSV = functions.firestore
         const endDate = startMoment.clone().endOf("month").toDate();
         const startDate = startMoment.clone().startOf("month").toDate();
 
+        // Plus (+) character and comma characters give problems in CSV file
+        // Replace '+' and ',' with space for CSV export
+        const stripInvalidCSVChars = (text: string) => {
+            return text
+                .replace(new RegExp(",", 'g'), " ")
+                .replace(new RegExp("\\+", 'g'), " ");
+        };
+
         return Promise.all([
             db.collection('projects').get().then(s => projectsMap = new Map(s.docs.map((d): [string, any] => [d.id, d.data()]))),
             db.collection('tasks').get().then(s => tasksMap = new Map(s.docs.map((d): [string, any] => [d.id, d.data()]))),
@@ -84,8 +92,9 @@ exports.createCSV = functions.firestore
                     const client = clientData ? clientData.name : fireStoreData.client;
                     const date = fireStoreData.date ? fireStoreData.date.toDate().getDate() : "";
                     const time = fireStoreData.time ? parseFloat(fireStoreData.time.toFixed(2)) : 0;
+                    const description = fireStoreData.description ? stripInvalidCSVChars(fireStoreData.description) : "";
 
-                    registrations.push({ ...fireStoreData, project, task, date, client, time });
+                    registrations.push({ ...fireStoreData, project, task, date, client, time, description });
                 });
 
                 return json2csv(registrations, { fields: ["date", "time", "project", "task", "client", "description"] });
@@ -154,7 +163,7 @@ exports.initTimestampsForRegistrations = functions.https.onCall(() => {
 
                 return p;
 
-            }, []);
+            }, [] as { ref: FirebaseFirestore.DocumentReference, data: any }[]);
 
             let i: number;
             let temparray: { ref: FirebaseFirestore.DocumentReference, data: any }[];

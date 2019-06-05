@@ -3,7 +3,7 @@ import { ListItem, List, ListDivider } from '../mdc/list';
 import { IGroupedRegistrations } from '../stores/TimesheetsStore';
 import { observer } from 'mobx-react';
 import { IRegistration } from '../../common/dist';
-import { GroupedRegistrationItems } from './Pages/Timesheets/GroupedRegistrationItems';
+import { RegistrationLines } from './registrations/RegistrationLine/RegistrationLines';
 
 
 export interface IGroupedRegistrationProps {
@@ -65,21 +65,26 @@ export class GroupedRegistration extends React.Component<IGroupedRegistrationPro
             ...({ paddingTop: 0, paddingBottom: 0 })
         };
 
-        const totalList = <List isDense={denseList} style={{ ...listStyle, ...extraStylingForTotalList }}>{total}<ListDivider></ListDivider></List>;
+        const totalList =
+            <List isDense={denseList} style={{ ...listStyle, ...extraStylingForTotalList }}>
+                {total}
+                <ListDivider></ListDivider>
+            </List>;
+
         const topTotal = totalOnTop ? totalList : undefined;
         const bottomTotal = totalOnTop ? undefined : totalList;
 
         return (
             <div ref={this.registrationRef}>
                 {topTotal}
-                <List isDense={denseList} isTwoLine={true} style={{ ...listStyle, display: isCollapsed ? "none" : "block" }}>
-                    <GroupedRegistrationItems
+                <div style={{ ...listStyle, display: isCollapsed ? "none" : "block" }}>
+                    <RegistrationLines
                         registrations={registrations}
                         registrationClick={registrationClick}
                         registrationToggleSelect={registrationSelect}>
-                    </GroupedRegistrationItems>
+                    </RegistrationLines>
                     <ListDivider></ListDivider>
-                </List>
+                </div>
                 {bottomTotal}
             </div>
         );

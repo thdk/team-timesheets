@@ -1,0 +1,43 @@
+@import "@material/react-checkbox/index.scss";
+
+.registration-line {
+    display: flex;
+    align-content: center;
+    align-items: center;
+    flex-direction: row;
+    justify-content: space-between;
+    height: 72px;
+    color: var(--mdc-theme-text-secondary-on-background, rgba(0, 0, 0, 0.54));
+    cursor: pointer;
+
+    &:hover {
+        background-color: #ededed;
+    }
+
+    .registration-line-header {
+        display: flex;
+        width: 5%;
+        justify-content: center;
+    }
+
+    .registration-line-content {
+        display: flex;
+        flex-direction: column;
+        width: 85%;
+
+        .line1 {
+            color: rgba(0, 0, 0, 0.87);
+            color: var(--mdc-theme-text-primary-on-background, rgba(0, 0, 0, 0.87));
+        }
+    }
+
+    .registration-line-time {
+        display: flex;
+        width: 5%;
+    }
+
+    .registration-line-select {
+        display: flex;
+        width: 5%;
+    }
+}

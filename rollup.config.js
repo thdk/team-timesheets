@@ -39,7 +39,7 @@ export default {
     commonJS({
       include: 'node_modules/**',
       namedExports: {
-        'node_modules/react/index.js': ['createRef', 'Component', 'PureComponent', 'Fragment', 'Children', 'createElement', 'forwardRef'],
+        'node_modules/react/index.js': ['createRef', 'Component', 'PureComponent', 'Fragment', 'Children', 'createElement', 'forwardRef', 'useRef' ],
         'node_modules/react-dom/index.js': ['findDOMNode', 'unstable_batchedUpdates', 'render'],
         '@material/react-chips': ["Chip", "ChipSet"],
         'firestorable': ['Collection', 'Document']

@@ -1,19 +1,17 @@
-import * as React from 'react';
+import * as React from "react";
 import store from '../../../stores/RootStore';
-import { Checkbox } from '../../../mdc/checkbox';
-import { FlexGroup } from '../../Layout/flex';
-import { ListItem } from '../../../mdc/list';
 import { observer } from 'mobx-react';
 import { Doc } from "firestorable";
 import { IRegistration, IRegistrationData } from '../../../../common';
+import RegistrationLine from "../../registrations/RegistrationLine";
 
-export interface IGroupedRegistrationItemsProps extends React.HTMLProps<HTMLElement> {
+export interface IRegistrationLinesProps extends React.HTMLProps<HTMLElement> {
     readonly registrations: Doc<IRegistration, IRegistrationData>[];
     readonly registrationToggleSelect?: (id: string, data: IRegistration) => void;
     readonly registrationClick: (id: string) => void;
 }
 
-export const GroupedRegistrationItems = observer((props: IGroupedRegistrationItemsProps) => {
+export const RegistrationLines = observer((props: IRegistrationLinesProps) => {
 
     const { registrations, registrationToggleSelect, registrationClick } = props;
 
@@ -34,26 +32,20 @@ export const GroupedRegistrationItems = observer((props: IGroupedRegistrationIte
         const line1 = projectName;
         const line2 = `${clientName ? clientName + " - " : ""}${description}`;
 
-        const onClick = () => registrationToggleSelect ? registrationToggleSelect(id, r.data!) : undefined;
-        const checkbox = registrationToggleSelect
-            ? <div className="clickable"><Checkbox checked={store.view.selection.has(id)} onClick={onClick}></Checkbox></div>
-            : undefined;
+        const onSelect = () => registrationToggleSelect ? registrationToggleSelect(id, r.data!) : undefined;
 
-        const meta =
-            <FlexGroup center={true} style={{ justifyContent: "space-between", width: checkbox ? "8em" : "auto" }}>
-                <div>{`${time ? parseFloat(time.toFixed(2)) : 0}`}</div>
-                {checkbox}
-            </FlexGroup>;
 
         const listItemOnClick = () => registrationClick(id);
         return (
-            <ListItem
+            <RegistrationLine
                 icon={icon}
-                key={id}
-                lines={[line1, line2]}
-                meta={meta}
-                onClick={listItemOnClick}>
-            </ListItem>
+                id={id}
+                line1={line1}
+                line2={line2}
+                time={time}
+                onClick={listItemOnClick}
+                onSelect={onSelect}>
+            </RegistrationLine>
         );
     });
 

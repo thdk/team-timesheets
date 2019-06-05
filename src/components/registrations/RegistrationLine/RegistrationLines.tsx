@@ -40,6 +40,7 @@ export const RegistrationLines = observer((props: IRegistrationLinesProps) => {
             <RegistrationLine
                 icon={icon}
                 id={id}
+                key={id}
                 line1={line1}
                 line2={line2}
                 time={time}

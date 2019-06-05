@@ -15,29 +15,44 @@
     }
 
     .registration-line-header {
+        width: 80px;
         display: flex;
-        width: 5%;
+        flex-shrink: 0;
         justify-content: center;
     }
 
     .registration-line-content {
         display: flex;
         flex-direction: column;
-        width: 85%;
+        flex-grow: 1;
+        flex-shrink: 2;
+        white-space: nowrap;
+        overflow: hidden;
 
         .line1 {
             color: rgba(0, 0, 0, 0.87);
             color: var(--mdc-theme-text-primary-on-background, rgba(0, 0, 0, 0.87));
+            text-overflow: ellipsis;
+            overflow: hidden;
+        }
+
+        .line2 {
+            text-overflow: ellipsis;
+            overflow: hidden;
         }
     }
 
     .registration-line-time {
+        width: 80px;
         display: flex;
-        width: 5%;
+        flex-shrink: 1;
+        justify-content: center;
     }
 
     .registration-line-select {
+        width: 80px;
         display: flex;
-        width: 5%;
+        flex-shrink: 0;
+        justify-content: center;
     }
 }

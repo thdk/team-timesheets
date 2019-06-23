@@ -3,7 +3,6 @@ import { observer } from "mobx-react";
 import moment from 'moment-es6';
 import { Fab } from "../mdc/buttons/fab";
 import routes from '../routes/index';
-import { goToRegistration } from '../internal';
 import store from '../stores/RootStore';
 import { FlexGroup } from './Layout/flex';
 import { goToOverview } from '../routes/timesheets/overview';
@@ -11,10 +10,12 @@ import { GroupedRegistration } from './GroupedRegistration';
 import { GroupedRegistrations, SortOrder } from './GroupedRegistrations';
 import { ListItem, List, ListDivider } from '../mdc/list';
 import { IRegistration } from '../../common/dist';
+import { goToRegistration } from '../internal';
 
 @observer
 export class Timesheets extends React.Component {
     registrationClick = (id: string) => {
+        store.timesheets.setSelectedRegistrationId(id);
         goToRegistration(id);
     }
 
@@ -60,6 +61,7 @@ export class Timesheets extends React.Component {
                     registrationClick={this.registrationClick.bind(this)}
                     registrationToggleSelect={this.registrationSelect.bind(this)}
                     isCollapsed={false}
+                    headerClick={() => {}}
                 />
                 : <></>;
         } else {
@@ -72,12 +74,12 @@ export class Timesheets extends React.Component {
 
             const sortOrder = store.timesheets.registrationsGroupedByDaySortOrder;
             const today = new Date();
-            const activeDate = query.last !== undefined 
-                ? query.last
+            const activeDate = query.last !== undefined
+                ? +query.last
                 : sortOrder === SortOrder.Descending && store.view.month && (store.view.month - 1) === today.getMonth() ? today.getDate() : undefined;
 
             regs = <>
-                <GroupedRegistrations  activeDate={activeDate} totalOnTop={true}
+                <GroupedRegistrations activeDate={activeDate} totalOnTop={true}
                     createTotalLabel={this.createTotalLabel}
                     registrationClick={this.registrationClick.bind(this)}
                     registrationToggleSelect={this.registrationSelect.bind(this)}

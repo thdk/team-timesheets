@@ -31,12 +31,16 @@ export class GroupedRegistrations extends React.Component<IGroupedRegistrationsP
     render() {
         const { sortOrder = SortOrder.Ascending } = this.props;
 
+
         return (sortOrder > 0 ? store.timesheets.registrationsGroupedByDay : store.timesheets.registrationsGroupedByDayReversed).map((g, i) => {
             const isLastOpenedGroup = g.groupKey && g.groupKey.getDate() === this.props.activeDate;
+            const isCollapsed = isLastOpenedGroup ? false : !store.timesheets.selectedRegistrationDays.some(d => d.getTime() === g.groupKey.getTime());
             return <GroupedRegistration ref={isLastOpenedGroup ? this.activeRegistrationRef : null}
                 denseList={true} key={`group-${i}`}
                 group={g}
-                {...{ ...this.props, isCollapsed: isLastOpenedGroup ? false : this.props.isCollapsed }}>
+                {...{ ...this.props, isCollapsed }}
+                headerClick={() => store.timesheets.toggleSelectedRegistrationDay(g.groupKey)}
+            >
             </GroupedRegistration>
         });
     }

@@ -1,6 +1,8 @@
 import * as React from 'react';
 import Checkbox from '@material/react-checkbox';
 import store from '../../stores/RootStore';
+import { observer } from 'mobx-react';
+import EditableTextField from '../Controls/EditableText';
 
 export interface IRegistrationLineProps extends React.HTMLProps<HTMLDivElement> {
     readonly line1: string;
@@ -11,48 +13,79 @@ export interface IRegistrationLineProps extends React.HTMLProps<HTMLDivElement> 
     readonly onSelect: () => void;
 }
 
-const registrationLine = (props: IRegistrationLineProps) => {
-    const { line1, line2, icon, time = 0, id, onSelect, ...restProps } = props;
+@observer
+export default class RegistrationLine extends React.Component<IRegistrationLineProps> {
+    private timeInputEl: React.RefObject<HTMLInputElement>;
+    constructor(props: IRegistrationLineProps) {
+        super(props);
 
-    const iconJSX = icon
-        ? <span className="icon material-icons" aria-hidden="true">{icon}</span>
-        : undefined;
+        this.timeInputEl = React.createRef<HTMLInputElement>();
+    }
 
-    const line1JSX =
-        <span className="line1 mdc-typography--subtitle1">
-            {line1}
-        </span>;
+    render() {
+        const { line1, line2, icon, time = 0, id, onSelect, ...restProps } = this.props;
 
-    const line2JSX = line2 ?
-        <span className="line2 mdc-typography--subtitle2">
-            {line2}
-        </span>
-        : undefined;
+        const onTimeChange = (value: string) => {
+            if (store.timesheets.registration && store.timesheets.registration) {
+                store.timesheets.registration.time = +value;
+                store.timesheets.saveSelectedRegistration();
+                store.timesheets.setSelectedRegistrationId(undefined);
+            }
+        }
 
-    return <div className="registration-line" {...restProps}>
-        <div className="registration-line-header">
-            {iconJSX}
-        </div>
+        const onCancel = () => {
+            store.timesheets.setSelectedRegistrationId(undefined);
+        };
 
-        <div className="registration-line-content">
-            {line1JSX}
-            {line2JSX}
-        </div>
+        const iconJSX = icon
+            ? <span className="icon material-icons" aria-hidden="true">{icon}</span>
+            : undefined;
 
-        <div className="registration-line-time">
-            {parseFloat(time.toFixed(2))}
-        </div>
+        const line1JSX =
+            <span className="line1 mdc-typography--subtitle1">
+                {line1}
+            </span>;
 
-        <div className="registration-line-select">
-            <Checkbox onClick={(e: MouseEvent) => {
-                e.stopPropagation();
+        const line2JSX = line2 ?
+            <span className="line2 mdc-typography--subtitle2">
+                {line2}
+            </span>
+            : undefined;
+
+        const isEditing = store.timesheets.registration && store.timesheets.registrationId === id;
+        const timeJSX2 = <EditableTextField
+            ref={this.timeInputEl}
+            editMode={!!isEditing}
+            edit={{ onChange: onTimeChange, onCancel, value: (time || 0).toFixed(2) }}/>;
+
+        return <div className="registration-line" {...restProps}>
+
+            <div className="registration-line-header">
+                {iconJSX}
+            </div>
+
+            <div className="registration-line-content">
+                {line1JSX}
+                {line2JSX}
+            </div>
+
+            <div className="registration-line-time" onClick={(e) => {
                 e.preventDefault();
-            }}
-                checked={store.view.selection.has(id)}
-                onChange={onSelect}
-            ></Checkbox>
-        </div>
-    </div>
-}
+                e.stopPropagation();
+                store.timesheets.setSelectedRegistrationId(id);
+            }}>
+                {timeJSX2}
+            </div>
 
-export default registrationLine;
+            <div className="registration-line-select">
+                <Checkbox onClick={(e: MouseEvent) => {
+                    e.stopPropagation();
+                    e.preventDefault();
+                }}
+                    checked={store.view.selection.has(id)}
+                    onChange={onSelect}
+                ></Checkbox>
+            </div>
+        </div>
+    }
+}

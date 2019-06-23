@@ -36,8 +36,7 @@ export const RegistrationLines = observer((props: IRegistrationLinesProps) => {
 
 
         const listItemOnClick = () => registrationClick(id);
-        return (
-            <RegistrationLine
+        return <RegistrationLine
                 icon={icon}
                 id={id}
                 key={id}
@@ -47,7 +46,6 @@ export const RegistrationLines = observer((props: IRegistrationLinesProps) => {
                 onClick={listItemOnClick}
                 onSelect={onSelect}>
             </RegistrationLine>
-        );
     });
 
     return <>{rows}</>;

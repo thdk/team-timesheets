@@ -63,6 +63,8 @@
     "@material/list": "^0.44.0",
     "@material/react-checkbox": "^0.13.0",
     "@material/react-chips": "^0.10.0",
+    "@material/react-material-icon": "^0.13.0",
+    "@material/react-text-field": "^0.13.0",
     "@material/ripple": "0.44.0",
     "@material/select": "^0.44.0",
     "@material/switch": "^0.44.1",

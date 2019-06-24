@@ -9,7 +9,7 @@ import { RegistrationLines } from './registrations/RegistrationLine/Registration
 export interface IGroupedRegistrationProps {
     group: IGroupedRegistrations<Date>;
     registrationClick: (id: string) => void;
-    headerClick: () => void;
+    headerClick: (e: React.MouseEvent) => void;
     registrationToggleSelect?: (id: string, data: IRegistration) => void;
     createTotalLabel: (date: Date) => React.ReactNode;
     totalOnTop?: boolean;

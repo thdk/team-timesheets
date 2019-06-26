@@ -72,3 +72,6 @@ src/config.ts
 functions/lib
 
 .rpt2_cache/
+
+# macos
+**/.DS_Store

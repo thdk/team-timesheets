@@ -43,7 +43,7 @@ const setActions = (s: IRootStore, alowInserts = false) => {
                 s.timesheets.clipboard.replace(selection);
                 s.view.selection.clear();
             },
-            icon: { content: "file_copy", label: "Copy" },
+            icon: { content: "content_copy", label: "Copy" },
             shortKey: { ctrlKey: true, key: "c" },
             selection: s.view.selection,
             contextual: true
@@ -76,7 +76,7 @@ const setActions = (s: IRootStore, alowInserts = false) => {
                     // s.timesheets.clipboard.clear();
                 });
             },
-            icon: { content: "library_add", label: "Paste" },
+            icon: { content: "content_paste", label: "Paste" },
             shortKey: { ctrlKey: true, key: "v" },
             selection: s.timesheets.clipboard
         } as IViewAction<IRegistration>);

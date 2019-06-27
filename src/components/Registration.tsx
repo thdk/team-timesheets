@@ -2,7 +2,7 @@ import * as React from 'react';
 import { observer } from "mobx-react";
 import { Chip, ChipSet } from '@material/react-chips';
 
-import { TextField } from '../mdc/textfield';
+import { TextFieldOld } from '../mdc/textfield';
 import { Form, FormField } from '../components/Layout/form';
 import { FlexGroup } from './Layout/flex';
 import store from '../stores/RootStore';
@@ -41,15 +41,15 @@ export class Registration extends React.Component {
                 <Form>
                     <FlexGroup extraCssClass="row">
                         <FormField>
-                            <TextField type="number" outlined={true} focus={true} tabIndex={0} onChange={this.onTimeChange} value={(time || "").toString()} id="time" hint="Time" fullWidth={false}></TextField>
+                            <TextFieldOld type="number" outlined={true} focus={true} tabIndex={0} onChange={this.onTimeChange} value={(time || "").toString()} id="time" hint="Time" fullWidth={false}></TextFieldOld>
                         </FormField>
                         <FormField first={false}>
-                            <TextField tabIndex={-1} disabled={true} value={`${date!.getFullYear()}-${date!.getMonth() + 1}-${date!.getDate()}`} id="date" hint="Date" leadingIcon="event" outlined={true}></TextField>
+                            <TextFieldOld tabIndex={-1} disabled={true} value={`${date!.getFullYear()}-${date!.getMonth() + 1}-${date!.getDate()}`} id="date" hint="Date" leadingIcon="event" outlined={true}></TextFieldOld>
                         </FormField>
                     </FlexGroup>
                     <FlexGroup extraCssClass="row">
                         <FormField>
-                            <TextField cols={250} rows={2} outlined={true} tabIndex={0} onChange={this.onDescriptionChange} value={description} id="description" hint="Description" fullWidth={false}></TextField>
+                            <TextFieldOld cols={250} rows={2} outlined={true} tabIndex={0} onChange={this.onDescriptionChange} value={description} id="description" hint="Description" fullWidth={false}></TextFieldOld>
                         </FormField>
                     </FlexGroup>
                     <FlexGroup>

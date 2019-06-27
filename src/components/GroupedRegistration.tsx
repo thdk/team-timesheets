@@ -3,12 +3,13 @@ import { ListItem, List, ListDivider } from '../mdc/list';
 import { IGroupedRegistrations } from '../stores/TimesheetsStore';
 import { observer } from 'mobx-react';
 import { IRegistration } from '../../common/dist';
-import { GroupedRegistrationItems } from './Pages/Timesheets/GroupedRegistrationItems';
+import { RegistrationLines } from './registrations/RegistrationLine/RegistrationLines';
 
 
 export interface IGroupedRegistrationProps {
     group: IGroupedRegistrations<Date>;
     registrationClick: (id: string) => void;
+    headerClick: (e: React.MouseEvent) => void;
     registrationToggleSelect?: (id: string, data: IRegistration) => void;
     createTotalLabel: (date: Date) => React.ReactNode;
     totalOnTop?: boolean;
@@ -17,18 +18,12 @@ export interface IGroupedRegistrationProps {
     isCollapsable?: boolean;
 }
 
-interface IGroupedRegistrationState {
-    isCollapsed: boolean;
-}
-
 @observer
-export class GroupedRegistration extends React.Component<IGroupedRegistrationProps, IGroupedRegistrationState> {
+export class GroupedRegistration extends React.Component<IGroupedRegistrationProps> {
     private registrationRef: React.RefObject<HTMLDivElement>;
     constructor(props: IGroupedRegistrationProps) {
         super(props);
         this.registrationRef = React.createRef();
-
-        this.state = { isCollapsed: !!props.isCollapsed };
     }
 
     render() {
@@ -42,10 +37,10 @@ export class GroupedRegistration extends React.Component<IGroupedRegistrationPro
             createTotalLabel,
             totalOnTop,
             registrationClick,
-            registrationToggleSelect: registrationSelect
+            headerClick,
+            registrationToggleSelect: registrationSelect,
+            isCollapsed
         } = this.props;
-
-        const { isCollapsed } = this.state;
 
         const listStyle = { width: '100%' };
 
@@ -53,7 +48,7 @@ export class GroupedRegistration extends React.Component<IGroupedRegistrationPro
         const totalLabel = createTotalLabel(groupKey);
 
         const total = <ListItem
-            onClick={isCollapsable ? this.setState.bind(this, { isCollapsed: !isCollapsed }) : undefined}
+            onClick={headerClick}
             lines={[totalLabel]}
             icon={isCollapsable ? isCollapsed ? "chevron_right" : "expand_more" : undefined}
             meta={parseFloat(totalTime.toFixed(2)) + " hours"}
@@ -65,21 +60,26 @@ export class GroupedRegistration extends React.Component<IGroupedRegistrationPro
             ...({ paddingTop: 0, paddingBottom: 0 })
         };
 
-        const totalList = <List isDense={denseList} style={{ ...listStyle, ...extraStylingForTotalList }}>{total}<ListDivider></ListDivider></List>;
+        const totalList =
+            <List isDense={denseList} style={{ ...listStyle, ...extraStylingForTotalList }}>
+                {total}
+                <ListDivider></ListDivider>
+            </List>;
+
         const topTotal = totalOnTop ? totalList : undefined;
         const bottomTotal = totalOnTop ? undefined : totalList;
 
         return (
             <div ref={this.registrationRef}>
                 {topTotal}
-                <List isDense={denseList} isTwoLine={true} style={{ ...listStyle, display: isCollapsed ? "none" : "block" }}>
-                    <GroupedRegistrationItems
+                <div style={{ ...listStyle, display: isCollapsed ? "none" : "block" }}>
+                    <RegistrationLines
                         registrations={registrations}
                         registrationClick={registrationClick}
                         registrationToggleSelect={registrationSelect}>
-                    </GroupedRegistrationItems>
+                    </RegistrationLines>
                     <ListDivider></ListDivider>
-                </List>
+                </div>
                 {bottomTotal}
             </div>
         );
@@ -87,11 +87,5 @@ export class GroupedRegistration extends React.Component<IGroupedRegistrationPro
 
     public scrollIntoView() {
         this.registrationRef.current && this.registrationRef.current.scrollIntoView({ behavior: "smooth" });
-    }
-
-    componentDidUpdate(_prevProps: IGroupedRegistrationProps, prevState: IGroupedRegistrationState) {
-        if (prevState.isCollapsed !== this.props.isCollapsed) {
-            this.setState({ isCollapsed: !!this.props.isCollapsed });
-        }
     }
 }

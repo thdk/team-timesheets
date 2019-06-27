@@ -3,7 +3,7 @@ import store from "../../../stores/RootStore";
 import { Box } from "../../Layout/box";
 import { FlexGroup } from "../../Layout/flex";
 import { FormField } from "../../Layout/form";
-import { TextField } from "../../../mdc/textfield";
+import { TextFieldOld } from "../../../mdc/textfield";
 import { observer } from "mobx-react";
 import Switch from "../../../mdc/switch";
 import { IRoles } from "../../../../common";
@@ -30,9 +30,9 @@ export default class User extends React.Component {
             <Box>
                 <FlexGroup>
                     <FormField>
-                        <TextField outlined={true} id="username" hint="Display name" value={name}
+                        <TextFieldOld outlined={true} id="username" hint="Display name" value={name}
                             onChange={this.onUserNameChange}>
-                        </TextField>
+                        </TextFieldOld>
                     </FormField>
                     <TeamSelect value={team} onChange={this.onTeamChange}></TeamSelect>
                 </FlexGroup>

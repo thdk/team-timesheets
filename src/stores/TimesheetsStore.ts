@@ -1,4 +1,4 @@
-import { observable, computed, reaction, when, action, toJS, ObservableMap, observe } from 'mobx';
+import { observable, computed, reaction, when, action, toJS, ObservableMap, observe, IObservableArray } from 'mobx';
 import { Doc, ICollection, Collection } from "firestorable";
 import store, { IRootStore } from './RootStore';
 import * as deserializer from '../../common/serialization/deserializer';
@@ -13,12 +13,15 @@ export interface IGroupedRegistrations<T> {
     registrations: Doc<IRegistration, IRegistrationData>[];
     readonly groupKey: T;
     totalTime: number;
+    isCollapsed: boolean;
 }
 
 export interface IRegistrationsStore {
     readonly clipboard: ObservableMap<string, IRegistration>;
     readonly registrations: ICollection<IRegistration, IRegistrationData>;
 
+    readonly selectedRegistrationDays: IObservableArray<Date>;
+    readonly toggleSelectedRegistrationDay: (day: Date) => void;
     readonly registration: IRegistration | undefined;
     readonly registrationId?: string;
     readonly setSelectedRegistrationId: (id: string | undefined) => void;
@@ -44,6 +47,9 @@ export class RegistrationStore implements IRegistrationsStore {
     private _selectedRegistration = observable.box<IRegistration | undefined>();
     @observable
     private _selectedRegistrationId = observable.box<string | undefined>();
+
+    @observable
+    public selectedRegistrationDays = observable([] as Date[]);
 
     @observable
     private registrationsGroupedByDaySortOrderField = SortOrder.Descending;
@@ -84,6 +90,16 @@ export class RegistrationStore implements IRegistrationsStore {
             );
             else this.registrations.unsubscribeAndClear();
         });
+
+        reaction(() => this.areGroupedRegistrationsCollapsed, collapsed => {
+            if (collapsed) {
+                this.selectedRegistrationDays.clear();
+            } else {
+                this.selectedRegistrationDays.replace(
+                    this.registrationsGroupedByDay.map(g => g.groupKey)
+                );
+            }
+        })
 
         observe(this._selectedRegistrationId, change => this.setSelectedRegistration(change.newValue), true);
     }
@@ -134,7 +150,8 @@ export class RegistrationStore implements IRegistrationsStore {
                     p.push({
                         groupKey: c.data!.date,
                         registrations: [c],
-                        totalTime: c.data!.time || 0
+                        totalTime: c.data!.time || 0,
+                        isCollapsed: !this.selectedRegistrationDays.some(d => d === c.data!.date),
                     });
                 }
 
@@ -197,6 +214,15 @@ export class RegistrationStore implements IRegistrationsStore {
         if (!store.view.day) throw new Error("Can't clone a registration without a specific new date");
 
         return { ...source, date: this.toUTC(store.view.moment.toDate()) };
+    }
+
+    public toggleSelectedRegistrationDay(date: Date) {
+        const index = this.selectedRegistrationDays.findIndex(d => d.getTime() === date.getTime());
+        if (index === -1) {
+            this.selectedRegistrationDays.push(date);
+        } else {
+            this.selectedRegistrationDays.replace([...this.selectedRegistrationDays.slice(0, index), ...this.selectedRegistrationDays.slice(index + 1)]);
+        }
     }
 
     private getNewRegistrationDataAsync(): Promise<IRegistration> {

@@ -26,7 +26,7 @@ export interface IListItemProps extends IReactProps {
     icon?: string;
     meta?: React.ReactNode;
     disabled?: boolean;
-    onClick?: () => void;
+    onClick?: (e: React.MouseEvent) => void;
 }
 
 export class ListItem extends React.Component<IListItemProps> {
@@ -49,7 +49,7 @@ export class ListItem extends React.Component<IListItemProps> {
         if (disabled) classNames.push("mdc-list-item--disabled");
 
         return (
-            <li ref={this.liRef} className={classNames.join(" ")}>
+            <li ref={this.liRef} className={classNames.join(" ")} onClick={(e) => this.props.onClick && this.props.onClick(e)}>
                 {icon !== undefined && <span className="mdc-list-item__graphic material-icons" aria-hidden="true">{icon}</span>}
                 <span className="mdc-list-item__text">
                     {line1El}
@@ -58,22 +58,6 @@ export class ListItem extends React.Component<IListItemProps> {
                 {meta && <span className="mdc-list-item__meta">{meta}</span>}
             </li>
         );
-    }
-
-
-
-    componentDidMount() {
-        this.props.onClick && this.liRef.current && this.liRef.current.addEventListener("click", e => {
-            const targetEl = e.target as HTMLElement
-            if (targetEl && targetEl.closest(".clickable")) {
-                return;
-            };
-            this.props.onClick && this.props.onClick()
-        });
-    }
-
-    componentWillUnmount() {
-        this.props.onClick && this.liRef.current && this.liRef.current.removeEventListener("click", this.props.onClick)
     }
 }
 

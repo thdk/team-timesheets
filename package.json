@@ -54,14 +54,17 @@
   },
   "dependencies": {
     "@material/button": "^0.44.0",
-    "@material/checkbox": "^0.44.0",
+    "@material/checkbox": "^0.44.1",
     "@material/chips": "^1.0.1",
     "@material/drawer": "^0.44.0",
     "@material/fab": "^0.44.0",
     "@material/icon-button": "^0.44.0",
     "@material/icon-toggle": "^0.44.0",
     "@material/list": "^0.44.0",
+    "@material/react-checkbox": "^0.13.0",
     "@material/react-chips": "^0.10.0",
+    "@material/react-material-icon": "^0.13.0",
+    "@material/react-text-field": "^0.13.0",
     "@material/ripple": "0.44.0",
     "@material/select": "^0.44.0",
     "@material/switch": "^0.44.1",
@@ -82,10 +85,10 @@
     "mobx-router": "0.0.19",
     "mobx-undefined-value": "^1.0.0",
     "moment-es6": "^1.0.0",
-    "react": "^16.8.3",
+    "react": "^16.8.6",
     "react-calendar": "^2.17.5",
     "react-chartjs-2": "^2.7.4",
-    "react-dom": "^16.8.3",
+    "react-dom": "^16.8.6",
     "stream-series": "^0.1.1"
   }
 }

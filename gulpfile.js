@@ -24,7 +24,8 @@ const configuration = {
             html: './src/*.html',
             images: './src/images/**/*.png',
             css: [
-                './src/style/*.scss'
+                './src/style/*.scss',
+                './src/components/**/*.scss'
             ],
             js: 'src/app.ts',
             manifest: 'src/manifest.json',
@@ -66,7 +67,7 @@ gulp.task('scss', gulp.series(function (done) {
 }));
 
 gulp.task('scsswatch', gulp.series(function (done) {
-    gulp.watch('./src/style/**/*.scss', gulp.series('clean-css', 'scss', 'inject'));
+    gulp.watch(configuration.paths.src.css, gulp.series('clean-css', 'scss', 'inject'));
     done();
 }));
 

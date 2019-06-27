@@ -2,22 +2,27 @@ import * as React from "react";
 import { MDCTextField } from '@material/textfield/index';
 
 export interface ITextFieldProps {
-    id: string;
-    hint: string;
+    id?: string;
+    hint?: string;
     fullWidth?: boolean;
     leadingIcon?: string;
     outlined?: boolean;
     disabled?: boolean;
+    dense?: boolean;
     value?: string;
     onChange?: (value: string) => void;
     tabIndex?: number;
     focus?: true;
     rows?: number;
     cols?: number;
-    type?: "text" | "number"
+    type?: "text" | "number",
+    innerRef?: React.Ref<HTMLInputElement | HTMLTextAreaElement>;
+    onKeyPress?: (e: React.KeyboardEvent<HTMLInputElement | HTMLTextAreaElement>) => void;
+    onFocus?: (e: React.FocusEvent<HTMLTextAreaElement | HTMLInputElement>) => void;
+    onBlur?: (e: React.FocusEvent<HTMLTextAreaElement | HTMLInputElement>) => void;
 }
 
-export class TextField extends React.Component<ITextFieldProps> {
+export class TextFieldOld extends React.Component<ITextFieldProps> {
     private readonly mdcTextField: React.RefObject<HTMLDivElement>;
 
     constructor(props: ITextFieldProps) {
@@ -26,7 +31,7 @@ export class TextField extends React.Component<ITextFieldProps> {
     }
 
     render() {
-        const { type = "text", rows, cols, tabIndex, id, hint, fullWidth = false, leadingIcon, outlined = false, value = "", disabled = false } = this.props;
+        const { dense, type = "text", innerRef, rows, cols, tabIndex, id, hint, fullWidth = false, leadingIcon, outlined = false, value = "", disabled = false, onKeyPress, onFocus, onBlur } = this.props;
         const isTextArea = !!rows && !!cols;
         const leadingIconEl = leadingIcon ?
             <i className="material-icons mdc-text-field__icon">{leadingIcon}</i>
@@ -39,6 +44,7 @@ export class TextField extends React.Component<ITextFieldProps> {
         if (leadingIcon) className += " mdc-text-field--with-leading-icon";
         if (outlined) className += " text-field mdc-text-field--outlined";
         if (disabled) className += " mdc-text-field--disabled";
+        if (dense) className += " mdc-text-field--dense";
 
         const lineEl = outlined !== fullWidth ?
             <>
@@ -63,14 +69,26 @@ export class TextField extends React.Component<ITextFieldProps> {
             className: "mdc-text-field__input",
             value,
             onChange: this.onChange,
-            type
+            type,
+            onKeyUp: onKeyPress, // keypress is not firing for escape key
+            onFocus,
+            onBlur,
         }
 
+        const isTextAreaRef = (_ref?: React.Ref<HTMLTextAreaElement | HTMLInputElement>): _ref is React.Ref<HTMLTextAreaElement> => {
+            return true;
+        }
 
-        const input = isTextArea ?
-            <textarea cols={cols} rows={rows} {...attr} />
+        const isTextInputRef = (_ref?: React.Ref<HTMLTextAreaElement | HTMLInputElement>): _ref is React.Ref<HTMLInputElement> => {
+            return true;
+        }
+
+        const input = isTextArea && isTextAreaRef(innerRef) ?
+            <textarea ref={innerRef} cols={cols} rows={rows} {...attr} />
             :
-            <input {...attr} />
+            isTextInputRef(innerRef)
+                ? <input ref={innerRef} {...attr} />
+                : <input {...attr} />;
 
         return (
             <>
@@ -92,3 +110,5 @@ export class TextField extends React.Component<ITextFieldProps> {
         this.props.onChange && this.props.onChange(event.target.value);
     }
 }
+
+export default React.forwardRef((props: ITextFieldProps, ref: React.Ref<HTMLInputElement>) => <TextFieldOld innerRef={ref} {...props} />);

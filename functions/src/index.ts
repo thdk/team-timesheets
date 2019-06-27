@@ -17,6 +17,7 @@ import * as gcs from '@google-cloud/storage';
 import { IFirebaseConfig } from './interfaces';
 import { exportToBigQuery, ExportToBigQueryTask } from './bigquery/export';
 import { IRegistrationData } from './interfaces/IRegistrationData';
+import { initTimestampsForRegistrations, initNamesInsensitive } from './tools/firestore';
 
 const adminConfig: IFirebaseConfig | undefined = process.env.FIREBASE_CONFIG && JSON.parse(process.env.FIREBASE_CONFIG);
 if (!adminConfig) {
@@ -132,63 +133,16 @@ const exportTasks: ExportToBigQueryTask[] = [
 const performExportToBigQuery = () => exportToBigQuery(exportTasks, new BigQuery({ projectId: adminConfig.projectId }), db);
 exports.exportToBigQuery = functions.https.onCall(performExportToBigQuery);
 
-exports.scheduledExportToBigQuery = functions.pubsub.schedule('every day 06:00')
+// TODO: Why do we need to cast as any here? Upgrade firebase packages?
+exports.scheduledExportToBigQuery = (functions.pubsub as any).schedule('every day 06:00')
     .timeZone('Europe/Brussels')
     .onRun(() => performExportToBigQuery());
 
 // Temporary function to add timestamps to data already in database
-exports.initTimestampsForRegistrations = functions.https.onCall(() => {
-    const collections = ["registrations", "projects"];
-    return Promise.all(collections.reduce((previousPromises, c) => {
-        const collectionRef = db.collection(c);
-        collectionRef.get().then(snapshot => {
-            const updates: { ref: FirebaseFirestore.DocumentReference, data: any }[] = snapshot.docs.reduce((p, doc) => {
-                const data = doc.data();
-                let shouldUpdate = false;
-
-                const newData = {};
-                if (!data.created) {
-                    Object.assign(newData, { created: data.date || admin.firestore.FieldValue.serverTimestamp() });
-                    shouldUpdate = true;
-                }
-
-                if (!data.modified) {
-                    Object.assign(newData, { modified: data.date || admin.firestore.FieldValue.serverTimestamp() });
-                    shouldUpdate = true;
-                }
-
-                if (shouldUpdate) {
-                    p.push({ ref: doc.ref, data: newData });
-                }
-
-                return p;
-
-            }, [] as { ref: FirebaseFirestore.DocumentReference, data: any }[]);
-
-            let i: number;
-            let temparray: { ref: FirebaseFirestore.DocumentReference, data: any }[];
-            const chunk = 500; // max 500 records in a batch
-
-            const j = updates.length;
-
-            const results = [];
-            for (i = 0; i < j; i += chunk) {
-                temparray = updates.slice(i, i + chunk);
-                const batch = db.batch();
-                temparray.forEach(update => {
-                    batch.update(update.ref, update.data);
-                });
-                results.push(batch.commit());
-            }
-
-            return Promise.all(results);
-
-        });
-        return previousPromises;
-    }, []));
-
-});
+exports.initTimestampsForRegistrations = functions.https.onCall(() => initTimestampsForRegistrations(db));
 
 
+// Temporary function to add name_insensitive to data already in database
+exports.initNamesInsensitive = functions.https.onCall(() => initNamesInsensitive(db));
 
 

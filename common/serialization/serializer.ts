@@ -82,8 +82,10 @@ export function convertProject(appData: Partial<IProject> | "delete"): Partial<I
 export function convertNameWithIcon(appData: Partial<INameWithIcon>): Partial<INameWithIconData> {
     const now = new Date();
 
+    const name = (appData.name || "").trim();
     const data: Partial<INameWithIconData> = {
-        name: (appData.name || "").trim(),
+        name,
+        name_insensitive: name.toUpperCase(),
         icon: appData.icon,
         created: firebase.firestore.Timestamp.fromDate(appData.created || now),
         modified: firebase.firestore.Timestamp.fromDate(now)

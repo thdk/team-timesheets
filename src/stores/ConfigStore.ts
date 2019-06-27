@@ -2,7 +2,7 @@ import { observable, computed } from 'mobx';
 import { Collection, ICollection } from "firestorable";
 import { IRootStore } from './RootStore';
 import { firestore } from '../firebase/myFirebase';
-import { IProject, ITask, IClient, ITeam, ITeamData, IProjectData, ITaskData } from '../../common/dist';
+import { IProject, ITask, IClient, IClientData, ITeam, ITeamData, IProjectData, ITaskData } from '../../common/dist';
 
 import * as serializer from '../../common/serialization/serializer';
 import * as deserializer from '../../common/serialization/deserializer';
@@ -37,24 +37,24 @@ export class ConfigStore implements IConfigStore {
         // this._rootStore = rootStore;
         this.projects = observable(new Collection<IProject, IProjectData>(firestore, getCollection.bind(this, "projects"), {
             realtime: true,
-            query: ref => ref.orderBy("name"),
+            query: ref => ref.orderBy("name_insensitive"),
             serialize: serializer.convertProject,
             deserialize: deserializer.convertProject
         }));
 
         this.tasks = observable(new Collection<ITask, ITaskData>(firestore, getCollection.bind(this, "tasks"), {
             realtime: true,
-            query: ref => ref.orderBy("name")
+            query: ref => ref.orderBy("name_insensitive")
         }));
 
-        this.clientsCollection = observable(new Collection<ITask>(firestore, getCollection.bind(this, "clients"), {
+        this.clientsCollection = observable(new Collection<IClient, IClientData>(firestore, getCollection.bind(this, "clients"), {
             realtime: true,
-            query: ref => ref.orderBy("name")
+            query: ref => ref.orderBy("name_insensitive")
         }));
 
         this.teamsCollection = observable(new Collection<ITeam, ITeamData>(firestore, getCollection.bind(this, "teams"), {
             realtime: true,
-            query: ref => ref.orderBy("name")
+            query: ref => ref.orderBy("name_insensitive")
         }));
     }
 

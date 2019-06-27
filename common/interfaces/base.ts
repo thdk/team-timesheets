@@ -8,6 +8,7 @@ export interface INameWithIcon {
 
 export interface INameWithIconData extends IPersistedEntity {
     name: string;
+    name_insensitive?: string;
     icon?: string;
 }
 

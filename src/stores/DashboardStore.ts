@@ -215,7 +215,8 @@ export class DashboardStore implements IDashboardStore {
                     groupedMap.set(key, {
                         groupKey: keySelector(c.data!),
                         registrations: [c],
-                        totalTime: c.data!.time || 0
+                        totalTime: c.data!.time || 0,
+                        isCollapsed: true
                     });
                 }
             });

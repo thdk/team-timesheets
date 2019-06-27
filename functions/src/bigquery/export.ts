@@ -6,7 +6,7 @@ import { BigQueryField, insertRows } from "./utils";
 // Imports the Google Cloud client library
 const { BigQuery } = require('@google-cloud/bigquery');
 
-export const convertRegistration = (firebaseChange) => {
+export const convertRegistration = (firebaseChange: FirebaseFirestore.DocumentSnapshot) => {
     const reg = firebaseChange.data() as unknown as IRegistrationData;
     return {
         id: firebaseChange.id,
@@ -23,7 +23,7 @@ export const convertRegistration = (firebaseChange) => {
     };
 };
 
-export const convertProject = (firebaseChange) => {
+export const convertProject = (firebaseChange: FirebaseFirestore.DocumentSnapshot) => {
     const project = firebaseChange.data() as unknown as IProjectData;
     return {
         id: firebaseChange.id,
@@ -58,7 +58,7 @@ const registrationSchema: BigQueryField[] = [
     { "name": "userId", "type": "STRING" },
 ];
 
-const firestoreBigQueryMap: { [collection: string]: { convert: (change: FirebaseFirestore.DocumentData) => any, schema: BigQueryField[], dateField?: string } } = {
+const firestoreBigQueryMap: { [collection: string]: { convert: (change: FirebaseFirestore.DocumentSnapshot) => any, schema: BigQueryField[], dateField?: string } } = {
     "registrations": {
         convert: convertRegistration,
         schema: registrationSchema

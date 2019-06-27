@@ -1,10 +1,10 @@
 import * as admin from "firebase-admin";
+import { WriteResult } from "@google-cloud/firestore";
 
 export const initTimestampsForRegistrations = (db: FirebaseFirestore.Firestore) => {
     const collections = ["projects", "registrations"];
-    return Promise.all(collections.reduce((previousPromises, c) => {
-        const collectionRef = db.collection(c);
-        collectionRef.get().then(snapshot => {
+    return Promise.all(collections.map(c => {
+        return db.collection(c).get().then(snapshot => {
             const updates: { ref: FirebaseFirestore.DocumentReference, data: any }[] = snapshot.docs.reduce((p, doc) => {
                 const data = doc.data();
                 let shouldUpdate = false;
@@ -49,17 +49,15 @@ export const initTimestampsForRegistrations = (db: FirebaseFirestore.Firestore) 
             }
 
             return Promise.all(results);
-
         });
-        return previousPromises;
-    }, []));
+    }));
 };
 
 export const initNamesInsensitive = (db: FirebaseFirestore.Firestore) => {
     const collections = ["clients", "projects", "tasks", "teams"];
-    return Promise.all(collections.reduce((previousPromises, c) => {
+    return Promise.all(collections.map(c => {
         const collectionRef = db.collection(c);
-        collectionRef.get().then(snapshot => {
+        return collectionRef.get().then(snapshot => {
             const updates: { ref: FirebaseFirestore.DocumentReference, data: any }[] = snapshot.docs.reduce((p, doc) => {
                 const data = doc.data();
                 let shouldUpdate = false;
@@ -85,7 +83,7 @@ export const initNamesInsensitive = (db: FirebaseFirestore.Firestore) => {
 
             const j = updates.length;
             console.log("Updates: " + j.toString());
-            const results = [];
+            const results = [] as Promise<WriteResult[]>[];
             for (i = 0; i < j; i += chunk) {
                 temparray = updates.slice(i, i + chunk);
                 const batch = db.batch();
@@ -100,6 +98,5 @@ export const initNamesInsensitive = (db: FirebaseFirestore.Firestore) => {
             return Promise.all(results);
 
         });
-        return previousPromises;
-    }, []));
+    }));
 };

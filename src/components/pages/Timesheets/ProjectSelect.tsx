@@ -2,17 +2,17 @@ import * as React from 'react';
 import { observer } from 'mobx-react';
 
 import { FormField } from '../../Layout/form';
-import { Select, SelectOption } from '../../../MaterialUI/select';
+import { Select, SelectOption } from '../../../mdc/select';
 import store from '../../../stores/RootStore';
-import { Doc } from '../../../Firestorable/Document';
-import { IProject } from '../../../stores/ConfigStore';
+import { Doc } from "firestorable";
+import { IProject } from '../../../../common/dist';
 
 @observer
 export default class ProjectSelect extends React.Component {
     render() {
-        const project = store.timesheets.registration ? store.timesheets.registration.data!.project : "";
+        const project = store.timesheets.registration ? store.timesheets.registration.project : "";
 
-        const userRecentProjects = store.user.user ? store.user.user.data!.recentProjects : [];
+        const userRecentProjects = store.user.authenticatedUser ? store.user.authenticatedUser.recentProjects : [];
 
         const recentProjects = userRecentProjects.slice(0, 5).reduce((p, c) => {
             const projectData = store.config.projects.docs.get(c);
@@ -61,13 +61,13 @@ export default class ProjectSelect extends React.Component {
 
     projectClicked = (id: string, selected: boolean) => {
         if (selected) {
-            if (store.timesheets.registration && store.timesheets.registration.data)
-                store.timesheets.registration.data.project = id;
+            if (store.timesheets.registration && store.timesheets.registration)
+                store.timesheets.registration.project = id;
         }
     };
 
     onProjectChange = (value: string) => {
-        if (store.timesheets.registration && store.timesheets.registration.data)
-            store.timesheets.registration.data.project = value;
+        if (store.timesheets.registration && store.timesheets.registration)
+            store.timesheets.registration.project = value;
     }
 }

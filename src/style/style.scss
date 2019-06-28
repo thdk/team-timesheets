@@ -16,9 +16,11 @@
 @import "@material/tab-indicator/mdc-tab-indicator";
 @import "@material/tab/mdc-tab";
 @import "@material/checkbox/mdc-checkbox";
+@import "@material/icon-button/mdc-icon-button";
 
-@import '../MaterialUI/styles/list';
-@import '../MaterialUI/styles/app-bar';
+@import '../mdc/styles/list';
+@import '../mdc/styles/app-bar';
+@import '../mdc/styles/switch';
 
 @import './calendar';
 @import './chart';
@@ -49,8 +51,8 @@ body {
 
   .app-fab--absolute {
     position: fixed;
-    bottom: 1rem;
-    right: 1rem;
+    bottom: 2rem;
+    right: 2rem;
   }
 
   .mdc-top-app-bar {
@@ -67,3 +69,7 @@ body {
     height: 100%;
   }
 
+/** https://github.com/material-components/material-components-web/issues/4629 */
+:not(.mdc-list--non-interactive) > :not(.mdc-list-item--disabled).mdc-list-item:hover::before {
+    filter: opacity(100%);
+}

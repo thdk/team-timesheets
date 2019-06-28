@@ -4,11 +4,11 @@ import moment from 'moment-es6';
 import { goToRegistration } from '../../internal';
 import store from '../../stores/RootStore';
 import { FlexGroup } from '../Layout/flex';
-import { GroupedRegistrations } from '../GroupedRegistrations';
+import { GroupedRegistrations, SortOrder } from '../GroupedRegistrations';
 import { goToOverview } from '../../routes/timesheets/overview';
-import { List, ListItem, ListDivider } from '../../MaterialUI/list';
+import { List, ListItem, ListDivider } from '../../mdc/list';
 import { DateSelect } from '../Controls/DateSelect';
-import { Button, ButtonType } from '../../MaterialUI/buttons';
+import { ButtonType, Button } from '../../mdc/buttons/button';
 
 @observer
 export class Reports extends React.Component {
@@ -19,11 +19,12 @@ export class Reports extends React.Component {
 
     goToDate(e: React.MouseEvent, date: Date) {
         e.preventDefault();
+        store.view.track = true;
         goToOverview(store, {
             year: date.getFullYear(),
             month: date.getMonth() + 1,
             day: date.getDate()
-        })
+        }, {track: true});
     }
 
     createTotalLabel = (date: Date) => {
@@ -34,11 +35,13 @@ export class Reports extends React.Component {
     }
 
     render() {
+        if (!store.view.moment) return null;
+
         const totalTime = Array.from(store.timesheets.registrations.docs.values())
             .reduce((p, c) => p + (c.data!.time || 0), 0);
 
         const totalLabel = `Total in ${store.view.moment.format('MMMM')}`;
-        const total = <ListItem key={`total-month`} lines={[totalLabel]} meta={totalTime + " hours"} disabled={true}></ListItem>
+        const total = <ListItem key={`total-month`} lines={[totalLabel]} meta={parseFloat(totalTime.toFixed(2)) + " hours"} disabled={true}></ListItem>
 
         const totalList = <List style={{ width: "100%" }}><ListDivider></ListDivider>{total}<ListDivider></ListDivider></List>;
 
@@ -48,7 +51,7 @@ export class Reports extends React.Component {
             ? <a href={store.reports.reportUrl}>Download report</a>
             : store.reports.report.data.status : undefined;
         const downloadReport = download &&
-            <FlexGroup direction={"vertical"} style={{ paddingRight:"1em", alignItems: "flex-end"}}>{download}</FlexGroup>
+            <FlexGroup direction={"vertical"} style={{ paddingRight: "1em", alignItems: "flex-end" }}>{download}</FlexGroup>
 
         return (
             <>
@@ -58,7 +61,7 @@ export class Reports extends React.Component {
                         <Button onClick={this.export} style={{ margin: "1em" }} type={ButtonType.Outlined}>Export</Button>
                     </FlexGroup>
                     {downloadReport}
-                    <GroupedRegistrations totalOnTop={true} createTotalLabel={this.createTotalLabel} registrationClick={this.registrationClick.bind(this)} />
+                    <GroupedRegistrations isCollapsed={false} sortOrder={SortOrder.Ascending} totalOnTop={true} createTotalLabel={this.createTotalLabel} registrationClick={this.registrationClick.bind(this)} />
                     {totalList}
                 </FlexGroup>
             </>

@@ -1,5 +1,8 @@
 import * as functions from 'firebase-functions';
-import * as admin from 'firebase-admin';
+import * as admin from "firebase-admin";
+
+const { BigQuery } = require('@google-cloud/bigquery');
+
 // tslint:disable-next-line
 import 'firebase-functions';
 
@@ -11,11 +14,16 @@ import * as os from 'os';
 import * as path from 'path';
 import * as fs from 'fs-extra';
 import * as gcs from '@google-cloud/storage';
+import { IFirebaseConfig } from './interfaces';
+import { exportToBigQuery, ExportToBigQueryTask } from './bigquery/export';
+import { IRegistrationData } from './interfaces/IRegistrationData';
+import { initTimestampsForRegistrations, initNamesInsensitive } from './tools/firestore';
 
-const adminConfig = process.env.FIREBASE_CONFIG && JSON.parse(process.env.FIREBASE_CONFIG);
-const bucketName = adminConfig ? adminConfig.storageBucket : "";
-
-console.log({ adminConfig });
+const adminConfig: IFirebaseConfig | undefined = process.env.FIREBASE_CONFIG && JSON.parse(process.env.FIREBASE_CONFIG);
+if (!adminConfig) {
+    throw new Error("Firebase functions should have process.env.FIREBASE_CONFIG set.");
+}
+const bucketName = adminConfig.storageBucket;
 
 admin.initializeApp();
 
@@ -30,8 +38,6 @@ exports.createCSV = functions.firestore
         if (!reportData) return new Promise(resolve => resolve());
 
         const { year, month, userId } = reportData;
-        console.log("report data:");
-        console.log({ reportData });
 
         const reportId = snapshot.id;
         const fileName = `reports/${year}/${month}/${userId}.csv`;
@@ -53,8 +59,13 @@ exports.createCSV = functions.firestore
         const endDate = startMoment.clone().endOf("month").toDate();
         const startDate = startMoment.clone().startOf("month").toDate();
 
-        console.log({ startDate });
-        console.log({ endDate });
+        // Plus (+) character and comma characters give problems in CSV file
+        // Replace '+' and ',' with space for CSV export
+        const stripInvalidCSVChars = (text: string) => {
+            return text
+                .replace(new RegExp(",", 'g'), " ")
+                .replace(new RegExp("\\+", 'g'), " ");
+        };
 
         return Promise.all([
             db.collection('projects').get().then(s => projectsMap = new Map(s.docs.map((d): [string, any] => [d.id, d.data()]))),
@@ -67,12 +78,11 @@ exports.createCSV = functions.firestore
             .where("userId", "==", userId)
             .get()
             .then(querySnapshot => {
-                console.log("Snapshot size: " + querySnapshot.size);
                 const registrations: any[] = [];
 
                 // create array of registration data
                 querySnapshot.forEach(doc => {
-                    const fireStoreData = doc.data();
+                    const fireStoreData = doc.data() as IRegistrationData;
 
                     const projectData = projectsMap.get(fireStoreData.project);
                     const taskData = tasksMap.get(fireStoreData.task);
@@ -82,9 +92,10 @@ exports.createCSV = functions.firestore
                     const task = taskData ? taskData.name : fireStoreData.task;
                     const client = clientData ? clientData.name : fireStoreData.client;
                     const date = fireStoreData.date ? fireStoreData.date.toDate().getDate() : "";
-                    const time = fireStoreData.time ? fireStoreData.time.toFixed(2) : 0;
+                    const time = fireStoreData.time ? parseFloat(fireStoreData.time.toFixed(2)) : 0;
+                    const description = fireStoreData.description ? stripInvalidCSVChars(fireStoreData.description) : "";
 
-                    registrations.push({ ...fireStoreData, project, task, date, client, time });
+                    registrations.push({ ...fireStoreData, project, task, date, client, time, description });
                 });
 
                 return json2csv(registrations, { fields: ["date", "time", "project", "task", "client", "description"] });
@@ -110,5 +121,28 @@ exports.createCSV = functions.firestore
             }));
     });
 
+const exportTasks: ExportToBigQueryTask[] = [
+    {
+        collection: "registrations",
+    },
+    {
+        collection: "projects",
+    }
+]
+
+const performExportToBigQuery = () => exportToBigQuery(exportTasks, new BigQuery({ projectId: adminConfig.projectId }), db);
+exports.exportToBigQuery = functions.https.onCall(performExportToBigQuery);
+
+// TODO: Why do we need to cast as any here? Upgrade firebase packages?
+exports.scheduledExportToBigQuery = (functions.pubsub as any).schedule('every day 06:00')
+    .timeZone('Europe/Brussels')
+    .onRun(() => performExportToBigQuery());
+
+// Temporary function to add timestamps to data already in database
+exports.initTimestampsForRegistrations = functions.https.onCall(() => initTimestampsForRegistrations(db));
+
+
+// Temporary function to add name_insensitive to data already in database
+exports.initNamesInsensitive = functions.https.onCall(() => initNamesInsensitive(db));
 
 

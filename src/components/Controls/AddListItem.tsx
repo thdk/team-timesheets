@@ -1,9 +1,9 @@
 import * as React from 'react';
-import { IListItemProps, ListItem } from '../../MaterialUI/list';
+import { IListItemProps, ListItem } from '../../mdc/list';
 import { FlexGroup } from '../Layout/flex';
 import { FormField } from '../Layout/form';
-import { TextField } from '../../MaterialUI/textfield';
-import { Button } from '../../MaterialUI/buttons';
+import { TextFieldOld } from '../../mdc/textfield';
+import { Button } from '../../mdc/buttons/button';
 
 export interface IListItemData { icon?: string, name?: string };
 
@@ -37,10 +37,10 @@ export class AddListItem extends React.Component<IAddListItemProps, IState> {
 
             const input = <FlexGroup style={{ alignItems: "center" }}>
                 <FormField>
-                    <TextField value={icon} onChange={this.changeIcon.bind(this)} hint="Icon" id="task-icon-text"></TextField>
+                    <TextFieldOld value={icon} onChange={this.changeIcon.bind(this)} hint="Icon" id="task-icon-text"></TextFieldOld>
                 </FormField>
                 <FormField first={false}>
-                    <TextField value={name} onChange={this.changeName.bind(this)} hint="Name" id="task-name-text"></TextField>
+                    <TextFieldOld value={name} onChange={this.changeName.bind(this)} hint="Name" id="task-name-text"></TextFieldOld>
                 </FormField>
                 <FormField first={false}>
                     <Button onClick={this.save.bind(this)}>{saveLabel}</Button>

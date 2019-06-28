@@ -2,10 +2,10 @@ import * as React from 'react';
 import { Route } from 'mobx-router';
 import { Login } from '../components/Login';
 import { App, goToOverview, setNavigationContent } from '../internal';
-import { getLoggedInUserAsync } from '../Firestorable/Firestorable';
 import { IRootStore } from '../stores/RootStore';
 import { when } from 'mobx';
-import { Doc } from '../Firestorable/Document';
+import { getLoggedInUserAsync } from '../firebase/firebase-utils';
+import { auth } from '../firebase/myFirebase';
 
 const path = "/login";
 
@@ -18,12 +18,12 @@ const routes = {
         path,
         component: <App><Login></Login></App>,
         onEnter: (route: Route, _params: any, s: IRootStore) => {
-            when(() => (s.user.user instanceof(Doc)), () => goToOverview(s));
+            when(() => !!s.user.authenticatedUser, () => goToOverview(s));
             setNavigationContent(route, false);
         },
         title: "Login",
         beforeEnter: (_route: Route, _params: any, s: IRootStore) => {
-            return getLoggedInUserAsync().then(() => {
+            return getLoggedInUserAsync(auth).then(() => {
                 goToOverview(s);
                 return false;
             }, () => true);

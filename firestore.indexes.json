@@ -1,54 +1,69 @@
 {
   "indexes": [
     {
-      "collectionId": "reports",
-      "state": "READY",
-      "fields": [
-        {
-          "fieldPath": "month",
-          "mode": "ASCENDING"
-        },
-        {
-          "fieldPath": "userId",
-          "mode": "ASCENDING"
-        },
-        {
-          "fieldPath": "year",
-          "mode": "ASCENDING"
-        },
-        {
-          "fieldPath": "created",
-          "mode": "DESCENDING"
-        }
-      ]
-    },
-    {
-      "collectionId": "registrations",
-      "state": "READY",
+      "collectionGroup": "registrations",
+      "queryScope": "COLLECTION",
       "fields": [
         {
           "fieldPath": "userId",
-          "mode": "ASCENDING"
+          "order": "ASCENDING"
         },
         {
           "fieldPath": "date",
-          "mode": "ASCENDING"
+          "order": "ASCENDING"
         }
       ]
     },
     {
-      "collectionId": "registrations",
-      "state": "READY",
+      "collectionGroup": "registrations",
+      "queryScope": "COLLECTION",
       "fields": [
         {
           "fieldPath": "deleted",
-          "mode": "ASCENDING"
+          "order": "ASCENDING"
         },
         {
           "fieldPath": "date",
-          "mode": "ASCENDING"
+          "order": "ASCENDING"
+        }
+      ]
+    },
+    {
+      "collectionGroup": "registrations",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "project",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "date",
+          "order": "ASCENDING"
+        }
+      ]
+    },
+    {
+      "collectionGroup": "reports",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "month",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "userId",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "year",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "created",
+          "order": "DESCENDING"
         }
       ]
     }
-  ]
+  ],
+  "fieldOverrides": []
 }

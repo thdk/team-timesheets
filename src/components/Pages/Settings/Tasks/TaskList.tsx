@@ -4,7 +4,7 @@ import { ReactNode } from 'react';
 import { IReactProps } from '../../../../types';
 import store from '../../../../stores/RootStore';
 import { AddListItem, IListItemData } from '../../../Controls/AddListItem';
-import { ListItem, List } from '../../../../MaterialUI/list';
+import { ListItem, List } from '../../../../mdc/list';
 import { canAddTask, canEditTask, canDeleteTask } from '../../../../rules/rules';
 
 export interface ITaskListState {
@@ -23,7 +23,7 @@ export class TaskList extends React.Component<IReactProps, ITaskListState> {
             .reduce((p, c) => {
                 if (c.data) {
                     const { id, data: { icon = "", name } } = c;
-                    p.push(id === store.config.taskId && canEditTask(store.user.currentUser)
+                    p.push(id === store.config.taskId && canEditTask(store.user.authenticatedUser)
                         ? <AddListItem key={id} onCancel={this.unselectItem} onSave={(data) => this.saveListItem(data, id)} data={c.data} onClick={this.selectItem.bind(this, id)}></AddListItem>
                         : <ListItem onClick={this.selectItem.bind(this, id)} icon={icon} key={id} lines={[name!]}></ListItem>
                     );
@@ -32,7 +32,7 @@ export class TaskList extends React.Component<IReactProps, ITaskListState> {
             }, new Array<ReactNode>());
 
 
-        const addTask = canAddTask(store.user.currentUser)
+        const addTask = canAddTask(store.user.authenticatedUser)
             ? <AddListItem labels={{ add: "Add task" }} onSave={this.saveListItem.bind(this)} ></AddListItem>
             : undefined;
 
@@ -47,7 +47,7 @@ export class TaskList extends React.Component<IReactProps, ITaskListState> {
     }
 
     selectItem(id: string) {
-        if (canEditTask(store.user.currentUser) || canDeleteTask(store.user.currentUser)) {
+        if (canEditTask(store.user.authenticatedUser) || canDeleteTask(store.user.authenticatedUser)) {
             store.config.taskId = id;
         }
     }

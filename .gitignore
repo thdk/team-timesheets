@@ -70,3 +70,8 @@ src/config.ts
 .firebase/
 
 functions/lib
+
+.rpt2_cache/
+
+# macos
+**/.DS_Store

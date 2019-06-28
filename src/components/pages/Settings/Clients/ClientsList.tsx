@@ -16,8 +16,8 @@ export class ClientList extends React.Component {
             }
         };
         return <SettingsDataList
-            canAdd={canAddClient(store.user.currentUser)}
-            canEdit={canEditClient(store.user.currentUser)}
+            canAdd={canAddClient(store.user.authenticatedUser)}
+            canEdit={canEditClient(store.user.authenticatedUser)}
             items={Array.from(store.config.clientsCollection.docs.values()).map(client => ({
                 id: client.id,
                 name: client.data!.name,

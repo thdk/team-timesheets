@@ -1,45 +1,25 @@
-import { observable, action, transaction, computed } from "mobx";
-import { ICollection, Collection } from "../Firestorable/Collection";
-import { Doc } from "../Firestorable/Document";
-import { firestorable } from "../Firestorable/Firestorable";
+import { observable, action, transaction, computed, observe, when, intercept } from "mobx";
+import { ICollection, Collection, Doc } from 'firestorable';
 import { IRootStore } from "./RootStore";
-import * as deserializer from '../serialization/deserializer';
-import * as serializer from '../serialization/serializer';
+import * as deserializer from '../../common/serialization/deserializer';
+import * as serializer from '../../common/serialization/serializer';
+import { IUser, IUserData } from "../../common/dist";
+import { canReadUsers } from "../rules/rules";
+
+import { UndefinedValue, isUndefinedValue, Undefined } from "mobx-undefined-value";
+import { firestore, auth } from "../firebase/myFirebase";
 
 export interface IUserStore {
     readonly userId?: string;
-    /**
-     * Deprecated: use currentUser
-     */
-    readonly user: (Doc<IUser> & Pick<firebase.User, "email" | "displayName">) | undefined;
-    readonly currentUser?: IUser;
-    readonly setUser: (fbUser: firebase.User | null) => void;
-    readonly users: ICollection<IUser>;
-}
-
-export interface IRoles {
-    admin?: boolean;
-    user?: boolean;
-}
-
-export type RecentlyUsedProjects = string[];
-
-export interface IUser {
-    tasks: Map<string, true>;
-    roles: IRoles;
-    name: string;
-    defaultTask?: string;
-    recentProjects: RecentlyUsedProjects;
-    defaultClient?: string;
-}
-
-export interface IUserData {
-    tasks?: string[];
-    roles?: IRoles;
-    name?: string;
-    defaultTask: string;
-    defaultClient?: string;
-    recentProjects?: RecentlyUsedProjects;
+    readonly authenticatedUser?: IUser;
+    readonly selectedUser?: IUser;
+    readonly selectedUserId: string | undefined;
+    readonly setSelectedUserId: (id: string | undefined) => void;
+    readonly saveSelectedUser: () => void;
+    readonly updateSelectedUser: (data: Partial<IUser>) => void;
+    readonly users: ICollection<IUser, IUserData>;
+    readonly updateAuthenticatedUser: (userData: Partial<IUser>) => void;
+    readonly signout: () => void;
 }
 
 export enum StoreState {
@@ -49,56 +29,118 @@ export enum StoreState {
 }
 
 export class UserStore implements IUserStore {
-    // private rootStore: IRootStore;
-    @observable.ref userId?: string;
-    @observable.ref fbUser?: firebase.User
+    @observable.ref
+    private _userId?: string;
+
     @observable state = StoreState.Done;
 
-    public readonly users: ICollection<IUser>;
+    @observable
+    private _authUser: Doc<IUser, IUserData> | Undefined = observable(UndefinedValue);
+
+    private readonly _selectedUser = observable.box<IUser | undefined>();
+
+    private _selectedUserId = observable.box<string | undefined>();
+
+    public readonly users: ICollection<IUser, IUserData>;
     constructor(rootStore: IRootStore) {
-        // this.rootStore = rootStore;
-        this.users = new Collection(rootStore.getCollection.bind(this, "users"), {
+        this.users = new Collection(firestore, rootStore.getCollection.bind(this, "users"), {
             realtime: true,
             serialize: serializer.convertUser,
             deserialize: deserializer.convertUser
         });
 
-        firestorable.auth.onAuthStateChanged(this.setUser.bind(this));
+        when(() => !!this.authenticatedUser, () => {
+            if (canReadUsers(this.authenticatedUser)) {
+                this.users.query = ref => ref.orderBy("name", "asc");
+            }
+        });
 
-        // TODO: this is not good. we only need a single user!
-        this.users.getDocs();
-    }
+        auth.onAuthStateChanged(this.setUser.bind(this));
 
-    @computed public get user() {
-        // TODO: should return a type of IUser (see currentUser)
-        if (this.userId && this.fbUser) {
-            const user = this.users.docs.get(this.userId);
-            return user
-                ? Object.assign(user, { email: this.fbUser.email, displayName: this.fbUser.displayName })
-                : undefined;
-        }
+        // TODO: move to Firestorable/Document?
+        intercept(this._authUser, change => {
+            if (change.type === "update") {
+                if (isUndefinedValue(change.newValue)) {
+                    change.object.unwatch();
+                }
+            }
 
-        return undefined;
-    }
+            return change;
+        });
 
-    @computed public get currentUser() {
-        if (!this.userId) return undefined;
-
-        const user = this.users.docs.get(this.userId);
-        if (!user) throw new Error("No user found in collection for the currentUser: " + this.userId);
-
-        return user.data!;
+        observe(this._selectedUserId, change => this.setSelectedUser(change.newValue));
     }
 
     @action
-    public setUser(fbUser: firebase.User | null) {
+    private setSelectedUser(id: string | undefined) {
+        const user = id ? this.users.docs.get(id) : undefined;
+
+        if (id && !user) {
+            // fetch the user manually
+            this.users.getAsync(id, true)
+                .then(this.setSelectedUserObservable.bind(this))
+        } else {
+            this.setSelectedUserObservable(user);
+        }
+    }
+
+    public updateSelectedUser(data: Partial<IUser>) {
+        this.selectedUser && this._selectedUser.set({ ...this.selectedUser, ...data });
+    }
+
+    public saveSelectedUser() {
+        this.selectedUserId && this.selectedUser && this.users.updateAsync(this.selectedUserId, this.selectedUser);
+    }
+
+    @action.bound
+    private setSelectedUserObservable(userDoc: Doc<IUser, IUserData> | undefined) {
+        this._selectedUser.set(userDoc && userDoc.data ? { ...userDoc.data } : undefined);
+    }
+
+    @computed
+    public get selectedUser() {
+        return this._selectedUser.get();
+    }
+
+    @action
+    public setSelectedUserId(id: string | undefined) {
+        this._selectedUserId.set(id);
+    }
+
+    @computed
+    public get selectedUserId() {
+        return this._selectedUserId.get();
+    }
+
+    @computed
+    public get authenticatedUser() {
+        if (isUndefinedValue(this._authUser)) return undefined;
+
+        return this._authUser.data;
+    }
+
+    @computed
+    get userId() {
+        return this._userId;
+    }
+
+    @action
+    public updateAuthenticatedUser(userData: Partial<IUser>) {
+        if (!isUndefinedValue(this._authUser)) this.users.updateAsync(this._authUser.id, userData);
+    }
+
+    @action
+    private setUser(fbUser: firebase.User | null) {
         if (!fbUser) {
-            this.userId = undefined;
+            transaction(() => {
+                this._userId = undefined;
+                this._authUser = UndefinedValue;
+            });
         }
         else {
             this.state = StoreState.Pending;
             this.users.getAsync(fbUser.uid).then(user => {
-                this.getUserSuccess(user, fbUser);
+                this.getAuthUserSuccess(user);
             }, () => this.users.addAsync(
                 {
                     roles: { user: true },
@@ -109,18 +151,18 @@ export class UserStore implements IUserStore {
                 , fbUser.uid).then(() => {
                     // get the newly registered user
                     return this.users.getAsync(fbUser.uid).then(user => {
-                        this.getUserSuccess(user, fbUser);
+                        this.getAuthUserSuccess(user);
                     }, this.getUserError);
                 }, error => console.log(`${error}\nCoudn't save newly registered user. `)));
         }
     }
 
     @action.bound
-    getUserSuccess = (user: Doc<IUser>, fbUser: firebase.User) => {
+    getAuthUserSuccess = (user: Doc<IUser, IUserData>) => {
         transaction(() => {
             this.state = StoreState.Done;
-            this.userId = user.id;
-            this.fbUser = fbUser;
+            this._userId = user.id;
+            this._authUser = user;
         });
     }
 
@@ -128,5 +170,9 @@ export class UserStore implements IUserStore {
     getUserError = (error: any) => {
         console.log(error);
         this.state = StoreState.Error;
+    }
+
+    signout() {
+        auth.signOut();
     }
 }

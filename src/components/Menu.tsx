@@ -1,7 +1,6 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import { goToOverview, goToLogin, goToSettings, goToReports, goToDashboard } from "../internal";
-import { firestorable } from '../Firestorable/Firestorable';
 import store from '../stores/RootStore';
 import Calendar, { CalendarTileProperties } from 'react-calendar/dist/entry.nostyle';
 
@@ -9,25 +8,19 @@ import Calendar, { CalendarTileProperties } from 'react-calendar/dist/entry.nost
 export class Menu extends React.Component {
 
     dateChanged = (dates: Date | Date[]) => {
-        const date = dates instanceof(Date) ? dates : dates[0];
-        goToOverview(store, { year: date.getFullYear(), day: date.getDate(), month: date.getMonth() + 1 });
+        const date = dates instanceof (Date) ? dates : dates[0];
+        goToOverview(store, { year: date.getFullYear(), day: date.getDate(), month: date.getMonth() + 1 }, { track: false });
     }
 
-    navigateToOverview = (e: React.MouseEvent) => {
+    navigateToOverview = (e: React.MouseEvent, month = false) => {
         e.preventDefault();
         const date = new Date();
-        goToOverview(store, { day: date.getDate(), month: date.getMonth() + 1, year: date.getFullYear() });
-    }
-
-    navigateToCurrentMonth = (e: React.MouseEvent) => {
-        e.preventDefault();
-        const today = new Date();
-        goToOverview(store, { year: today.getFullYear(), month: today.getMonth() + 1 });
+        goToOverview(store, { day: month ? undefined : date.getDate(), month: date.getMonth() + 1, year: date.getFullYear() }, { track: false });
     }
 
     toggleLogin = (e: React.MouseEvent) => {
         e.preventDefault();
-        store.user.user ? firestorable.auth.signOut() : goToLogin(store);
+        store.user.authenticatedUser ? store.user.signout() : goToLogin(store);
     }
 
     navigate = (e: React.MouseEvent, navigate: () => void) => {
@@ -43,9 +36,9 @@ export class Menu extends React.Component {
             // However due to a timezone issue it not always gives the required results!
             // below code is NOT ready for production
             const tileHasData = store.timesheets.registrationsGroupedByDay.some(g =>
-                g.date.getDate() === tile.date.getDate()
-                && g.date.getMonth() === tile.date.getMonth()
-                && g.date.getFullYear() === tile.date.getFullYear());
+                g.groupKey.getDate() === tile.date.getDate()
+                && g.groupKey.getMonth() === tile.date.getMonth()
+                && g.groupKey.getFullYear() === tile.date.getFullYear());
             if (tileHasData) classNames.push("has-data");
         }
 
@@ -62,15 +55,20 @@ export class Menu extends React.Component {
                         <span className="mdc-list-item__text">Today</span>
                     </a>
 
+                    <a className="mdc-list-item" onClick={e => this.navigateToOverview(e, true)} href="/" aria-selected="true">
+                        <i className="material-icons mdc-list-item__graphic" aria-hidden="true">calendar_today</i>
+                        <span className="mdc-list-item__text">This month</span>
+                    </a>
+
                     <hr className="mdc-list-divider" />
 
                     <h6 className="mdc-list-group__subheader">Reports</h6>
-                    <a className="mdc-list-item" onClick={e => this.navigate(e, () => {e.preventDefault(); goToReports(store);})} href="#">
+                    <a className="mdc-list-item" onClick={e => this.navigate(e, () => { e.preventDefault(); goToReports(store); })} href="#">
                         <i className="material-icons mdc-list-item__graphic" aria-hidden="true">list</i>
                         <span className="mdc-list-item__text">Export</span>
                     </a>
 
-                    <a className="mdc-list-item" onClick={e => this.navigate(e, () => {e.preventDefault(); goToDashboard(store);})} href="#">
+                    <a className="mdc-list-item" onClick={e => this.navigate(e, () => { e.preventDefault(); goToDashboard(store); })} href="#">
                         <i className="material-icons mdc-list-item__graphic" aria-hidden="true">bar_chart</i>
                         <span className="mdc-list-item__text">Dashboard</span>
                     </a>

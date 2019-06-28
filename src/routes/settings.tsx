@@ -11,22 +11,22 @@ export const goToSettings = (tab: SettingsTab = "preferences") => {
     store.router.goTo(routes.preferences, {}, store, { tab });
 }
 
-export type SettingsTab = "tasks" | "projects" | "preferences" | "clients";
+export type SettingsTab = "tasks" | "projects" | "preferences" | "clients" | "users" | "teams";
 
 let reactionDisposer: IReactionDisposer;
 
 const setActions = (tab: SettingsTab, s: IRootStore) => {
-    when(() => store.user.currentUser !== undefined, () => {
+    when(() => store.user.authenticatedUser !== undefined, () => {
         // reactionDisposer && reactionDisposer();
         switch (tab) {
             case "tasks": {
-                const deleteAction: IViewAction | undefined = canDeleteTask(store.user.currentUser)
+                const deleteAction: IViewAction | undefined = canDeleteTask(store.user.authenticatedUser)
                     ? {
                         action: () => {
                             s.config.taskId && s.config.tasks.deleteAsync(s.config.taskId);
                             s.config.taskId = undefined;
                         },
-                        icon: "delete",
+                        icon: { label: "Delete", content: "delete" },
                         shortKey: { key: "Delete", ctrlKey: true }
                     }
                     : undefined;
@@ -38,31 +38,32 @@ const setActions = (tab: SettingsTab, s: IRootStore) => {
                 break;
             }
             case "projects": {
-                const deleteAction: IViewAction | undefined = canDeleteProject(store.user.currentUser) ?
+                const deleteAction: IViewAction | undefined =
                     {
                         action: () => {
                             s.config.projectId && s.config.projects.deleteAsync(s.config.projectId);
                             s.config.projectId = undefined;
                         },
-                        icon: "delete",
+                        icon: { label: "Delete", content: "delete" },
                         shortKey: { key: "Delete", ctrlKey: true }
-                    }
-                    : undefined;
+                    };
 
                 reactionDisposer = reaction(() => s.config.projectId, id => {
-                    if (id) s.view.setActions([deleteAction].filter(a => a !== undefined) as IViewAction[]);
+                    if (id && canDeleteProject(s.config.projects.docs.get(id)!.data!, s.user.authenticatedUser, s.user.userId)) {
+                        s.view.setActions([deleteAction].filter(a => a !== undefined) as IViewAction[]);
+                    }
                     else s.view.setActions([]);
                 });
                 break;
             }
             case "clients": {
-                const deleteAction: IViewAction | undefined = canDeleteClient(store.user.currentUser) ?
+                const deleteAction: IViewAction | undefined = canDeleteClient(store.user.authenticatedUser) ?
                     {
                         action: () => {
                             s.config.clientId && s.config.clientsCollection.deleteAsync(s.config.clientId);
                             s.config.clientId = undefined;
                         },
-                        icon: "delete",
+                        icon: { label: "Delete", content: "delete" },
                         shortKey: { key: "Delete", ctrlKey: true }
                     }
                     : undefined;

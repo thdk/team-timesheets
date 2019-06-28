@@ -30,3 +30,14 @@
         }
     }
 }
+
+.chart-container {
+    width: 100%;
+    margin-bottom: 1em;
+}
+
+@media (min-width: 550px) {
+    .chart-container {
+        width: 50%;
+    }
+}

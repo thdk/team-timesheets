@@ -1,0 +1,25 @@
+{
+  "name": "common",
+  "version": "1.0.0",
+  "description": "\"Common code for timesheets app, firebase functions, chrome extension,...\"",
+  "main": "lib/index.js",
+  "module": "es/index.js",
+  "jsnext:main": "es/index.js",
+  "scripts": {
+    "build": "tsc",
+    "build:commonjs": "tsc --module CommonJS --outDir lib",
+    "build:es": "tsc"
+  },
+  "files": [
+    "es",
+    "lib"
+  ],
+  "author": "thdk",
+  "license": "ISC",
+  "dependencies": {},
+  "devDependencies": {
+    "@firebase/app-types": "^0.3.4",
+    "@firebase/firestore-types": "^1.0.2",
+    "typescript": "^3.3.3333"
+  }
+}

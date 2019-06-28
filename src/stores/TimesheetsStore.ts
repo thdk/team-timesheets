@@ -1,66 +1,64 @@
-import { observable, computed, reaction, when, action, transaction, toJS, ObservableMap } from 'mobx';
-import { Doc } from "../Firestorable/Document";
-
-import * as firebase from 'firebase/app'
-import { ICollection, Collection } from "../Firestorable/Collection";
+import { observable, computed, reaction, when, action, toJS, ObservableMap, observe, IObservableArray } from 'mobx';
+import { Doc, ICollection, Collection } from "firestorable";
 import store, { IRootStore } from './RootStore';
-import * as deserializer from '../serialization/deserializer';
-import * as serializer from '../serialization/serializer';
-import { getLoggedInUserAsync } from '../Firestorable/Firestorable';
+import * as deserializer from '../../common/serialization/deserializer';
+import * as serializer from '../../common/serialization/serializer';
+import { SortOrder } from '../components/GroupedRegistrations';
+import { IRegistration, IRegistrationData } from '../../common/dist';
+import moment from 'moment-es6';
+import { firestore, auth } from '../firebase/myFirebase';
+import { getLoggedInUserAsync } from '../firebase/firebase-utils';
 
-export interface IGroupedRegistrations {
-    readonly registrations: Doc<IRegistration>[];
-    readonly date: Date;
+export interface IGroupedRegistrations<T> {
+    registrations: Doc<IRegistration, IRegistrationData>[];
+    readonly groupKey: T;
     totalTime: number;
-}
-
-export interface IDocumentData {
-    deleted?: boolean;
-}
-
-export interface IRegistration {
-    description?: string;
-    time?: number;
-    project?: string;
-    task?: string;
-    client?: string;
-    date: Date;
-    userId: string;
-    isPersisted: boolean;
-}
-
-export interface IRegistrationData {
-    description: string;
-    time: number;
-    project: string;
-    task: string;
-    client: string;
-    date: firebase.firestore.Timestamp;
-    userId: string;
-    deleted: boolean;
+    isCollapsed: boolean;
 }
 
 export interface IRegistrationsStore {
     readonly clipboard: ObservableMap<string, IRegistration>;
-    readonly registrations: ICollection<IRegistration>;
-    readonly registration: Doc<Partial<IRegistration>> | undefined;
-    registrationId?: string;
-    readonly registrationsGroupedByDay: IGroupedRegistrations[];
-    readonly save: () => void;
-    readonly newRegistration: () => void;
+    readonly registrations: ICollection<IRegistration, IRegistrationData>;
+
+    readonly selectedRegistrationDays: IObservableArray<Date>;
+    readonly toggleSelectedRegistrationDay: (day: Date) => void;
+    readonly registration: IRegistration | undefined;
+    readonly registrationId?: string;
+    readonly setSelectedRegistrationId: (id: string | undefined) => void;
+    readonly saveSelectedRegistration: () => void;
+    readonly updateSelectedRegistration: (data: Partial<IRegistration>) => void;
+    readonly setSelectedRegistrationDefault: () => void;
+    readonly deleteRegistrationsAsync: (...ids: string[]) => Promise<void[]>;
+
+    readonly registrationsGroupedByDay: IGroupedRegistrations<Date>[];
+    readonly registrationsGroupedByDayReversed: IGroupedRegistrations<Date>[];
+    readonly registrationsGroupedByDaySortOrder: SortOrder;
+    areGroupedRegistrationsCollapsed: boolean;
+    readonly setRegistrationsGroupedByDaySortOrder: (sortOrder: SortOrder) => void;
     readonly cloneRegistration: (source: IRegistration) => IRegistration;
 }
 
 export class RegistrationStore implements IRegistrationsStore {
     private rootStore: IRootStore;
-    readonly registrations: ICollection<IRegistration>;
+    readonly registrations: ICollection<IRegistration, IRegistrationData>;
     readonly clipboard = observable(new Map<string, IRegistration>());
 
-    @observable.ref registrationId?: string;
+    @observable
+    private _selectedRegistration = observable.box<IRegistration | undefined>();
+    @observable
+    private _selectedRegistrationId = observable.box<string | undefined>();
+
+    @observable
+    public selectedRegistrationDays = observable([] as Date[]);
+
+    @observable
+    private registrationsGroupedByDaySortOrderField = SortOrder.Descending;
+    @observable
+    public areGroupedRegistrationsCollapsed = true;
 
     constructor(rootStore: IRootStore) {
         this.rootStore = rootStore;
-        this.registrations = observable(new Collection<IRegistration, IRegistrationData>(() => rootStore.getCollection("registrations"),
+        this.registrations = observable(new Collection<IRegistration, IRegistrationData>(firestore, () => rootStore.getCollection("registrations"),
             {
                 realtime: true,
                 deserialize: deserializer.convertRegistration,
@@ -87,34 +85,73 @@ export class RegistrationStore implements IRegistrationsStore {
         // -- the logged in user changes
         reaction(() => rootStore.view.monthMoment, updateRegistrationQuery);
         reaction(() => rootStore.user.userId, userId => {
-            if (userId) getLoggedInUserAsync().then(() =>
+            if (userId) getLoggedInUserAsync(auth).then(() =>
                 updateRegistrationQuery()
             );
             else this.registrations.unsubscribeAndClear();
         });
+
+        reaction(() => this.areGroupedRegistrationsCollapsed, collapsed => {
+            if (collapsed) {
+                this.selectedRegistrationDays.clear();
+            } else {
+                this.selectedRegistrationDays.replace(
+                    this.registrationsGroupedByDay.map(g => g.groupKey)
+                );
+            }
+        })
+
+        observe(this._selectedRegistrationId, change => this.setSelectedRegistration(change.newValue), true);
+    }
+
+    @computed
+    public get registrationsGroupedByDaySortOrder() {
+        return this.registrationsGroupedByDaySortOrderField;
+    }
+
+    @action
+    public setRegistrationsGroupedByDaySortOrder(sortOrder: SortOrder) {
+        this.registrationsGroupedByDaySortOrderField = sortOrder;
+    }
+
+    @computed get registrationsGroupedByDayReversed() {
+        return this.getGroupedRegistrations(this.registrations, SortOrder.Descending);
     }
 
     @computed get registrationsGroupedByDay() {
-        const registrations = Array.from(this.registrations.docs.values())
+        return this.getGroupedRegistrations(this.registrations);
+    }
+
+    private getGroupedRegistrations(registrations: ICollection<IRegistration, IRegistrationData>, sortOrder = SortOrder.Ascending) {
+        const regs = Array.from(registrations.docs.values())
             .filter(doc => doc.data!.isPersisted) // don't display drafts
             .sort((a, b) => {
                 const aTime = a.data!.date.getTime();
                 const bTime = b.data!.date.getTime();
-                return aTime > bTime ? 1 : aTime < bTime ? -1 : 0;
+                return aTime > bTime ? 1 * sortOrder : aTime < bTime ? -1 * sortOrder : 0;
             });
 
-        if (registrations.length === 0) return [];
-        return registrations
-            .reduce<IGroupedRegistrations[]>((p, c) => {
+        if (regs.length === 0) return [];
+        return regs
+            .reduce<IGroupedRegistrations<Date>[]>((p, c) => {
                 const currentDayGroup = p[p.length - 1];
-                if (currentDayGroup && c.data!.date.getTime() === currentDayGroup.date.getTime()) {
+                if (currentDayGroup && c.data!.date.getTime() === currentDayGroup.groupKey.getTime()) {
                     currentDayGroup.registrations.push(c);
+
+                    // Always make sure that the order within a group is stable
+                    // Oldest on top
+                    currentDayGroup.registrations = currentDayGroup.registrations.sort((a, b) => {
+                        const aTime = a.data!.created!.getTime();
+                        const bTime = b.data!.created!.getTime();
+                        return aTime > bTime ? 1 : aTime < bTime ? -1 : 0;
+                    })
                     currentDayGroup.totalTime = (currentDayGroup.totalTime || 0) + (c.data!.time || 0);
                 } else {
                     p.push({
-                        date: c.data!.date,
+                        groupKey: c.data!.date,
                         registrations: [c],
-                        totalTime: c.data!.time || 0
+                        totalTime: c.data!.time || 0,
+                        isCollapsed: !this.selectedRegistrationDays.some(d => d === c.data!.date),
                     });
                 }
 
@@ -124,14 +161,53 @@ export class RegistrationStore implements IRegistrationsStore {
 
     @computed
     public get registration() {
-        if (!store.user.user) throw new Error("User must be set");
+        return this._selectedRegistration.get();
+    }
 
-        const registration = this.registrationId
-            ? this.registrations.docs.get(this.registrationId)
-            : undefined;
+    @computed
+    public get registrationId() {
+        return this._selectedRegistrationId.get();
+    }
 
+    @action
+    public setSelectedRegistrationId(id: string | undefined) {
+        this._selectedRegistrationId.set(id);
+    }
 
-        return registration;
+    public updateSelectedRegistration(data: Partial<IRegistration> | undefined) {
+        this.registration && this._selectedRegistration.set(data ? { ...this.registration, ...data } : undefined);
+    }
+
+    @action
+    private setSelectedRegistration(id: string | undefined) {
+        const registration = id ? this.registrations.docs.get(id) : undefined;
+
+        if (id && !registration) {
+            // fetch the registration manually
+            this.registrations.getAsync(id)
+                .then(regDoc => this.setSelectedRegistrationObservable(regDoc.data))
+        } else if (registration) {
+            this.setSelectedRegistrationObservable(registration.data!);
+        } else {
+            this.setSelectedRegistrationObservable(undefined);
+        }
+    }
+
+    @action
+    public setSelectedRegistrationDefault() {
+        this.getNewRegistrationDataAsync().then(data => {
+            this.setSelectedRegistrationObservable(data);
+        });
+    }
+
+    @action.bound
+    private setSelectedRegistrationObservable(registration: IRegistration | undefined) {
+        this._selectedRegistration.set(registration);
+    }
+
+    public deleteRegistrationsAsync(...ids: string[]) {
+        // Todo: make updateAsync with data === "delete" use a batch in firestorable package.
+        return Promise.all(ids.map(id => this.registrations.updateAsync(id, "delete")));
     }
 
     public cloneRegistration(source: IRegistration) {
@@ -140,47 +216,52 @@ export class RegistrationStore implements IRegistrationsStore {
         return { ...source, date: this.toUTC(store.view.moment.toDate()) };
     }
 
-    @action
-    public newRegistration() {
-        if (!store.user.user) throw new Error("User must be set");
-
-        const {
-            data: {
-                recentProjects = [],
-                defaultTask: task = store.config.tasks.docs.size ? Array.from(store.config.tasks.docs.keys())[0] : undefined,
-                defaultClient: client = undefined
-            } = {}
-            , id: userId
-        } = store.user.user;
-
-        const registration = this.registrations.newDoc<IRegistration>({
-            date: this.toUTC(
-                this.rootStore.view.moment.toDate()
-            ),
-            task,
-            client,
-            userId,
-            project: recentProjects.length ? recentProjects[0] : undefined,
-            isPersisted: false,
-        });
-
-        transaction(() => {
-            this.registrationId = registration.id;
-            this.registrations.docs.set(registration.id, registration);
-        });
+    public toggleSelectedRegistrationDay(date: Date) {
+        const index = this.selectedRegistrationDays.findIndex(d => d.getTime() === date.getTime());
+        if (index === -1) {
+            this.selectedRegistrationDays.push(date);
+        } else {
+            this.selectedRegistrationDays.replace([...this.selectedRegistrationDays.slice(0, index), ...this.selectedRegistrationDays.slice(index + 1)]);
+        }
     }
 
-    public save() {
-        if (store.timesheets.registration) {
-            const registration = store.timesheets.registration;
-            store.timesheets.registrations
-                .updateAsync(registration.id, registration.data!)
+    private getNewRegistrationDataAsync(): Promise<IRegistration> {
+        return when(() => !!this.rootStore.user.authenticatedUser)
+            .then(() => {
+                const regMoment = this.rootStore.view.day === undefined ? moment().startOf("day") : undefined;
+
+                if (!this.rootStore.user.authenticatedUser || !this.rootStore.user.userId) throw new Error("User must be set");
+
+                const {
+                    recentProjects = [],
+                    defaultTask: task = this.rootStore.config.tasks.docs.size ? Array.from(this.rootStore.config.tasks.docs.keys())[0] : undefined,
+                    defaultClient: client = undefined
+                } = this.rootStore.user.authenticatedUser || {};
+
+                return {
+                    date: this.toUTC(
+                        regMoment ? regMoment.toDate() : this.rootStore.view.moment.toDate()
+                    ),
+                    task,
+                    client,
+                    userId: this.rootStore.user.userId,
+                    project: recentProjects.length ? recentProjects[0] : undefined,
+                    isPersisted: false,
+                };
+            });
+    }
+
+    public saveSelectedRegistration() {
+        if (this.registration) {
+            const { registration } = this;
+            this.registrations
+                .updateAsync(this.registrationId, registration)
                 .then(() => {
-                    const { project = undefined } = registration.data || {};
+                    const { project = undefined } = registration || {};
                     // TODO: move set recent project to firebase function
                     // triggering for every update/insert of a registration?
-                    if (store.user.userId && store.user.user && project) {
-                        const recentProjects = toJS(store.user.user.data!.recentProjects);
+                    if (store.user.userId && store.user.authenticatedUser && project) {
+                        const recentProjects = toJS(store.user.authenticatedUser.recentProjects);
                         const oldProjectIndex = recentProjects.indexOf(project);
 
                         // don't update the user document if the current project was already most recent
@@ -197,7 +278,7 @@ export class RegistrationStore implements IRegistrationsStore {
                                 recentProjects.unshift(project);
                             }
 
-                            store.user.userId && store.user.users.updateAsync(store.user.userId, { recentProjects })
+                            store.user.updateAuthenticatedUser({ recentProjects });
                         }
                     }
                 });

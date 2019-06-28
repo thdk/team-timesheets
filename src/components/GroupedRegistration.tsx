@@ -1,78 +1,91 @@
 import * as React from 'react';
-import store from '../stores/RootStore';
-import { ListItem, List, ListDivider } from '../MaterialUI/list';
-import { IGroupedRegistrations, IRegistration } from '../stores/TimesheetsStore';
+import { ListItem, List, ListDivider } from '../mdc/list';
+import { IGroupedRegistrations } from '../stores/TimesheetsStore';
 import { observer } from 'mobx-react';
-import { Checkbox } from '../MaterialUI/checkbox';
-import { FlexGroup } from './Layout/flex';
+import { IRegistration } from '../../common/dist';
+import { RegistrationLines } from './registrations/RegistrationLine/RegistrationLines';
 
 
 export interface IGroupedRegistrationProps {
-    group: IGroupedRegistrations;
+    group: IGroupedRegistrations<Date>;
     registrationClick: (id: string) => void;
+    headerClick: (e: React.MouseEvent) => void;
     registrationToggleSelect?: (id: string, data: IRegistration) => void;
     createTotalLabel: (date: Date) => React.ReactNode;
     totalOnTop?: boolean;
+    denseList?: boolean;
+    isCollapsed: boolean;
+    isCollapsable?: boolean;
 }
 
 @observer
 export class GroupedRegistration extends React.Component<IGroupedRegistrationProps> {
+    private registrationRef: React.RefObject<HTMLDivElement>;
+    constructor(props: IGroupedRegistrationProps) {
+        super(props);
+        this.registrationRef = React.createRef();
+    }
+
     render() {
-        const { group: { registrations, date, totalTime }, createTotalLabel, totalOnTop, registrationClick, registrationToggleSelect: registrationSelect } = this.props;
+        const { isCollapsable = false,
+            denseList,
+            group: {
+                registrations,
+                groupKey,
+                totalTime
+            },
+            createTotalLabel,
+            totalOnTop,
+            registrationClick,
+            headerClick,
+            registrationToggleSelect: registrationSelect,
+            isCollapsed
+        } = this.props;
+
         const listStyle = { width: '100%' };
-        const rows = registrations.map(r => {
-            if (!r.data) throw new Error("Found registration without Data");
 
-            const { id, data: { description = "...", project, time, task, client } } = r;
 
-            const projectData = project ? store.config.projects.docs.get(project) : null;
-            const { data: { name: projectName = "" } = {} } = projectData || {};
+        const totalLabel = createTotalLabel(groupKey);
 
-            const taskData = task ? store.config.tasks.docs.get(task) : null;
-            const { data: { icon = undefined } = {} } = taskData || {};
+        const total = <ListItem
+            onClick={headerClick}
+            lines={[totalLabel]}
+            icon={isCollapsable ? isCollapsed ? "chevron_right" : "expand_more" : undefined}
+            meta={parseFloat(totalTime.toFixed(2)) + " hours"}
+            disabled={true}>
+        </ListItem>
 
-            const clientData = client ? store.config.clientsCollection.docs.get(client) : null;
-            const { data: { name: clientName = undefined } = {} } = clientData || {};
+        const extraStylingForTotalList = {
+            ...(isCollapsable ? { cursor: "pointer" } : {}),
+            ...({ paddingTop: 0, paddingBottom: 0 })
+        };
 
-            const line1 = projectName;
-            const line2 = `${clientName ? clientName + " - " : ""}${description}`;
+        const totalList =
+            <List isDense={denseList} style={{ ...listStyle, ...extraStylingForTotalList }}>
+                {total}
+                <ListDivider></ListDivider>
+            </List>;
 
-            const checkbox = registrationSelect
-                ? <div className="clickable"><Checkbox checked={store.view.selection.has(id)} onClick={registrationSelect.bind(this, id, r.data!)}></Checkbox></div>
-                : undefined;
-
-            const meta =
-                <FlexGroup center={true} style={{ justifyContent: "space-between", width: checkbox ? "8em" : "auto" }}>
-                    <div>{`${time ? time.toFixed(2) : 0}`}</div>
-                    {checkbox}
-                </FlexGroup>;
-
-            return (
-                <ListItem
-                    icon={icon}
-                    key={id}
-                    lines={[line1, line2]}
-                    meta={meta}
-                    onClick={registrationClick.bind(this, id)}>
-                </ListItem>
-            );
-        });
-        const totalLabel = createTotalLabel(date);
-
-        const total = <ListItem lines={[totalLabel]} meta={totalTime.toFixed(2) + " hours"} disabled={true}></ListItem>
-
-        const totalList = <List style={listStyle}><ListDivider></ListDivider>{total}<ListDivider></ListDivider></List>;
         const topTotal = totalOnTop ? totalList : undefined;
         const bottomTotal = totalOnTop ? undefined : totalList;
 
         return (
-            <React.Fragment>
+            <div ref={this.registrationRef}>
                 {topTotal}
-                <List isTwoLine={true} style={listStyle}>
-                    {rows}
-                </List>
+                <div style={{ ...listStyle, display: isCollapsed ? "none" : "block" }}>
+                    <RegistrationLines
+                        registrations={registrations}
+                        registrationClick={registrationClick}
+                        registrationToggleSelect={registrationSelect}>
+                    </RegistrationLines>
+                    <ListDivider></ListDivider>
+                </div>
                 {bottomTotal}
-            </React.Fragment>
+            </div>
         );
+    }
+
+    public scrollIntoView() {
+        this.registrationRef.current && this.registrationRef.current.scrollIntoView({ behavior: "smooth" });
     }
 }

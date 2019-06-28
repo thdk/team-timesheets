@@ -1,26 +1,32 @@
 service cloud.firestore {
     match /databases/{database}/documents {
         function getRole(role) {
-            return get(/databases/$(database)/documents/users/$(request.auth.uid)).data.roles[role]
+            return get(/databases/$(database)/documents/users/$(request.auth.uid)).data.roles[role];
         }
 
         match /registrations/{registrationId} {
             allow read, create: if request.auth.uid != null;
-            allow update, delete: if get(/databases/$(database)/documents/registrations/$(registrationId)).data.userId == request.auth.uid
+            allow update, delete: if get(/databases/$(database)/documents/registrations/$(registrationId)).data.userId == request.auth.uid;
         }
 
         match /reports/{reportId} {
             allow read, write;
         }
 
-        match /projects/{document} {
-            allow read, create;
-            allow update, delete: if getRole('admin') == true
+        match /projects/{documentId} {
+            allow read;
+            allow create: if getRole('editor') == true;
+            allow update, delete: if (getRole('editor') == true && resource.data.createdBy == request.auth.uid) || getRole('admin') == true;
         }
 
-         match /clients/{document} {
-            allow read, create;
-            allow update, delete: if getRole('admin') == true
+        match /clients/{document} {
+            allow read;
+            allow create, update, delete: if getRole('admin') == true;
+        }
+
+        match /teams/{document} {
+            allow read;
+            allow create, update, delete: if getRole('admin') == true;
         }
 
         match /tasks/{document} {
@@ -29,8 +35,9 @@ service cloud.firestore {
         }
 
         match /users/{userId} {
-            allow read;
+            allow read: if getRole('admin') == true || request.auth.uid == userId;
             allow create, update: if getRole('admin') == true || !request.resource.keys().hasAny(["roles"]);
+            allow delete: if getRole('admin') == true;
         }
   	}
 }

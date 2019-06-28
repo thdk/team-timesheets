@@ -2,6 +2,8 @@ import { observable, IObservableArray, action, computed, transaction, reaction, 
 import moment from 'moment-es6';
 import { IRootStore } from "./RootStore";
 import { goToLogin } from "../internal";
+import { IIconData } from "../mdc/buttons/iconButtons";
+
 export interface IShortKey {
   ctrlKey?: boolean;
   altKey?: boolean;
@@ -11,7 +13,9 @@ export interface IShortKey {
 }
 
 export interface IViewAction<T = any> {
-  readonly icon: string;
+  readonly icon: IIconData;
+  readonly iconActive?: IIconData;
+  readonly isActive?: boolean;
   readonly action: (selection?: Map<string, T>) => void;
   readonly shortKey?: IShortKey;
   readonly contextual?: boolean;
@@ -19,15 +23,20 @@ export interface IViewAction<T = any> {
 }
 
 export interface INavigationViewAction extends IViewAction {
-  icon: "menu" | "arrow_back" | "arrow_upward";
+  icon: { label: "Menu", content: "menu" } | { label: "Back", content: "arrow_back" } | { label: "Up", content: "arrow_upward" };
 }
 
 export interface IViewStore {
   title: string;
   isDrawerOpen: boolean;
+
+  // todo: day, month and year should be set with an action setDate(year, month, day)
   day?: number;
   month?: number;
   year?: number;
+
+  track?: boolean;
+
   readonly moment: moment.Moment;
   readonly monthMoment: moment.Moment;
   readonly actions: IObservableArray<IViewAction>;
@@ -50,6 +59,8 @@ export class ViewStore implements IViewStore {
   @observable month?: number;
   @observable year?: number;
 
+  public track?: boolean;
+
   private readonly rootStore: IRootStore;
 
   constructor(rootStore: IRootStore) {
@@ -67,12 +78,18 @@ export class ViewStore implements IViewStore {
 
     this.setNavigation("default");
 
-    reaction(() => rootStore.user.userId, userId => {
+    this.init();
+  }
+
+  private init() {
+    // redirect to login when user logs out
+    reaction(() => this.rootStore.user.userId, userId => {
       if (!userId) {
-        goToLogin(rootStore);
+        goToLogin(this.rootStore);
       }
     });
 
+    // listen for keyboard event which can fire viewactions
     document.addEventListener("keydown", ev => {
       const viewAction = this.actions.filter(a => {
         const { key = undefined, ctrlKey = false, altKey = false, shiftKey = false, metaKey = false } = a.shortKey || {};
@@ -98,7 +115,7 @@ export class ViewStore implements IViewStore {
       action: () => {
         this.rootStore.view.isDrawerOpen = !this.rootStore.view.isDrawerOpen;
       },
-      icon: "menu",
+      icon: { content: "menu", label: "Menu" },
     } : action;
   }
 

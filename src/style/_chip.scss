@@ -1,4 +1,4 @@
-@import "@material/chips/mdc-chips";
+@import '@material/react-chips/index.scss';
 
 .mdc-chip {
     @include mdc-chip-outline(2px, solid, currentColor);

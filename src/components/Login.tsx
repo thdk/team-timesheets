@@ -2,7 +2,9 @@ import * as React from 'react';
 
 import * as firebase from 'firebase/app';
 import * as firebaseui from 'firebaseui';
-import { firestorable } from '../Firestorable/Firestorable';
+
+import { config, LoginProvider } from '../config';
+import { auth } from '../firebase/myFirebase';
 
 export class Login extends React.Component {
     private loginUi?: firebaseui.auth.AuthUI;
@@ -15,38 +17,48 @@ export class Login extends React.Component {
     }
 
     componentDidMount() {
-        // TODO: loginUIConfig should take settings from a config file!        
+        const { providers, tosUrl, privacyPolicyUrl } = config.firebaseAuth;
+
         const loginUiConfig = {
             callbacks: {
                 signInSuccessWithAuthResult: (_authResult: firebase.auth.UserCredential, _redirectUrl: string) => {
                     return false;
                 }
             },
-            signInOptions: [
-                // Leave the lines as is for the providers you want to offer your users.
-                firebase.auth.GoogleAuthProvider.PROVIDER_ID,
-                // firebase.auth.EmailAuthProvider.PROVIDER_ID,
-                // firebaseui.auth.AnonymousAuthProvider.PROVIDER_ID
-            ],
+            signInOptions: providers.map(this.getFirebaseAuthProvider),
             // tosUrl and privacyPolicyUrl accept either url string or a callback
             // function.
             // Terms of service url/callback.
-            tosUrl: 'http://thdk.be',
+            tosUrl,
             // Privacy policy url/callback.
-            privacyPolicyUrl: function () {
-                window.location.assign('http://thdk.be');
-            },
+            privacyPolicyUrl,
+            // privacyPolicyUrl: function () {
+            //
+            // },
             signInFlow: 'popup',
             credentialHelper: firebaseui.auth.CredentialHelper.NONE
         };
 
         // Initialize the FirebaseUI Widget using Firebase.
-        this.loginUi = new firebaseui.auth.AuthUI(firestorable.auth);
+        this.loginUi = new firebaseui.auth.AuthUI(auth);
         // The start method will wait until the DOM is loaded.
         this.loginUi.start('#firebaseui-auth-container', loginUiConfig);
     }
 
     componentWillUnmount() {
         this.loginUi && this.loginUi.delete();
+    }
+
+    getFirebaseAuthProvider(provider: LoginProvider) {
+        switch (provider) {
+            case LoginProvider.Google:
+                return firebase.auth.GoogleAuthProvider.PROVIDER_ID;
+            case LoginProvider.Facebook:
+                return firebase.auth.FacebookAuthProvider.PROVIDER_ID;
+            case LoginProvider.Email:
+                return firebase.auth.EmailAuthProvider.PROVIDER_ID;
+            case LoginProvider.Guest:
+                return firebaseui.auth.AnonymousAuthProvider.PROVIDER_ID;
+        }
     }
 }

@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Drawer } from '../MaterialUI/drawer';
+import { Drawer } from '../mdc/drawer';
 import { Menu } from './Menu';
 import { observe } from 'mobx';
 import { IViewStore } from '../stores/ViewStore';
@@ -22,7 +22,7 @@ export class App extends React.Component {
                     <TopNavigation></TopNavigation>
 
                     <main className="main-content" id="main-content">
-                        <div className="mdc-top-app-bar--fixed-adjust">
+                        <div style={{ paddingBottom: "100px" }} className="mdc-top-app-bar--fixed-adjust">
                             {this.props.children}
                         </div>
                     </main>

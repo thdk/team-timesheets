@@ -1,4 +1,14 @@
 // rename this file with correct values to config.ts
+// Only edit the file where written in comments!
+
+// Do not edit
+export enum LoginProvider {
+    Email,
+    Facebook,
+    Google,
+    Guest
+}
+//
 
 // Replace the values below with those from your firebase project settings.
 
@@ -8,6 +18,11 @@ const configs: Environments = {
         authDomain: "DEFAULT_API_KEY",
         projectId: "DEFAULT_API_KEY",
         storageBucket: "DEFAULT_API_KEY",
+        firebaseAuth: {
+            providers: [LoginProvider.Google, LoginProvider.Facebook, LoginProvider.Guest],
+            tosUrl: "http://tosUrl.company.com",
+            privacyPolicyUrl: "http://privacyPolicyUrl.company.com"
+        }
     },
     development: {
         apiKey: "DEV_API_KEY",
@@ -30,6 +45,11 @@ export interface IAppConfig {
     authDomain: string;
     projectId: string;
     storageBucket: string;
+    firebaseAuth: {
+        providers: LoginProvider[];
+        tosUrl: string;
+        privacyPolicyUrl: string;
+    }
 }
 
 type Environments = {

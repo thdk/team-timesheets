@@ -4,9 +4,11 @@ const gulp = require('gulp');
 const rollup = require('rollup-stream');
 const sass = require('gulp-sass');
 const rev = require('gulp-rev');
+const series = require('stream-series');
 const buffer = require('gulp-buffer');
 const inject = require('gulp-inject');
 const del = require('del');
+const merge = require("merge-stream");
 
 const postcss = require('gulp-postcss');
 const autoprefixer = require('autoprefixer');
@@ -22,7 +24,8 @@ const configuration = {
             html: './src/*.html',
             images: './src/images/**/*.png',
             css: [
-                './src/style/*.scss'
+                './src/style/*.scss',
+                './src/components/**/*.scss'
             ],
             js: 'src/app.ts',
             manifest: 'src/manifest.json',
@@ -30,11 +33,12 @@ const configuration = {
             safari: 'src/images/icons/safari-pinned-tab.svg',
             favicon: './src/images/icons/favicon.ico',
         },
-        dist: './dist'
+        dist: './dist',
+        node_modules: './node_modules/'
     }
 };
 
-gulp.task('root', function() {
+gulp.task('root', function () {
     return gulp.src([
         configuration.paths.src.manifest,
         configuration.paths.src.browserconfig,
@@ -44,7 +48,7 @@ gulp.task('root', function() {
         .pipe(gulp.dest(configuration.paths.dist));
 });
 
-gulp.task('images', function() {
+gulp.task('images', function () {
     return gulp.src(configuration.paths.src.images)
         .pipe(gulp.dest(configuration.paths.dist + '/images'));
 });
@@ -63,8 +67,32 @@ gulp.task('scss', gulp.series(function (done) {
 }));
 
 gulp.task('scsswatch', gulp.series(function (done) {
-    gulp.watch('./src/style/**/*.scss', gulp.series('clean-css', 'scss', 'inject'));
+    gulp.watch(configuration.paths.src.css, gulp.series('clean-css', 'scss', 'inject'));
     done();
+}));
+
+gulp.task('clean:libs', gulp.series(function (done) {
+    // You can use multiple globbing patterns as you would with `gulp.src`
+    return del([configuration.paths.dist + "/lib"], done);
+}));
+
+gulp.task("copy:libs", gulp.series("clean:libs", function () {
+    const production = process.env.NODE_ENV === "production";
+    const mobxLib = production ? "mobx/lib/mobx.umd.min.js" : "mobx/lib/mobx.umd.js"
+    const momentLib = production ? "moment/min/moment.min.js" : "moment/moment.js";
+    const chartjsLib = production ? "chart.js/dist/Chart.min.js" : "chart.js/dist/Chart.js"
+    const libs = [];
+
+    libs.push(
+        gulp.src(configuration.paths.node_modules + momentLib)
+            .pipe(gulp.dest(configuration.paths.dist + "/lib/moment")),
+        gulp.src(configuration.paths.node_modules + chartjsLib)
+            .pipe(gulp.dest(configuration.paths.dist + "/lib/chartjs")),
+        gulp.src(configuration.paths.node_modules + mobxLib)
+            .pipe(gulp.dest(configuration.paths.dist + "/lib/mobx"))
+    );
+
+    return merge(...libs);
 }));
 
 gulp.task('bundle', function () {
@@ -81,12 +109,19 @@ gulp.task('tswatch', gulp.series(function (done) {
 }));
 
 gulp.task('inject', function (done) {
+    const appStream = gulp.src(['./dist/**/*.js',
+        './dist/**/*.css'], { read: false });
+
+    const vendorStream = gulp.src([
+        './dist/lib/**/*.js'], { read: false });
+
     gulp.src('./src/**/*.html')
-        .pipe(inject(gulp.src(['./dist/**/*.js', './dist/**/*.css'], { read: false }), {
-            ignorePath: 'dist',
-            addRootSlash: true,
-            relative: false
-        }))
+        .pipe(inject(series(vendorStream, appStream)
+            , {
+                ignorePath: 'dist',
+                addRootSlash: true,
+                relative: false,
+            }))
         .pipe(gulp.dest('./dist'));
     done();
 });
@@ -106,7 +141,7 @@ gulp.task('clean-dist', function (cb) {
     return del(['dist'], cb);
 });
 
-gulp.task('set-node-env', function(done) {
+gulp.task('set-node-env', function (done) {
     process.env.NODE_ENV = argv.env;
     done();
 });
@@ -114,7 +149,7 @@ gulp.task('set-node-env', function(done) {
 // Gulp default task
 gulp.task('default', gulp.series(
     gulp.parallel('clean-dist', 'set-node-env'),
-    gulp.parallel('bundle', 'scss'),
+    gulp.parallel('bundle', 'scss', 'copy:libs'),
     gulp.parallel('inject', 'root', 'images')
 ));
 

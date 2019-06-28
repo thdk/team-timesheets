@@ -4,8 +4,8 @@ import * as React from 'react';
 import store, { IRootStore } from "../stores/RootStore";
 import { Settings } from "../components/Pages/Settings/Settings";
 import { IViewAction } from "../stores/ViewStore";
-import { IReactionDisposer, reaction, transaction, when } from "mobx";
-import { canDeleteTask, canDeleteProject, canDeleteClient } from "../rules/rules";
+import { IReactionDisposer, reaction, transaction, when, Lambda } from "mobx";
+import { canDeleteTask, canDeleteProject, canDeleteClient, canArchiveProject } from "../rules/rules";
 
 export const goToSettings = (tab: SettingsTab = "preferences") => {
     store.router.goTo(routes.preferences, {}, store, { tab });
@@ -13,7 +13,7 @@ export const goToSettings = (tab: SettingsTab = "preferences") => {
 
 export type SettingsTab = "tasks" | "projects" | "preferences" | "clients" | "users" | "teams";
 
-let reactionDisposer: IReactionDisposer;
+let reactionDisposer: IReactionDisposer | Lambda;
 
 const setActions = (tab: SettingsTab, s: IRootStore) => {
     when(() => store.user.authenticatedUser !== undefined, () => {
@@ -38,21 +38,49 @@ const setActions = (tab: SettingsTab, s: IRootStore) => {
                 break;
             }
             case "projects": {
-                const deleteAction: IViewAction | undefined =
-                    {
-                        action: () => {
-                            s.config.projectId && s.config.projects.deleteAsync(s.config.projectId);
-                            s.config.projectId = undefined;
-                        },
-                        icon: { label: "Delete", content: "delete" },
-                        shortKey: { key: "Delete", ctrlKey: true }
-                    };
+                const deleteAction: IViewAction =
+                {
+                    action: () => {
+                        const project = store.config.project.get();
+                        project && s.config.projects.deleteAsync(project.id);
+                        s.config.setSelectedProject();
+                    },
+                    icon: { label: "Delete", content: "delete" },
+                    shortKey: { key: "Delete", ctrlKey: true }
+                };
 
-                reactionDisposer = reaction(() => s.config.projectId, id => {
-                    if (id && canDeleteProject(s.config.projects.docs.get(id)!.data!, s.user.authenticatedUser, s.user.userId)) {
-                        s.view.setActions([deleteAction].filter(a => a !== undefined) as IViewAction[]);
+                const archiveAction: IViewAction = {
+                    action: () => {
+                        const project = store.config.project.get();
+                        if (project) {
+                            project.isArchived ? s.config.unarchiveProject() : s.config.archiveProject();
+                        }
+                    },
+                    icon: { label: "Archive", content: "archive" },
+                    iconActive: { label: "Unarchive", content: "unarchive" },
+                    shortKey: { key: "e" },
+                    isActive: () => {
+                        const project = store.config.project.get();
+                        return (project && project.isArchived) || false;
                     }
-                    else s.view.setActions([]);
+                };
+
+                reactionDisposer = s.config.project.observe(change => {
+
+                    const project = change.newValue;
+
+                    const viewActions = [] as IViewAction[];
+                    if (project) {
+                        if (canDeleteProject(project, s.user.authenticatedUser, s.user.userId)) {
+                            viewActions.push(deleteAction);
+                        }
+
+                        if (canArchiveProject(project, s.user.authenticatedUser, s.user.userId)) {
+                            viewActions.push(archiveAction);
+                        }
+                    }
+
+                    s.view.setActions(viewActions);
                 });
                 break;
             }
@@ -92,7 +120,7 @@ const routes = {
         },
         onParamsChange: (_route, _params, s: IRootStore, queryParams: { tab: SettingsTab }) => {
             transaction(() => {
-                s.config.projectId = undefined;
+                s.config.setSelectedProject();
                 s.config.taskId = undefined;
                 s.config.clientId = undefined;
             });
@@ -101,7 +129,7 @@ const routes = {
         title: "Settings",
         beforeExit: (_route, _param, s: IRootStore) => {
             transaction(() => {
-                s.config.projectId = undefined;
+                s.config.setSelectedProject();
                 s.config.taskId = undefined;
                 s.config.clientId = undefined;
             });

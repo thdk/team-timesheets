@@ -76,7 +76,11 @@ export function convertTeam(appData: Partial<ITeam>): Partial<ITeamData> {
 export function convertProject(appData: Partial<IProject> | "delete"): Partial<IProjectData> {
     if (appData === "delete") throw new Error("Soft 'delete' is not supported for projects. The document must be deleted");
 
-    return { ...convertNameWithIcon(appData), createdBy: appData.createdBy };
+    const data = { ...convertNameWithIcon(appData), createdBy: appData.createdBy, isArchived: appData.isArchived };
+
+    if (data.createdBy === undefined) delete (data.createdBy);
+    if (data.isArchived === undefined) delete (data.isArchived);
+    return data;
 }
 
 export function convertNameWithIcon(appData: Partial<INameWithIcon>): Partial<INameWithIconData> {

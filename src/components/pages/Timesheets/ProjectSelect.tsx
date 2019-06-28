@@ -4,7 +4,6 @@ import { observer } from 'mobx-react';
 import { FormField } from '../../Layout/form';
 import { Select, SelectOption } from '../../../mdc/select';
 import store from '../../../stores/RootStore';
-import { Doc } from "firestorable";
 import { IProject } from '../../../../common/dist';
 
 @observer
@@ -15,20 +14,20 @@ export default class ProjectSelect extends React.Component {
         const userRecentProjects = store.user.authenticatedUser ? store.user.authenticatedUser.recentProjects : [];
 
         const recentProjects = userRecentProjects.slice(0, 5).reduce((p, c) => {
-            const projectData = store.config.projects.docs.get(c);
+            const projectData = store.config.activeProjects.find(p => p.id === c);
             if (projectData) {
                 p.push(projectData);
             } else {
                 console.log("No project data found for recent project id: " + c)
             }
             return p;
-        }, new Array<Doc<IProject>>());
+        }, new Array<IProject & { id: string }>());
 
         const recentProjectItems = recentProjects.length
             ? ["\/ Recent projects \/", ...recentProjects, "", "\/ More projects \/"]
             : [""];
 
-        const otherProjectItems = Array.from(store.config.projects.docs.values())
+        const otherProjectItems = store.config.activeProjects
             .filter(p => !recentProjects.some(rp => rp.id === p.id));
 
         const projects = [...recentProjectItems, ...otherProjectItems]
@@ -39,23 +38,21 @@ export default class ProjectSelect extends React.Component {
                     ]);
                 }
                 else {
-                    if (c.data) {
-                        const { id, data: { name } } = c;
-                        p.push(
-                            <SelectOption text={name!} value={id} key={id}></SelectOption>
-                        );
-                    }
+                    const { id, name } = c;
+                    p.push(
+                        <SelectOption text={name!} value={id} key={id}></SelectOption>
+                    );
                 }
 
                 return p;
             }, new Array());
 
         return (
-                <FormField>
-                    <Select value={project} outlined={true} label="Project" onChange={this.onProjectChange}>
-                        {projects}
-                    </Select>
-                </FormField>
+            <FormField>
+                <Select value={project} outlined={true} label="Project" onChange={this.onProjectChange}>
+                    {projects}
+                </Select>
+            </FormField>
         );
     }
 

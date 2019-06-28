@@ -101,10 +101,7 @@ export class Dashboard extends React.Component {
                                 <CollectionSelect value={store.dashboard.projectFilterValue}
                                     label="Project"
                                     onChange={this.onProjectFilterChange}
-                                    items={
-                                        Array.from(store.config.projects.docs.values())
-                                            .map(doc => ({ name: doc.data!.name, id: doc.id }))
-                                    }>
+                                    items={store.config.activeProjects}>
                                 </CollectionSelect>
                             </FormField>
                         </FlexGroup>

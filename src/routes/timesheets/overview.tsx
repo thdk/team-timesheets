@@ -71,10 +71,8 @@ const setActions = (s: IRootStore, alowInserts = false) => {
                 const docData = Array.from(selection.values())
                     .map(reg => s.timesheets.cloneRegistration(reg)) as IRegistration[];
 
-                s.timesheets.registrations.addAsync(docData).then(() => {
-                    // uncomment to clear clipboard on paste
-                    // s.timesheets.clipboard.clear();
-                });
+                s.timesheets.addRegistrations(docData);
+                s.timesheets.clipboard.clear();
             },
             icon: { content: "content_paste", label: "Paste" },
             shortKey: { ctrlKey: true, key: "v" },

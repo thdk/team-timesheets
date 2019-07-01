@@ -8,4 +8,5 @@ export interface IRegistration {
     userId: string;
     isPersisted: boolean;
     created?: Date;
+    deleted?: boolean;
 }

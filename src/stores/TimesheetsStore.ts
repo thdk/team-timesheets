@@ -18,8 +18,6 @@ export interface IGroupedRegistrations<T> {
 
 export interface IRegistrationsStore {
     readonly clipboard: ObservableMap<string, IRegistration>;
-    readonly registrations: ICollection<IRegistration, IRegistrationData>;
-
     readonly selectedRegistrationDays: IObservableArray<Date>;
     readonly toggleSelectedRegistrationDay: (day: Date) => void;
     readonly registration: IRegistration | undefined;
@@ -29,6 +27,7 @@ export interface IRegistrationsStore {
     readonly updateSelectedRegistration: (data: Partial<IRegistration>) => void;
     readonly setSelectedRegistrationDefault: () => void;
     readonly deleteRegistrationsAsync: (...ids: string[]) => Promise<void[]>;
+    readonly addRegistrations: (data: IRegistration[]) => void;
 
     readonly registrationsGroupedByDay: IGroupedRegistrations<Date>[];
     readonly registrationsGroupedByDayReversed: IGroupedRegistrations<Date>[];
@@ -40,7 +39,7 @@ export interface IRegistrationsStore {
 
 export class RegistrationStore implements IRegistrationsStore {
     private rootStore: IRootStore;
-    readonly registrations: ICollection<IRegistration, IRegistrationData>;
+    private readonly registrations: ICollection<IRegistration, IRegistrationData>;
     readonly clipboard = observable(new Map<string, IRegistration>());
 
     @observable
@@ -73,7 +72,6 @@ export class RegistrationStore implements IRegistrationsStore {
                 const endDate = moment.clone().endOf("month").toDate();
                 const startDate = moment.clone().startOf("month").toDate();
                 this.registrations.query = ref => ref
-                    .where("deleted", "==", false)
                     .where("date", ">", startDate)
                     .where("date", "<=", endDate)
                     .where("userId", "==", rootStore.user.userId);
@@ -124,7 +122,7 @@ export class RegistrationStore implements IRegistrationsStore {
 
     private getGroupedRegistrations(registrations: ICollection<IRegistration, IRegistrationData>, sortOrder = SortOrder.Ascending) {
         const regs = Array.from(registrations.docs.values())
-            .filter(doc => doc.data!.isPersisted) // don't display drafts
+            .filter(doc => doc.data!.isPersisted && !doc.data!.deleted) // don't display drafts or deleted items
             .sort((a, b) => {
                 const aTime = a.data!.date.getTime();
                 const bTime = b.data!.date.getTime();
@@ -208,6 +206,10 @@ export class RegistrationStore implements IRegistrationsStore {
     public deleteRegistrationsAsync(...ids: string[]) {
         // Todo: make updateAsync with data === "delete" use a batch in firestorable package.
         return Promise.all(ids.map(id => this.registrations.updateAsync(id, "delete")));
+    }
+
+    public addRegistrations(data: IRegistration[]) {
+        this.registrations.addAsync(data);
     }
 
     public cloneRegistration(source: IRegistration) {

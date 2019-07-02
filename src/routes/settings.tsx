@@ -92,7 +92,9 @@ const setActions = (tab: SettingsTab, s: IRootStore) => {
                             s.config.clientId = undefined;
                         },
                         icon: { label: "Delete", content: "delete" },
-                        shortKey: { key: "Delete", ctrlKey: true }
+                        shortKey: { key: "Delete", ctrlKey: true },
+                        contextual: true,
+                        selection: store.view.selection,
                     }
                     : undefined;
 

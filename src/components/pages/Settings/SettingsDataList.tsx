@@ -1,7 +1,7 @@
 import * as React from 'react';;
 import { AddListItem, IListItemData } from '../../Controls/AddListItem';
-import { ListItem, List } from '../../../mdc/list';
 import { INameWithIcon } from '../../../../common/dist';
+import { SettingsListItem } from '../../Controls/SettingsList/Item';
 
 export interface ISettingsItem extends INameWithIcon {
     id: string;
@@ -21,10 +21,10 @@ export default class SettingsDataList extends React.Component<ISettingsDataListP
     render() {
         const {items, canEdit, canAdd, labels} = this.props;
             const listItems = items.reduce((p, c) => {
-                    const { id, icon, name, isSelected, } = c;
+                    const { id, isSelected, } = c;
                     p.push(isSelected && canEdit
                         ? <AddListItem key={id} onCancel={this.onSelectItem.bind(this, undefined)} onSave={(data) => this.saveListItem(data, id)} data={c} onClick={this.onSelectItem.bind(this, id)}></AddListItem>
-                        : <ListItem onClick={this.onSelectItem.bind(this, id)} icon={icon} key={id} lines={[name!]}></ListItem>
+                        : <SettingsListItem onClick={this.onSelectItem.bind(this, id)} itemData={c} autoFocus></SettingsListItem>
                     );
                 return p;
             }, new Array());
@@ -34,10 +34,10 @@ export default class SettingsDataList extends React.Component<ISettingsDataListP
             : undefined;
 
         return (
-            <List isTwoLine={false}>
+            <div className="settings-list">
                 {listItems}
                 {addItem}
-            </List>
+            </div>
         );
     }
 

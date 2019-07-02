@@ -24,7 +24,8 @@ export class ClientList extends React.Component {
                 isSelected: client.id === store.config.clientId
             }))}
             onSave={saveListItem}
-            onSelect={(id) => store.config.clientId = id}
+            onSelect={id => id && store.view.toggleSelection(id, true)}
+            // onSelect={(id) => store.config.clientId = id}
             labels={{ add: "Add client" }}
         ></SettingsDataList>;
     }

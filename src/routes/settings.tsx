@@ -42,7 +42,7 @@ const setActions = (tab: SettingsTab, s: IRootStore) => {
                 {
                     action: () => {
                         const project = store.config.project.get();
-                        project && s.config.projects.deleteAsync(project.id);
+                        project && s.config.deleteProject(project.id);
                         s.config.setSelectedProject();
                     },
                     icon: { label: "Delete", content: "delete" },

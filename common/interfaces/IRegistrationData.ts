@@ -1,7 +1,7 @@
 import { Timestamp } from "@firebase/firestore-types";
 import { IPersistedEntity } from "./base";
 
-export interface IRegistrationData extends IPersistedEntity{
+export interface IRegistrationData extends IPersistedEntity {
     description: string;
     time: number;
     project: string;

@@ -32,12 +32,14 @@ export const convertProject = (firebaseChange: FirebaseFirestore.DocumentSnapsho
         createdBy: project.createdBy,
         created: project.created ? project.created.toDate().toISOString().replace('Z', '') : null,
         modified: project.modified ? project.modified.toDate().toISOString().replace('Z', '') : null,
+        deleted: project.deleted
     }
 }
 
 const projectSchema: BigQueryField[] = [
     { "name": "icon", "type": "STRING" },
     { "name": "name", "type": "STRING" },
+    { "name": "deleted", "type": "BOOLEAN" },
     { "name": "created", "type": "TIMESTAMP" },
     { "name": "modified", "type": "TIMESTAMP" },
     { "name": "createdBy", "type": "STRING" },

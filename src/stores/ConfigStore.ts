@@ -8,11 +8,12 @@ import * as serializer from '../../common/serialization/serializer';
 import * as deserializer from '../../common/serialization/deserializer';
 
 export interface IConfigStore {
-    projects: ICollection<IProject, IProjectData>;
     activeProjects: IObservableArray<IProject & { id: string }>;
     archivedProjects: IObservableArray<IProject & { id: string }>;
+    addProject: (project: IProject, id?: string) => void;
     archiveProject: (id?: string) => void;
     unarchiveProject: (id?: string) => void;
+    deleteProject: (id: string) => void;
     setSelectedProject: (id?: string) => void;
     tasks: ICollection<ITask, ITaskData>;
     clientsCollection: ICollection<IClient>;
@@ -44,22 +45,28 @@ export class ConfigStore implements IConfigStore {
             realtime: true,
             query: ref => ref.orderBy("name_insensitive"),
             serialize: serializer.convertProject,
-            deserialize: deserializer.convertProject
+            deserialize: deserializer.convertProject,
         }));
 
         this.tasks = observable(new Collection<ITask, ITaskData>(firestore, getCollection.bind(this, "tasks"), {
             realtime: true,
-            query: ref => ref.orderBy("name_insensitive")
+            query: ref => ref.orderBy("name_insensitive"),
+            serialize: serializer.convertNameWithIcon,
+            deserialize: deserializer.convertNameWithIcon,
         }));
 
         this.clientsCollection = observable(new Collection<IClient, IClientData>(firestore, getCollection.bind(this, "clients"), {
             realtime: true,
-            query: ref => ref.orderBy("name_insensitive")
+            query: ref => ref.orderBy("name_insensitive"),
+            serialize: serializer.convertNameWithIcon,
+            deserialize: deserializer.convertNameWithIcon,
         }));
 
         this.teamsCollection = observable(new Collection<ITeam, ITeamData>(firestore, getCollection.bind(this, "teams"), {
             realtime: true,
-            query: ref => ref.orderBy("name_insensitive")
+            query: ref => ref.orderBy("name_insensitive"),
+            serialize: serializer.convertNameWithIcon,
+            deserialize: deserializer.convertNameWithIcon,
         }));
 
         this.project = observable.box(undefined);
@@ -79,6 +86,16 @@ export class ConfigStore implements IConfigStore {
         projectId && this.projects.updateAsync(projectId, { isArchived: false }).then(() => {
             this.setSelectedProject(undefined);
         });
+    }
+
+    public deleteProject(id?: string) {
+        const project = this.project.get();
+        const projectId = id || (project && project.id);
+        projectId && this.projects.updateAsync(projectId, "delete");
+    }
+
+    public addProject(project: IProject, id?: string) {
+        this.projects.addAsync(project, id);
     }
 
     @action
@@ -109,13 +126,13 @@ export class ConfigStore implements IConfigStore {
     public get activeProjects() {
         return observable(Array.from(this.projects.docs.values())
             .map(doc => ({ ...doc.data!, id: doc.id }))
-            .filter(p => !p.isArchived));
+            .filter(p => !p.isArchived && !p.deleted));
     }
 
     @computed
     public get archivedProjects() {
         return observable(Array.from(this.projects.docs.values())
             .map(doc => ({ ...doc.data!, id: doc.id }))
-            .filter(p => p.isArchived));
+            .filter(p => p.isArchived && !p.deleted));
     }
 }

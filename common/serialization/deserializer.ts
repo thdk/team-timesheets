@@ -55,6 +55,7 @@ export const convertNameWithIcon = (firestoreData: INameWithIconData) => {
         name: firestoreData.name,
         icon: firestoreData.icon,
         created: firestoreData.created ? firestoreData.created.toDate() : undefined,
+        deleted: firestoreData.deleted || false,
     };
 
     return data;

@@ -240,6 +240,7 @@ export class RegistrationStore implements IRegistrationsStore {
                     defaultClient: client = undefined
                 } = this.rootStore.user.authenticatedUser || {};
 
+                const recentActiveProjects = recentProjects.filter(projectId => store.config.activeProjects.some(p => p.id === projectId));
                 return {
                     date: this.toUTC(
                         regMoment ? regMoment.toDate() : this.rootStore.view.moment.toDate()
@@ -247,7 +248,7 @@ export class RegistrationStore implements IRegistrationsStore {
                     task,
                     client,
                     userId: this.rootStore.user.userId,
-                    project: recentProjects.length ? recentProjects[0] : undefined,
+                    project: recentActiveProjects.length ? recentActiveProjects[0] : undefined,
                     isPersisted: false,
                 };
             });

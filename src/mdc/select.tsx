@@ -21,6 +21,7 @@ export interface ISelectProps<T = string> extends IReactProps {
     value?: T;
     onChange: (value: T) => void;
     outlined?: boolean;
+    disabled?: boolean;
 }
 
 export class Select<T extends string> extends React.Component<ISelectProps<T>> {
@@ -32,7 +33,7 @@ export class Select<T extends string> extends React.Component<ISelectProps<T>> {
     }
 
     render() {
-        const { label, value, outlined } = this.props;
+        const { label, value, outlined, disabled } = this.props;
         const lineEl = outlined ?
             <>
                 <div className="mdc-notched-outline">
@@ -51,11 +52,12 @@ export class Select<T extends string> extends React.Component<ISelectProps<T>> {
 
         const classList = ["mdc-select"];
         outlined && classList.push("mdc-select--outlined");
+        disabled && classList.push("mdc-select--disabled");
 
         return (
             <div className={classList.join(" ")} ref={this.mdcSelect}>
                 <i className="mdc-select__dropdown-icon"></i>
-                <select onChange={() =>{}} className="mdc-select__native-control" value={value || ""} >
+                <select disabled={disabled} onChange={() => { }} className="mdc-select__native-control" value={value || ""} >
                     {this.props.children}
                 </select>
                 {lineEl}

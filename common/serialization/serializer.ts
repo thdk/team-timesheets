@@ -74,22 +74,40 @@ export function convertTeam(appData: Partial<ITeam>): Partial<ITeamData> {
 }
 
 export function convertProject(appData: Partial<IProject> | "delete"): Partial<IProjectData> {
-    if (appData === "delete") throw new Error("Soft 'delete' is not supported for projects. The document must be deleted");
+    let data: Partial<IProjectData>;
 
-    return { ...convertNameWithIcon(appData), createdBy: appData.createdBy };
+    if (appData === "delete") {
+        const now = new Date();
+        data = { deleted: true, modified: firebase.firestore.Timestamp.fromDate(now) };
+    }
+    else {
+        data = { ...convertNameWithIcon(appData), createdBy: appData.createdBy, isArchived: appData.isArchived };
+    }
+
+    if (data.createdBy === undefined) delete (data.createdBy);
+    if (data.isArchived === undefined) delete (data.isArchived);
+    return data;
 }
 
-export function convertNameWithIcon(appData: Partial<INameWithIcon>): Partial<INameWithIconData> {
+export function convertNameWithIcon(appData: Partial<INameWithIcon> | "delete"): Partial<INameWithIconData> {
     const now = new Date();
 
-    const name = (appData.name || "").trim();
-    const data: Partial<INameWithIconData> = {
-        name,
-        name_insensitive: name.toUpperCase(),
-        icon: appData.icon,
-        created: firebase.firestore.Timestamp.fromDate(appData.created || now),
-        modified: firebase.firestore.Timestamp.fromDate(now)
-    };
+    let data: Partial<INameWithIconData>;
+
+    if (appData === "delete") {
+        const now = new Date();
+        data = { deleted: true, modified: firebase.firestore.Timestamp.fromDate(now) };
+    }
+    else {
+        const name = (appData.name || "").trim();
+        data = {
+            name,
+            name_insensitive: name.toUpperCase(),
+            icon: appData.icon,
+            created: firebase.firestore.Timestamp.fromDate(appData.created || now),
+            modified: firebase.firestore.Timestamp.fromDate(now)
+        };
+    }
 
     return data;
 }

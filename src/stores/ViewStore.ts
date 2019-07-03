@@ -15,7 +15,7 @@ export interface IShortKey {
 export interface IViewAction<T = any> {
   readonly icon: IIconData;
   readonly iconActive?: IIconData;
-  readonly isActive?: boolean;
+  readonly isActive?: boolean | (() => boolean);
   readonly action: (selection?: Map<string, T>) => void;
   readonly shortKey?: IShortKey;
   readonly contextual?: boolean;

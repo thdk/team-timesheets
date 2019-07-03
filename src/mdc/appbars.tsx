@@ -66,8 +66,9 @@ class AppBarActions extends React.Component<IAppBarActionsProps> {
     render() {
         const { contextual = false } = this.props;
         return store.view.actions.filter(a => !!a.contextual === contextual).map((a, i) => {
+            const active = a.isActive !== undefined ? (a.isActive === true ? true : a.isActive === false ? false : a.isActive()) : false;
             return !a.selection || a.selection.size
-                ? <AppBarAction key={i} onClick={this.onClick.bind(this, a)} icon={a.icon} iconActive={a.iconActive} isActive={a.isActive}></AppBarAction>
+                ? <AppBarAction key={i} onClick={this.onClick.bind(this, a)} icon={a.icon} iconActive={a.iconActive} isActive={active}></AppBarAction>
                 : <div key={i}></div>;
         });
     }

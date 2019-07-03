@@ -58,7 +58,6 @@ const setActions = (tab: SettingsTab, s: IRootStore) => {
                     },
                     icon: { label: "Archive", content: "archive" },
                     iconActive: { label: "Unarchive", content: "unarchive" },
-                    shortKey: { key: "e" },
                     isActive: () => {
                         const project = store.config.project.get();
                         return (project && project.isArchived) || false;

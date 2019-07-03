@@ -9,7 +9,7 @@ import { IProject } from '../../../../common/dist';
 @observer
 export default class ProjectSelect extends React.Component {
     render() {
-        const project = store.timesheets.registration ? store.timesheets.registration.project : "";
+        let project = store.timesheets.registration ? store.timesheets.registration.project : "";
 
         const userRecentProjects = store.user.authenticatedUser ? store.user.authenticatedUser.recentProjects : [];
 
@@ -30,8 +30,23 @@ export default class ProjectSelect extends React.Component {
         const otherProjectItems = store.config.activeProjects
             .filter(p => !recentProjects.some(rp => rp.id === p.id));
 
-        const projects = [...recentProjectItems, ...otherProjectItems]
-            .reduce((p, c, i) => {
+        const allProjects = [...recentProjectItems, ...otherProjectItems];
+
+        let isCurrentProjectArchived = false;
+        // Maybe project is archived? Add it and disable change of project!
+        if (project && !allProjects.some(p => typeof p !== "string" && p.id === project)) {
+            const archivedProject = store.config.archivedProjects.find(p => p.id === project);
+            if (archivedProject) {
+                isCurrentProjectArchived = true;
+                allProjects.unshift(archivedProject);
+            } 
+            else {
+                console.log("Project of registration not found");
+                project = undefined;
+            }
+        }
+
+        const projects = allProjects.reduce((p, c, i) => {
                 if (typeof c === "string") {
                     p.push([
                         <SelectOption key={i.toString()} value="" text={c} disabled={true}></SelectOption>
@@ -49,7 +64,7 @@ export default class ProjectSelect extends React.Component {
 
         return (
             <FormField>
-                <Select value={project} outlined={true} label="Project" onChange={this.onProjectChange}>
+                <Select disabled={isCurrentProjectArchived} value={project} outlined={true} label="Project" onChange={this.onProjectChange}>
                     {projects}
                 </Select>
             </FormField>

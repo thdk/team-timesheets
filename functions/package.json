@@ -15,19 +15,21 @@
     "@google-cloud/firestore": "^1.2.0",
     "@google-cloud/storage": "^2.3.4",
     "firebase-admin": "^8.2.0",
-    "firebase-functions": "^3.0.2",
+    "csvtojson": "^2.0.10",
+    "firebase-functions": "^3.1.0",
     "firestorable": "0.0.3",
     "fs-extra": "^7.0.1",
     "json2csv": "^4.3.2",
     "moment-es6": "^1.0.0",
     "os": "^0.1.1",
-    "path": "^0.12.7"
+    "path": "^0.12.7",
+    "xlsx": "^0.14.3"
   },
   "devDependencies": {
-    "@types/json2csv": "^4.2.0",
     "@types/fs-extra": "^5.0.4",
+    "@types/json2csv": "^4.2.0",
     "tslint": "~5.12.1",
-    "typescript": "~3.3.1"
+    "typescript": "^3.5.3"
   },
   "private": true,
   "engines": {

@@ -1,8 +1,14 @@
 // Imports the Google Cloud client library
-const { BigQuery } = require('@google-cloud/bigquery');
+import { BigQuery } from '@google-cloud/bigquery';
+import { BigQueryTableSchemes } from './config';
 
 export type BigQueryField = { name: string, type: string, mode?: string };
-export type BigQueryConfig = { dataSetId: string; tableId: string; tableIdPrefix: string, schema: BigQueryField[] };
+export type BigQueryConfig = {
+    dataSetId: string;
+    tableId: string;
+    tableIdPrefix: string,
+    schemes: BigQueryTableSchemes
+};
 
 function validateTableSchemaAsync(table: any, schema: BigQueryField[]) {
     return table.getMetadata().then(([metadata]) => {
@@ -43,17 +49,19 @@ function isEqualSchema(schema1: BigQueryField[], schema2: BigQueryField[]) {
     });
 }
 
-export function insertRows<T>(bigquery: typeof BigQuery, options: BigQueryConfig, rows: ReadonlyArray<T>) {
-    const { dataSetId, tableId, tableIdPrefix = "", schema } = options;
+export function insertRowsAsync<T>(options: BigQueryConfig, rows: ReadonlyArray<T>, bigqueryClient?: BigQuery) {
+    const { dataSetId, tableId, tableIdPrefix = "", schemes } = options;
 
     console.log(`Inserting ${rows.length} rows into ${tableId}`);
 
     const insertOptions = {
-        schema,
+        schema: schemes[tableId],
         location: 'US'
     };
 
     if (!rows.length) return new Promise(resolve => resolve());
+
+    const bigquery = bigqueryClient || new BigQuery();
 
     // TODO: create dataset only once since insertRows can be called multiple times simultaneously!
     return bigquery
@@ -68,14 +76,15 @@ export function insertRows<T>(bigquery: typeof BigQuery, options: BigQueryConfig
                     .then(() => {
                         console.log(`Inserted ${rows.length} rows`);
                         return `Inserted ${rows.length} rows`;
-                    }, (error: { errors: string[], name: string, response: any, message: string }) => {
-                        console.log(error.name);
-                        console.log(error.message);
+                    }, (error: { errors: any, name: string, response: any, message: string }) => {
                         error.errors && error.errors.forEach(e => {
-                            console.log(`${Object.keys(e).join(", ")}`);
+                            console.log({
+                                error: error.name,
+                                message: error.message,
+                                errors: e.errors,
+                                row: e.row
+                            });
                         });
-
-                        console.log(error.response);
                     }, (e) => {
                         console.log(e);
                         console.log("Table could not be created");

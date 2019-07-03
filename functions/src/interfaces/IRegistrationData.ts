@@ -13,3 +13,9 @@ export interface IRegistrationData {
     created?: Timestamp;
     modified?: Timestamp;
 }
+
+export interface IBigQueryRegistrationData extends Omit<IRegistrationData, "created" | "modified" | "date"> {
+    created: string;
+    modified: string;
+    date: string;
+}

@@ -8,7 +8,7 @@ export const convertRegistration = (firestoreData: IRegistrationData) => {
         description: firestoreData.description,
         project: firestoreData.project,
         task: firestoreData.task,
-        time: firestoreData.time || 0,
+        time: +(firestoreData.time ? firestoreData.time : 0),
         userId: firestoreData.userId,
         client: firestoreData.client,
         isPersisted: true,

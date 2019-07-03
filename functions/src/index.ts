@@ -1,7 +1,7 @@
 import * as functions from 'firebase-functions';
 import * as admin from "firebase-admin";
 
-const { BigQuery } = require('@google-cloud/bigquery');
+import { BigQuery } from '@google-cloud/bigquery';
 
 // tslint:disable-next-line
 import 'firebase-functions';
@@ -14,22 +14,23 @@ import * as os from 'os';
 import * as path from 'path';
 import * as fs from 'fs-extra';
 import * as gcs from '@google-cloud/storage';
-import { IFirebaseConfig } from './interfaces';
+
 import { exportToBigQuery, ExportToBigQueryTask } from './bigquery/export';
 import { IRegistrationData } from './interfaces/IRegistrationData';
 import { initTimestampsForRegistrations, initNamesInsensitive, changeProjectOfRegistrations, projectsByName } from './tools/firestore';
+import { watchForFilesToImportFrom } from './storage/imports';
+import { watchImportSessions } from './firestore/import';
+import { getAdminConfig } from './utils';
 
-const adminConfig: IFirebaseConfig | undefined = process.env.FIREBASE_CONFIG && JSON.parse(process.env.FIREBASE_CONFIG);
-if (!adminConfig) {
-    throw new Error("Firebase functions should have process.env.FIREBASE_CONFIG set.");
-}
+const adminConfig = getAdminConfig();
+
 const bucketName = adminConfig.storageBucket;
 
 admin.initializeApp({ credential: admin.credential.applicationDefault() });
 
 // Reference report in Firestore
 const db = admin.firestore();
-
+db.collection
 exports.createCSV = functions.firestore
     .document('reports/{reportId}')
     .onCreate(snapshot => {
@@ -159,5 +160,8 @@ exports.initTimestampsForRegistrations = functions.https.onCall(() => initTimest
 
 // Temporary function to add name_insensitive to data already in database
 exports.initNamesInsensitive = functions.https.onCall(() => initNamesInsensitive(db));
+
+exports.watchForFilesToImportFrom = watchForFilesToImportFrom;
+exports.watchImportSessions = watchImportSessions;
 
 

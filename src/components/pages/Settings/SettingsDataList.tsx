@@ -17,7 +17,7 @@ export interface ISettingsDataListProps {
     onSave: (data: INameWithIcon, id?: string) => void;
     onItemSelect: (id: string | undefined) => void;
     onItemClick: (id: string) => void;
-    labels: { add: string; }
+    labels: { add: string; },
 }
 
 @observer
@@ -27,7 +27,16 @@ export default class SettingsDataList extends React.Component<ISettingsDataListP
         const listItems = items.map(c => {
             const { id } = c;
             const isSelected = store.view.selection.has(id);
-            return <SettingsListItem edit={store.config.clientId === id} onSelect={this.onSelectItem.bind(this, id)} isSelected={isSelected} key={id} onClick={this.onClickItem.bind(this, id)} itemData={c} autoFocus></SettingsListItem>;
+            return <SettingsListItem
+                autoFocus
+                key={id}
+                itemData={c}
+                edit={store.config.clientId === id}
+                isSelected={isSelected}
+                onSelect={this.onSelectItem.bind(this, id)}
+                onClick={this.onClickItem.bind(this, id)}
+                onChange={this.saveListItem.bind(this)}
+            ></SettingsListItem>;
         });
 
         const addItem = canAdd

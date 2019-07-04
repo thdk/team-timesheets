@@ -17,7 +17,7 @@ import * as gcs from '@google-cloud/storage';
 import { IFirebaseConfig } from './interfaces';
 import { exportToBigQuery, ExportToBigQueryTask } from './bigquery/export';
 import { IRegistrationData } from './interfaces/IRegistrationData';
-import { initTimestampsForRegistrations, initNamesInsensitive } from './tools/firestore';
+import { initTimestampsForRegistrations, initNamesInsensitive, changeProjectOfRegistrations, projectsByName } from './tools/firestore';
 
 const adminConfig: IFirebaseConfig | undefined = process.env.FIREBASE_CONFIG && JSON.parse(process.env.FIREBASE_CONFIG);
 if (!adminConfig) {
@@ -25,7 +25,7 @@ if (!adminConfig) {
 }
 const bucketName = adminConfig.storageBucket;
 
-admin.initializeApp();
+admin.initializeApp({ credential: admin.credential.applicationDefault() });
 
 // Reference report in Firestore
 const db = admin.firestore();
@@ -129,6 +129,21 @@ const exportTasks: ExportToBigQueryTask[] = [
         collection: "projects",
     }
 ]
+
+const performChangeProjectOfRegistrations = (from: string, to: string) => changeProjectOfRegistrations(db, { from, to });
+exports.changeProjectOfRegistrations = functions.https.onCall(data => performChangeProjectOfRegistrations(data.from, data.to));
+
+exports.changeProjectOfRegistrationsRequest = functions.https.onRequest((req, res) => {
+    return performChangeProjectOfRegistrations(req.query.from, req.query.to).then(result => {
+        res.send(result);
+    });
+});
+
+exports.projectsByName = functions.https.onRequest((req, res) => {
+    return projectsByName(db, decodeURI(req.query.name)).then(result => {
+        res.send(result);
+    })
+});
 
 const performExportToBigQuery = () => exportToBigQuery(exportTasks, new BigQuery({ projectId: adminConfig.projectId }), db);
 exports.exportToBigQuery = functions.https.onCall(performExportToBigQuery);

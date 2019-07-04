@@ -5,6 +5,7 @@ import { IListItemData } from '../../../Controls/AddListItem';
 import store from '../../../../stores/RootStore';
 import SettingsDataList from '../SettingsDataList';
 import { canAddClient, canEditClient } from '../../../../rules/rules';
+import { Box } from '../../../Layout/box';
 
 @observer
 export class ClientList extends React.Component {
@@ -15,18 +16,19 @@ export class ClientList extends React.Component {
                 store.config.clientsCollection.addAsync({ name: data.name, icon: data.icon }, id);
             }
         };
-        return <SettingsDataList
+        return <Box><SettingsDataList
             canAdd={canAddClient(store.user.authenticatedUser)}
             canEdit={canEditClient(store.user.authenticatedUser)}
             items={Array.from(store.config.clientsCollection.docs.values()).map(client => ({
                 id: client.id,
                 name: client.data!.name,
-                isSelected: client.id === store.config.clientId
+                isSelected: client.id === store.config.clientId,
+                icon: client.data!.icon
             }))}
             onSave={saveListItem}
-            onSelect={id => id && store.view.toggleSelection(id, true)}
-            // onSelect={(id) => store.config.clientId = id}
+            onItemSelect={id => id && store.view.toggleSelection(id, true)}
+            onItemClick={id => store.config.clientId = id}
             labels={{ add: "Add client" }}
-        ></SettingsDataList>;
+        ></SettingsDataList></Box>;
     }
 }

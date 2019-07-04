@@ -54,16 +54,15 @@ gulp.task('images', function () {
 });
 
 // Gulp task to concatenate our scss files
-gulp.task('scss', gulp.series(function (done) {
-    gulp.src(configuration.paths.src.css)
+gulp.task('scss', gulp.series(() => {
+    return gulp.src(configuration.paths.src.css)
         .pipe(sass({
             includePaths: ['node_modules/'] // added includePaths to resolve scss partials from node modules
         }).on('error', sass.logError))
         .pipe(postcss([autoprefixer()]))
         .pipe(buffer())
         .pipe(rev())
-        .pipe(gulp.dest(configuration.paths.dist + '/css'))
-    done();
+        .pipe(gulp.dest(configuration.paths.dist + '/css'));
 }));
 
 gulp.task('scsswatch', gulp.series(function (done) {
@@ -115,7 +114,7 @@ gulp.task('inject', function (done) {
     const vendorStream = gulp.src([
         './dist/lib/**/*.js'], { read: false });
 
-    gulp.src('./src/**/*.html')
+    return gulp.src('./src/**/*.html')
         .pipe(inject(series(vendorStream, appStream)
             , {
                 ignorePath: 'dist',
@@ -123,7 +122,6 @@ gulp.task('inject', function (done) {
                 relative: false,
             }))
         .pipe(gulp.dest('./dist'));
-    done();
 });
 
 gulp.task('clean-js', function (cb) {
@@ -133,7 +131,7 @@ gulp.task('clean-js', function (cb) {
 
 gulp.task('clean-css', function (cb) {
     // You can use multiple globbing patterns as you would with `gulp.src`
-    return del(['dist/js'], cb);
+    return del(['dist/css'], cb);
 });
 
 gulp.task('clean-dist', function (cb) {

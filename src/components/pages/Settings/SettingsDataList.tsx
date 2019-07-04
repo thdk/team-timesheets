@@ -2,6 +2,8 @@ import * as React from 'react';;
 import { AddListItem, IListItemData } from '../../Controls/AddListItem';
 import { INameWithIcon } from '../../../../common/dist';
 import { SettingsListItem } from '../../Controls/SettingsList/Item';
+import store from '../../../stores/RootStore';
+import { observer } from 'mobx-react';
 
 export interface ISettingsItem extends INameWithIcon {
     id: string;
@@ -13,24 +15,23 @@ export interface ISettingsDataListProps {
     canAdd: boolean;
     canEdit: boolean;
     onSave: (data: INameWithIcon, id?: string) => void;
-    onSelect: (id: string | undefined) => void;
-    labels: { add: string;}
+    onItemSelect: (id: string | undefined) => void;
+    onItemClick: (id: string) => void;
+    labels: { add: string; }
 }
 
+@observer
 export default class SettingsDataList extends React.Component<ISettingsDataListProps> {
     render() {
-        const {items, canEdit, canAdd, labels} = this.props;
-            const listItems = items.reduce((p, c) => {
-                    const { id, isSelected, } = c;
-                    p.push(isSelected && canEdit
-                        ? <AddListItem key={id} onCancel={this.onSelectItem.bind(this, undefined)} onSave={(data) => this.saveListItem(data, id)} data={c} onClick={this.onSelectItem.bind(this, id)}></AddListItem>
-                        : <SettingsListItem onClick={this.onSelectItem.bind(this, id)} itemData={c} autoFocus></SettingsListItem>
-                    );
-                return p;
-            }, new Array());
+        const { items, canEdit, canAdd, labels } = this.props;
+        const listItems = items.map(c => {
+            const { id } = c;
+            const isSelected = store.view.selection.has(id);
+            return <SettingsListItem edit={store.config.clientId === id} onSelect={this.onSelectItem.bind(this, id)} isSelected={isSelected} key={id} onClick={this.onClickItem.bind(this, id)} itemData={c} autoFocus></SettingsListItem>;
+        });
 
         const addItem = canAdd
-            ? <AddListItem labels={{add: labels.add}} onSave={this.saveListItem.bind(this)} ></AddListItem>
+            ? <AddListItem labels={{ add: labels.add }} onSave={this.saveListItem.bind(this)} ></AddListItem>
             : undefined;
 
         return (
@@ -42,12 +43,16 @@ export default class SettingsDataList extends React.Component<ISettingsDataListP
     }
 
     onSelectItem(id: string | undefined) {
-        this.props.onSelect(id);
+        this.props.onItemSelect(id);
+    }
+
+    onClickItem(id: string) {
+        this.props.onItemClick(id);
     }
 
     saveListItem(data: IListItemData, id?: string) {
         if (data.name) {
-            this.props.onSave({name: data.name, icon: data.icon}, id);
+            this.props.onSave({ name: data.name, icon: data.icon }, id);
         }
     }
 }

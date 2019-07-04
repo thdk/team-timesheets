@@ -1,0 +1,31 @@
+
+.settings-list {
+    .settings-list-item {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        height: 48px;
+        justify-content: space-between;
+
+        &.settings-list-item--selected {
+            height: 72px;
+        }
+
+        &:hover {
+            background-color: #ededed;
+            cursor: pointer;
+        }
+
+        .list-item-props {
+            display: flex;
+        }
+    }
+
+    .item-icon {
+        width: 80px;
+        display: flex;
+        flex-shrink: 0;
+        justify-content: center;
+        align-items: center;
+    }
+}

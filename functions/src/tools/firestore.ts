@@ -44,13 +44,47 @@ export const initTimestampsForRegistrations = (db: FirebaseFirestore.Firestore) 
                     console.log(`updating: ${update.data}`);
                     batch.update(update.ref, update.data);
                 });
-                
+
                 results.push(batch.commit());
             }
 
             return Promise.all(results);
         });
     }));
+};
+
+export interface IChangeProjectOfRegistrationsOptions { from: string, to: string };
+
+export const changeProjectOfRegistrations = (db: FirebaseFirestore.Firestore, { from, to }: IChangeProjectOfRegistrationsOptions): Promise<string> => {
+    if (!from) throw new Error("Missing required option 'from'");
+    if (!to) throw new Error("Missing required options: 'to'");
+    const query = db.collection("registrations").where("project", "==", from);
+
+    return query.limit(500).get().then(snapshot => {
+        if (snapshot.empty) return new Promise<string>(resolve => resolve(`No registrations found with projectId: ${from}`));
+
+        const batch = db.batch();
+        snapshot.forEach(doc => batch.update(doc.ref, { project: to, modified: admin.firestore.FieldValue.serverTimestamp() }));
+
+        return batch.commit().then(() => query.get().then(finalSnapshot => `${snapshot.size} registrations updated.\n ${finalSnapshot.size} remaining.`));
+    });
+};
+
+export const projectsByName = (db: FirebaseFirestore.Firestore, name: string) => {
+    if (!name) throw new Error("Missing required option 'from'");
+
+    return db.collection("projects").where("name_insensitive", "==", name.toUpperCase()).get().then(snapshot => {
+        return snapshot.size === 0
+            ? new Promise<any[]>(resolve => resolve([]))
+            : Promise.all(snapshot.docs
+                .map(doc => db.collection("registrations").where("project", "==", doc.id).get()
+                    .then(registrationsSnapshot => {
+                        const counter = registrationsSnapshot.size === 0 ? 0 : registrationsSnapshot.docs.filter(r => !r.data().deleted).length;
+                        return { id: doc.id, name: doc.data().name, registrationCount: counter };
+                    })
+                )
+            )
+    })
 };
 
 export const initNamesInsensitive = (db: FirebaseFirestore.Firestore) => {
@@ -91,7 +125,7 @@ export const initNamesInsensitive = (db: FirebaseFirestore.Firestore) => {
                     console.log(`updating: ${update.data}`);
                     batch.update(update.ref, update.data);
                 });
-                
+
                 results.push(batch.commit());
             }
 

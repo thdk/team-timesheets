@@ -42,6 +42,7 @@ export default {
         'node_modules/react/index.js': ['createRef', 'Component', 'PureComponent', 'Fragment', 'Children', 'createElement', 'forwardRef', 'useRef', 'useState', 'useEffect' ],
         'node_modules/react-dom/index.js': ['findDOMNode', 'unstable_batchedUpdates', 'render'],
         '@material/react-chips': ["Chip", "ChipSet"],
+        '@material/react-text-field': ["Input"],
         'firestorable': ['Collection', 'Document']
       }
     }),

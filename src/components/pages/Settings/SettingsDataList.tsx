@@ -16,7 +16,7 @@ export interface ISettingsDataListProps {
     canEdit: boolean;
     onSave: (data: INameWithIcon, id?: string) => void;
     onItemSelect: (id: string | undefined) => void;
-    onItemClick: (id: string) => void;
+    onItemClick: (id: string | undefined) => void;
     labels: { add: string; },
 }
 
@@ -35,7 +35,9 @@ export default class SettingsDataList extends React.Component<ISettingsDataListP
                 isSelected={isSelected}
                 onSelect={this.onSelectItem.bind(this, id)}
                 onClick={this.onClickItem.bind(this, id)}
-                onChange={this.saveListItem.bind(this)}
+                onChange={data => this.saveListItem(data, id)}
+                onCancel={this.onClickItem.bind(this, undefined)}
+                settingName={"Setting"}
             ></SettingsListItem>;
         });
 
@@ -55,7 +57,7 @@ export default class SettingsDataList extends React.Component<ISettingsDataListP
         this.props.onItemSelect(id);
     }
 
-    onClickItem(id: string) {
+    onClickItem(id: string | undefined) {
         this.props.onItemClick(id);
     }
 

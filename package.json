@@ -26,7 +26,7 @@
   "devDependencies": {
     "@material/theme": "^0.43.0",
     "@types/classnames": "^2.2.9",
-    "@types/react": "16.7.13",
+    "@types/react": "^16.8.23",
     "@types/react-dom": "^16.8.4",
     "autoprefixer": "^9.4.2",
     "del": "^3.0.0",
@@ -50,7 +50,7 @@
     "rollup-stream": "^1.24.1",
     "sort-stream": "^1.0.1",
     "tslib": "^1.9.3",
-    "typescript": "^3.3.3",
+    "typescript": "^3.5.2",
     "vinyl-source-stream": "^2.0.0"
   },
   "dependencies": {

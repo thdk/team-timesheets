@@ -27,15 +27,22 @@
             .item-name {
                 width: 200px;
             }
+
+            .item-form {
+                display: flex;
+
+                .icon-picker {
+                    margin-right: 20px;
+                }
+
+                .mdc-text-field {
+                    height: 48px;
+                }
+            }
         }
 
         &.settings-list-item--selected {
-            height: 72px;
-
-            .item-icon {
-                width: 200px;
-                padding-right: 20px;
-            }
+            height: 48px;
         }
     }
 }

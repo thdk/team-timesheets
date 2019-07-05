@@ -49,29 +49,37 @@ export const SettingsListItem = (props: ISettingsItemProps) => {
     };
 
     const cssClasses = classNames("settings-list-item", ...className, { "settings-list-item--selected": edit });
-    const iconJSX = edit
-        ? <TextField
-            label={settingName + " icon"}>
-            <Input<HTMLInputElement> autoFocus ref={iconElRef} value={icon} onChange={e => setIcon(e.currentTarget.value)}></Input>
-        </TextField>
-        : icon ? <i className="icon material-icons">{icon}</i> : undefined;
+    const iconJSX = icon ? <i className="icon material-icons">{icon}</i> : undefined;
 
-    // Warning: manually edited @material/react-text-field/Input.d.ts to make below compile
+    // Warning: manually edited @material/react-text-field/dist/Input.d.ts to make below compile
     // See: https://github.com/material-components/material-components-web-react/issues/965
     const nameJSX = edit
-        ? <TextField
-            label={settingName + " name"}>
-            <Input<HTMLInputElement> ref={nameElRef} value={name} onChange={e => setName(e.currentTarget.value)}></Input>
-        </TextField>
-        : name;
+        ? undefined
+        : <div className="item-name">
+            {name}
+        </div>;
+
+    const formJSX = edit ?
+        <>
+            <TextField className="icon-picker"
+                label={settingName + " icon"}>
+                <Input<HTMLInputElement> autoFocus ref={iconElRef} value={icon} onChange={e => setIcon(e.currentTarget.value)}></Input>
+            </TextField>
+            <TextField
+                label={settingName + " name"}>
+                <Input<HTMLInputElement> ref={nameElRef} value={name} onChange={e => setName(e.currentTarget.value)}></Input>
+            </TextField>
+        </>
+        : undefined;
 
     return <div className={cssClasses} {...restProps} tabIndex={0} onKeyUp={onKeyUp}>
         <div className="list-item-props">
             <div className="item-icon">
                 {iconJSX}
             </div>
-            <div className="item-name">
-                {nameJSX}
+            {nameJSX}
+            <div className="item-form">
+                {formJSX}
             </div>
         </div>
         <div>

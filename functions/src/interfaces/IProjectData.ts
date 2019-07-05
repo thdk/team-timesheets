@@ -6,4 +6,5 @@ export interface IProjectData {
     created?: Timestamp;
     modified?: Timestamp;
     createdBy?: string;
+    deleted?: boolean;
 }

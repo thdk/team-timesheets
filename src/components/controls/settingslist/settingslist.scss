@@ -1,19 +1,20 @@
 
 .settings-list {
-    .settings-list-item {
+    .settings-list-item, .settings-list-add-item {
         display: flex;
         flex-direction: row;
         align-items: center;
         height: 48px;
         justify-content: space-between;
 
-        &:hover {
+        &:not(.new-item):hover {
             background-color: #ededed;
             cursor: pointer;
         }
 
         .list-item-props {
             display: flex;
+            align-items: center;
             width: 90%;
 
             .item-icon {
@@ -43,6 +44,10 @@
 
         &.settings-list-item--selected {
             height: 48px;
+        }
+
+        .list-item-checkbox {
+            width: 80px;
         }
     }
 }

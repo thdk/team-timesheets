@@ -4,24 +4,25 @@ import classNames from 'classnames';
 import Checkbox from '@material/react-checkbox';
 import { useState } from 'react';
 import TextField, { Input } from '@material/react-text-field';
+import { observer } from 'mobx-react-lite';
 
 export interface ISettingsItemProps extends Omit<React.HTMLProps<HTMLDivElement>, "onChange"> {
-    readonly itemData: INameWithIcon;
+    readonly itemData: Partial<INameWithIcon> & { id?: string };
     readonly edit?: boolean;
-    readonly isSelected?: boolean;
-    readonly onSelect: () => void;
-    readonly onChange?: (data: INameWithIcon) => void;
+    readonly isChecked?: boolean;
+    readonly onSelectItem?: (id: string) => void;
+    readonly onChangeItem?: (data: INameWithIcon) => void;
     readonly onCancel?: () => void;
-    readonly settingName: string;
+    readonly settingName?: string;
 }
 
-export const SettingsListItem = (props: ISettingsItemProps) => {
+export const SettingsListItem = observer((props: ISettingsItemProps) => {
     const { className = [],
         itemData,
-        isSelected,
+        isChecked,
         edit,
-        onSelect,
-        onChange,
+        onSelectItem,
+        onChangeItem,
         onCancel,
         settingName,
         ...restProps
@@ -38,7 +39,7 @@ export const SettingsListItem = (props: ISettingsItemProps) => {
             case "Enter":
                 const iconValue = iconElRef.current && iconElRef.current.inputElement ? iconElRef.current.inputElement.value : "";
                 const nameValue = nameElRef.current && nameElRef.current.inputElement ? nameElRef.current.inputElement.value : "";
-                onChange && onChange({ icon: iconValue, name: nameValue });
+                onChangeItem && onChangeItem({ icon: iconValue, name: nameValue });
                 break;
             case "Escape":
                 onCancel && onCancel();
@@ -48,7 +49,7 @@ export const SettingsListItem = (props: ISettingsItemProps) => {
         }
     };
 
-    const cssClasses = classNames("settings-list-item", ...className, { "settings-list-item--selected": edit });
+    const cssClasses = classNames("settings-list-item", className, { "settings-list-item--selected": edit });
     const iconJSX = icon ? <i className="icon material-icons">{icon}</i> : undefined;
 
     // Warning: manually edited @material/react-text-field/dist/Input.d.ts to make below compile
@@ -62,15 +63,29 @@ export const SettingsListItem = (props: ISettingsItemProps) => {
     const formJSX = edit ?
         <>
             <TextField className="icon-picker"
-                label={settingName + " icon"}>
+                label={settingName ? settingName + " icon" : "Icon"}>
                 <Input<HTMLInputElement> autoFocus ref={iconElRef} value={icon} onChange={e => setIcon(e.currentTarget.value)}></Input>
             </TextField>
             <TextField
-                label={settingName + " name"}>
+                label={settingName ? settingName + " name" : "Name"}>
                 <Input<HTMLInputElement> ref={nameElRef} value={name} onChange={e => setName(e.currentTarget.value)}></Input>
             </TextField>
         </>
         : undefined;
+
+    const checkboxJSX = itemData.id && onSelectItem
+        ? <div className="list-item-checkbox">
+            <Checkbox
+                checked={isChecked}
+                onChange={onSelectItem.bind(null, itemData.id)}
+                onClick={(e: MouseEvent) => {
+                    e.stopPropagation();
+                    e.preventDefault();
+                }}
+            />
+        </div>
+        : undefined;
+
 
     return <div className={cssClasses} {...restProps} tabIndex={0} onKeyUp={onKeyUp}>
         <div className="list-item-props">
@@ -82,15 +97,6 @@ export const SettingsListItem = (props: ISettingsItemProps) => {
                 {formJSX}
             </div>
         </div>
-        <div>
-            <Checkbox
-                checked={isSelected}
-                onChange={onSelect}
-                onClick={(e: MouseEvent) => {
-                    e.stopPropagation();
-                    e.preventDefault();
-                }}
-            />
-        </div>
+        {checkboxJSX}
     </div>;
-};
+});

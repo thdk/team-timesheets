@@ -15,7 +15,7 @@ service cloud.firestore {
 
         match /projects/{documentId} {
             allow read;
-            allow create: if getRole('editor') == true;
+            allow create: if getRole('editor') == true || getRole('admin') == true;
             allow update, delete: if (getRole('editor') == true && resource.data.createdBy == request.auth.uid) || getRole('admin') == true;
         }
 

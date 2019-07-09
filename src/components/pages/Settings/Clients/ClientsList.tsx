@@ -3,29 +3,33 @@ import { observer } from 'mobx-react';
 
 import { IListItemData } from '../../../Controls/AddListItem';
 import store from '../../../../stores/RootStore';
-import SettingsDataList from '../SettingsDataList';
-import { canAddClient, canEditClient } from '../../../../rules/rules';
+import { canWriteClient } from '../../../../rules/rules';
+import { SettingsList } from '../../../Controls/SettingsList/SettingsList';
 
-@observer
-export class ClientList extends React.Component {
-    render() {
-        const saveListItem = (data: IListItemData, id?: string) => {
-            store.config.clientId = undefined;
-            if (data.name) {
+export const ClientList = observer(() => {
+    const saveListItem = (data: IListItemData, id?: string) => {
+        store.config.clientId = undefined;
+        if (data.name) {
+            if (id) {
                 store.config.clientsCollection.addAsync({ name: data.name, icon: data.icon }, id);
             }
-        };
-        return <SettingsDataList
-            canAdd={canAddClient(store.user.authenticatedUser)}
-            canEdit={canEditClient(store.user.authenticatedUser)}
-            items={Array.from(store.config.clientsCollection.docs.values()).map(client => ({
-                id: client.id,
-                name: client.data!.name,
-                isSelected: client.id === store.config.clientId
-            }))}
-            onSave={saveListItem}
-            onSelect={(id) => store.config.clientId = id}
-            labels={{ add: "Add client" }}
-        ></SettingsDataList>;
-    }
-}
+            else {
+                store.config.clientsCollection.updateAsync(id, { name: data.name, icon: data.icon });
+            }
+        }
+    };
+
+    return <SettingsList
+        readonly={!canWriteClient(store.user.authenticatedUser)}
+        items={Array.from(store.config.clientsCollection.docs.values()).map(client => ({
+            id: client.id,
+            name: client.data!.name,
+            icon: client.data!.icon
+        }))}
+        addItem={saveListItem}
+        toggleSelection={id => id && store.view.toggleSelection(id, true)}
+        onItemClick={id => store.config.clientId = id}
+        activeItemId={store.config.clientId}
+        selection={store.view.selection}
+    ></SettingsList>
+});

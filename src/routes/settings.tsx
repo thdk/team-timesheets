@@ -27,14 +27,14 @@ const setActions = (tab: SettingsTab, s: IRootStore) => {
                             s.view.selection.clear();
                         },
                         icon: { label: "Delete", content: "delete" },
-                        shortKey: { key: "Delete", ctrlKey: true }
+                        shortKey: { key: "Delete", ctrlKey: true },
+                        contextual: true,
+                        selection: store.view.selection,
                     }
                     : undefined;
 
-                reactionDisposer = reaction(() => s.view.selection, id => {
-                    if (id) s.view.setActions([deleteAction].filter(a => a !== undefined) as IViewAction[]);
-                    else s.view.setActions([]);
-                });
+                s.view.setActions([deleteAction].filter(a => a !== undefined) as IViewAction[]);
+
                 break;
             }
             case "projects": {

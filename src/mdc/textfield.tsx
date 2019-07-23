@@ -111,4 +111,7 @@ export class TextFieldOld extends React.Component<ITextFieldProps> {
     }
 }
 
-export default React.forwardRef((props: ITextFieldProps, ref: React.Ref<HTMLInputElement>) => <TextFieldOld innerRef={ref} {...props} />);
+
+export default React.forwardRef<HTMLInputElement, ITextFieldProps>((props, ref) => (
+    <TextFieldOld innerRef={ref} {...props}></TextFieldOld>
+))

@@ -148,8 +148,8 @@ exports.projectsByName = functions.https.onRequest((req, res) => {
 
 exports.projects = functions.https.onRequest((req, res) => {
     return projectsAll(db).then(result => {
-        if (req.query.format && req.query.format === "csv"){
-            res.send(json2csv(result));
+        if (req.query.format && req.query.format === "csv") {
+            res.send(json2csv(result, { quote: "" }));
         }
         res.send(result);
     })

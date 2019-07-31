@@ -1,6 +1,7 @@
 export type FirestoreData<T> = (Exclude<T, "id"> & { id?: string });
-
-export const addAsync = <T extends { id?: string }>(firestore: FirebaseFirestore.Firestore, collectionRef: FirebaseFirestore.CollectionReference, data: FirestoreData<T> | FirestoreData<T>[]) => {
+export function addAsync<T extends { id?: string }>(firestore: FirebaseFirestore.Firestore, collectionRef: FirebaseFirestore.CollectionReference, data: FirestoreData<T[]>): Promise<void>;
+export function addAsync<T extends { id?: string }>(firestore: FirebaseFirestore.Firestore, collectionRef: FirebaseFirestore.CollectionReference, data: FirestoreData<T>): Promise<string>;
+export function addAsync<T extends { id?: string }>(firestore: FirebaseFirestore.Firestore, collectionRef: FirebaseFirestore.CollectionReference, data: FirestoreData<T> | FirestoreData<T>[]): Promise<void | string> {
     if (Array.isArray(data)) {
         return batchProcess(
             data,
@@ -10,7 +11,9 @@ export const addAsync = <T extends { id?: string }>(firestore: FirebaseFirestore
                 return batch.set(docRef, item);
             },
             500,
-            firestore);
+            firestore).then(() => {
+                //
+            });
     }
     else {
         const { id } = data;
@@ -25,7 +28,7 @@ export function batchProcess<T>(data: T[], func: (batch: Omit<FirebaseFirestore.
     const chunk = batchSize <= 500 ? batchSize : 500; // max 500 records in a batch
 
     const j = data.length;
-    const results = [];
+    const results = [] as Promise<FirebaseFirestore.WriteResult[]>[];
     for (i = 0; i < j; i += chunk) {
         temparray = data.slice(i, i + chunk);
         const batch = fireStoreDb.batch();

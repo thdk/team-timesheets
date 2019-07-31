@@ -38,6 +38,25 @@ export const watchImportSessions = functions.firestore
 
             const deserialise = insertDirectlyToBigquery ? deserialiseForBigquery : deserialiseForFirestore;
 
+            const filterFnAsync =
+                collection === "projects"
+                    ? (items: any[], db: FirebaseFirestore.Firestore, ) => {
+                        const collectionRef = db.collection(collection);
+                        return collectionRef.get().then(itemsSnapshot => {
+                            return items.reduce<any[]>((p, c) => {
+                                if (itemsSnapshot.docs.some(d => d.data().name === c.name)) {
+                                    console.log(`Skipped existing project: ${c.name}`);
+                                    return p;
+                                }
+                                p.push(c);
+                                return p;
+                            }, []);
+                        });
+                    } :
+                    (items: any[]) => {
+                        return new Promise(resolve => resolve(items));
+                    };
+
             const insertBigQueryFunc = (items: any) => {
                 return insertRowsAsync(
                     {
@@ -50,16 +69,17 @@ export const watchImportSessions = functions.firestore
                 )
             };
 
-            const insertFirestoreFunc = (items: any) => {
+            const insertFirestoreFunc = (items: any[]) => {
                 const db = admin.firestore();
-                return addAsync(db, db.collection(collection), items);
+                filterFnAsync(items, db)
+                    .then(reducedItems => addAsync(db, db.collection(collection), reducedItems));
             };
 
-            const insertFunc = insertDirectlyToBigquery ? insertBigQueryFunc : insertFirestoreFunc;
+            const insertFuncAsync = insertDirectlyToBigquery ? insertBigQueryFunc : insertFirestoreFunc;
 
             // Load data from CSV in cloud storage and insert into bigquery
             return loadCsvAsync<any>(bucket, file, deserialise)
-                .then(insertFunc)
+                .then(insertFuncAsync)
                 .then(() => {
                     return snapshot.ref.update({ state: "Import finished" })
                 });

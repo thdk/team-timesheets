@@ -1,7 +1,7 @@
 import { BigQueryField } from "./utils";
 import { IProjectData, IBigQueryProjectData } from "../interfaces/IProjectData";
 import { IRegistrationData, IBigQueryRegistrationData } from "../interfaces/IRegistrationData";
-import { Timestamp } from "@google-cloud/firestore";
+import * as admin from 'firebase-admin';
 
 export const convertRegistration = (firebaseChange: FirebaseFirestore.DocumentSnapshot) => {
     const reg = firebaseChange.data() as unknown as IRegistrationData;
@@ -52,13 +52,16 @@ const convertCsvProjectToBigQuery = (data: any) => {
     } as IBigQueryProjectData);
 }
 
+// Example csv data
+// id	name	isArchived
+// ipid-1	Automated price sync	true
 const convertCsvProjectToFirestore = (data: any) => {
     // validate input
     const { name, icon, id, isArchived = "true"  } = data;
     if (!id) throw new Error("Cannot insert project data without id");
     if (!name) throw new Error("Name is missing for project with id: " + id);
 
-    const now = Timestamp.now();
+    const now = admin.firestore.Timestamp.now();
     return ({
         id: id,
         name: name,
@@ -103,11 +106,11 @@ const convertCsvRegistrationToFirestore = (data: any) => {
     // validate input
     const { time, date, id, description, client, task, project, userId } = data;
 
-    const now = Timestamp.now();
+    const now = admin.firestore.Timestamp.now();
     return ({
         id,
         time: +(time || 0),
-        date: Timestamp.fromDate(new Date(date)),
+        date: admin.firestore.Timestamp.fromDate(new Date(date)),
         deleted: false,
         created: now,
         modified: now,

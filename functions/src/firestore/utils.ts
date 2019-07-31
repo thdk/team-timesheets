@@ -19,7 +19,7 @@ export const addAsync = <T extends { id?: string }>(firestore: FirebaseFirestore
     }
 };
 
-export const batchProcess = <T>(data: T[], func: (batch: Omit<FirebaseFirestore.WriteBatch, "create" | "commit">, data: T) => FirebaseFirestore.WriteBatch, batchSize = 500, fireStoreDb: FirebaseFirestore.Firestore) => {
+export function batchProcess<T>(data: T[], func: (batch: Omit<FirebaseFirestore.WriteBatch, "create" | "commit">, data: T) => FirebaseFirestore.WriteBatch, batchSize = 500, fireStoreDb: FirebaseFirestore.Firestore) {
     let i: number;
     let temparray: T[];
     const chunk = batchSize <= 500 ? batchSize : 500; // max 500 records in a batch

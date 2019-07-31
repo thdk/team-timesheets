@@ -70,6 +70,16 @@ export const changeProjectOfRegistrations = (db: FirebaseFirestore.Firestore, { 
     });
 };
 
+export const projectsAll = (db: FirebaseFirestore.Firestore) => {
+    return db.collection("projects").orderBy("name_insensitive").get().then(snapshot => {
+        return snapshot.size === 0
+            ? new Promise<any[]>(resolve => resolve([]))
+            : snapshot.docs.map(doc => {
+                return { id: doc.id, name: doc.data().name };
+            });
+    })
+};
+
 export const projectsByName = (db: FirebaseFirestore.Firestore, name: string) => {
     if (!name) throw new Error("Missing required option 'from'");
 

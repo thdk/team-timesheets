@@ -17,7 +17,7 @@ import * as gcs from '@google-cloud/storage';
 
 import { exportToBigQuery, ExportToBigQueryTask } from './bigquery/export';
 import { IRegistrationData } from './interfaces/IRegistrationData';
-import { initTimestampsForRegistrations, initNamesInsensitive, changeProjectOfRegistrations, projectsByName } from './tools/firestore';
+import { initTimestampsForRegistrations, initNamesInsensitive, changeProjectOfRegistrations, projectsByName, projectsAll } from './tools/firestore';
 import { watchForFilesToImportFrom } from './storage/imports';
 import { watchImportSessions } from './firestore/import';
 import { getAdminConfig } from './utils';
@@ -145,6 +145,16 @@ exports.projectsByName = functions.https.onRequest((req, res) => {
         res.send(result);
     })
 });
+
+exports.projects = functions.https.onRequest((req, res) => {
+    return projectsAll(db).then(result => {
+        if (req.query.format && req.query.format === "csv"){
+            res.send(json2csv(result));
+        }
+        res.send(result);
+    })
+});
+
 
 const performExportToBigQuery = () => exportToBigQuery(exportTasks, new BigQuery({ projectId: adminConfig.projectId }), db);
 exports.exportToBigQuery = functions.https.onCall(performExportToBigQuery);

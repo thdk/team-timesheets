@@ -1,5 +1,5 @@
 
-import { Timestamp } from "@google-cloud/firestore";
+import * as admin from 'firebase-admin';
 
 export interface IRegistrationData {
     description: string;
@@ -7,11 +7,11 @@ export interface IRegistrationData {
     project: string;
     task: string;
     client: string;
-    date: Timestamp;
+    date: admin.firestore.Timestamp;
     userId: string;
     deleted: boolean;
-    created?: Timestamp;
-    modified?: Timestamp;
+    created?: admin.firestore.Timestamp;
+    modified?: admin.firestore.Timestamp;
 }
 
 export interface IBigQueryRegistrationData extends Omit<IRegistrationData, "created" | "modified" | "date"> {

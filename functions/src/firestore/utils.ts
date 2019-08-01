@@ -6,6 +6,8 @@ export function addAsync<T extends { id?: string }>(firestore: FirebaseFirestore
         return batchProcess(
             data,
             (batch, item) => {
+                console.log("Adding new item to firestore...");
+                console.log({ item });
                 const docRef = item.id ? collectionRef.doc(item.id) : collectionRef.doc();
                 delete item.id;
                 return batch.set(docRef, item);

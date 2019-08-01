@@ -100,17 +100,21 @@ const convertCsvRegistrationToBigQuery = (data: any) => {
 }
 
 // Example CSV data
-// date	                    description	    project	                task	                time	userId	                        [id]	                client
-// 2020-07-23 00:00:00 UTC	Foobar	        sLpzfJLhAHNeswVtcIub	XDiim1EzIR4JpSTF94sb	3	    Egzn2JunuWZj47KWxBIccm91bp33	[ggVaApCbnJVW3LmqegoK]	cTXyre5UPdgOz4EXj6tQ
+// date	        description	    project	                task	    time	user                [id]	                client
+// 2020-01-01	Foobar	        Project Name	        Task name   3	    Thomas Dekiere	    [ggVaApCbnJVW3LmqegoK]	Client Name
 const convertCsvRegistrationToFirestore = (data: any) => {
     // validate input
-    const { time, date, id, description, client, task, project, userId } = data;
+    const { time, date, id, description, client, task, project, user } = data;
+
+    const toUTC = (localDate: Date) => {
+        return new Date(Date.UTC(localDate.getFullYear(), localDate.getMonth(), localDate.getDate(), localDate.getHours(), localDate.getMinutes(), localDate.getSeconds()));
+    };
 
     const now = admin.firestore.Timestamp.now();
     return ({
         id,
         time: +(time || 0),
-        date: admin.firestore.Timestamp.fromDate(new Date(date)),
+        date: admin.firestore.Timestamp.fromDate(toUTC(new Date(date))),
         deleted: false,
         created: now,
         modified: now,
@@ -118,8 +122,8 @@ const convertCsvRegistrationToFirestore = (data: any) => {
         task,
         client,
         project,
-        userId
-    } as IRegistrationData);
+        user
+    });
 }
 
 export const csvDerserializers = {

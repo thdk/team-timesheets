@@ -1,5 +1,4 @@
 import * as admin from "firebase-admin";
-import { WriteResult } from "@google-cloud/firestore";
 
 export const initTimestampsForRegistrations = (db: FirebaseFirestore.Firestore) => {
     const collections = ["projects", "registrations"];
@@ -127,7 +126,7 @@ export const initNamesInsensitive = (db: FirebaseFirestore.Firestore) => {
 
             const j = updates.length;
             console.log("Updates: " + j.toString());
-            const results = [] as Promise<WriteResult[]>[];
+            const results = [] as Promise<admin.firestore.WriteResult[]>[];
             for (i = 0; i < j; i += chunk) {
                 temparray = updates.slice(i, i + chunk);
                 const batch = db.batch();

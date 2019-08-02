@@ -81,7 +81,8 @@ export const watchImportSessions = functions.firestore
                                             name: c.project.trim(),
                                             name_insensitive: ((c.project || "") as string).toUpperCase().trim(),
                                             isArchived: true,
-                                            importId
+                                            importId,
+                                            icon: ""
                                         };
 
                                         console.log("Inserting new project...");
@@ -148,7 +149,8 @@ export const watchImportSessions = functions.firestore
                                         const taskData = {
                                             name: c.task.trim(),
                                             name_insensitive: ((c.task || "") as string).toUpperCase().trim(),
-                                            importId
+                                            importId,
+                                            icon: ""
                                         };
                                         
                                         console.log("Inserting new task...");

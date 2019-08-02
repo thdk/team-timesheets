@@ -53,7 +53,7 @@ export const convertTask = (firestoreData: ITaskData) => {
 export const convertNameWithIcon = (firestoreData: INameWithIconData) => {
     const data = {
         name: firestoreData.name,
-        icon: firestoreData.icon,
+        icon: firestoreData.icon || "",
         created: firestoreData.created ? firestoreData.created.toDate() : undefined,
         deleted: firestoreData.deleted || false,
     };

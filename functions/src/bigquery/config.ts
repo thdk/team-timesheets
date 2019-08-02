@@ -103,10 +103,17 @@ const convertCsvRegistrationToBigQuery = (data: any) => {
 // date	        description	    project	                task	    time	user                [id]	                client
 // 2020-01-01	Foobar	        Project Name	        Task name   3	    Thomas Dekiere	    [ggVaApCbnJVW3LmqegoK]	Client Name
 const convertCsvRegistrationToFirestore = (data: any) => {
+    console.log("Converting...");
+    console.log({data});
+
     // validate input
     const { time, date, id, description, client, task, project, user } = data;
 
-    const toUTC = (localDate: Date) => {
+    const toUTC = (stringLocalDate: string) => {
+        console.log({stringLocalDate});
+
+        const localDate = new Date(stringLocalDate);
+        if (isNaN(localDate.getTime())) throw new Error("Invalid date provided for registration");
         return new Date(Date.UTC(localDate.getFullYear(), localDate.getMonth(), localDate.getDate(), localDate.getHours(), localDate.getMinutes(), localDate.getSeconds()));
     };
 
@@ -114,7 +121,7 @@ const convertCsvRegistrationToFirestore = (data: any) => {
     return ({
         id,
         time: +(time || 0),
-        date: admin.firestore.Timestamp.fromDate(toUTC(new Date(date))),
+        date: admin.firestore.Timestamp.fromDate(toUTC(date)),
         deleted: false,
         created: now,
         modified: now,

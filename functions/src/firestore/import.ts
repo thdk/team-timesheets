@@ -74,12 +74,12 @@ export const watchImportSessions = functions.firestore
 
                                 return Promise.all(items.reduce((p, c) => {
                                     // Get project id, create new project if needed
-                                    const project = projects.find(projectDoc => (projectDoc.name || "").toLowerCase() === (c.project || "").toLowerCase());
+                                    const project = projects.find(projectDoc => (projectDoc.name || "").toLowerCase().trim() === (c.project || "").toLowerCase().trim());
                                     if (!project && c.project) {
                                         const docRef = projectsCollectionRef.doc();
                                         const projectData = {
-                                            name: c.project,
-                                            name_insensitive: ((c.project || "") as string).toUpperCase(),
+                                            name: c.project.trim(),
+                                            name_insensitive: ((c.project || "") as string).toUpperCase().trim(),
                                             isArchived: true,
                                             importId
                                         };
@@ -87,7 +87,7 @@ export const watchImportSessions = functions.firestore
                                         console.log("Inserting new project...");
                                         console.log({ projectData });
 
-                                        projects.push({ name: c.project, id: docRef.id });
+                                        projects.push({ name: c.project.trim(), id: docRef.id });
 
                                         c.project = docRef.id;
                                         p.push(docRef.set(projectData));
@@ -121,19 +121,19 @@ export const watchImportSessions = functions.firestore
                                     }
 
                                     // Get client id, create new client if needed
-                                    const client = clients.find(clientDoc => (clientDoc.name || "").toLowerCase() === (c.client || "").toLowerCase());
+                                    const client = clients.find(clientDoc => (clientDoc.name || "").toLowerCase().trim() === (c.client || "").toLowerCase().trim());
                                     if (!client && c.client) {
                                         const docRef = clientsCollectionRef.doc();
                                         const clientData = {
-                                            name: c.client,
-                                            name_insensitive: ((c.client || "") as string).toUpperCase(),
+                                            name: c.client.trim(),
+                                            name_insensitive: ((c.client || "") as string).toUpperCase().trim(),
                                             importId
                                         };
                                         
                                         console.log("Inserting new client...");
                                         console.log({ clientData });
                                         
-                                        clients.push({ name: c.client, id: docRef.id });
+                                        clients.push({ name: c.client.trim(), id: docRef.id });
                                         c.client = docRef.id;
                                         p.push(docRef.set(clientData));
                                     } else {
@@ -142,19 +142,19 @@ export const watchImportSessions = functions.firestore
                                     }
 
                                     // Get task id, create new task if needed
-                                    const task = tasks.find(taskDoc => (taskDoc.name || "").toLowerCase() === (c.task || "").toLowerCase());
+                                    const task = tasks.find(taskDoc => (taskDoc.name || "").toLowerCase().trim() === (c.task || "").toLowerCase().trim());
                                     if (!task && c.task) {
                                         const docRef = tasksCollectionRef.doc();
                                         const taskData = {
-                                            name: c.task,
-                                            name_insensitive: ((c.task || "") as string).toUpperCase(),
+                                            name: c.task.trim(),
+                                            name_insensitive: ((c.task || "") as string).toUpperCase().trim(),
                                             importId
                                         };
                                         
                                         console.log("Inserting new task...");
                                         console.log({ taskData });
                                         
-                                        tasks.push({ name: c.task, id: docRef.id });
+                                        tasks.push({ name: c.task.trim(), id: docRef.id });
                                         c.task = docRef.id;
                                         p.push(docRef.set(taskData));
                                     } else {

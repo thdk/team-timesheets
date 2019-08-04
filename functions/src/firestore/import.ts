@@ -85,8 +85,7 @@ export const watchImportSessions = functions.firestore
                                             icon: ""
                                         };
 
-                                        console.log("Inserting new project...");
-                                        console.log({ projectData });
+                                        console.log(`Inserting new project: ${projectData.name}`);
 
                                         projects.push({ name: c.project.trim(), id: docRef.id });
 
@@ -108,15 +107,14 @@ export const watchImportSessions = functions.firestore
                                             recentProjects: [],
                                             importId
                                         };
-                                        
-                                        console.log("Inserting new user...");
-                                        console.log({ userData });
-                                        
+
+                                        console.log(`Inserting new user: ${userData.name}`);
+
                                         users.push({ name: c.user, id: docRef.id });
                                         c.userId = docRef.id;
                                         p.push(docRef.set(userData));
                                     } else {
-                                        console.log("User found with name: " + c.user);
+                                        // console.log("User found with name: " + c.user);
                                         if (user) c.userId = user.id;
                                         else delete c.userId;
                                     }
@@ -130,10 +128,9 @@ export const watchImportSessions = functions.firestore
                                             name_insensitive: ((c.client || "") as string).toUpperCase().trim(),
                                             importId
                                         };
-                                        
-                                        console.log("Inserting new client...");
-                                        console.log({ clientData });
-                                        
+
+                                        console.log(`Inserting new client: ${clientData.name}`);
+
                                         clients.push({ name: c.client.trim(), id: docRef.id });
                                         c.client = docRef.id;
                                         p.push(docRef.set(clientData));
@@ -152,10 +149,9 @@ export const watchImportSessions = functions.firestore
                                             importId,
                                             icon: ""
                                         };
-                                        
-                                        console.log("Inserting new task...");
-                                        console.log({ taskData });
-                                        
+
+                                        console.log(`Inserting new task: ${taskData.name}`);
+
                                         tasks.push({ name: c.task.trim(), id: docRef.id });
                                         c.task = docRef.id;
                                         p.push(docRef.set(taskData));

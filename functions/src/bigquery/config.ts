@@ -57,7 +57,7 @@ const convertCsvProjectToBigQuery = (data: any) => {
 // ipid-1	Automated price sync	true
 const convertCsvProjectToFirestore = (data: any) => {
     // validate input
-    const { name, icon, id, isArchived = "true"  } = data;
+    const { name, icon, id, isArchived = "true" } = data;
     if (!id) throw new Error("Cannot insert project data without id");
     if (!name) throw new Error("Name is missing for project with id: " + id);
 
@@ -100,37 +100,39 @@ const convertCsvRegistrationToBigQuery = (data: any) => {
 }
 
 // Example CSV data
-// date	        description	    project	                task	    time	user                [id]	                client
-// 2020-01-01	Foobar	        Project Name	        Task name   3	    Thomas Dekiere	    [ggVaApCbnJVW3LmqegoK]	Client Name
+// date	        description	    project	                task	    time	user                [id]	                client          [timeOffset]
+// 2020-01-01	Foobar	        Project Name	        Task name   3	    Thomas Dekiere	    [ggVaApCbnJVW3LmqegoK]	Client Name     [5]
 const convertCsvRegistrationToFirestore = (data: any) => {
-    console.log("Converting...");
-    console.log({data});
+    try {
+        // validate input
+        const { time, date, id, description, client, task, project, user, timeOffset = 0 } = data;
 
-    // validate input
-    const { time, date, id, description, client, task, project, user } = data;
+        const nowDate = new Date();
+        // Use timeoffset to use a date in the past as created/modified
+        // Useful to insert data that doesn't need to by synced with bigquery
+        // Sync with bigquery only syncs data with modified date > last sync date
+        if (timeOffset) {
+            nowDate.setDate(nowDate.getDate() - timeOffset);
+        }
 
-    const toUTC = (stringLocalDate: string) => {
-        console.log({stringLocalDate});
-
-        const localDate = new Date(stringLocalDate);
-        if (isNaN(localDate.getTime())) throw new Error("Invalid date provided for registration");
-        return new Date(Date.UTC(localDate.getFullYear(), localDate.getMonth(), localDate.getDate(), localDate.getHours(), localDate.getMinutes(), localDate.getSeconds()));
-    };
-
-    const now = admin.firestore.Timestamp.now();
-    return ({
-        id,
-        time: +(time || 0),
-        date: admin.firestore.Timestamp.fromDate(toUTC(date)),
-        deleted: false,
-        created: now,
-        modified: now,
-        description,
-        task,
-        client,
-        project,
-        user
-    });
+        const nowTimestamp = admin.firestore.Timestamp.fromDate(nowDate);
+        return ({
+            id,
+            time: +(time || 0),
+            date: admin.firestore.Timestamp.fromDate(new Date(date)),
+            deleted: false,
+            created: nowTimestamp,
+            modified: nowTimestamp,
+            description,
+            task,
+            client,
+            project,
+            user
+        });
+    }
+    catch (e) {
+        throw new Error(`Can't convert: ${data}\nError:\n${e}`);
+    }
 }
 
 export const csvDerserializers = {
@@ -138,7 +140,7 @@ export const csvDerserializers = {
         "registrations": (data: any) => convertCsvRegistrationToBigQuery(data),
         "projects": (data: any) => convertCsvProjectToBigQuery(data),
     },
-    "firestore" : {
+    "firestore": {
         "registrations": (data: any) => convertCsvRegistrationToFirestore(data),
         "projects": (data: any) => convertCsvProjectToFirestore(data),
     }

@@ -6,8 +6,6 @@ export function addAsync<T extends { id?: string }>(firestore: FirebaseFirestore
         return batchProcess(
             data,
             (batch, item) => {
-                console.log("Adding new item to firestore...");
-                console.log({ item });
                 const docRef = item.id ? collectionRef.doc(item.id) : collectionRef.doc();
                 delete item.id;
                 return batch.set(docRef, item);
@@ -30,7 +28,7 @@ export function batchProcess<T>(data: T[], func: (batch: Omit<FirebaseFirestore.
     const chunk = batchSize <= 500 ? batchSize : 500; // max 500 records in a batch
 
     const j = data.length;
-    const results = [] as Promise<FirebaseFirestore.WriteResult[]>[];
+    const results = [] as FirebaseFirestore.WriteBatch[];
     for (i = 0; i < j; i += chunk) {
         temparray = data.slice(i, i + chunk);
         const batch = fireStoreDb.batch();
@@ -38,8 +36,16 @@ export function batchProcess<T>(data: T[], func: (batch: Omit<FirebaseFirestore.
             func(batch, dataItem);
         });
 
-        results.push(batch.commit());
+        results.push(batch);
     }
 
-    return Promise.all(results);
+    const execUntilTheEnd = (queue: FirebaseFirestore.WriteBatch[]) => {
+        console.log(`Processing batches, ${queue.length} remaining.`);
+        return queue.length
+            ? queue.shift().commit() // commit the first batch and remove it from the queue
+                .then(execUntilTheEnd(queue)) // continue with the remaining batches in the queue
+            : true;
+    }
+
+    return execUntilTheEnd(results);
 }

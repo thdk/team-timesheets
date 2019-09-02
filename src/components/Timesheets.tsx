@@ -70,8 +70,7 @@ export class Timesheets extends React.Component {
                 />
                 : <></>;
         } else {
-            const totalTime = Array.from(store.timesheets.registrationsGroupedByDay)
-                .reduce((p, c) => p + c.totalTime, 0);
+            const totalTime = store.timesheets.registrationsTotalTime;
 
             const totalLabel = `Total in ${store.view.moment.format('MMMM')}`;
             const total = <ListItem key={`total-month`} lines={[totalLabel]} meta={parseFloat(totalTime.toFixed(2)) + " hours"} disabled={true}></ListItem>

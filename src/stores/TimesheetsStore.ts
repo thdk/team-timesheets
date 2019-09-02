@@ -29,6 +29,7 @@ export interface IRegistrationsStore {
     readonly deleteRegistrationsAsync: (...ids: string[]) => Promise<void[]>;
     readonly addRegistrations: (data: IRegistration[]) => void;
 
+    readonly registrationsTotalTime: number;
     readonly registrationsGroupedByDay: IGroupedRegistrations<Date>[];
     readonly registrationsGroupedByDayReversed: IGroupedRegistrations<Date>[];
     readonly registrationsGroupedByDaySortOrder: SortOrder;
@@ -72,7 +73,7 @@ export class RegistrationStore implements IRegistrationsStore {
                 const endDate = moment.clone().endOf("month").toDate();
                 const startDate = moment.clone().startOf("month").toDate();
                 this.registrations.query = ref => ref
-                    .where("date", ">", startDate)
+                    .where("date", ">=", startDate)
                     .where("date", "<=", endDate)
                     .where("userId", "==", rootStore.user.userId);
             });
@@ -105,6 +106,11 @@ export class RegistrationStore implements IRegistrationsStore {
     @computed
     public get registrationsGroupedByDaySortOrder() {
         return this.registrationsGroupedByDaySortOrderField;
+    }
+
+    @computed
+    public get registrationsTotalTime() {
+        return this.registrationsGroupedByDay.reduce((p, c) => p + (c.totalTime || 0), 0);
     }
 
     @action

@@ -42,7 +42,11 @@ export const convertRegistration = (appData: Partial<IRegistration> | "delete") 
     return registration;
 }
 
-export const convertUser = (appData: Partial<IUser>) => {
+export const convertUser = (appData: Partial<IUser> | "delete") => {
+    if (appData === "delete") {
+        throw new Error("Deleting user is not supported");
+    }
+
     const now = new Date();
 
     const user: IUserData = {

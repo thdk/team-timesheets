@@ -72,10 +72,17 @@ export function insertRowsAsync<T>(options: BigQueryConfig, rows: ReadonlyArray<
             return dataset.table(`${tableIdPrefix}${tableId}`)
                 .get({ autoCreate: true, ...insertOptions })
                 .then(([table]) => validateTableSchemaAsync(table, insertOptions.schema))
-                .then(table => table.insert(rows)
+                .then(table => {
+                    const first10kRows = rows.slice(0, 10000);
+                    return table.insert(first10kRows)
                     .then(() => {
-                        console.log(`Inserted ${rows.length} rows`);
-                        return `Inserted ${rows.length} rows`;
+                        console.log(`Inserted ${first10kRows.length} rows of total ${rows.length} into ${tableId}`);
+                        if (rows.length > 10000) {
+                            console.log("Inserting next batch...")
+                            return insertRowsAsync(options, rows.slice(10000));
+                        }
+
+                        return `Inserted ${rows.length} rows into ${tableId}`;
                     }, (error: { errors: any, name: string, response: any, message: string }) => {
                         error.errors && error.errors.forEach(e => {
                             console.log({
@@ -88,7 +95,8 @@ export function insertRowsAsync<T>(options: BigQueryConfig, rows: ReadonlyArray<
                     }, (e) => {
                         console.log(e);
                         console.log("Table could not be created");
-                    }))
+                    })
+                })
         }, e => {
             console.log(e);
             console.log("Dataset could not be created");

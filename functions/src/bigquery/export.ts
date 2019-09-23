@@ -44,7 +44,7 @@ export const exportToBigQuery = (tasks: ExportToBigQueryTask[], bigquery: BigQue
                 changeSets.map(set => {
                     const config = firestoreBigQueryMap[set.task.collection];
                     return insertRowsAsync(
-                        Object.assign(biqQueryOptions, { tableId: set.task.collection, schemes: bigQuerySchemes }),
+                        {...biqQueryOptions, tableId: set.task.collection, schemes: bigQuerySchemes },
                         config.convert ? set.result.docs.map(config.convert) : set.result.docs,
                         bigquery
                     );

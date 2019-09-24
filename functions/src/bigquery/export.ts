@@ -36,7 +36,7 @@ export const exportToBigQuery = (tasks: ExportToBigQueryTask[], bigquery: BigQue
             // Run the filter for the collection of each export task
             return Promise.all(
                 tasks.map(
-                    task => (task.collection === "users" ? db.collection(task.collection) : filterByDate(db.collection(task.collection), firestoreBigQueryMap[task.collection].dateField || "modified"))
+                    task => filterByDate(db.collection(task.collection), firestoreBigQueryMap[task.collection].dateField || "modified")
                         .get()
                         .then(result => ({ task, result }))
                 )

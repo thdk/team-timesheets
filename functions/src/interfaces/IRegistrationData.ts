@@ -12,6 +12,7 @@ export interface IRegistrationData {
     deleted: boolean;
     created?: admin.firestore.Timestamp;
     modified?: admin.firestore.Timestamp;
+    importId?: string;
 }
 
 export interface IBigQueryRegistrationData extends Omit<IRegistrationData, "created" | "modified" | "date"> {

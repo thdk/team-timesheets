@@ -82,7 +82,8 @@ export function insertRowsAsync<T>(options: BigQueryConfig, rows: ReadonlyArray<
                             return insertRowsAsync(options, rows.slice(10000));
                         }
 
-                        return `Inserted ${rows.length} rows into ${tableId}`;
+                        console.log(`Finished inserting into ${tableId}`);
+                        return true;
                     }, (error: { errors: any, name: string, response: any, message: string }) => {
                         error.errors && error.errors.forEach(e => {
                             console.log({

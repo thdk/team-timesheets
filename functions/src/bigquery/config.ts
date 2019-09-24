@@ -16,7 +16,8 @@ export const convertRegistration = (firebaseChange: FirebaseFirestore.DocumentSn
         userId: reg.userId,
         created: reg.created ? reg.created.toDate().toISOString().replace('Z', '') : null,
         modified: reg.modified ? reg.modified.toDate().toISOString().replace('Z', '') : null,
-        deleted: reg.deleted
+        deleted: reg.deleted,
+        importId: reg.importId,
     };
 };
 

@@ -47,7 +47,9 @@ export const exportToBigQuery = (tasks: ExportToBigQueryTask[], bigquery: BigQue
                         {...biqQueryOptions, tableId: set.task.collection, schemes: bigQuerySchemes },
                         config.convert ? set.result.docs.map(config.convert) : set.result.docs,
                         bigquery
-                    );
+                    ).then(()=> {
+                        return "Inserted " + set.result.docs.length + " into " + set.task.collection;
+                    });
                 })
             );
         });

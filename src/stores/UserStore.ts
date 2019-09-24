@@ -1,8 +1,8 @@
 import { observable, action, transaction, computed, observe, when, intercept } from "mobx";
-import { ICollection, Collection, Doc } from 'firestorable';
+import { ICollection, Collection, Doc } from "firestorable";
 import { IRootStore } from "./RootStore";
-import * as deserializer from '../../common/serialization/deserializer';
-import * as serializer from '../../common/serialization/serializer';
+import * as deserializer from "../../common/serialization/deserializer";
+import * as serializer from "../../common/serialization/serializer";
 import { IUser, IUserData } from "../../common/dist";
 import { canReadUsers } from "../rules/rules";
 
@@ -57,7 +57,7 @@ export class UserStore implements IUserStore {
 
         auth.onAuthStateChanged(this.setUser.bind(this));
 
-        // TODO: move to Firestorable/Document?
+        // tODO: move to Firestorable/Document?
         intercept(this._authUser, change => {
             if (change.type === "update") {
                 if (isUndefinedValue(change.newValue)) {
@@ -72,72 +72,71 @@ export class UserStore implements IUserStore {
     }
 
     @action
-    private setSelectedUser(id: string | undefined) {
-        const user = id ? this.users.docs.get(id) : undefined;
+    private setSelectedUser(id: string | undefined): void {
+        const user: Doc<IUser, IUserData> | undefined = id ? this.users.docs.get(id) : undefined;
 
         if (id && !user) {
             // fetch the user manually
             this.users.getAsync(id, true)
-                .then(this.setSelectedUserObservable.bind(this))
+                .then(this.setSelectedUserObservable.bind(this));
         } else {
             this.setSelectedUserObservable(user);
         }
     }
 
-    public updateSelectedUser(data: Partial<IUser>) {
-        this.selectedUser && this._selectedUser.set({ ...this.selectedUser, ...data });
+    public updateSelectedUser(data: Partial<IUser>): void {
+        if (this.selectedUser) { this._selectedUser.set({ ...this.selectedUser, ...data }); }
     }
 
-    public saveSelectedUser() {
-        this.selectedUserId && this.selectedUser && this.users.updateAsync(this.selectedUserId, this.selectedUser);
+    public saveSelectedUser(): void {
+        if (this.selectedUserId && this.selectedUser) { this.users.updateAsync(this.selectedUserId, this.selectedUser); }
     }
 
     @action.bound
-    private setSelectedUserObservable(userDoc: Doc<IUser, IUserData> | undefined) {
+    private setSelectedUserObservable(userDoc: Doc<IUser, IUserData> | undefined): void {
         this._selectedUser.set(userDoc && userDoc.data ? { ...userDoc.data } : undefined);
     }
 
     @computed
-    public get selectedUser() {
+    public get selectedUser(): IUser | undefined {
         return this._selectedUser.get();
     }
 
     @action
-    public setSelectedUserId(id: string | undefined) {
+    public setSelectedUserId(id: string | undefined): void {
         this._selectedUserId.set(id);
     }
 
     @computed
-    public get selectedUserId() {
+    public get selectedUserId(): string | undefined {
         return this._selectedUserId.get();
     }
 
     @computed
-    public get authenticatedUser() {
-        if (isUndefinedValue(this._authUser)) return undefined;
+    public get authenticatedUser(): IUser | undefined {
+        if (isUndefinedValue(this._authUser)) { return undefined; }
 
         return this._authUser.data;
     }
 
     @computed
-    get userId() {
+    get userId(): string | undefined {
         return this._userId;
     }
 
     @action
-    public updateAuthenticatedUser(userData: Partial<IUser>) {
-        if (!isUndefinedValue(this._authUser)) this.users.updateAsync(this._authUser.id, userData);
+    public updateAuthenticatedUser(userData: Partial<IUser>): void {
+        if (!isUndefinedValue(this._authUser)) { this.users.updateAsync(this._authUser.id, userData); }
     }
 
     @action
-    private setUser(fbUser: firebase.User | null) {
+    private setUser(fbUser: firebase.User | null): void {
         if (!fbUser) {
             transaction(() => {
                 this._userId = undefined;
                 this._authUser = UndefinedValue;
             });
-        }
-        else {
+        } else {
             this.state = StoreState.Pending;
             this.users.getAsync(fbUser.uid).then(user => {
                 this.getAuthUserSuccess(user);
@@ -172,7 +171,7 @@ export class UserStore implements IUserStore {
         this.state = StoreState.Error;
     }
 
-    signout() {
+    signout(): void {
         auth.signOut();
     }
 }

@@ -65,6 +65,7 @@ export const watchImportSessions = functions.firestore
                         const usersCollectionRef = db.collection("users");
                         const tasksCollectionRef = db.collection("tasks");
 
+                        const now = new Date();
                         return Promise.all([projectsCollectionRef.get(), clientsCollectionRef.get(), usersCollectionRef.get(), tasksCollectionRef.get()])
                             .then(([projectSnapshot, clientSnapshot, userSnapshot, taskSnapshot]) => {
                                 const projects = projectSnapshot.docs.map(d => ({ name: d.data().name, id: d.id }));
@@ -82,7 +83,9 @@ export const watchImportSessions = functions.firestore
                                             name_insensitive: ((c.project || "") as string).toUpperCase().trim(),
                                             isArchived: true,
                                             importId,
-                                            icon: ""
+                                            icon: "",
+                                            modified: admin.firestore.Timestamp.fromDate(now),
+                                            created: admin.firestore.Timestamp.fromDate(now),
                                         };
 
                                         console.log(`Inserting new project: ${projectData.name}`);
@@ -105,7 +108,9 @@ export const watchImportSessions = functions.firestore
                                             name: c.user,
                                             tasks: [],
                                             recentProjects: [],
-                                            importId
+                                            importId,
+                                            modified: admin.firestore.Timestamp.fromDate(now),
+                                            created: admin.firestore.Timestamp.fromDate(now),
                                         };
 
                                         console.log(`Inserting new user: ${userData.name}`);

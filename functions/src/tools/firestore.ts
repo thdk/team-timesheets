@@ -1,7 +1,7 @@
 import * as admin from "firebase-admin";
 
-export const initTimestampsForRegistrations = (db: FirebaseFirestore.Firestore) => {
-    const collections = ["projects", "registrations"];
+export const initTimestamps = (db: FirebaseFirestore.Firestore) => {
+    const collections = ["projects", "registrations", "users"];
     return Promise.all(collections.map(c => {
         return db.collection(c).get().then(snapshot => {
             const updates: { ref: FirebaseFirestore.DocumentReference, data: any }[] = snapshot.docs.reduce((p, doc) => {

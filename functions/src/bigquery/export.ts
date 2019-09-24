@@ -34,8 +34,13 @@ export const exportToBigQuery = (tasks: ExportToBigQueryTask[], bigquery: BigQue
             };
 
             // Run the filter for the collection of each export task
-            return Promise.all(tasks.map(task => filterByDate(db.collection(task.collection), firestoreBigQueryMap[task.collection].dateField || "modified")
-                .get().then(result => ({ task, result }))));
+            return Promise.all(
+                tasks.map(
+                    task => (task.collection === "users" ? db.collection(task.collection) : filterByDate(db.collection(task.collection), firestoreBigQueryMap[task.collection].dateField || "modified"))
+                        .get()
+                        .then(result => ({ task, result }))
+                )
+            );
         })
         // Stream all changes into bigquery
         .then(changeSets => {
@@ -44,10 +49,10 @@ export const exportToBigQuery = (tasks: ExportToBigQueryTask[], bigquery: BigQue
                 changeSets.map(set => {
                     const config = firestoreBigQueryMap[set.task.collection];
                     return insertRowsAsync(
-                        {...biqQueryOptions, tableId: set.task.collection, schemes: bigQuerySchemes },
+                        { ...biqQueryOptions, tableId: set.task.collection, schemes: bigQuerySchemes },
                         config.convert ? set.result.docs.map(config.convert) : set.result.docs,
                         bigquery
-                    ).then(()=> {
+                    ).then(() => {
                         return "Inserted " + set.result.docs.length + " into " + set.task.collection;
                     });
                 })

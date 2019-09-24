@@ -17,7 +17,7 @@ import * as gcs from '@google-cloud/storage';
 
 import { exportToBigQuery, ExportToBigQueryTask } from './bigquery/export';
 import { IRegistrationData } from './interfaces/IRegistrationData';
-import { initTimestampsForRegistrations, initNamesInsensitive, changeProjectOfRegistrations, projectsByName, projectsAll } from './tools/firestore';
+import { initTimestamps, initNamesInsensitive, changeProjectOfRegistrations, projectsByName, projectsAll } from './tools/firestore';
 import { watchForFilesToImportFrom } from './storage/imports';
 import { watchImportSessions } from './firestore/import';
 import { getAdminConfig } from './utils';
@@ -128,6 +128,9 @@ const exportTasks: ExportToBigQueryTask[] = [
     },
     {
         collection: "projects",
+    },
+    {
+        collection: "users",
     }
 ]
 
@@ -165,7 +168,7 @@ exports.scheduledExportToBigQuery = (functions.pubsub as any).schedule('every da
     .onRun(() => performExportToBigQuery());
 
 // Temporary function to add timestamps to data already in database
-exports.initTimestampsForRegistrations = functions.https.onCall(() => initTimestampsForRegistrations(db));
+exports.initTimestampsForRegistrations = functions.https.onCall(() => initTimestamps(db));
 
 
 // Temporary function to add name_insensitive to data already in database

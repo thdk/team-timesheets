@@ -12,7 +12,12 @@ export type BigQueryConfig = {
 
 function validateTableSchemaAsync(table: any, schema: BigQueryField[]) {
     return table.getMetadata().then(([metadata]) => {
-        console.log(`Current schema of table ${table.id} is ${JSON.stringify(metadata.schema.fields)}`);
+        if (metadata.schema) {
+            console.log(`Current schema of table ${table.id} is ${JSON.stringify(metadata.schema.fields)}`);
+        } else {
+            console.log("Table has no schema yet.");
+        }
+        
         console.log(`Required schema of table ${table.id} is ${JSON.stringify(schema)}`);
 
         if (!isEqualSchema(metadata.schema.fields, schema)) {
@@ -75,28 +80,28 @@ export function insertRowsAsync<T>(options: BigQueryConfig, rows: ReadonlyArray<
                 .then(table => {
                     const first10kRows = rows.slice(0, 10000);
                     return table.insert(first10kRows)
-                    .then(() => {
-                        console.log(`Inserted ${first10kRows.length} rows of total ${rows.length} into ${tableId}`);
-                        if (rows.length > 10000) {
-                            console.log("Inserting next batch...")
-                            return insertRowsAsync(options, rows.slice(10000));
-                        }
+                        .then(() => {
+                            console.log(`Inserted ${first10kRows.length} rows of total ${rows.length} into ${tableId}`);
+                            if (rows.length > 10000) {
+                                console.log("Inserting next batch...")
+                                return insertRowsAsync(options, rows.slice(10000));
+                            }
 
-                        console.log(`Finished inserting into ${tableId}`);
-                        return true;
-                    }, (error: { errors: any, name: string, response: any, message: string }) => {
-                        error.errors && error.errors.forEach(e => {
-                            console.log({
-                                error: error.name,
-                                message: error.message,
-                                errors: e.errors,
-                                row: e.row
+                            console.log(`Finished inserting into ${tableId}`);
+                            return true;
+                        }, (error: { errors: any, name: string, response: any, message: string }) => {
+                            error.errors && error.errors.forEach(e => {
+                                console.log({
+                                    error: error.name,
+                                    message: error.message,
+                                    errors: e.errors,
+                                    row: e.row
+                                });
                             });
-                        });
-                    }, (e) => {
-                        console.log(e);
-                        console.log("Table could not be created");
-                    })
+                        }, (e) => {
+                            console.log(e);
+                            console.log("Table could not be created");
+                        })
                 })
         }, e => {
             console.log(e);

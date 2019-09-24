@@ -8,7 +8,7 @@ export const convertRegistration = (firestoreData: IRegistrationData) => {
         description: firestoreData.description,
         project: firestoreData.project,
         task: firestoreData.task,
-        time: firestoreData.time || 0,
+        time: +(firestoreData.time ? firestoreData.time : 0),
         userId: firestoreData.userId,
         client: firestoreData.client,
         isPersisted: true,
@@ -53,7 +53,7 @@ export const convertTask = (firestoreData: ITaskData) => {
 export const convertNameWithIcon = (firestoreData: INameWithIconData) => {
     const data = {
         name: firestoreData.name,
-        icon: firestoreData.icon,
+        icon: firestoreData.icon || "",
         created: firestoreData.created ? firestoreData.created.toDate() : undefined,
         deleted: firestoreData.deleted || false,
     };

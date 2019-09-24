@@ -1,81 +1,15 @@
 import { firestore } from "firebase-admin";
-import { IProjectData } from "../interfaces/IProjectData";
-import { IRegistrationData } from "../interfaces/IRegistrationData";
-import { BigQueryField, insertRows } from "./utils";
+import { firestoreBigQueryMap, bigQuerySchemes } from "./config";
 
 // Imports the Google Cloud client library
-const { BigQuery } = require('@google-cloud/bigquery');
-
-export const convertRegistration = (firebaseChange: FirebaseFirestore.DocumentSnapshot) => {
-    const reg = firebaseChange.data() as unknown as IRegistrationData;
-    return {
-        id: firebaseChange.id,
-        description: reg.description,
-        time: reg.time,
-        date: reg.date ? reg.date.toDate().toISOString().replace('Z', '') : null,
-        task: reg.task,
-        project: reg.project,
-        client: reg.client,
-        userId: reg.userId,
-        created: reg.created ? reg.created.toDate().toISOString().replace('Z', '') : null,
-        modified: reg.modified ? reg.modified.toDate().toISOString().replace('Z', '') : null,
-        deleted: reg.deleted
-    };
-};
-
-export const convertProject = (firebaseChange: FirebaseFirestore.DocumentSnapshot) => {
-    const project = firebaseChange.data() as unknown as IProjectData;
-    return {
-        id: firebaseChange.id,
-        name: project.name,
-        icon: project.icon,
-        createdBy: project.createdBy,
-        created: project.created ? project.created.toDate().toISOString().replace('Z', '') : null,
-        modified: project.modified ? project.modified.toDate().toISOString().replace('Z', '') : null,
-        deleted: project.deleted
-    }
-}
-
-const projectSchema: BigQueryField[] = [
-    { "name": "icon", "type": "STRING" },
-    { "name": "name", "type": "STRING" },
-    { "name": "deleted", "type": "BOOLEAN" },
-    { "name": "created", "type": "TIMESTAMP" },
-    { "name": "modified", "type": "TIMESTAMP" },
-    { "name": "createdBy", "type": "STRING" },
-    { "name": "id", "type": "STRING" }
-];
-
-const registrationSchema: BigQueryField[] = [
-    { "name": "id", "type": "STRING" },
-    { "name": "created", "type": "TIMESTAMP" },
-    { "name": "deleted", "type": "BOOLEAN" },
-    { "name": "date", "type": "TIMESTAMP" },
-    { "name": "description", "type": "STRING" },
-    { "name": "modified", "type": "TIMESTAMP" },
-    { "name": "project", "type": "STRING" },
-    { "name": "task", "type": "STRING" },
-    { "name": "client", "type": "STRING" },
-    { "name": "time", "type": "FLOAT" },
-    { "name": "userId", "type": "STRING" },
-];
-
-const firestoreBigQueryMap: { [collection: string]: { convert: (change: FirebaseFirestore.DocumentSnapshot) => any, schema: BigQueryField[], dateField?: string } } = {
-    "registrations": {
-        convert: convertRegistration,
-        schema: registrationSchema
-    },
-    "projects": {
-        convert: convertProject,
-        schema: projectSchema
-    }
-}
+import { BigQuery } from '@google-cloud/bigquery';
+import { insertRowsAsync } from "./utils";
 
 export type ExportToBigQueryTask = {
     collection: string;
 }
 
-export const exportToBigQuery = (tasks: ExportToBigQueryTask[], bigquery: typeof BigQuery, db: FirebaseFirestore.Firestore) => {
+export const exportToBigQuery = (tasks: ExportToBigQueryTask[], bigquery: BigQuery, db: FirebaseFirestore.Firestore) => {
     // TODO: use config/env variable for dataSetId and tableId/table prefix?
     const dataSetId = "timesheets";
 
@@ -100,8 +34,13 @@ export const exportToBigQuery = (tasks: ExportToBigQueryTask[], bigquery: typeof
             };
 
             // Run the filter for the collection of each export task
-            return Promise.all(tasks.map(task => filterByDate(db.collection(task.collection), firestoreBigQueryMap[task.collection].dateField || "modified")
-                .get().then(result => ({ task, result }))));
+            return Promise.all(
+                tasks.map(
+                    task => (task.collection === "users" ? db.collection(task.collection) : filterByDate(db.collection(task.collection), firestoreBigQueryMap[task.collection].dateField || "modified"))
+                        .get()
+                        .then(result => ({ task, result }))
+                )
+            );
         })
         // Stream all changes into bigquery
         .then(changeSets => {
@@ -109,10 +48,13 @@ export const exportToBigQuery = (tasks: ExportToBigQueryTask[], bigquery: typeof
             return Promise.all(
                 changeSets.map(set => {
                     const config = firestoreBigQueryMap[set.task.collection];
-                    return insertRows(bigquery,
-                        Object.assign(biqQueryOptions, { tableId: set.task.collection, schema: config.schema }),
-                        config.convert ? set.result.docs.map(config.convert) : set.result.docs
-                    );
+                    return insertRowsAsync(
+                        { ...biqQueryOptions, tableId: set.task.collection, schemes: bigQuerySchemes },
+                        config.convert ? set.result.docs.map(config.convert) : set.result.docs,
+                        bigquery
+                    ).then(() => {
+                        return "Inserted " + set.result.docs.length + " into " + set.task.collection;
+                    });
                 })
             );
         });

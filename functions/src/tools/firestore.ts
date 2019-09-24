@@ -1,8 +1,7 @@
 import * as admin from "firebase-admin";
-import { WriteResult } from "@google-cloud/firestore";
 
-export const initTimestampsForRegistrations = (db: FirebaseFirestore.Firestore) => {
-    const collections = ["projects", "registrations"];
+export const initTimestamps = (db: FirebaseFirestore.Firestore) => {
+    const collections = ["projects", "registrations", "users"];
     return Promise.all(collections.map(c => {
         return db.collection(c).get().then(snapshot => {
             const updates: { ref: FirebaseFirestore.DocumentReference, data: any }[] = snapshot.docs.reduce((p, doc) => {
@@ -70,6 +69,16 @@ export const changeProjectOfRegistrations = (db: FirebaseFirestore.Firestore, { 
     });
 };
 
+export const projectsAll = (db: FirebaseFirestore.Firestore) => {
+    return db.collection("projects").orderBy("name_insensitive").get().then(snapshot => {
+        return snapshot.size === 0
+            ? new Promise<any[]>(resolve => resolve([]))
+            : snapshot.docs.map(doc => {
+                return { id: doc.id, name: doc.data().name };
+            });
+    })
+};
+
 export const projectsByName = (db: FirebaseFirestore.Firestore, name: string) => {
     if (!name) throw new Error("Missing required option 'from'");
 
@@ -117,7 +126,7 @@ export const initNamesInsensitive = (db: FirebaseFirestore.Firestore) => {
 
             const j = updates.length;
             console.log("Updates: " + j.toString());
-            const results = [] as Promise<WriteResult[]>[];
+            const results = [] as Promise<admin.firestore.WriteResult[]>[];
             for (i = 0; i < j; i += chunk) {
                 temparray = updates.slice(i, i + chunk);
                 const batch = db.batch();

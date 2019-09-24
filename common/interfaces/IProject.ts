@@ -1,4 +1,4 @@
-import { INameWithIcon, IPersistedEntity, INameWithIconData } from "./base";
+import { INameWithIcon, INameWithIconData } from "./base";
 
 export interface IProject extends INameWithIcon {
     createdBy?: string;

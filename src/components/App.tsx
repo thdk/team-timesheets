@@ -5,6 +5,7 @@ import { observe } from 'mobx';
 import { IViewStore } from '../stores/ViewStore';
 import { TopNavigation } from './TopNavigation';
 import store from '../stores/RootStore';
+import { Fabs } from './Controls/Fabs';
 
 export class App extends React.Component {
     private drawerRef?: Drawer | null;
@@ -14,7 +15,7 @@ export class App extends React.Component {
     render() {
         return (
             <div className="body-wrapper">
-                <Drawer ref={drawerRef => { this.drawerRef = drawerRef; }}>
+                <Drawer isOpen ref={drawerRef => { this.drawerRef = drawerRef; }}>
                     <Menu></Menu>
                 </Drawer>
 
@@ -24,6 +25,7 @@ export class App extends React.Component {
                     <main className="main-content" id="main-content">
                         <div style={{ paddingBottom: "100px" }} className="mdc-top-app-bar--fixed-adjust">
                             {this.props.children}
+                            <Fabs></Fabs>
                         </div>
                     </main>
                 </div>

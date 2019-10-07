@@ -1,8 +1,6 @@
 import * as React from 'react';
 import { observer } from "mobx-react";
 import moment from 'moment-es6';
-import { Fab } from "../mdc/buttons/fab";
-import routes from '../routes/index';
 import store from '../stores/RootStore';
 import { FlexGroup } from './Layout/flex';
 import { goToOverview } from '../routes/timesheets/overview';
@@ -107,13 +105,8 @@ export class Timesheets extends React.Component {
                         </h3>
                     </div>
                     {regs}
-                </FlexGroup>
-                <Fab onClick={this.addRegistration} icon="add" name="Add new registration"></Fab>
+                </FlexGroup>                
             </>
         );
-    }
-
-    addRegistration = () => {
-        store.router.goTo(routes.newRegistration, {}, store);
     }
 }

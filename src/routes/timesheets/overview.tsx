@@ -7,6 +7,7 @@ import { App } from '../../internal';
 import store, { IRootStore } from '../../stores/RootStore';
 import { IViewAction } from '../../stores/ViewStore';
 import { IRegistration } from '../../../common/dist';
+import detailRoutes from "./detail";
 
 export interface IDate {
     year: number;
@@ -101,13 +102,28 @@ const setActions = (s: IRootStore, alowInserts = false) => {
         )
     }
 
-    s.view.setActions(actions);
+    transaction(() => {
+        s.view.setActions(actions);
+        s.view.setFabs([{
+            action: () => {
+                store.router.goTo(detailRoutes.newRegistration, {}, store);
+            },
+            icon: {
+                content: "add",
+                label: "Add new registration"
+            },
+            shortKey: {
+                key: "a",
+            },
+        }]);
+    });
 };
 
 const beforeTimesheetExit = (_route: Route, _params: any, s: IRootStore) => {
     transaction(() => {
         s.view.selection.size && s.view.selection.clear();
         s.view.setActions([]);
+        s.view.setFabs([]);
     });
 };
 

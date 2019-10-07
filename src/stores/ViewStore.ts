@@ -12,6 +12,10 @@ export interface IShortKey {
   key: string;
 }
 
+export const isContextualAction = (action: IViewAction | IFab): action is IViewAction => {
+  return (action as any).contextual === true;
+};
+
 export interface IViewAction<T = any> {
   readonly icon: IIconData;
   readonly iconActive?: IIconData;
@@ -20,6 +24,12 @@ export interface IViewAction<T = any> {
   readonly shortKey?: IShortKey;
   readonly contextual?: boolean;
   readonly selection?: ObservableMap<string, any>;
+}
+
+export interface IFab {
+  readonly icon: IIconData;
+  readonly action: () => void;
+  readonly shortKey?: IShortKey;
 }
 
 export interface INavigationViewAction extends IViewAction {
@@ -40,10 +50,12 @@ export interface IViewStore {
   readonly moment: moment.Moment;
   readonly monthMoment: moment.Moment;
   readonly actions: IObservableArray<IViewAction>;
+  readonly fabs: IObservableArray<IFab>;
   readonly selection: ObservableMap<string, true>;
   readonly toggleSelection: (id: string, data: any) => void;
   navigationAction?: INavigationViewAction;
   setActions: (actions: IViewAction[]) => void;
+  setFabs: (fabs: IFab[]) => void;
   setNavigation: (action: INavigationViewAction | "default") => void;
   removeAction: (action: IViewAction) => void;
 }
@@ -51,6 +63,7 @@ export interface IViewStore {
 export class ViewStore implements IViewStore {
   readonly actions = observable<IViewAction>([]);
   readonly selection = observable(new Map<string, true>());
+  readonly fabs = observable<IFab>([]);
 
   @observable navigationAction?: INavigationViewAction;
   @observable readonly title: string;
@@ -91,20 +104,29 @@ export class ViewStore implements IViewStore {
 
     // listen for keyboard event which can fire viewactions
     document.addEventListener("keydown", ev => {
-      const viewAction = this.actions.filter(a => {
-        const { key = undefined, ctrlKey = false, altKey = false, shiftKey = false, metaKey = false } = a.shortKey || {};
-        return a.shortKey &&
-          altKey === ev.altKey &&
-          ctrlKey === ev.ctrlKey &&
-          metaKey === ev.metaKey &&
-          shiftKey === ev.shiftKey &&
-          key === ev.key
-      })[0];
+      const filterByShortKey = <T extends { shortKey?: IShortKey }>(items: (T[])) => {
+        return items.filter(a => {
+          const { key = undefined, ctrlKey = false, altKey = false, shiftKey = false, metaKey = false } = a.shortKey || {};
+          return a.shortKey &&
+            altKey === ev.altKey &&
+            ctrlKey === ev.ctrlKey &&
+            metaKey === ev.metaKey &&
+            shiftKey === ev.shiftKey &&
+            key === ev.key
+        })[0];
+      };
 
-      if (viewAction) {
+      const action = filterByShortKey([...this.fabs, ...this.actions]);
+
+      if (action) {
         ev.preventDefault();
         ev.stopPropagation();
-        viewAction.action(viewAction.selection);
+        if (isContextualAction(action)){
+          action.action(action.selection);
+        }
+        else {
+          action.action();
+        }
       }
     });
   }
@@ -132,6 +154,10 @@ export class ViewStore implements IViewStore {
 
   @action setActions(actions: IViewAction[]) {
     this.actions.replace(actions);
+  }
+
+  @action setFabs(fabs: IFab[]) {
+    this.fabs.replace(fabs);
   }
 
   @action removeAction(action: IViewAction) {

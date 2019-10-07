@@ -2,15 +2,24 @@ import * as React from 'react';
 import { MDCDrawer } from "@material/drawer/index";
 import { observer } from 'mobx-react';
 import store from '../stores/RootStore';
+import classNames from 'classnames';
 
 @observer
-export class Drawer extends React.Component {
+export class Drawer extends React.Component<{ isOpen?: boolean }> {
     private mdcDrawer?: any;
 
     render() {
+        const drawerClass = classNames(
+            "mdc-drawer",
+            "mdc-drawer--dismissible",
+            {
+            ['mdc-drawer--open']: this.props.isOpen
+        },
+        );
+
         const displayName = store.user.authenticatedUser ? store.user.authenticatedUser.name || "Guest" : "";
         return (<>
-            <aside className="mdc-drawer mdc-drawer--dismissible">
+            <aside className={drawerClass}>
                 <div className="mdc-drawer__header">
                     <h3 className="mdc-drawer__title">Timesheets</h3>
                     <h6 className="mdc-drawer__subtitle">{displayName}</h6>

@@ -12,8 +12,8 @@ export interface IShortKey {
   key: string;
 }
 
-export const isContextualAction = (action: IViewAction | IFab): action is IViewAction => {
-  return (action as any).contextual === true;
+export const isActionWithSelection = (action: IViewAction | IFab): action is IViewAction => {
+  return !!(action as any).selection;
 };
 
 export interface IViewAction<T = any> {
@@ -121,7 +121,7 @@ export class ViewStore implements IViewStore {
       if (action) {
         ev.preventDefault();
         ev.stopPropagation();
-        if (isContextualAction(action)){
+        if (isActionWithSelection(action)){
           action.action(action.selection);
         }
         else {

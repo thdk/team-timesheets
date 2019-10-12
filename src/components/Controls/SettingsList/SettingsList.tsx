@@ -1,9 +1,9 @@
 import * as React from 'react';
+import { observer } from 'mobx-react-lite';
 
 import { INameWithIcon } from '../../../../common';
 import { SettingsListItem } from './Item';
 import classNames from 'classnames';
-import { observer } from 'mobx-react-lite';
 import { ObservableMap } from 'mobx';
 import { AddItem } from './AddItem';
 

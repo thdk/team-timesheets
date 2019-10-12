@@ -211,7 +211,7 @@ export class RegistrationStore implements IRegistrationsStore {
 
     public deleteRegistrationsAsync(...ids: string[]) {
         // Todo: make updateAsync with data === "delete" use a batch in firestorable package.
-        return Promise.all(ids.map(id => this.registrations.updateAsync(id, "delete")));
+        return Promise.all(ids.map(id => this.registrations.updateAsync("delete", id)));
     }
 
     public addRegistrations(data: IRegistration[]) {
@@ -264,7 +264,7 @@ export class RegistrationStore implements IRegistrationsStore {
         if (this.registration) {
             const { registration } = this;
             this.registrations
-                .updateAsync(this.registrationId, registration)
+                .updateAsync(registration, this.registrationId || "")
                 .then(() => {
                     const { project = undefined } = registration || {};
                     // TODO: move set recent project to firebase function

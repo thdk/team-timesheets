@@ -81,7 +81,7 @@ export class ViewStore implements IViewStore {
 
     const date = new Date();
     this.title = "";
-    this.isDrawerOpen = false;
+    this.isDrawerOpen = true;
 
     transaction(() => {
       this.day = date.getDate();
@@ -104,6 +104,13 @@ export class ViewStore implements IViewStore {
 
     // listen for keyboard event which can fire viewactions
     document.addEventListener("keydown", ev => {
+      // Exit 'contextual mode' of top app bar
+      // by clearing the selection when escape key pressed
+      if (this.selection.size && ev.key === "Escape") {
+        this.selection.clear();
+        return;
+      }
+
       const filterByShortKey = <T extends { shortKey?: IShortKey }>(items: (T[])) => {
         return items.filter(a => {
           const { key = undefined, ctrlKey = false, altKey = false, shiftKey = false, metaKey = false } = a.shortKey || {};
@@ -121,7 +128,7 @@ export class ViewStore implements IViewStore {
       if (action) {
         ev.preventDefault();
         ev.stopPropagation();
-        if (isContextualAction(action)){
+        if (isContextualAction(action)) {
           action.action(action.selection);
         }
         else {
@@ -133,12 +140,14 @@ export class ViewStore implements IViewStore {
 
   @action
   public setNavigation(action: INavigationViewAction | "default") {
-    this.navigationAction = action === "default" ? {
-      action: () => {
-        this.rootStore.view.isDrawerOpen = !this.rootStore.view.isDrawerOpen;
-      },
-      icon: { content: "menu", label: "Menu" },
-    } : action;
+    this.navigationAction = action === "default"
+      ? {
+        action: () => {
+          this.rootStore.view.isDrawerOpen = !this.rootStore.view.isDrawerOpen;
+        },
+        icon: { content: "menu", label: "Menu" },
+      }
+      : action;
   }
 
   @computed get moment() {

@@ -23,8 +23,8 @@ export const TaskList = observer((props: React.HTMLProps<HTMLDivElement>) => {
     return <SettingsList {...props}
         readonly={!canManageTasks(store.user.authenticatedUser)}
         items={Array.from(store.config.tasks.docs.values()).map(task => ({ ...task.data!, id: task.id }))}
-        addItem={saveListItem}
-        toggleSelection={id => store.view.toggleSelection(id, true)}
+        onAddItem={saveListItem}
+        onToggleSelection={id => store.view.toggleSelection(id, true)}
         onItemClick={selectItem}
         selection={store.view.selection}
         activeItemId={store.config.taskId}

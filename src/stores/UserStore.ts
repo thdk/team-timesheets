@@ -89,7 +89,7 @@ export class UserStore implements IUserStore {
     }
 
     public saveSelectedUser(): void {
-        if (this.selectedUserId && this.selectedUser) { this.users.updateAsync(this.selectedUserId, this.selectedUser); }
+        if (this.selectedUserId && this.selectedUser) { this.users.updateAsync(this.selectedUser, this.selectedUserId || ""); }
     }
 
     @action.bound
@@ -126,7 +126,7 @@ export class UserStore implements IUserStore {
 
     @action
     public updateAuthenticatedUser(userData: Partial<IUser>): void {
-        if (!isUndefinedValue(this._authUser)) { this.users.updateAsync(this._authUser.id, userData); }
+        if (!isUndefinedValue(this._authUser)) { this.users.updateAsync(userData, this._authUser.id); }
     }
 
     @action

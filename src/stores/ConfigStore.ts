@@ -24,6 +24,7 @@ export interface IConfigStore {
     project: IObservableValue<(IProject & { id: string }) | undefined>;
     clientId?: string;
     teamId?: string;
+    projects: any;
 }
 
 export class ConfigStore implements IConfigStore {
@@ -75,7 +76,7 @@ export class ConfigStore implements IConfigStore {
     public archiveProject(id?: string) {
         const project = this.project.get();
         const projectId = id || (project && project.id);
-        projectId && this.projects.updateAsync(projectId, { isArchived: true }).then(() => {
+        projectId && this.projects.updateAsync({ isArchived: true }, projectId).then(() => {
             this.setSelectedProject(undefined);
         });
     }
@@ -83,7 +84,7 @@ export class ConfigStore implements IConfigStore {
     public unarchiveProject(id?: string) {
         const project = this.project.get();
         const projectId = id || (project && project.id);
-        projectId && this.projects.updateAsync(projectId, { isArchived: false }).then(() => {
+        projectId && this.projects.updateAsync({ isArchived: false }, projectId).then(() => {
             this.setSelectedProject(undefined);
         });
     }
@@ -91,7 +92,7 @@ export class ConfigStore implements IConfigStore {
     public deleteProject(id?: string) {
         const project = this.project.get();
         const projectId = id || (project && project.id);
-        projectId && this.projects.updateAsync(projectId, "delete");
+        projectId && this.projects.updateAsync("delete", projectId);
     }
 
     public addProject(project: IProject, id?: string) {

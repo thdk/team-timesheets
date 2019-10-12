@@ -22,8 +22,8 @@ export const TeamList = observer(() => {
             name: team.data!.name,
             icon: team.data!.icon
         }))}
-        addItem={saveListItem}
-        toggleSelection={id => id && store.view.toggleSelection(id, true)}
+        onAddItem={saveListItem}
+        onToggleSelection={id => id && store.view.toggleSelection(id, true)}
         onItemClick={id => store.config.teamId = id}
         activeItemId={store.config.teamId}
         selection={store.view.selection}

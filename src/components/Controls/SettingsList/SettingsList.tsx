@@ -8,20 +8,20 @@ import { ObservableMap } from 'mobx';
 import { AddItem } from './AddItem';
 
 export interface ISettingsListProps extends React.HTMLProps<HTMLDivElement> {
-    readonly addItem: (item: INameWithIcon, id?: string) => void;
-    readonly toggleSelection: (id: string) => void;
-    readonly onItemClick: (id: string) => void;
+    readonly onAddItem?: (item: INameWithIcon, id?: string) => void;
+    readonly onToggleSelection: (id: string) => void;
+    readonly onItemClick?: (id: string) => void;
     readonly items: (INameWithIcon & { id: string })[];
     readonly readonly?: boolean;
     readonly activeItemId?: string;
     readonly selection: ObservableMap<string, any>;
 }
 
-export const SettingsList = observer(({ addItem, selection, activeItemId, toggleSelection, items, readonly, onItemClick, ...restProps }: ISettingsListProps) => {
+export const SettingsList = observer(({ onAddItem, selection, activeItemId, onToggleSelection: toggleSelection, items, readonly, onItemClick, ...restProps }: ISettingsListProps) => {
 
     const itemsJSX = items.map(i => (
-        <SettingsListItem key={i.id} onChangeItem={data => addItem(data, i.id)}
-            onClick={readonly ? undefined : onItemClick.bind(null, i.id)}
+        <SettingsListItem key={i.id} onChangeItem={onAddItem ? data => onAddItem(data, i.id) : undefined}
+            onClick={readonly || !onItemClick ? undefined : onItemClick.bind(null, i.id)}
             isChecked={selection.has(i.id)}
             edit={activeItemId === i.id}
             itemData={i}
@@ -29,7 +29,7 @@ export const SettingsList = observer(({ addItem, selection, activeItemId, toggle
         </SettingsListItem>
     ));
 
-    const addItemsJSX = readonly ? undefined : <AddItem addListItem={addItem} />
+    const addItemsJSX = readonly || !onAddItem ? undefined : <AddItem addListItem={onAddItem} />
 
     const { className, ...otherProps } = restProps;
     const cssClasses = classNames("settings-list", className);

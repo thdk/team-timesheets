@@ -4,14 +4,14 @@ import * as React from 'react';
 import store, { IRootStore } from "../stores/RootStore";
 import { Settings } from "../components/Pages/Settings/Settings";
 import { IViewAction } from "../stores/ViewStore";
-import { IReactionDisposer, reaction, transaction, when, Lambda } from "mobx";
-import { canDeleteTask, canDeleteClient, canManageTeams, canDeleteProject, canArchiveProject } from "../rules/rules";
+import { IReactionDisposer, transaction, when, Lambda } from "mobx";
+import { canDeleteTask, canDeleteClient, canManageTeams } from "../rules/rules";
 
 export const goToSettings = (tab: SettingsTab = "preferences") => {
     store.router.goTo(routes.preferences, {}, store, { tab });
 }
 
-export type SettingsTab = "tasks" | "projects" | "preferences" | "clients" | "users" | "teams";
+export type SettingsTab = "tasks" | "preferences" | "clients" | "users" | "teams";
 
 let reactionDisposer: IReactionDisposer | Lambda;
 
@@ -35,52 +35,6 @@ const setActions = (tab: SettingsTab, s: IRootStore) => {
 
                 s.view.setActions([deleteAction].filter(a => a !== undefined) as IViewAction[]);
 
-                break;
-            }
-            case "projects": {
-                const deleteAction: IViewAction =
-                {
-                    action: () => {
-                        const project = store.config.project.get();
-                        project && s.config.deleteProject(project.id);
-                        s.config.setSelectedProject();
-                    },
-                    icon: { label: "Delete", content: "delete" },
-                    shortKey: { key: "Delete", ctrlKey: true }
-                };
-
-                const archiveAction: IViewAction = {
-                    action: () => {
-                        const project = store.config.project.get();
-                        if (project) {
-                            project.isArchived ? s.config.unarchiveProject() : s.config.archiveProject();
-                        }
-                    },
-                    icon: { label: "Archive", content: "archive" },
-                    iconActive: { label: "Unarchive", content: "unarchive" },
-                    isActive: () => {
-                        const project = store.config.project.get();
-                        return (project && project.isArchived) || false;
-                    }
-                };
-
-                reactionDisposer = s.config.project.observe(change => {
-
-                    const project = change.newValue;
-
-                    const viewActions = [] as IViewAction[];
-                    if (project) {
-                        if (canDeleteProject(project, s.user.authenticatedUser, s.user.userId)) {
-                            viewActions.push(deleteAction);
-                        }
-
-                        if (canArchiveProject(project, s.user.authenticatedUser, s.user.userId)) {
-                            viewActions.push(archiveAction);
-                        }
-                    }
-
-                    s.view.setActions(viewActions);
-                });
                 break;
             }
             case "clients": {

@@ -10,6 +10,7 @@
 // Note that this step (3) is only relevant if your are publishing a library that is consumed by others.
 
 export * from './components/App';
+export * from './routes/projects/list';
 export * from './routes/timesheets/overview';
 export * from './routes/timesheets/detail';
 export * from './routes/reports/report';

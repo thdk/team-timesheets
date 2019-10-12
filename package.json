@@ -11,7 +11,8 @@
     "server": "lite-server --baseDir ./dist",
     "start": "gulp watch --env=development",
     "deploy:development": "npm run build:development && firebase deploy",
-    "deploy:production": "npm run build:production && firebase deploy"
+    "deploy:production": "npm run build:production && firebase deploy",
+    "tsc": "tsc --noEmit"
   },
   "repository": {
     "type": "git",
@@ -79,7 +80,7 @@
     "classnames": "^2.2.6",
     "firebase": "^5.9.0",
     "firebaseui": "^3.4.1",
-    "firestorable": "0.0.6",
+    "firestorable": "^0.1.0",
     "firestore-ts-utils": "0.0.5",
     "g": "^2.0.1",
     "mobx": "^5.7.0",

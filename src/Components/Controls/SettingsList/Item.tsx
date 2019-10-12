@@ -35,6 +35,9 @@ export const SettingsListItem = observer((props: ISettingsItemProps) => {
     const [name, setName] = useState(itemData.name);
 
     const onKeyUp = (e: React.KeyboardEvent) => {
+        e.preventDefault();
+        e.stopPropagation();
+
         switch (e.key) {
             case "Enter":
                 const iconValue = iconElRef.current && iconElRef.current.inputElement ? iconElRef.current.inputElement.value : "";

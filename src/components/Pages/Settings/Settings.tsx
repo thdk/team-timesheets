@@ -5,7 +5,6 @@ import { TapBar, Tab, TabIcon } from '../../../mdc/tabbar';
 import { Preferences } from '../Settings/Preferences/Preferences';
 import store from '../../../stores/RootStore';
 import { TaskList } from './Tasks/TaskList';
-import { ProjectList } from './Projects/ProjectList';
 import { SettingsTab } from '../../../routes/settings';
 import { goToSettings } from '../../../internal';
 import { ClientList } from './Clients/ClientsList';
@@ -26,7 +25,6 @@ export class Settings extends React.Component {
     render() {
         const tabData: ITabData[] = [
             { id: "preferences", text: "Preferences", canOpen: () => !!store.user.authenticatedUser, tabContent: <Preferences /> },
-            { id: "projects", text: "Projects", tabContent: <ProjectList /> },
             { id: "tasks", text: "Tasks", tabContent: <TaskList /> },
             { id: "clients", text: "Clients", tabContent: <ClientList /> },
             { id: "teams", text: "Teams", canOpen: () => canManageTeams(store.user.authenticatedUser), tabContent: <TeamList /> },

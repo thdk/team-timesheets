@@ -6,6 +6,7 @@ import { RouterStore } from "mobx-router";
 import { IReportStore, ReportStore } from "./ReportStore";
 import { DashboardStore, IDashboardStore } from "./DashboardStore";
 import { firestore } from "../firebase/myFirebase";
+import { IProjectStore, ProjectStore } from "./ProjectStore";
 
 export interface IRootStore {
 
@@ -15,6 +16,7 @@ export interface IRootStore {
     readonly timesheets: IRegistrationsStore;
     readonly reports: IReportStore;
     readonly config: IConfigStore;
+    readonly projects: IProjectStore;
     readonly getCollection: (name: string) => firebase.firestore.CollectionReference;
 }
 
@@ -26,6 +28,7 @@ export class Store implements IRootStore {
     public readonly router = new RouterStore();
     public readonly reports: IReportStore;
     public readonly dashboard: IDashboardStore;
+    public readonly projects: IProjectStore;
 
     public readonly getCollection: (name: string) => firebase.firestore.CollectionReference;
 
@@ -38,6 +41,8 @@ export class Store implements IRootStore {
         this.timesheets = new RegistrationStore(this);
         this.reports = new ReportStore(this);
         this.dashboard = new DashboardStore(this);
+        this.projects = new ProjectStore(this);
+
     }
 };
 

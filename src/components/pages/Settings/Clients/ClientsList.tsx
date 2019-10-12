@@ -14,7 +14,7 @@ export const ClientList = observer(() => {
                 store.config.clientsCollection.addAsync({ name: data.name, icon: data.icon }, id);
             }
             else {
-                store.config.clientsCollection.updateAsync(id, { name: data.name, icon: data.icon });
+                store.config.clientsCollection.updateAsync({ name: data.name, icon: data.icon });
             }
         }
     };
@@ -26,8 +26,8 @@ export const ClientList = observer(() => {
             name: client.data!.name,
             icon: client.data!.icon
         }))}
-        addItem={saveListItem}
-        toggleSelection={id => id && store.view.toggleSelection(id, true)}
+        onAddItem={saveListItem}
+        onToggleSelection={id => id && store.view.toggleSelection(id, true)}
         onItemClick={id => store.config.clientId = id}
         activeItemId={store.config.clientId}
         selection={store.view.selection}

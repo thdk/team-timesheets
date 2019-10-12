@@ -5,6 +5,7 @@ import timesheetsRoutes from './timesheets';
 import settingsRoutes from './settings';
 import reportRoutes from './reports';
 import userRoutes from './users';
+import projectRoutes from './projects';
 
 import { goToOverview } from '../internal';
 import store from '../stores/RootStore';
@@ -22,6 +23,7 @@ const routes: RoutesConfig = {
   ...timesheetsRoutes,
   ...settingsRoutes,
   ...reportRoutes,
-  ...userRoutes
+  ...userRoutes,
+  ...projectRoutes
 };
 export default routes;

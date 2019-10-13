@@ -3,6 +3,7 @@ import { observer } from 'mobx-react';
 import { goToOverview, goToLogin, goToSettings, goToReports, goToDashboard, goToProjects } from "../internal";
 import store from '../stores/RootStore';
 import Calendar, { CalendarTileProperties } from 'react-calendar/dist/entry.nostyle';
+import { canManageProjects } from '../rules/rules';
 
 @observer
 export class Menu extends React.Component {
@@ -46,6 +47,18 @@ export class Menu extends React.Component {
     }
 
     render() {
+        const projectsJSX =
+            canManageProjects(store.user.authenticatedUser)
+                ? <>
+                    <hr className="mdc-list-divider" />
+
+                    <a className="mdc-list-item" onClick={e => this.navigate(e, goToProjects)} href="#">
+                        <i className="material-icons mdc-list-item__graphic" aria-hidden="true">star_border</i>
+                        <span className="mdc-list-item__text">Projects</span>
+                    </a>
+                </>
+                : null;
+
         return (
             <>
                 <Calendar key={store.timesheets.registrationsGroupedByDay.toString()} tileClassName={this.getTileClassName} value={store.view.moment.toDate()} onChange={this.dateChanged}></Calendar>
@@ -73,12 +86,7 @@ export class Menu extends React.Component {
                         <span className="mdc-list-item__text">Dashboard</span>
                     </a>
 
-                    <hr className="mdc-list-divider" />
-
-                    <a className="mdc-list-item" onClick={e => this.navigate(e, goToProjects)} href="#">
-                        <i className="material-icons mdc-list-item__graphic" aria-hidden="true">star_border</i>
-                        <span className="mdc-list-item__text">Projects</span>
-                    </a>
+                    {projectsJSX}
 
                     <hr className="mdc-list-divider" />
 

@@ -20,7 +20,7 @@ export class Projects extends React.Component {
     render() {
         const tabData: ITabData[] = [
             { id: "active", text: "Active projects", canOpen: () => !!store.user.authenticatedUser, tabContent: <ActiveProjectList /> },
-            { id: "archived", text: "Archived projects", tabContent: <ArchivedProjectList /> },
+            { id: "archived", text: "Archived projects", canOpen: () => !!store.user.authenticatedUser, tabContent: <ArchivedProjectList /> },
         ];
 
         const validTabs = tabData.filter(t => !t.canOpen || t.canOpen());

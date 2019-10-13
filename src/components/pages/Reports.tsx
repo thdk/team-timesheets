@@ -1,6 +1,5 @@
 import * as React from 'react';
 import { observer } from "mobx-react";
-import moment from 'moment-es6';
 import { goToRegistration } from '../../internal';
 import store from '../../stores/RootStore';
 import { FlexGroup } from '../Layout/flex';
@@ -24,14 +23,7 @@ export class Reports extends React.Component {
             year: date.getFullYear(),
             month: date.getMonth() + 1,
             day: date.getDate()
-        }, {track: true});
-    }
-
-    createTotalLabel = (date: Date) => {
-        return (
-            <a href="#" onClick={(e) => this.goToDate(e, date)}>
-                {moment(date).format("MMMM Do")}</a>
-        );
+        }, { track: true });
     }
 
     render() {
@@ -60,7 +52,14 @@ export class Reports extends React.Component {
                         <Button onClick={this.export} style={{ margin: "1em" }} type={ButtonType.Outlined}>Export</Button>
                     </FlexGroup>
                     {downloadReport}
-                    <GroupedRegistrations isCollapsed={false} sortOrder={SortOrder.Ascending} totalOnTop={true} createTotalLabel={this.createTotalLabel} registrationClick={this.registrationClick.bind(this)} />
+                    <GroupedRegistrations
+                        isCollapsed={false}
+                        sortOrder={SortOrder.Ascending}
+                        totalOnTop={true}
+                        registrationClick={this.registrationClick.bind(this)}
+                        isMonthView={true}
+                        showHeaderAddButton={false}
+                    />
                     {totalList}
                 </FlexGroup>
             </>

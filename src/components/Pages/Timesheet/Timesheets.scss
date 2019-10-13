@@ -1,0 +1,11 @@
+@import '@material/theme/mixins';
+@import '../../../style/vars';
+
+.timesheets-header-label {
+    @include mdc-theme-prop("color", $mdc-theme-on-surface);
+
+    height: 41px;
+    padding-left: 1em;
+    display: flex;
+    align-items: center;
+}

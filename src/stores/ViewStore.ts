@@ -12,7 +12,7 @@ export interface IShortKey {
   key: string;
 }
 
-export const isActionWithSelection = (action: IViewAction | IFab): action is IViewAction => {
+export const isActionWithSelection = (action: IViewAction | IFab): action is IViewAction & { selection: string[] } => {
   return !!(action as any).selection;
 };
 
@@ -126,12 +126,16 @@ export class ViewStore implements IViewStore {
       const action = filterByShortKey([...this.fabs, ...this.actions]);
 
       if (action) {
-        ev.preventDefault();
-        ev.stopPropagation();
-        if (isActionWithSelection(action)){
-          action.action(action.selection);
+        if (isActionWithSelection(action)) {
+          if (action.selection.size) {
+            ev.preventDefault();
+            ev.stopPropagation();
+            action.action(action.selection);
+          }
         }
         else {
+          ev.preventDefault();
+          ev.stopPropagation();
           action.action();
         }
       }

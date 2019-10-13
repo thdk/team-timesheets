@@ -20,7 +20,7 @@ export const RegistrationLines = observer((props: IRegistrationLinesProps) => {
 
         const { id, data: { description = "...", project, time, task, client } } = r;
 
-        const projectData = project ? store.config.projects.docs.get(project) : null;
+        const projectData = project ? store.projects.projectsCollection.docs.get(project) : null;
         const { data: { name: projectName = "" } = {} } = projectData || {};
 
         const taskData = task ? store.config.tasks.docs.get(task) : null;

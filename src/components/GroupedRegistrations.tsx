@@ -13,12 +13,13 @@ export enum SortOrder {
 export interface IGroupedRegistrationsProps extends IReactProps {
     registrationClick: (id: string) => void;
     registrationToggleSelect?: (id: string, data: IRegistration) => void;
-    createTotalLabel: (date: Date) => React.ReactNode;
     totalOnTop?: boolean;
     sortOrder?: SortOrder
     activeDate?: number;
     isCollapsed: boolean;
     isCollapsable?: boolean;
+    isMonthView: boolean;
+    showHeaderAddButton?: boolean;
 }
 
 @observer
@@ -29,22 +30,32 @@ export class GroupedRegistrations extends React.Component<IGroupedRegistrationsP
         this.activeRegistrationRef = React.createRef<GroupedRegistration>();
     }
     render() {
-        const { sortOrder = SortOrder.Ascending } = this.props;
+        const { sortOrder = SortOrder.Ascending,
+            isMonthView,
+            showHeaderAddButton = true,
+        } = this.props;
 
-        return (sortOrder > 0 ? store.timesheets.registrationsGroupedByDay : store.timesheets.registrationsGroupedByDayReversed).map((g, i) => {
-            const isLastOpenedGroup = g.groupKey && g.groupKey.getDate() === this.props.activeDate;
-            const isCollapsed = !store.timesheets.selectedRegistrationDays.some(d => d.getTime() === g.groupKey.getTime());
-            return <GroupedRegistration ref={isLastOpenedGroup ? this.activeRegistrationRef : null}
-                denseList={true} key={`group-${i}`}
-                group={g}
-                {...{ ...this.props, isCollapsed }}
-                headerClick={() => store.timesheets.toggleSelectedRegistrationDay(g.groupKey)}
-            >
-            </GroupedRegistration>
-        });
+        return (sortOrder > 0
+            ? store.timesheets.registrationsGroupedByDay
+            : store.timesheets.registrationsGroupedByDayReversed)
+            .map((g, i) => {
+                const isLastOpenedGroup = g.groupKey && g.groupKey.getDate() === this.props.activeDate;
+                const isCollapsed = !store.timesheets.selectedRegistrationDays
+                    .some(d => d.getTime() === g.groupKey.getTime());
+
+                return <GroupedRegistration
+                    ref={isLastOpenedGroup ? this.activeRegistrationRef : null}
+                    key={`group-${i}`}
+                    group={g}
+                    {...{ ...this.props, isCollapsed }}
+                    headerClick={() => store.timesheets.toggleSelectedRegistrationDay(g.groupKey)}
+                    isMonthView={isMonthView}
+                    showHeaderAddButton={showHeaderAddButton}
+                />
+            });
     }
 
     componentDidMount() {
-        this.activeRegistrationRef.current && this.activeRegistrationRef.current.scrollIntoView();
+        // this.activeRegistrationRef.current && this.activeRegistrationRef.current.scrollIntoView();
     }
 }

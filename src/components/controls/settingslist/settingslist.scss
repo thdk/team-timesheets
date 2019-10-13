@@ -6,6 +6,7 @@
         align-items: center;
         height: 48px;
         justify-content: space-between;
+        color: var(--mdc-theme-text-secondary-on-background, rgba(0, 0, 0, 0.54));
 
         &:not(.new-item):hover {
             background-color: #ededed;
@@ -27,6 +28,7 @@
 
             .item-name {
                 width: 200px;
+                color: var(--mdc-theme-text-primary-on-background, rgba(0, 0, 0, 0.87));
             }
 
             .item-form {

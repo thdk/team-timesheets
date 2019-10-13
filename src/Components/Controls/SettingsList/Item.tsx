@@ -28,8 +28,8 @@ export const SettingsListItem = observer((props: ISettingsItemProps) => {
         ...restProps
     } = props;
 
-    const [iconElRef] = useState<React.RefObject<Input<HTMLInputElement>>>(React.createRef());
-    const [nameElRef] = useState<React.RefObject<Input<HTMLInputElement>>>(React.createRef());
+    const [iconElRef] = useState<any>(React.createRef());
+    const [nameElRef] = useState<any>(React.createRef());
 
     const [icon, setIcon] = useState(itemData.icon);
     const [name, setName] = useState(itemData.name);

@@ -1,45 +1,27 @@
 import * as React from 'react';
 import { observer } from "mobx-react";
-import moment from 'moment-es6';
-import store from '../stores/RootStore';
-import { FlexGroup } from './Layout/flex';
-import { goToOverview } from '../routes/timesheets/overview';
-import { GroupedRegistration } from './GroupedRegistration';
-import { GroupedRegistrations, SortOrder } from './GroupedRegistrations';
-import { ListItem, List, ListDivider } from '../mdc/list';
-import { IRegistration } from '../../common/dist';
-import { goToRegistration } from '../internal';
+import store from '../../../stores/RootStore';
+import { goToRegistration, goToOverview } from '../../../internal';
+import { IRegistration } from '../../../../common';
+import { GroupedRegistration } from '../../GroupedRegistration';
+import { ListDivider } from '../../../mdc/list';
+import { SortOrder, GroupedRegistrations } from '../../GroupedRegistrations';
+import { FlexGroup } from '../../Layout/flex';
+
 
 @observer
-export class Timesheets extends React.Component {
+export class Timesheet extends React.Component {
     registrationClick = (id: string) => {
-        store.timesheets.setSelectedRegistrationId(id);
-        goToRegistration(id);
+        if (store.view.selection.size) {
+            store.view.toggleSelection(id, true);
+        } else {
+            store.timesheets.setSelectedRegistrationId(id);
+            goToRegistration(id);
+        }
     }
 
     registrationSelect = (id: string, data: IRegistration) => {
         store.view.toggleSelection(id, data);
-    }
-
-    createTotalLabel = (date: Date) => {
-        return store.view.day
-            ? `Total`
-            : <a href="#" onClick={(e: React.MouseEvent) => {
-                e.preventDefault();
-                e.stopPropagation();
-                this.goToDate(e, date);
-            }}>
-                {moment(date).format("MMMM Do")}
-            </a>;
-    }
-
-    goToDate(e: React.MouseEvent, date: Date) {
-        e.preventDefault();
-        goToOverview(store, {
-            year: date.getFullYear(),
-            month: date.getMonth() + 1,
-            day: date.getDate()
-        }, { track: true })
     }
 
     goToMonth(e: React.MouseEvent) {
@@ -60,7 +42,6 @@ export class Timesheets extends React.Component {
 
             regs = group.length
                 ? <GroupedRegistration group={group[0]}
-                    createTotalLabel={this.createTotalLabel}
                     registrationClick={this.registrationClick.bind(this)}
                     registrationToggleSelect={this.registrationSelect.bind(this)}
                     isCollapsed={false}
@@ -70,25 +51,39 @@ export class Timesheets extends React.Component {
         } else {
             const totalTime = store.timesheets.registrationsTotalTime;
 
-            const totalLabel = `Total in ${store.view.moment.format('MMMM')}`;
-            const total = <ListItem key={`total-month`} lines={[totalLabel]} meta={parseFloat(totalTime.toFixed(2)) + " hours"} disabled={true}></ListItem>
-            const totalList = <List style={{ width: "100%" }}>{total}<ListDivider></ListDivider></List>;
+            const totalLabel = `Total time: ${parseFloat(totalTime.toFixed(2))} hours`;
+            const total = <div
+                className="timesheets-header-label"
+                key={`total-month`}>
+                {totalLabel}
+            </div>
+            const totalList = <div className="timesheets-header">
+                {total}
+                <ListDivider></ListDivider>
+            </div>;
 
             const sortOrder = store.timesheets.registrationsGroupedByDaySortOrder;
             const today = new Date();
-            const activeDate = sortOrder === SortOrder.Descending && store.view.month && (store.view.month - 1) === today.getMonth() ? today.getDate() : undefined;
+            const activeDate =
+                sortOrder === SortOrder.Descending
+                    && store.view.month
+                    && (store.view.month - 1) === today.getMonth()
+                    ? today.getDate()
+                    : undefined;
 
             regs = <>
-                <GroupedRegistrations activeDate={activeDate} totalOnTop={true}
-                    createTotalLabel={this.createTotalLabel}
+                {totalList}
+                <GroupedRegistrations
+                    activeDate={activeDate}
+                    totalOnTop={true}
                     registrationClick={this.registrationClick.bind(this)}
                     registrationToggleSelect={this.registrationSelect.bind(this)}
                     sortOrder={sortOrder}
                     isCollapsed={store.timesheets.areGroupedRegistrationsCollapsed}
                     isCollapsable={true}
+                    isMonthView={!store.view.day}
                 >
                 </GroupedRegistrations>
-                {totalList}
             </>;
         }
 
@@ -105,8 +100,10 @@ export class Timesheets extends React.Component {
                         </h3>
                     </div>
                     {regs}
-                </FlexGroup>                
+                </FlexGroup>
             </>
         );
     }
 }
+
+export default Timesheet;

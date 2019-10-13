@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Route } from 'mobx-router';
-import { Timesheets } from '../../components/Timesheets';
+import Timesheet from '../../components/Pages/Timesheet';
 import { transaction } from 'mobx';
 import { beforeEnter, setNavigationContent, goToRouteWithDate } from '../actions';
 import { App } from '../../internal';
@@ -73,7 +73,7 @@ const setActions = (s: IRootStore, alowInserts = false) => {
                     .map(reg => s.timesheets.cloneRegistration(reg)) as IRegistration[];
 
                 s.timesheets.addRegistrations(docData);
-                s.timesheets.clipboard.clear();
+                // s.timesheets.clipboard.clear();
             },
             icon: { content: "content_paste", label: "Paste" },
             shortKey: { ctrlKey: true, key: "v" },
@@ -130,7 +130,7 @@ const beforeTimesheetExit = (_route: Route, _params: any, s: IRootStore) => {
 const routes = {
     overview: new Route({
         path: path + '/:year/:month/:day',
-        component: <App><Timesheets></Timesheets></App>,
+        component: <App><Timesheet></Timesheet></App>,
         onEnter: (route: Route, params: IDate, s: IRootStore) => {
             routeChanged(route, params, s);
             setActions(s, true);
@@ -142,7 +142,7 @@ const routes = {
     }),
     monthOverview: new Route({
         path: path + '/:year/:month',
-        component: <App><Timesheets></Timesheets></App>,
+        component: <App><Timesheet></Timesheet></App>,
         onEnter: (route: Route, params: IDate, s: IRootStore) => {
             store.view.track = false;
             routeChanged(route, params, s);

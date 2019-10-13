@@ -12,13 +12,13 @@ export interface IProjectStore {
     archivedProjects: IObservableArray<IProject & { id: string }>;
     projectsCollection: ICollection<IProject, IProjectData>;
     addProject: (project: IProject, id?: string) => void;
+    updateProject: (project: IProject, id: string) => void;
     archiveProjects: (...projectIds: string[]) => void;
     unarchiveProjects: (...projectIds: string[]) => void;
     deleteProjects: (...ids: string[]) => void;
     setProjectId: (id?: string) => void;
     project?: IProject | null;
     projectId?: string;
-    // project: IObservableValue<(IProject & { id: string }) | undefined>;
 }
 
 export class ProjectStore implements IProjectStore {
@@ -58,7 +58,15 @@ export class ProjectStore implements IProjectStore {
     }
 
     public addProject(project: IProject, id?: string) {
+        if (!project.createdBy) {
+            throw new Error("The current authenticed user must be set on project when adding a new project.");
+        }
+
         this.projectsCollection.addAsync(project, id);
+    }
+
+    public updateProject(project: IProject, id: string) {
+        this.projectsCollection.updateAsync(project, id);
     }
 
     @action

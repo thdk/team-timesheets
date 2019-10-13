@@ -89,7 +89,6 @@ const routes = {
         },
         onParamsChange: (_route, _params, s: IRootStore, queryParams: { tab: SettingsTab }) => {
             transaction(() => {
-                s.config.setSelectedProject();
                 s.config.taskId = undefined;
                 s.config.clientId = undefined;
                 s.view.selection.clear();
@@ -99,7 +98,6 @@ const routes = {
         title: "Settings",
         beforeExit: (_route, _param, s: IRootStore) => {
             transaction(() => {
-                s.config.setSelectedProject();
                 s.config.taskId = undefined;
                 s.config.clientId = undefined;
                 s.view.selection.clear();

@@ -52,7 +52,7 @@ export class Dashboard extends React.Component {
         const projectChartProps: IRegistrationsChartProps<IProject> = {
             title: "Time / project",
             data: store.dashboard.registrationsGroupedByProject,
-            labelCollection: store.config.projects,
+            labelCollection: store.projects.projectsCollection,
             getLabel: project => project.name,
             chart: ChartType.Doughnut
         };
@@ -101,7 +101,7 @@ export class Dashboard extends React.Component {
                                 <CollectionSelect value={store.dashboard.projectFilterValue}
                                     label="Project"
                                     onChange={this.onProjectFilterChange}
-                                    items={store.config.activeProjects}>
+                                    items={store.projects.activeProjects}>
                                 </CollectionSelect>
                             </FormField>
                         </FlexGroup>

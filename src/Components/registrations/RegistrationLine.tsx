@@ -56,17 +56,11 @@ export default class RegistrationLine extends React.Component<IRegistrationLineP
         const timeJSX2 = <EditableTextField
             ref={this.timeInputEl}
             editMode={!!isEditing}
-            edit={{ onChange: onTimeChange, onCancel, value: (time || 0).toFixed(2) }}/>;
+            edit={{ onChange: onTimeChange, onCancel, value: (time || 0).toFixed(2) }} />;
 
         return <div className="registration-line" {...restProps}>
-
             <div className="registration-line-header">
                 {iconJSX}
-            </div>
-
-            <div className="registration-line-content">
-                {line1JSX}
-                {line2JSX}
             </div>
 
             <div className="registration-line-time" onClick={(e) => {
@@ -75,6 +69,11 @@ export default class RegistrationLine extends React.Component<IRegistrationLineP
                 store.timesheets.setSelectedRegistrationId(id);
             }}>
                 {timeJSX2}
+            </div>
+
+            <div className="registration-line-content">
+                {line1JSX}
+                {line2JSX}
             </div>
 
             <div className="registration-line-select">

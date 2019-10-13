@@ -43,6 +43,7 @@ export default {
         'node_modules/react-dom/index.js': ['findDOMNode', 'unstable_batchedUpdates', 'render'],
         '@material/react-chips': ["Chip", "ChipSet"],
         '@material/react-text-field': ["Input"],
+        '@material/react-button': ["Button"],
         'firestorable': ['Collection', 'Document']
       }
     }),

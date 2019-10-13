@@ -14,7 +14,7 @@ export default class ProjectSelect extends React.Component {
         const userRecentProjects = store.user.authenticatedUser ? store.user.authenticatedUser.recentProjects : [];
 
         const recentProjects = userRecentProjects.slice(0, 5).reduce((p, c) => {
-            const projectData = store.config.activeProjects.find(p => p.id === c);
+            const projectData = store.projects.activeProjects.find(p => p.id === c);
             if (projectData) {
                 p.push(projectData);
             } else {
@@ -27,7 +27,7 @@ export default class ProjectSelect extends React.Component {
             ? ["\/ Recent projects \/", ...recentProjects, "", "\/ More projects \/"]
             : [""];
 
-        const otherProjectItems = store.config.activeProjects
+        const otherProjectItems = store.projects.activeProjects
             .filter(p => !recentProjects.some(rp => rp.id === p.id));
 
         const allProjects = [...recentProjectItems, ...otherProjectItems];
@@ -35,11 +35,11 @@ export default class ProjectSelect extends React.Component {
         let isCurrentProjectArchived = false;
         // Maybe project is archived? Add it and disable change of project!
         if (project && !allProjects.some(p => typeof p !== "string" && p.id === project)) {
-            const archivedProject = store.config.archivedProjects.find(p => p.id === project);
+            const archivedProject = store.projects.archivedProjects.find(p => p.id === project);
             if (archivedProject) {
                 isCurrentProjectArchived = true;
                 allProjects.unshift(archivedProject);
-            } 
+            }
             else {
                 console.log("Project of registration not found");
                 project = undefined;

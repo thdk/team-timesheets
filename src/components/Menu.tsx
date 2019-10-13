@@ -62,13 +62,6 @@ export class Menu extends React.Component {
 
                     <hr className="mdc-list-divider" />
 
-                    <a className="mdc-list-item" onClick={e => this.navigate(e, goToProjects)} href="#">
-                        <i className="material-icons mdc-list-item__graphic" aria-hidden="true">star_border</i>
-                        <span className="mdc-list-item__text">Projects</span>
-                    </a>
-
-                    <hr className="mdc-list-divider" />
-
                     <h6 className="mdc-list-group__subheader">Reports</h6>
                     <a className="mdc-list-item" onClick={e => this.navigate(e, () => { e.preventDefault(); goToReports(store); })} href="#">
                         <i className="material-icons mdc-list-item__graphic" aria-hidden="true">list</i>
@@ -78,6 +71,13 @@ export class Menu extends React.Component {
                     <a className="mdc-list-item" onClick={e => this.navigate(e, () => { e.preventDefault(); goToDashboard(store); })} href="#">
                         <i className="material-icons mdc-list-item__graphic" aria-hidden="true">bar_chart</i>
                         <span className="mdc-list-item__text">Dashboard</span>
+                    </a>
+
+                    <hr className="mdc-list-divider" />
+
+                    <a className="mdc-list-item" onClick={e => this.navigate(e, goToProjects)} href="#">
+                        <i className="material-icons mdc-list-item__graphic" aria-hidden="true">star_border</i>
+                        <span className="mdc-list-item__text">Projects</span>
                     </a>
 
                     <hr className="mdc-list-divider" />

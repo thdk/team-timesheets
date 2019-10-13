@@ -19,13 +19,13 @@ export interface IGroupedRegistrations<T> {
 export interface IRegistrationsStore {
     readonly clipboard: ObservableMap<string, IRegistration>;
     readonly selectedRegistrationDays: IObservableArray<Date>;
-    readonly toggleSelectedRegistrationDay: (day: Date) => void;
+    readonly toggleSelectedRegistrationDay: (day: Date, force?: boolean) => void;
     readonly registration: IRegistration | undefined;
     readonly registrationId?: string;
     readonly setSelectedRegistrationId: (id: string | undefined) => void;
     readonly saveSelectedRegistration: () => void;
     readonly updateSelectedRegistration: (data: Partial<IRegistration>) => void;
-    readonly setSelectedRegistrationDefault: () => void;
+    readonly setSelectedRegistrationDefault: (moment?: moment.Moment) => void;
     readonly deleteRegistrationsAsync: (...ids: string[]) => Promise<void[]>;
     readonly addRegistrations: (data: IRegistration[]) => void;
 
@@ -198,8 +198,8 @@ export class RegistrationStore implements IRegistrationsStore {
     }
 
     @action
-    public setSelectedRegistrationDefault() {
-        this.getNewRegistrationDataAsync().then(data => {
+    public setSelectedRegistrationDefault(moment?: moment.Moment) {
+        this.getNewRegistrationDataAsync(moment).then(data => {
             this.setSelectedRegistrationObservable(data);
         });
     }
@@ -224,19 +224,21 @@ export class RegistrationStore implements IRegistrationsStore {
         return { ...source, date: this.toUTC(store.view.moment.toDate()) };
     }
 
-    public toggleSelectedRegistrationDay(date: Date) {
+    public toggleSelectedRegistrationDay(date: Date, force = false) {
         const index = this.selectedRegistrationDays.findIndex(d => d.getTime() === date.getTime());
         if (index === -1) {
             this.selectedRegistrationDays.push(date);
-        } else {
+        } else if (!force) {
             this.selectedRegistrationDays.replace([...this.selectedRegistrationDays.slice(0, index), ...this.selectedRegistrationDays.slice(index + 1)]);
         }
     }
 
-    private getNewRegistrationDataAsync(): Promise<IRegistration> {
+    private getNewRegistrationDataAsync(registrationMoment?: moment.Moment): Promise<IRegistration> {
         return when(() => !!this.rootStore.user.authenticatedUser)
             .then(() => {
-                const regMoment = this.rootStore.view.day === undefined ? moment().startOf("day") : undefined;
+                const regMoment = registrationMoment
+                    ? registrationMoment
+                    : this.rootStore.view.day === undefined ? moment().startOf("day") : undefined;
 
                 if (!this.rootStore.user.authenticatedUser || !this.rootStore.user.userId) throw new Error("User must be set");
 
@@ -246,7 +248,10 @@ export class RegistrationStore implements IRegistrationsStore {
                     defaultClient: client = undefined
                 } = this.rootStore.user.authenticatedUser || {};
 
-                const recentActiveProjects = recentProjects.filter(projectId => store.config.activeProjects.some(p => p.id === projectId));
+                const recentActiveProjects = recentProjects
+                    .filter(projectId => store.projects.activeProjects
+                        .some(p => p.id === projectId));
+
                 return {
                     date: this.toUTC(
                         regMoment ? regMoment.toDate() : this.rootStore.view.moment.toDate()

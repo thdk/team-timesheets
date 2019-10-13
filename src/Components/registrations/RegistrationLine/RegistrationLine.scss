@@ -6,7 +6,7 @@
     align-items: center;
     flex-direction: row;
     justify-content: space-between;
-    height: 72px;
+    height: 64px;
     color: var(--mdc-theme-text-secondary-on-background, rgba(0, 0, 0, 0.54));
     cursor: pointer;
 
@@ -28,6 +28,7 @@
         flex-shrink: 2;
         white-space: nowrap;
         overflow: hidden;
+        margin-left: 36px;
 
         .line1 {
             color: rgba(0, 0, 0, 0.87);

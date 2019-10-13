@@ -39,7 +39,19 @@ const EditableTextField = React.forwardRef((props: IEditableTextFieldProps, ref?
     };
 
     const jsx = editMode
-        ? <TextFieldOld onBlur={onBlur} onFocus={onFocus} dense={true} focus={true} onKeyPress={onKeyPress} onChange={onInputChange} ref={ref} value={textFieldValue}></TextFieldOld>
+        ? <TextFieldOld
+            style={{
+                height: "40px",
+                maxWidth: "56px"
+            }}
+            onBlur={onBlur}
+            onFocus={onFocus}
+            dense
+            focus
+            onKeyPress={onKeyPress}
+            onChange={onInputChange}
+            ref={ref}
+            value={textFieldValue} />
         : <>{value}</>;
 
     return jsx;

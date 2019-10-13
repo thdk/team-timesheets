@@ -19,7 +19,7 @@ export const ActiveProjectList = observer((props: React.HTMLProps<HTMLDivElement
         } else {
             const project = store.projects.projectsCollection.docs.get(id);
             if (project
-                && canEditProject(project.data!, store.user.authenticatedUser)
+                && canEditProject(project.data!, store.user.authenticatedUser, store.user.userId)
             ) {
                 store.projects.setProjectId(id);
             }
@@ -29,12 +29,18 @@ export const ActiveProjectList = observer((props: React.HTMLProps<HTMLDivElement
     const saveListItem = (data: IListItemData, id?: string) => {
         store.projects.setProjectId(undefined);
         if (data.name) {
-            store.projects.addProject({ name: data.name, icon: data.icon }, id);
+            const projectData = { name: data.name, icon: data.icon };
+            if (id) {
+                store.projects.updateProject(projectData, id)
+            }
+            else {
+                store.projects.addProject({...projectData, createdBy: store.user.userId});
+            }
         }
     };
 
     const onSelectItem = (id: string) => {
-        if (store.projects.projectId){
+        if (store.projects.projectId) {
             store.projects.setProjectId(undefined);
         }
 

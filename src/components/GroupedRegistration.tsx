@@ -1,9 +1,10 @@
 import * as React from 'react';
-import { ListItem, List, ListDivider } from '../mdc/list';
+import { ListDivider } from '../mdc/list';
 import { IGroupedRegistrations } from '../stores/TimesheetsStore';
 import { observer } from 'mobx-react';
 import { IRegistration } from '../../common/dist';
 import { RegistrationLines } from './registrations/RegistrationLine/RegistrationLines';
+import GroupedRegistrationHeader from './GroupedRegistrationHeader/GroupedRegistrationHeader';
 
 
 export interface IGroupedRegistrationProps {
@@ -11,11 +12,10 @@ export interface IGroupedRegistrationProps {
     registrationClick: (id: string) => void;
     headerClick: (e: React.MouseEvent) => void;
     registrationToggleSelect?: (id: string, data: IRegistration) => void;
-    createTotalLabel: (date: Date) => React.ReactNode;
     totalOnTop?: boolean;
-    denseList?: boolean;
     isCollapsed: boolean;
-    isCollapsable?: boolean;
+    isMonthView?: boolean;
+    showHeaderAddButton?: boolean;
 }
 
 @observer
@@ -27,48 +27,40 @@ export class GroupedRegistration extends React.Component<IGroupedRegistrationPro
     }
 
     render() {
-        const { isCollapsable = false,
-            denseList,
+        const {
             group: {
                 registrations,
                 groupKey,
                 totalTime
             },
-            createTotalLabel,
-            totalOnTop,
+            totalOnTop = true,
             registrationClick,
             headerClick,
             registrationToggleSelect: registrationSelect,
-            isCollapsed
+            isCollapsed,
+            isMonthView = false,
+            showHeaderAddButton = true,
         } = this.props;
 
-        const listStyle = { width: '100%' };
+        const totalList = <GroupedRegistrationHeader
+            headerClick={headerClick}
+            groupKey={groupKey}
+            totalTime={totalTime}
+            isCollapsable={isMonthView}
+            isCollapsed={isCollapsed}
+            isMonthView={isMonthView}
+            showAddButton={showHeaderAddButton}
+        ></GroupedRegistrationHeader>
 
-
-        const totalLabel = createTotalLabel(groupKey);
-
-        const total = <ListItem
-            onClick={headerClick}
-            lines={[totalLabel]}
-            icon={isCollapsable ? isCollapsed ? "chevron_right" : "expand_more" : undefined}
-            meta={parseFloat(totalTime.toFixed(2)) + " hours"}
-            disabled={true}>
-        </ListItem>
-
-        const extraStylingForTotalList = {
-            ...(isCollapsable ? { cursor: "pointer" } : {}),
-            ...({ paddingTop: 0, paddingBottom: 0 })
-        };
-
-        const totalList =
-            <List isDense={denseList} style={{ ...listStyle, ...extraStylingForTotalList }}>
-                {total}
+        const topTotal = totalOnTop
+            ? <>
+                {totalList}
                 <ListDivider></ListDivider>
-            </List>;
-
-        const topTotal = totalOnTop ? totalList : undefined;
+            </>
+            : undefined;
         const bottomTotal = totalOnTop ? undefined : totalList;
 
+        const listStyle = { width: '100%' };
         return (
             <div ref={this.registrationRef}>
                 {topTotal}

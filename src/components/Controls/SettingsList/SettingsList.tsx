@@ -20,7 +20,9 @@ export interface ISettingsListProps extends React.HTMLProps<HTMLDivElement> {
 export const SettingsList = observer(({ onAddItem, selection, activeItemId, onToggleSelection: toggleSelection, items, readonly, onItemClick, ...restProps }: ISettingsListProps) => {
 
     const itemsJSX = items.map(i => (
-        <SettingsListItem key={i.id} onChangeItem={onAddItem ? data => onAddItem(data, i.id) : undefined}
+        <SettingsListItem
+            key={i.id}
+            onChangeItem={onAddItem ? data => onAddItem(data, i.id) : undefined}
             onClick={readonly || !onItemClick ? undefined : onItemClick.bind(null, i.id)}
             isChecked={selection.has(i.id)}
             edit={activeItemId === i.id}

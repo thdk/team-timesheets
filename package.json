@@ -12,7 +12,7 @@
     "start": "gulp watch --env=development",
     "deploy:development": "npm run build:development && firebase deploy",
     "deploy:production": "npm run build:production && firebase deploy",
-    "tsc": "tsc --noEmit"
+    "tsc": "tsc -p common && tsc --noEmit"
   },
   "repository": {
     "type": "git",
@@ -27,6 +27,7 @@
   "devDependencies": {
     "@material/theme": "^0.43.0",
     "@types/classnames": "^2.2.9",
+    "@types/node": "^12.7.12",
     "@types/react": "^16.8.23",
     "@types/react-dom": "^16.8.4",
     "autoprefixer": "^9.4.2",
@@ -64,6 +65,7 @@
     "@material/icon-button": "^0.44.0",
     "@material/icon-toggle": "^0.44.0",
     "@material/list": "^0.44.0",
+    "@material/react-button": "^0.15.0",
     "@material/react-checkbox": "^0.14.1",
     "@material/react-chips": "^0.14.0",
     "@material/react-material-icon": "^0.14.0",
@@ -72,7 +74,7 @@
     "@material/select": "^0.44.0",
     "@material/switch": "^0.44.1",
     "@material/tab-bar": "^0.44.0",
-    "@material/textfield": "^0.44.0",
+    "@material/textfield": "^0.44.1",
     "@material/top-app-bar": "^0.44.0",
     "@material/typography": "^0.44.0",
     "@types/chart.js": "^2.7.42",

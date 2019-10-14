@@ -16,7 +16,6 @@ export interface IGroupedRegistrationsProps extends IReactProps {
     totalOnTop?: boolean;
     sortOrder?: SortOrder
     activeDate?: number;
-    isCollapsed: boolean;
     isCollapsable?: boolean;
     isMonthView: boolean;
     showHeaderAddButton?: boolean;
@@ -30,7 +29,8 @@ export class GroupedRegistrations extends React.Component<IGroupedRegistrationsP
         this.activeRegistrationRef = React.createRef<GroupedRegistration>();
     }
     render() {
-        const { sortOrder = SortOrder.Ascending,
+        const { 
+            sortOrder = SortOrder.Ascending,
             isMonthView,
             showHeaderAddButton = true,
         } = this.props;
@@ -40,7 +40,7 @@ export class GroupedRegistrations extends React.Component<IGroupedRegistrationsP
             : store.timesheets.registrationsGroupedByDayReversed)
             .map((g, i) => {
                 const isLastOpenedGroup = g.groupKey && g.groupKey.getDate() === this.props.activeDate;
-                const isCollapsed = !store.timesheets.selectedRegistrationDays
+                const isCollapsed =  !store.timesheets.selectedRegistrationDays
                     .some(d => d.getTime() === g.groupKey.getTime());
 
                 return <GroupedRegistration

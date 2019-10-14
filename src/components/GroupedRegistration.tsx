@@ -61,17 +61,22 @@ export class GroupedRegistration extends React.Component<IGroupedRegistrationPro
         const bottomTotal = totalOnTop ? undefined : totalList;
 
         const listStyle = { width: '100%' };
+
+        const regsJSX = registrations.length
+            ? <div style={{ ...listStyle, display: isCollapsed ? "none" : "block" }}>
+                <RegistrationLines
+                    registrations={registrations}
+                    registrationClick={registrationClick}
+                    registrationToggleSelect={registrationSelect}>
+                </RegistrationLines>
+                <ListDivider></ListDivider>
+            </div>
+            : null;
+
         return (
             <div ref={this.registrationRef}>
                 {topTotal}
-                <div style={{ ...listStyle, display: isCollapsed ? "none" : "block" }}>
-                    <RegistrationLines
-                        registrations={registrations}
-                        registrationClick={registrationClick}
-                        registrationToggleSelect={registrationSelect}>
-                    </RegistrationLines>
-                    <ListDivider></ListDivider>
-                </div>
+                {regsJSX}
                 {bottomTotal}
             </div>
         );

@@ -1,5 +1,5 @@
 import * as React from 'react';
-import Checkbox from '@material/react-checkbox';
+import { Checkbox } from '@rmwc/checkbox';
 import store from '../../stores/RootStore';
 import { observer } from 'mobx-react';
 import EditableTextField from '../Controls/EditableText';
@@ -10,7 +10,7 @@ export interface IRegistrationLineProps extends React.HTMLProps<HTMLDivElement> 
     readonly icon?: string;
     readonly time?: number;
     readonly id: string;
-    readonly onSelect: () => void;
+    readonly onSelect?: () => void;
 }
 
 @observer
@@ -58,6 +58,17 @@ export default class RegistrationLine extends React.Component<IRegistrationLineP
             editMode={!!isEditing}
             edit={{ onChange: onTimeChange, onCancel, value: (time || 0).toFixed(2) }} />;
 
+        const selectJSX = onSelect
+            ? <div className="registration-line-select">
+                <Checkbox onClick={(e: React.MouseEvent) => {
+                    e.stopPropagation();
+                }}
+                    checked={store.view.selection.has(id)}
+                    onChange={onSelect}
+                ></Checkbox>
+            </div>
+            : null;
+
         return <div className="registration-line" {...restProps}>
             <div className="registration-line-header">
                 {iconJSX}
@@ -76,15 +87,7 @@ export default class RegistrationLine extends React.Component<IRegistrationLineP
                 {line2JSX}
             </div>
 
-            <div className="registration-line-select">
-                <Checkbox onClick={(e: MouseEvent) => {
-                    e.stopPropagation();
-                    e.preventDefault();
-                }}
-                    checked={store.view.selection.has(id)}
-                    onChange={onSelect}
-                ></Checkbox>
-            </div>
+            {selectJSX}
         </div>
     }
 }

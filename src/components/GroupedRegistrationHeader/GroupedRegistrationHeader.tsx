@@ -44,7 +44,7 @@ const GroupedRegistrationHeader = (props: GroupedRegistrationHeaderProps) => {
             : null;
 
 
-        return !isMonthView
+        const displayJSX = !isMonthView
             ? <>
                 <div className="grouped-registration-header-label">
                     Total time: {parseFloat(totalTime.toFixed(2))} hours
@@ -62,20 +62,26 @@ const GroupedRegistrationHeader = (props: GroupedRegistrationHeaderProps) => {
                     {dateMoment.format("MMMM Do")}
                 </a>
                 {totalJSX}
-                {showAddButton ?
-                    <Button
-                        onClick={(e: React.MouseEvent) => {
-                            e.preventDefault();
-                            e.stopPropagation();
-                            store.timesheets.toggleSelectedRegistrationDay(date, true);
-                            goToNewRegistration(dateMoment);
-                        }}
-                        dense
-                        className="grouped-registration-header-add-button"
-                    >+</Button>
-                    : null
-                }
             </>;
+
+        return showAddButton
+            ? <>
+                {displayJSX}
+                <Button
+                    onClick={(e: React.MouseEvent) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        store.timesheets.toggleSelectedRegistrationDay(date, true);
+                        goToNewRegistration(dateMoment);
+                    }}
+                    dense
+                    className="grouped-registration-header-add-button"
+                >+</Button>
+            </>
+            : <>
+                {displayJSX}
+            </>;
+
     };
 
     const titleJSX = createTotalLabel(groupKey, totalTime);

@@ -36,6 +36,7 @@ export interface IRegistrationsStore {
     areGroupedRegistrationsCollapsed: boolean;
     readonly setRegistrationsGroupedByDaySortOrder: (sortOrder: SortOrder) => void;
     readonly cloneRegistration: (source: IRegistration) => IRegistration;
+    readonly getRegistrationById: (id: string) => IRegistration | null;
 }
 
 export class RegistrationStore implements IRegistrationsStore {
@@ -55,6 +56,7 @@ export class RegistrationStore implements IRegistrationsStore {
     private registrationsGroupedByDaySortOrderField = SortOrder.Descending;
     @observable
     public areGroupedRegistrationsCollapsed = true;
+
 
     constructor(rootStore: IRootStore) {
         this.rootStore = rootStore;
@@ -233,6 +235,11 @@ export class RegistrationStore implements IRegistrationsStore {
         }
     }
 
+    public getRegistrationById(id: string): IRegistration | null {
+        const doc = this.registrations.docs.get(id);
+        return doc ? doc.data : null;
+    }
+
     private getNewRegistrationDataAsync(registrationMoment?: moment.Moment): Promise<IRegistration> {
         return when(() => !!this.rootStore.user.authenticatedUser)
             .then(() => {
@@ -268,8 +275,15 @@ export class RegistrationStore implements IRegistrationsStore {
     public saveSelectedRegistration() {
         if (this.registration) {
             const { registration } = this;
-            this.registrations
-                .updateAsync(registration, this.registrationId || "")
+
+            const saveOrUpdateAsync = (registration: IRegistration, id: string |undefined) => {
+                return id 
+                    ? this.registrations.updateAsync(registration, id)
+                    : this.registrations.addAsync(registration);
+
+            };
+            
+            saveOrUpdateAsync(registration, this.registrationId)
                 .then(() => {
                     const { project = undefined } = registration || {};
                     // TODO: move set recent project to firebase function

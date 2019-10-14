@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { INameWithIcon } from '../../../../common';
 import classNames from 'classnames';
-import Checkbox from '@material/react-checkbox';
+import { Checkbox } from '@rmwc/checkbox';
 import { useState } from 'react';
 import TextField, { Input } from '@material/react-text-field';
 import { observer } from 'mobx-react-lite';
@@ -81,9 +81,8 @@ export const SettingsListItem = observer((props: ISettingsItemProps) => {
             <Checkbox
                 checked={isChecked}
                 onChange={onSelectItem.bind(null, itemData.id)}
-                onClick={(e: MouseEvent) => {
+                onClick={(e: React.MouseEvent) => {
                     e.stopPropagation();
-                    e.preventDefault();
                 }}
             />
         </div>

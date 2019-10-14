@@ -69,11 +69,13 @@ const setActions = (s: IRootStore, alowInserts = false) => {
             action: selection => {
                 if (!selection) return;
 
-                const docData = Array.from(selection.values())
-                    .map(reg => s.timesheets.cloneRegistration(reg)) as IRegistration[];
+                const docData = Array.from(selection.keys())
+                    .map(regId => {
+                        const reg = s.timesheets.getRegistrationById(regId);
+                        return reg ? s.timesheets.cloneRegistration(reg) : undefined;
+                    }) as IRegistration[];
 
-                s.timesheets.addRegistrations(docData);
-                // s.timesheets.clipboard.clear();
+                s.timesheets.addRegistrations(docData.filter(r => !!r));
             },
             icon: { content: "content_paste", label: "Paste" },
             shortKey: { ctrlKey: true, key: "v" },

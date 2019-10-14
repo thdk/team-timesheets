@@ -40,14 +40,12 @@ export class Timesheet extends React.Component {
         if (store.view.day) {
             const group = store.timesheets.registrationsGroupedByDay.filter(g => g.groupKey.getDate() === store.view.day);
 
-            regs = group.length
-                ? <GroupedRegistration group={group[0]}
-                    registrationClick={this.registrationClick.bind(this)}
-                    registrationToggleSelect={this.registrationSelect.bind(this)}
-                    isCollapsed={false}
-                    headerClick={() => { }}
-                />
-                : <></>;
+            regs = <GroupedRegistration group={group[0] || { groupKey: store.view.moment.toDate(), totalTime: 0, registrations: [] }}
+                registrationClick={this.registrationClick.bind(this)}
+                registrationToggleSelect={this.registrationSelect.bind(this)}
+                isCollapsed={false}
+                headerClick={() => { }}
+            />;
         } else {
             const totalTime = store.timesheets.registrationsTotalTime;
 
@@ -79,7 +77,6 @@ export class Timesheet extends React.Component {
                     registrationClick={this.registrationClick.bind(this)}
                     registrationToggleSelect={this.registrationSelect.bind(this)}
                     sortOrder={sortOrder}
-                    isCollapsed={store.timesheets.areGroupedRegistrationsCollapsed}
                     isCollapsable={true}
                     isMonthView={!store.view.day}
                 >

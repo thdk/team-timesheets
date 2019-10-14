@@ -32,7 +32,7 @@ export const RegistrationLines = observer((props: IRegistrationLinesProps) => {
         const line1 = projectName;
         const line2 = `${clientName ? clientName + " - " : ""}${description}`;
 
-        const onSelect = () => registrationToggleSelect ? registrationToggleSelect(id, r.data!) : undefined;
+        const onSelect = registrationToggleSelect ? () => registrationToggleSelect(id, r.data!) : undefined;
 
 
         const listItemOnClick = () => registrationClick(id);

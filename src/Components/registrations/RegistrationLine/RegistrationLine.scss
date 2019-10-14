@@ -1,5 +1,3 @@
-@import "@material/react-checkbox/index.scss";
-
 .registration-line {
     display: flex;
     align-content: center;
@@ -46,7 +44,7 @@
     .registration-line-time {
         width: 80px;
         display: flex;
-        flex-shrink: 1;
+        flex-shrink: 0;
         justify-content: center;
         height: 100%;
         align-items: center;

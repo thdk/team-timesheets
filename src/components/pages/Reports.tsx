@@ -53,7 +53,6 @@ export class Reports extends React.Component {
                     </FlexGroup>
                     {downloadReport}
                     <GroupedRegistrations
-                        isCollapsed={false}
                         sortOrder={SortOrder.Ascending}
                         totalOnTop={true}
                         registrationClick={this.registrationClick.bind(this)}

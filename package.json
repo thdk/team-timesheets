@@ -26,6 +26,7 @@
   "homepage": "https://github.com/thdk/typescript-start#readme",
   "devDependencies": {
     "@material/theme": "^0.43.0",
+    "@types/chart.js": "^2.8.7",
     "@types/classnames": "^2.2.9",
     "@types/node": "^12.7.12",
     "@types/react": "^16.8.23",
@@ -77,7 +78,6 @@
     "@material/top-app-bar": "^0.44.0",
     "@material/typography": "^0.44.0",
     "@rmwc/checkbox": "^5.7.0",
-    "@types/chart.js": "^2.7.42",
     "chart.js": "^2.7.3",
     "classnames": "^2.2.6",
     "firebase": "^5.9.0",

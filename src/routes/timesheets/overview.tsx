@@ -1,11 +1,11 @@
 import * as React from 'react';
 import { Route } from 'mobx-router';
-import Timesheet from '../../components/Pages/Timesheet';
+import Timesheet from '../../pages/registrations';
 import { transaction } from 'mobx';
 import { beforeEnter, setNavigationContent, goToRouteWithDate } from '../actions';
 import { App } from '../../internal';
-import store, { IRootStore } from '../../stores/RootStore';
-import { IViewAction } from '../../stores/ViewStore';
+import store, { IRootStore } from '../../stores/root-store';
+import { IViewAction } from '../../stores/view-store';
 import { IRegistration } from '../../../common/dist';
 import detailRoutes from "./detail";
 

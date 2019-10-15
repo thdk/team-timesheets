@@ -2,9 +2,9 @@ import * as React from 'react';
 
 import { MDCTopAppBar } from '@material/top-app-bar/index';
 import { observer } from 'mobx-react';
-import store from '../stores/RootStore';
-import { IViewAction } from '../stores/ViewStore';
-import { IIconData, IconButtonToggle } from './buttons/iconButtons';
+import store from '../stores/root-store';
+import { IViewAction } from '../stores/view-store';
+import { IIconData, IconButtonToggle } from './buttons/icon-buttons';
 
 export interface TopAppBarProps {
     showNavigationIcon: boolean,

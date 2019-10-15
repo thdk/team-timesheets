@@ -4,7 +4,7 @@ import { Provider } from 'mobx-react';
 import { MobxRouter, startRouter } from 'mobx-router';
 
 import routes from './routes/index';
-import store from './stores/RootStore';
+import store from './stores/root-store';
 
 
 startRouter(routes, store);

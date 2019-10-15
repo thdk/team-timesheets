@@ -1,10 +1,10 @@
 import { Route } from "mobx-router";
 import { goToOverview, IDate } from './timesheets/overview';
-import store, { IRootStore } from "../stores/RootStore";
+import store, { IRootStore } from "../stores/root-store";
 import { goToLogin } from "./login";
 import { when, transaction } from "mobx";
 import { getLoggedInUserAsync } from "../firebase/firebase-utils";
-import { auth } from "../firebase/myFirebase";
+import { auth } from "../firebase/my-firebase";
 
 export const goToRouteWithDate = (route: Route, s: IRootStore, date?: IDate, trackOptions?: { track?: boolean, currentDate?: number }) => {
     const { track = undefined, currentDate = undefined } = trackOptions || {};

@@ -3,9 +3,9 @@ import * as React from 'react';
 import { transaction, when } from "mobx";
 
 import { App, setNavigationContent } from "../../internal";
-import store, { IRootStore } from "../../stores/RootStore";
-import { IViewAction } from "../../stores/ViewStore";
-import { Projects } from "../../components/Pages/Projects/Projects";
+import store, { IRootStore } from "../../stores/root-store";
+import { IViewAction } from "../../stores/view-store";
+import { Projects } from "../../pages/projects";
 
 export const goToProjects = (tab: ProjectsTab = "active") => {
     store.router.goTo(routes.projects, {}, store, { tab });

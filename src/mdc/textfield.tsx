@@ -20,6 +20,7 @@ export interface ITextFieldProps {
     onKeyPress?: (e: React.KeyboardEvent<HTMLInputElement | HTMLTextAreaElement>) => void;
     onFocus?: (e: React.FocusEvent<HTMLTextAreaElement | HTMLInputElement>) => void;
     onBlur?: (e: React.FocusEvent<HTMLTextAreaElement | HTMLInputElement>) => void;
+    style?: React.CSSProperties;
 }
 
 export class TextFieldOld extends React.Component<ITextFieldProps> {
@@ -92,7 +93,7 @@ export class TextFieldOld extends React.Component<ITextFieldProps> {
 
         return (
             <>
-                <div className={className} ref={this.mdcTextField}>
+                <div style={this.props.style} className={className} ref={this.mdcTextField}>
                     {leadingIconEl}
                     {input}
                     {lineEl}

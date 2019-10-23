@@ -14,10 +14,10 @@ export const canEditTask = (user?: IUser) => isAdmin(user);
 export const canDeleteTask = (user?: IUser) => isAdmin(user);
 
 export const canAddProject = (user?: IUser) => isAdmin(user) || isEditor(user);
-export const canEditProject = (project: IProject, user?: IUser, userId?: string) => isAdmin(user) || (isEditor(user) && userId && userId === project.createdBy);
-export const canDeleteProject = (project: IProject, user?: IUser, userId?: string) => isAdmin(user) || (isEditor(user) && userId && userId === project.createdBy);
-export const canArchiveProject = (project: IProject, user?: IUser, userId?: string) => isAdmin(user) || (isEditor(user) && userId && userId === project.createdBy);
-export const canManageProjects = (user?: IUser) => isAdmin(user);
+export const canEditProject = (project: IProject, user: IUser | undefined, userId: string | undefined) => isAdmin(user) || (isEditor(user) && userId && userId === project.createdBy);
+export const canDeleteProject = (project: IProject, user: IUser | undefined, userId: string | undefined) => isAdmin(user) || (isEditor(user) && userId && userId === project.createdBy);
+export const canArchiveProject = (project: IProject, user: IUser | undefined, userId: string | undefined) => isAdmin(user) || (isEditor(user) && userId && userId === project.createdBy);
+export const canManageProjects = (user?: IUser) => isAdmin(user) || isEditor(user);
 
 export const canAddClient = (user?: IUser) => isAdmin(user);
 export const canEditClient = (user?: IUser) => isAdmin(user);

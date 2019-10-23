@@ -1,0 +1,40 @@
+@import '@material/theme/mixins';
+@import '../../../style/vars';
+
+.grouped-registration-header {
+        @include mdc-theme-prop("color", $mdc-theme-on-surface);
+        display: flex;
+        align-items: center;
+        height: 41px;
+
+        &.grouped-registration-header--collapsable {
+            cursor: pointer;
+        }
+
+        .grouped-registration-header-label {
+            padding-left: 1em;
+            display: flex;
+            justify-content: center;
+        }
+
+        .grouped-registration-header-total {
+            padding-left: 1em;
+            width: 80px;
+            display: flex;
+        }
+
+        .grouped-registration-header-icon {
+            margin-left: 16px;
+            margin-right: 36px;
+        }
+
+        .grouped-registration-header-date{
+            width: 120px;
+        }
+
+        .grouped-registration-header-add-button {
+            margin-left: 1em;
+            height: 25px;
+            cursor: pointer;
+        }
+}

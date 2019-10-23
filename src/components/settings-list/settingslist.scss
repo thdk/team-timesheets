@@ -1,0 +1,54 @@
+
+.settings-list {
+    .settings-list-item, .settings-list-add-item {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        height: 48px;
+        justify-content: space-between;
+        color: var(--mdc-theme-text-secondary-on-background, rgba(0, 0, 0, 0.54));
+
+        &:not(.new-item):hover {
+            background-color: #ededed;
+            cursor: pointer;
+        }
+
+        .list-item-props {
+            display: flex;
+            align-items: center;
+            width: 90%;
+
+            .item-icon {
+                width: 80px;
+                display: flex;
+                flex-shrink: 0;
+                justify-content: center;
+                align-items: center;
+            }
+
+            .item-name {
+                color: var(--mdc-theme-text-primary-on-background, rgba(0, 0, 0, 0.87));
+            }
+
+            .item-form {
+                display: flex;
+
+                .icon-picker {
+                    margin-right: 20px;
+                }
+
+                .mdc-text-field {
+                    height: 48px;
+                }
+            }
+        }
+
+        &.settings-list-item--selected {
+            height: 48px;
+        }
+
+        .list-item-checkbox {
+            width: 80px;
+        }
+    }
+}

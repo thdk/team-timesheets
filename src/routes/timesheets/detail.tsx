@@ -2,18 +2,22 @@ import * as React from 'react';
 import { RoutesConfig, Route } from 'mobx-router';
 import { reaction, transaction } from 'mobx';
 
-import { App } from '../../components/App';
-import { Registration } from '../../components/Registration';
+import { App, goToOverview } from '../../internal';
+import { Registration } from '../../pages/timesheet-detail';
 import { setTitleForRoute, setBackToOverview, beforeEnter } from '../actions';
-import { goToOverview } from '../../internal';
-import store, { IRootStore } from '../../stores/RootStore';
-import { IViewAction } from '../../stores/ViewStore';
+import store, { IRootStore } from '../../stores/root-store';
+import { IViewAction } from '../../stores/view-store';
+import moment from 'moment';
 
 const path = "/timesheetsdetail";
 
 export const goToRegistration = (id?: string) => {
     store.router.goTo(id ? routes.registrationDetail : routes.newRegistration, { id }, store);
-}
+};
+
+export const goToNewRegistration = (date: moment.Moment) => {
+    store.router.goTo(routes.newRegistration, { id: undefined }, store, { date: moment(date).format("YYYY-MM-DD") });
+};
 
 const onEnter = (route: Route, params: { id?: string }, s: IRootStore) => {
     if (params.id) {
@@ -68,10 +72,11 @@ const routes = {
         title: "New registration",
         onEnter,
         beforeExit,
-        beforeEnter: (route: Route, params: any, s: IRootStore) => {
+        beforeEnter: (route: Route, params: {}, s: IRootStore, queryParams?: { date?: string }) => {
             return beforeEnter(route, params, s)
                 .then(() => {
-                    s.timesheets.setSelectedRegistrationDefault();
+                    const { date = undefined } = queryParams || {};
+                    s.timesheets.setSelectedRegistrationDefault(date ? moment(date) : undefined);
 
                     return true;
                 })

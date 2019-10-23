@@ -1,11 +1,11 @@
 import * as React from 'react';
 import { Route } from 'mobx-router';
-import { Timesheets } from '../../components/Timesheets';
+import Timesheet from '../../pages/registrations';
 import { transaction } from 'mobx';
 import { beforeEnter, setNavigationContent, goToRouteWithDate } from '../actions';
 import { App } from '../../internal';
-import store, { IRootStore } from '../../stores/RootStore';
-import { IViewAction } from '../../stores/ViewStore';
+import store, { IRootStore } from '../../stores/root-store';
+import { IViewAction } from '../../stores/view-store';
 import { IRegistration } from '../../../common/dist';
 import detailRoutes from "./detail";
 
@@ -69,11 +69,13 @@ const setActions = (s: IRootStore, alowInserts = false) => {
             action: selection => {
                 if (!selection) return;
 
-                const docData = Array.from(selection.values())
-                    .map(reg => s.timesheets.cloneRegistration(reg)) as IRegistration[];
+                const docData = Array.from(selection.keys())
+                    .map(regId => {
+                        const reg = s.timesheets.getRegistrationById(regId);
+                        return reg ? s.timesheets.cloneRegistration(reg) : undefined;
+                    }) as IRegistration[];
 
-                s.timesheets.addRegistrations(docData);
-                s.timesheets.clipboard.clear();
+                s.timesheets.addRegistrations(docData.filter(r => !!r));
             },
             icon: { content: "content_paste", label: "Paste" },
             shortKey: { ctrlKey: true, key: "v" },
@@ -130,7 +132,7 @@ const beforeTimesheetExit = (_route: Route, _params: any, s: IRootStore) => {
 const routes = {
     overview: new Route({
         path: path + '/:year/:month/:day',
-        component: <App><Timesheets></Timesheets></App>,
+        component: <App><Timesheet></Timesheet></App>,
         onEnter: (route: Route, params: IDate, s: IRootStore) => {
             routeChanged(route, params, s);
             setActions(s, true);
@@ -142,7 +144,7 @@ const routes = {
     }),
     monthOverview: new Route({
         path: path + '/:year/:month',
-        component: <App><Timesheets></Timesheets></App>,
+        component: <App><Timesheet></Timesheet></App>,
         onEnter: (route: Route, params: IDate, s: IRootStore) => {
             store.view.track = false;
             routeChanged(route, params, s);

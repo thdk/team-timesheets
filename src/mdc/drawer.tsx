@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { MDCDrawer } from "@material/drawer/index";
 import { observer } from 'mobx-react';
-import store from '../stores/RootStore';
+import store from '../stores/root-store';
 import classNames from 'classnames';
 
 @observer

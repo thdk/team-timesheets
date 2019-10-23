@@ -25,7 +25,9 @@ const configuration = {
             images: './src/images/**/*.png',
             css: [
                 './src/style/*.scss',
-                './src/components/**/*.scss'
+                './src/components/**/*.scss',
+                './src/containers/**/*.scss',
+                './src/pages/**/*.scss',
             ],
             js: 'src/app.ts',
             manifest: 'src/manifest.json',

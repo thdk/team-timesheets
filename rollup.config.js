@@ -15,6 +15,7 @@ const external = [
   "firebaseui",
   "chart.js",
   "mobx",
+  "@types/node",
 ];
 
 export default {
@@ -39,10 +40,29 @@ export default {
     commonJS({
       include: 'node_modules/**',
       namedExports: {
-        'node_modules/react/index.js': ['memo', 'useDebugValue', 'useMemo', 'useCallback', 'createRef', 'Component', 'PureComponent', 'Fragment', 'Children', 'createElement', 'forwardRef', 'useRef', 'useState', 'useEffect' ],
+        'node_modules/react/index.js': [
+          'memo',
+          'useDebugValue',
+          'useMemo',
+          'useCallback',
+          'createRef',
+          'Component',
+          'PureComponent',
+          'Fragment',
+          'Children',
+          'createElement',
+          'forwardRef',
+          'useRef',
+          'useState',
+          'useEffect',
+          'createContext',
+          'cloneElement',
+          'isValidElement',
+        ],
         'node_modules/react-dom/index.js': ['findDOMNode', 'unstable_batchedUpdates', 'render'],
         '@material/react-chips': ["Chip", "ChipSet"],
         '@material/react-text-field': ["Input"],
+        '@material/react-button': ["Button"],
         'firestorable': ['Collection', 'Document']
       }
     }),

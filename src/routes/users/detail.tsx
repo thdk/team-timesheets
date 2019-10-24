@@ -36,7 +36,7 @@ const routes = {
 
             const deleteAction: IViewAction = {
                 action: () => {
-                    s.user.selectedUserId && s.user.users.deleteAsync(s.user.selectedUserId);
+                    s.user.selectedUserId && s.user.usersCollection.deleteAsync(s.user.selectedUserId);
                     goToSettings("users");
                 },
                 icon: { label: "Delete", content: "delete" },

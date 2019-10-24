@@ -11,10 +11,11 @@
 
 export * from './containers/app';
 export * from './routes/projects/list';
-export * from './routes/timesheets/overview';
-export * from './routes/timesheets/detail';
+export * from './routes/registrations/overview';
+export * from './routes/registrations/detail';
 export * from './routes/reports/report';
 export * from './routes/dashboard/dashboard';
 export * from './routes/login';
 export * from './routes/settings';
 export * from './routes/actions';
+export * from './routes/projects/detail';

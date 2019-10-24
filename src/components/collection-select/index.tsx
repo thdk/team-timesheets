@@ -2,7 +2,7 @@ import * as React from 'react';
 import { observer } from 'mobx-react';
 import { SelectOption, Select } from '../../mdc/select';
 
-export interface ICollectionList {
+export interface ICollectionListProps {
     readonly label: string;
     readonly items: { name: string, id: string }[];
     readonly onChange: (value: string) => void;
@@ -10,7 +10,7 @@ export interface ICollectionList {
 }
 
 @observer
-export default class CollectionSelect extends React.Component<ICollectionList> {
+export default class CollectionSelect extends React.Component<ICollectionListProps> {
     render() {
         const { items, value, onChange, label } = this.props;
         const listItems = items.map(i =>

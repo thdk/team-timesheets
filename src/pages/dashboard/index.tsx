@@ -45,7 +45,7 @@ export class Dashboard extends React.Component {
         const userChartProps: IUserRegistrationsChartProps = {
             title: "Time / user",
             data: store.dashboard.registrationsGroupedByUser,
-            labelCollection: store.user.users,
+            labelCollection: store.user.usersCollection,
             getLabel: user => user.name,
             chart: ChartType.Bar
         };
@@ -74,7 +74,7 @@ export class Dashboard extends React.Component {
                             label="User"
                             onChange={this.onUserFilterChange}
                             items={
-                                Array.from(store.user.users.docs.values())
+                                Array.from(store.user.usersCollection.docs.values())
                                     .map(doc => ({ name: doc.data!.name, id: doc.id }))
                             }>
                         </CollectionSelect>
@@ -83,7 +83,7 @@ export class Dashboard extends React.Component {
             </>
             : null;
 
-        const registrationsPerUserChart = canReadUsers(store.user.authenticatedUser) && store.user.users.docs.size
+        const registrationsPerUserChart = canReadUsers(store.user.authenticatedUser) && store.user.usersCollection.docs.size
             ? <RegistrationsChart {...userChartProps}>
             </RegistrationsChart>
             : null;

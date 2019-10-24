@@ -1,8 +1,8 @@
 import * as React from 'react';
-import { FormField } from '../../../components/layout/form';
+
 import store from '../../../stores/root-store';
-import { observer } from 'mobx-react';
 import CollectionSelect from '../../../components/collection-select';
+import { observer } from 'mobx-react-lite';
 
 export interface IClientSelectProps {
     value?: string;
@@ -10,16 +10,16 @@ export interface IClientSelectProps {
     onChange: (value: string) => void;
 }
 
-@observer
-export default class ClientSelect extends React.Component<IClientSelectProps> {
-    render() {
-        const { label = "Client", value = "", onChange } = this.props;
-        return (
-            <>
-                <FormField first={false}>
-                    <CollectionSelect value={value} items={store.config.clients} label={label} onChange={onChange}></CollectionSelect>
-                </FormField>
-            </>
-        );
-    }
-}
+export const ClientSelect = observer((props: IClientSelectProps) => {
+    const { label = "Client", value = "", onChange } = props;
+    return (
+        <CollectionSelect
+            value={value}
+            items={store.config.clients}
+            label={label}
+            onChange={onChange}>
+        </CollectionSelect>
+    );
+});
+
+export default ClientSelect;

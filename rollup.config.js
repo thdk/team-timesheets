@@ -15,6 +15,7 @@ const external = [
   "firebaseui",
   "chart.js",
   "mobx",
+  "@types/node",
 ];
 
 export default {

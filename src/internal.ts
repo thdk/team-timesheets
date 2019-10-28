@@ -9,12 +9,12 @@
 // 3. The index.js file is the main entry point and imports and exports everything from internal.js that you want to expose to the outside world.
 // Note that this step (3) is only relevant if your are publishing a library that is consumed by others.
 
-export * from './components/App';
+export * from './containers/app';
 export * from './routes/projects/list';
 export * from './routes/timesheets/overview';
 export * from './routes/timesheets/detail';
 export * from './routes/reports/report';
-export * from './routes/reports/dashboard';
+export * from './routes/dashboard/dashboard';
 export * from './routes/login';
 export * from './routes/settings';
 export * from './routes/actions';

@@ -2,12 +2,12 @@ import * as React from "react";
 import { Route, RoutesConfig } from "mobx-router";
 
 import { App } from "../../internal";
-import User from "../../components/Pages/User/User";
-import store, { IRootStore } from "../../stores/RootStore";
+import User from "../../pages/user-detail";
+import store, { IRootStore } from "../../stores/root-store";
 import { beforeEnter, setTitleForRoute } from "../actions";
 import { goToSettings } from "../settings";
 import { transaction } from "mobx";
-import { IViewAction } from "../../stores/ViewStore";
+import { IViewAction } from "../../stores/view-store";
 
 export const goToUser = (id?: string) => {
     store.router.goTo(routes.registrationDetail, {id}, store);

@@ -2,12 +2,11 @@ import * as React from 'react';
 import { RoutesConfig, Route } from 'mobx-router';
 import { reaction, transaction } from 'mobx';
 
-import { App } from '../../components/App';
-import { Registration } from '../../components/Registration';
+import { App, goToOverview } from '../../internal';
+import { Registration } from '../../pages/timesheet-detail';
 import { setTitleForRoute, setBackToOverview, beforeEnter } from '../actions';
-import { goToOverview } from '../../internal';
-import store, { IRootStore } from '../../stores/RootStore';
-import { IViewAction } from '../../stores/ViewStore';
+import store, { IRootStore } from '../../stores/root-store';
+import { IViewAction } from '../../stores/view-store';
 import moment from 'moment';
 
 const path = "/timesheetsdetail";

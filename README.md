@@ -19,11 +19,11 @@ If you don't have node installed yet, install [node](https://nodejs.org/en/downl
 
 npm install -g firebase-tools
 
-#### Firebase
+### Firebase
 
 The project is build entirely for Google Cloud Firebase.
 
-##### Firebase project
+#### Firebase project
 
 To seperate a development environment from the production environment you'll need two firebase projects so you can deploy dev and production seperately.
 
@@ -38,11 +38,11 @@ I have two firebase projects:
 
 Follow the instructions below for each environment you want to configure.
 
-##### Get authenticated
+#### Get authenticated
 
 `firebase login`
 
-##### Select firebase project
+#### Select firebase project
 `firebase use --add`
 
 (follow instructions)
@@ -51,7 +51,7 @@ Follow the instructions below for each environment you want to configure.
 
 When your project was succesfully selected, it will be stored in the file called: *.firebasesrc*
 
-##### Firebase hosting
+#### Firebase hosting
 
 Go back to the firebase console and create a new site from the *hosting* menu.
 I've created a site with name *timesheets-web*.
@@ -89,7 +89,7 @@ This is how *.firebasesrc* file looks like after following the instructions abov
 }
 ```
 
-##### Firebase authentication
+#### Firebase authentication
 
 From the firebase console, go to the authentication tab.
 Activate authentication and set up the desired authentication providers.
@@ -98,7 +98,7 @@ Verify the authorized domain list. You'll need:
 * localhost
 * your hosting site url
 
-#### Installing
+### Installing
 
 Install dependencies
 

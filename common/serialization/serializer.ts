@@ -16,10 +16,10 @@ export const convertRegistration = (appData: Partial<IRegistration> | "delete") 
         if (!appData.userId) throw new Error("Registrations must have a userId set.");
         // end validation
 
-
+        const description = (appData.description || "").trim();
         registration = {
             date: firebase.firestore.Timestamp.fromDate(appData.date),
-            description: appData.description,
+            description,
             project: appData.project,
             task: appData.task,
             time: appData.time,

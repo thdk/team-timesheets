@@ -1,16 +1,16 @@
 import * as React from 'react';
 import { observer } from "mobx-react";
 import store from '../../stores/root-store';
-import { goToRegistration, goToOverview } from '../../internal';
+import { goToRegistration, goToOverview, RedirectToLogin } from '../../internal';
 import { IRegistration } from '../../../common';
 import { Day } from '../../containers/registrations/day';
 import { ListDivider } from '../../mdc/list';
 import { SortOrder, Days } from '../../containers/registrations/days';
 import { FlexGroup } from '../../components/layout/flex';
-
+import { withAuthentication } from '../../containers/users/with-authentication';
 
 @observer
-export class Timesheet extends React.Component {
+class Timesheet extends React.Component {
     registrationClick = (id: string) => {
         if (store.view.selection.size) {
             store.view.toggleSelection(id, true);
@@ -103,4 +103,7 @@ export class Timesheet extends React.Component {
     }
 }
 
-export default Timesheet;
+export default withAuthentication(
+    Timesheet,
+    <RedirectToLogin />,
+);

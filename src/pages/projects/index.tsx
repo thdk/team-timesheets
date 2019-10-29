@@ -1,12 +1,14 @@
 
 import { observer } from 'mobx-react';
+import React from 'react';
 
 import { TapBar, Tab, TabIcon } from '../../mdc/tabbar';
 import store from '../../stores/root-store';
 import { ProjectsTab, goToProjects } from '../../routes/projects/list';
 import { ActiveProjectList } from '../../containers/projects/list-active';
 import { ArchivedProjectList } from '../../containers/projects/list-archived';
-import React from 'react';
+import { withAuthentication } from '../../containers/users/with-authentication';
+import { RedirectToLogin } from '../../routes/login';
 
 interface ITabData {
     id: ProjectsTab;
@@ -17,19 +19,17 @@ interface ITabData {
 }
 
 @observer
-export class Projects extends React.Component {
+class Projects extends React.Component {
     render() {
         const tabData: ITabData[] = [
             {
                 id: "active",
                 text: "Active projects",
-                canOpen: () => !!store.user.authenticatedUser,
                 tabContent: <ActiveProjectList />,
             },
             {
                 id: "archived",
                 text: "Archived projects",
-                canOpen: () => !!store.user.authenticatedUser,
                 tabContent: <ArchivedProjectList />,
             },
         ];
@@ -58,3 +58,8 @@ export class Projects extends React.Component {
         );
     }
 }
+
+export default withAuthentication(
+    Projects,
+    <RedirectToLogin />,
+);

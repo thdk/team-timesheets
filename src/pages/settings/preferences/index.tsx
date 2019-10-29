@@ -8,10 +8,19 @@ import ClientSelect from '../../../containers/clients/select';
 import { UserTasks } from '../../../containers/users/user-tasks';
 import { FormField } from '../../../components/layout/form';
 
+import {
+    IWithAuthenticatedUserProps,
+    withAuthenticatedUser
+} from '../../../containers/users/with-authenticated-user';
+
+type Props = IWithAuthenticatedUserProps;
+
 @observer
-export class Preferences extends React.Component {
+class Preferences extends React.Component<Props> {
     render() {
-        if (!store.user.authenticatedUser || store.config.tasks.docs.size === 0) return null;
+        const { authenticatedUser: user } = this.props;
+
+        if (store.config.tasks.docs.size === 0) return null;
 
         const { tasks: userTasks = new Map<string, true>(), defaultTask = undefined, defaultClient = undefined } = store.user.authenticatedUser || {};
         const tasks = Array.from(store.config.tasks.docs.values())
@@ -27,7 +36,7 @@ export class Preferences extends React.Component {
             }, new Array());
 
         // TODO: create computed value on user store containing the data of the user tasks
-        const userTasksChips = store.user.authenticatedUser.tasks.size > 1
+        const userTasksChips = user.tasks.size > 1
             ? <UserTasks value={defaultTask} onChange={this.defaultTaskChanged}></UserTasks>
             : undefined;
 
@@ -50,9 +59,7 @@ export class Preferences extends React.Component {
     }
 
     handleTaskSelect = (id: string, selected: boolean) => {
-        if (!store.user.authenticatedUser) return;
-
-        const { tasks } = store.user.authenticatedUser;
+        const { authenticatedUser: { tasks } } = this.props;
 
         if (selected === !!tasks.get(id)) return;
 
@@ -76,3 +83,5 @@ export class Preferences extends React.Component {
         });
     }
 }
+
+export default withAuthenticatedUser(Preferences);

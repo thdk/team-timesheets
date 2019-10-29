@@ -8,9 +8,11 @@ import { FlexGroup } from '../../components/layout/flex';
 import store from '../../stores/root-store';
 import ProjectSelect from '../../containers/projects/select';
 import ClientSelect from '../../containers/clients/select';
+import { withAuthentication } from '../../containers/users/with-authentication';
+import { RedirectToLogin } from '../../internal';
 
 @observer
-export class Registration extends React.Component {
+class Registration extends React.Component {
     render() {
         if (!store.timesheets.registration || !store.user.authenticatedUser) {
             return <></>;
@@ -96,3 +98,8 @@ export class Registration extends React.Component {
             store.timesheets.registration.client = value;
     }
 }
+
+export default withAuthentication(
+    Registration,
+    <RedirectToLogin />,
+);

@@ -16,3 +16,7 @@ export interface IUser {
     team?: string;
     created?: Date;
 }
+
+export interface IAuthenticatedUser extends IUser {
+    id: string;
+}

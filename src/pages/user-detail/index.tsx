@@ -8,14 +8,17 @@ import { observer } from "mobx-react";
 import Switch from "../../mdc/switch";
 import { IRoles } from "../../../common";
 import TeamSelect from "../../containers/teams/select";
+import { withAuthentication } from "../../containers/users/with-authentication";
+import { RedirectToLogin } from "../../routes/login";
 
 @observer
-export default class User extends React.Component {
+class User extends React.Component {
     render() {
         if (!store.user.selectedUser) return <></>;
+
         const roles: (keyof IRoles)[] = ["admin", "editor", "user"];
 
-        const {name, roles: userRoles, team} = store.user.selectedUser;
+        const { name, roles: userRoles, team } = store.user.selectedUser;
 
         const userRolesEls = roles
             .map((role, i: number) =>
@@ -62,3 +65,8 @@ export default class User extends React.Component {
             store.user.updateSelectedUser({ team: value });
     }
 }
+
+export default withAuthentication(
+    User,
+    <RedirectToLogin />,
+);

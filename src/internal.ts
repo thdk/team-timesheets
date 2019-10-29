@@ -19,3 +19,5 @@ export * from './routes/login';
 export * from './routes/settings';
 export * from './routes/actions';
 export * from './routes/projects/detail';
+
+export * from './routes';

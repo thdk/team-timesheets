@@ -4,7 +4,7 @@ import { Route, RoutesConfig } from "mobx-router";
 import { App } from "../../internal";
 import User from "../../pages/user-detail";
 import store, { IRootStore } from "../../stores/root-store";
-import { beforeEnter, setTitleForRoute } from "../actions";
+import { setTitleForRoute } from "../actions";
 import { goToSettings } from "../settings";
 import { transaction } from "mobx";
 import { IViewAction } from "../../stores/view-store";
@@ -18,11 +18,8 @@ const routes = {
         path: '/user/:id',
         component: <App><User></User></App>,
         title: "Edit user details",
-        beforeEnter: (route: Route, params: { id?: string }, s: IRootStore) => {
-            return beforeEnter(route, params, s)
-                .then(() => {
-                    s.user.setSelectedUserId(params.id || s.user.userId);
-                });
+        beforeEnter: (_route: Route, params: { id?: string }, s: IRootStore) => {
+            s.user.setSelectedUserId(params.id || s.user.userId);
         },
         onEnter: (route: Route, _params: {id?: string}, s: IRootStore) => {
             const saveAction: IViewAction = {

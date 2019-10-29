@@ -1,7 +1,6 @@
-import { observable, IObservableArray, action, computed, transaction, reaction, ObservableMap } from "mobx";
+import { observable, IObservableArray, action, computed, transaction, ObservableMap } from "mobx";
 import moment from 'moment-es6';
 import { IRootStore } from "./root-store";
-import { goToLogin } from "../internal";
 import { IIconData } from "../mdc/buttons/icon-buttons";
 
 export interface IShortKey {
@@ -95,13 +94,6 @@ export class ViewStore implements IViewStore {
   }
 
   private init() {
-    // redirect to login when user logs out
-    reaction(() => this.rootStore.user.userId, userId => {
-      if (!userId) {
-        goToLogin(this.rootStore);
-      }
-    });
-
     // listen for keyboard event which can fire viewactions
     document.addEventListener("keydown", ev => {
       // Exit 'contextual mode' of top app bar

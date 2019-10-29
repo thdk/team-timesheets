@@ -10,7 +10,7 @@ import { firestore, auth } from "../firebase/my-firebase";
 
 export interface IUserStore {
     readonly userId?: string;
-    readonly authenticatedUser?: IUser;
+    readonly authenticatedUser?: IUser & { id: string };
     readonly selectedUser?: IUser;
     readonly selectedUserId: string | undefined;
     readonly setSelectedUserId: (id: string | undefined) => void;
@@ -113,9 +113,9 @@ export class UserStore implements IUserStore {
     }
 
     @computed
-    public get authenticatedUser(): IUser | undefined {
+    public get authenticatedUser(): (IUser & { id: string }) | undefined {
         const user = this._authUser.get();
-        return user ? user.data : undefined;
+        return user ? { ...user.data!, id: user.id } : undefined;
     }
 
     @computed

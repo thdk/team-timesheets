@@ -1,9 +1,9 @@
 import * as React from 'react';
 import { Route } from 'mobx-router';
-import { beforeEnter, setNavigationContent } from '../actions';
+import { setNavigationContent } from '../actions';
 import { App, IDate } from '../../internal';
 import store, { IRootStore } from '../../stores/root-store';
-import { Dashboard } from '../../pages/dashboard';
+import Dashboard from '../../pages/dashboard';
 import { canReadUsers } from '../../rules/rules';
 
 const path = "/reports/dashboard";
@@ -29,7 +29,6 @@ const routes = {
         },
         onParamsChange: routeChanged,
         title: "Reports dashboard",
-        beforeEnter
     })
 };
 

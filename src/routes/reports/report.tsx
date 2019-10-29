@@ -1,9 +1,9 @@
 import * as React from 'react';
 import { Route } from 'mobx-router';
-import { beforeEnter, setNavigationContent, goToRouteWithDate, routeWithDateChanged } from '../actions';
+import { setNavigationContent, goToRouteWithDate, routeWithDateChanged } from '../actions';
 import { App, IDate } from '../../internal';
 import { IRootStore } from '../../stores/root-store';
-import { Reports } from '../../pages/export';
+import Reports from '../../pages/export';
 
 const path = "/reports";
 
@@ -25,7 +25,6 @@ const routes = {
         },
         onParamsChange: routeChanged,
         title: "Export timesheet",
-        beforeEnter
     })
 };
 

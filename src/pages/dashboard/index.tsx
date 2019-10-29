@@ -1,16 +1,23 @@
 import * as React from 'react';
 import { IReactionDisposer, transaction, when } from 'mobx';
+import { observer } from 'mobx-react';
 
+import {
+    IUserRegistrationsChartProps,
+    ChartType,
+    IRegistrationsChartProps,
+    RegistrationsChart
+} from '../../containers/registrations/chart';
 import { FlexGroup } from '../../components/layout/flex';
 import store from '../../stores/root-store';
 import CollectionSelect from '../../components/collection-select';
-import { observer } from 'mobx-react';
 import { Box } from '../../components/layout/box';
 import { FormField } from '../../components/layout/form';
 import { canReadUsers } from '../../rules/rules';
-import { IUserRegistrationsChartProps, ChartType, IRegistrationsChartProps, RegistrationsChart } from '../../containers/registrations/chart';
 import { TimePeriodSelect, TimePeriod } from '../../components/time-period-select';
 import { IProject, ITask } from '../../../common/dist';
+import { withAuthentication } from '../../containers/users/with-authentication';
+import { RedirectToLogin } from '../../internal';
 
 export const chartColors = {
     blue: "rgb(54, 162, 235)",
@@ -23,7 +30,7 @@ export const chartColors = {
 }
 
 @observer
-export class Dashboard extends React.Component {
+class Dashboard extends React.Component {
     private getUsersReactionDisposer?: IReactionDisposer;
 
     constructor(props: any) {
@@ -146,3 +153,8 @@ export class Dashboard extends React.Component {
         store.dashboard.setTaskFilter(value);
     }
 }
+
+export default withAuthentication(
+    Dashboard,
+    <RedirectToLogin />,
+);

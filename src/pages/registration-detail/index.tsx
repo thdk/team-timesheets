@@ -53,8 +53,15 @@ export class Registration extends React.Component {
                         </FormField>
                     </FlexGroup>
                     <FlexGroup>
-                        <ProjectSelect></ProjectSelect>
-                        <ClientSelect onChange={this.onClientChange} value={client}></ClientSelect>
+                        <FormField>
+                            <ProjectSelect></ProjectSelect>
+                        </FormField>
+                        <FormField first={false}>
+                            <ClientSelect
+                                onChange={this.onClientChange}
+                                value={client}>
+                            </ClientSelect>
+                        </FormField>
                     </FlexGroup>
                     <FlexGroup extraCssClass="row">
                         <FlexGroup direction="vertical">

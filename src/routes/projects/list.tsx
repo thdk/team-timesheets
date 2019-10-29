@@ -6,6 +6,8 @@ import { App, setNavigationContent } from "../../internal";
 import store, { IRootStore } from "../../stores/root-store";
 import { IViewAction } from "../../stores/view-store";
 import { Projects } from "../../pages/projects";
+import detailRoutes from "./detail";
+import { canManageProjects } from "../../rules/rules";
 
 export const goToProjects = (tab: ProjectsTab = "active") => {
     store.router.goTo(routes.projects, {}, store, { tab });
@@ -15,20 +17,26 @@ export type ProjectsTab = "active" | "archived";
 
 const setActions = (tab: ProjectsTab, s: IRootStore) => {
     when(() => store.user.authenticatedUser !== undefined, () => {
+        if (!canManageProjects(store.user.authenticatedUser)) {
+            return;
+        }
+
+        const deleteAction: IViewAction = {
+            action: () => {
+                s.view.selection.size && s.projects.deleteProjects(...s.view.selection.keys());
+                s.view.selection.clear();
+            },
+            icon: { label: "Delete", content: "delete" },
+            shortKey: { key: "Delete", ctrlKey: true },
+            contextual: true,
+            selection: store.view.selection,
+        };
+
+        const actions = [deleteAction] as IViewAction[];
+
         // reactionDisposer && reactionDisposer();
         switch (tab) {
             case "active":
-                const deleteAction: IViewAction = {
-                    action: () => {
-                        s.view.selection.size && s.projects.deleteProjects(...s.view.selection.keys());
-                        s.view.selection.clear();
-                    },
-                    icon: { label: "Delete", content: "delete" },
-                    shortKey: { key: "Delete", ctrlKey: true },
-                    contextual: true,
-                    selection: store.view.selection,
-                };
-
                 const archiveAction: IViewAction = {
                     action: () => {
                         s.projects.archiveProjects(...s.view.selection.keys());
@@ -40,12 +48,11 @@ const setActions = (tab: ProjectsTab, s: IRootStore) => {
                     selection: store.view.selection,
                 };
 
-                s.view.setActions([deleteAction, archiveAction]);
+                actions.push(archiveAction);
 
                 break;
 
             case "archived":
-
                 const unarchiveAction: IViewAction = {
                     action: () => {
                         s.projects.unarchiveProjects(...s.view.selection.keys());
@@ -57,10 +64,24 @@ const setActions = (tab: ProjectsTab, s: IRootStore) => {
                     selection: store.view.selection,
                 };
 
-                s.view.setActions([unarchiveAction]);
+                actions.push(unarchiveAction);
 
                 break;
         }
+
+        s.view.setActions(actions);
+        s.view.setFabs([{
+            action: () => {
+                store.router.goTo(detailRoutes.newProject, {}, store);
+            },
+            icon: {
+                content: "add",
+                label: "Add new project"
+            },
+            shortKey: {
+                key: "a",
+            },
+        }]);
     });
 }
 
@@ -85,6 +106,8 @@ const routes = {
             transaction(() => {
                 s.projects.setProjectId(undefined);
                 s.view.selection.clear();
+                s.view.setFabs([]);
+                s.view.setActions([]);
             });
         }
     })

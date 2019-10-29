@@ -63,7 +63,8 @@ export default {
         '@material/react-chips': ["Chip", "ChipSet"],
         '@material/react-text-field': ["Input"],
         '@material/react-button': ["Button"],
-        'firestorable': ['Collection', 'Document']
+        'firestorable': ['Collection', 'Document'],
+        '@material/react-dialog': ['DialogTitle', 'DialogContent'],
       }
     }),
     typescript(),

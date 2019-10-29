@@ -1,7 +1,6 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 
-import { FormField } from '../../../components/layout/form';
 import { Select, SelectOption } from '../../../mdc/select';
 import store from '../../../stores/root-store';
 import { IProject } from '../../../../common/dist';
@@ -47,27 +46,25 @@ export default class ProjectSelect extends React.Component {
         }
 
         const projects = allProjects.reduce((p, c, i) => {
-                if (typeof c === "string") {
-                    p.push([
-                        <SelectOption key={i.toString()} value="" text={c} disabled={true}></SelectOption>
-                    ]);
-                }
-                else {
-                    const { id, name } = c;
-                    p.push(
-                        <SelectOption text={name!} value={id} key={id}></SelectOption>
-                    );
-                }
+            if (typeof c === "string") {
+                p.push([
+                    <SelectOption key={i.toString()} value="" text={c} disabled={true}></SelectOption>
+                ]);
+            }
+            else {
+                const { id, name } = c;
+                p.push(
+                    <SelectOption text={name!} value={id} key={id}></SelectOption>
+                );
+            }
 
-                return p;
-            }, new Array());
+            return p;
+        }, new Array());
 
         return (
-            <FormField>
-                <Select disabled={isCurrentProjectArchived} value={project} outlined={true} label="Project" onChange={this.onProjectChange}>
-                    {projects}
-                </Select>
-            </FormField>
+            <Select disabled={isCurrentProjectArchived} value={project} outlined={true} label="Project" onChange={this.onProjectChange}>
+                {projects}
+            </Select>
         );
     }
 

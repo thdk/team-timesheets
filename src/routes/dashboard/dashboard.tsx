@@ -21,8 +21,8 @@ const routes = {
         path: path,
         component: <App><Dashboard></Dashboard></App>,
         onEnter: (route: Route, params: IDate, s: IRootStore) => {
-            if (canReadUsers(store.user.authenticatedUser) && !store.user.users.docs.size) {
-                store.user.users.getDocs();
+            if (canReadUsers(store.user.authenticatedUser) && !store.user.usersCollection.docs.size) {
+                store.user.usersCollection.getDocs();
             }
 
             routeChanged(route, params, s);

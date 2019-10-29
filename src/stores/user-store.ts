@@ -1,4 +1,4 @@
-import { observable, action, transaction, computed, observe, when, intercept } from "mobx";
+import { observable, action, transaction, computed, observe, when, intercept, IObservableValue } from "mobx";
 import { ICollection, Collection, Doc } from "firestorable";
 import { IRootStore } from "./root-store";
 import * as deserializer from "../../common/serialization/deserializer";
@@ -6,7 +6,6 @@ import * as serializer from "../../common/serialization/serializer";
 import { IUser, IUserData } from "../../common/dist";
 import { canReadUsers } from "../rules/rules";
 
-import { UndefinedValue, isUndefinedValue, Undefined } from "mobx-undefined-value";
 import { firestore, auth } from "../firebase/my-firebase";
 
 export interface IUserStore {
@@ -17,7 +16,8 @@ export interface IUserStore {
     readonly setSelectedUserId: (id: string | undefined) => void;
     readonly saveSelectedUser: () => void;
     readonly updateSelectedUser: (data: Partial<IUser>) => void;
-    readonly users: ICollection<IUser, IUserData>;
+    readonly usersCollection: ICollection<IUser, IUserData>;
+    readonly users: (IUser & { id: string })[];
     readonly updateAuthenticatedUser: (userData: Partial<IUser>) => void;
     readonly signout: () => void;
 }
@@ -35,15 +35,15 @@ export class UserStore implements IUserStore {
     @observable state = StoreState.Done;
 
     @observable
-    private _authUser: Doc<IUser, IUserData> | Undefined = observable(UndefinedValue);
+    private _authUser: IObservableValue<Doc<IUser, IUserData> | undefined> = observable.box(undefined);
 
     private readonly _selectedUser = observable.box<IUser | undefined>();
 
     private _selectedUserId = observable.box<string | undefined>();
 
-    public readonly users: ICollection<IUser, IUserData>;
+    public readonly usersCollection: ICollection<IUser, IUserData>;
     constructor(rootStore: IRootStore) {
-        this.users = new Collection(firestore, rootStore.getCollection.bind(this, "users"), {
+        this.usersCollection = new Collection(firestore, rootStore.getCollection.bind(this, "users"), {
             realtime: true,
             serialize: serializer.convertUser,
             deserialize: deserializer.convertUser
@@ -51,7 +51,7 @@ export class UserStore implements IUserStore {
 
         when(() => !!this.authenticatedUser, () => {
             if (canReadUsers(this.authenticatedUser)) {
-                this.users.query = ref => ref.orderBy("name", "asc");
+                this.usersCollection.query = ref => ref.orderBy("name", "asc");
             }
         });
 
@@ -60,7 +60,7 @@ export class UserStore implements IUserStore {
         // tODO: move to Firestorable/Document?
         intercept(this._authUser, change => {
             if (change.type === "update") {
-                if (isUndefinedValue(change.newValue)) {
+                if (!change.newValue) {
                     change.object.unwatch();
                 }
             }
@@ -73,11 +73,11 @@ export class UserStore implements IUserStore {
 
     @action
     private setSelectedUser(id: string | undefined): void {
-        const user: Doc<IUser, IUserData> | undefined = id ? this.users.docs.get(id) : undefined;
+        const user: Doc<IUser, IUserData> | undefined = id ? this.usersCollection.docs.get(id) : undefined;
 
         if (id && !user) {
             // fetch the user manually
-            this.users.getAsync(id, true)
+            this.usersCollection.getAsync(id, true)
                 .then(this.setSelectedUserObservable.bind(this));
         } else {
             this.setSelectedUserObservable(user);
@@ -89,7 +89,7 @@ export class UserStore implements IUserStore {
     }
 
     public saveSelectedUser(): void {
-        if (this.selectedUserId && this.selectedUser) { this.users.updateAsync(this.selectedUser, this.selectedUserId || ""); }
+        if (this.selectedUserId && this.selectedUser) { this.usersCollection.updateAsync(this.selectedUser, this.selectedUserId || ""); }
     }
 
     @action.bound
@@ -114,9 +114,8 @@ export class UserStore implements IUserStore {
 
     @computed
     public get authenticatedUser(): IUser | undefined {
-        if (isUndefinedValue(this._authUser)) { return undefined; }
-
-        return this._authUser.data;
+        const user = this._authUser.get();
+        return user ? user.data : undefined;
     }
 
     @computed
@@ -126,7 +125,8 @@ export class UserStore implements IUserStore {
 
     @action
     public updateAuthenticatedUser(userData: Partial<IUser>): void {
-        if (!isUndefinedValue(this._authUser)) { this.users.updateAsync(userData, this._authUser.id); }
+        const user = this._authUser.get();
+        if (user) { this.usersCollection.updateAsync(userData, user.id); }
     }
 
     @action
@@ -134,22 +134,22 @@ export class UserStore implements IUserStore {
         if (!fbUser) {
             transaction(() => {
                 this._userId = undefined;
-                this._authUser = UndefinedValue;
+                this._authUser.set(undefined);
             });
         } else {
             this.state = StoreState.Pending;
-            this.users.getAsync(fbUser.uid).then(user => {
+            this.usersCollection.getAsync(fbUser.uid).then(user => {
                 this.getAuthUserSuccess(user);
-            }, () => this.users.addAsync(
+            }, () => this.usersCollection.addAsync(
                 {
                     roles: { user: true },
                     name: fbUser.displayName || "",
                     tasks: new Map(),
-                    recentProjects: []
+                    recentProjects: [],
                 }
                 , fbUser.uid).then(() => {
                     // get the newly registered user
-                    return this.users.getAsync(fbUser.uid).then(user => {
+                    return this.usersCollection.getAsync(fbUser.uid).then(user => {
                         this.getAuthUserSuccess(user);
                     }, this.getUserError);
                 }, error => console.log(`${error}\nCoudn't save newly registered user. `)));
@@ -161,7 +161,7 @@ export class UserStore implements IUserStore {
         transaction(() => {
             this.state = StoreState.Done;
             this._userId = user.id;
-            this._authUser = user;
+            this._authUser.set(user);
         });
     }
 
@@ -173,5 +173,12 @@ export class UserStore implements IUserStore {
 
     signout(): void {
         auth.signOut();
+    }
+
+    @computed
+    public get users() {
+        return Array.from(
+            this.usersCollection.docs.values()
+        ).map(doc => ({ ...doc.data!, id: doc.id }));
     }
 }

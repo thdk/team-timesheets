@@ -2,9 +2,9 @@ import * as React from 'react';
 import { RoutesConfig, Route } from 'mobx-router';
 import { reaction, transaction } from 'mobx';
 
-import { App, goToOverview } from '../../internal';
-import { Registration } from '../../pages/timesheet-detail';
-import { setTitleForRoute, setBackToOverview, beforeEnter } from '../actions';
+import { App, goToOverview, IDate } from '../../internal';
+import { Registration } from '../../pages/registration-detail';
+import { setTitleForRoute, beforeEnter } from '../actions';
 import store, { IRootStore } from '../../stores/root-store';
 import { IViewAction } from '../../stores/view-store';
 import moment from 'moment';
@@ -18,6 +18,16 @@ export const goToRegistration = (id?: string) => {
 export const goToNewRegistration = (date: moment.Moment) => {
     store.router.goTo(routes.newRegistration, { id: undefined }, store, { date: moment(date).format("YYYY-MM-DD") });
 };
+
+export const setBackToOverview = (action?: () => void, currentDate?: number, targetDate?: IDate) => {
+    store.view.setNavigation({
+        action: () => {
+            action && action();
+            goToOverview(store, targetDate, { track: store.view.track, currentDate });
+        },
+        icon: { label: "Back", content: "arrow_back" }
+    });
+}
 
 const onEnter = (route: Route, params: { id?: string }, s: IRootStore) => {
     if (params.id) {

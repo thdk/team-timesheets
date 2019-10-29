@@ -6,6 +6,7 @@ import store from '../../../stores/root-store';
 import { Box } from '../../../components/layout/box';
 import ClientSelect from '../../../containers/clients/select';
 import { UserTasks } from '../../../containers/users/user-tasks';
+import { FormField } from '../../../components/layout/form';
 
 @observer
 export class Preferences extends React.Component {
@@ -40,7 +41,9 @@ export class Preferences extends React.Component {
                     {userTasksChips}
 
                     <h3 className="mdc-typography--subtitle1">Pick default client</h3>
-                    <ClientSelect onChange={this.defaultClientChanged} label="Default client" value={defaultClient}></ClientSelect>
+                    <FormField first={false}>
+                        <ClientSelect onChange={this.defaultClientChanged} label="Default client" value={defaultClient}></ClientSelect>
+                    </FormField>
                 </Box>
             </>
         );

@@ -20,7 +20,9 @@ export const IconDialog = (props: Props) => {
     // const [isOpen, setIsOpen] = useState(false);
 
     const handleDialogClose = useCallback((event: CustomEvent<{ action?: string }>) => {
-        onClose(event.detail.action);
+        const { action } = event.detail;
+
+        onClose(action === "close" || action === "destroy" ? undefined : event.detail.action);
         // setIsOpen(false)
     }, []);
 

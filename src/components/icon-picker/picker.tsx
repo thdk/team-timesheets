@@ -42,12 +42,8 @@ const IconPicker = (props: Props) => {
     }, [isOpen]);
 
     const handleDialogClose = useCallback((icon: string | undefined) => {
-        if (icon === "destroy") return;
-
         if (icon) {
             setIcon(icon.substr(10));
-        } else {
-            setIcon("");
         }
 
         setIsOpen(false);

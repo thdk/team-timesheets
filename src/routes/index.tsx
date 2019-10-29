@@ -6,7 +6,8 @@ import settingsRoutes from './settings';
 import reportRoutes from './reports';
 import userRoutes from './users';
 import projectRoutes from './projects';
-import dashboardRoures from './projects';
+import dashboardRoures from './dashboard';
+import loginRoutes from './login';
 
 import { goToOverview } from '../internal';
 import store from '../stores/root-store';
@@ -27,5 +28,6 @@ const routes: RoutesConfig = {
   ...userRoutes,
   ...projectRoutes,
   ...dashboardRoures,
+  ...loginRoutes,
 };
 export default routes;

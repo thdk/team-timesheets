@@ -40,7 +40,7 @@ export const setNavigationContent = (route: Route, isChildRoute = true, targetDa
 
 export const beforeEnter = (_route: Route, _params: any, s: IRootStore) => {
     return getLoggedInUserAsync(auth).then(() => {
-        return when(() => !!s.user.userId)
+        return when(() => !!s.user.authenticatedUser)
     }, () => {
         goToLogin(s);
         return false;

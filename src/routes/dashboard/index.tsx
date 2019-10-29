@@ -1,3 +1,3 @@
-import * as dashboard from './dashboard';
+import dashboard from './dashboard';
 
 export default { ...dashboard };

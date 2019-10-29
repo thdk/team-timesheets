@@ -60,8 +60,8 @@ export class UserStore implements IUserStore {
         // tODO: move to Firestorable/Document?
         intercept(this._authUser, change => {
             if (change.type === "update") {
-                if (!change.newValue) {
-                    change.object.unwatch();
+                if (!change.newValue && change.object.value) {
+                    change.object.value.unwatch();
                 }
             }
 

@@ -1,22 +1,25 @@
 import * as React from 'react';
-import { IReactProps } from '../../types';
 
-export const Form = (props: IReactProps) => {
+export const Form = (props: React.HTMLProps<HTMLDivElement>) => {
+    const {children, ...rest} = props;
     return (
-        <div className="form">
+        <div className="form" {...rest}>
             {props.children}
         </div>
     );
 }
 
-export interface IFormFieldProps extends IReactProps {
+export interface IFormFieldProps extends React.HTMLProps<HTMLDivElement> {
     first?: boolean;
 }
 
 export const FormField = (props: IFormFieldProps) => {
-    const {first = true} = props;
+    const { first = true, ...rest } = props;
     return (
-        <div className={`${first ? "first " : ""}formField`}>
+        <div
+            className={`${first ? "first " : ""}formField`}
+            {...rest}
+        >
             {props.children}
         </div>
     )

@@ -1,6 +1,5 @@
 import * as React from 'react';
 import store from '../../../stores/root-store';
-import { IReactProps } from '../../../types';
 import { observer } from 'mobx-react';
 import { Day as Day } from '../day';
 import { IRegistration } from '../../../../common/dist';
@@ -10,7 +9,7 @@ export enum SortOrder {
     Descending = -1
 }
 
-export interface IDaysProps extends IReactProps {
+export interface IDaysProps {
     registrationClick: (id: string) => void;
     registrationToggleSelect?: (id: string, data: IRegistration) => void;
     totalOnTop?: boolean;

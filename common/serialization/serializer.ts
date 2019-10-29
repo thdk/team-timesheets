@@ -16,10 +16,10 @@ export const convertRegistration = (appData: Partial<IRegistration> | "delete") 
         if (!appData.userId) throw new Error("Registrations must have a userId set.");
         // end validation
 
-
+        const description = (appData.description || "").trim();
         registration = {
             date: firebase.firestore.Timestamp.fromDate(appData.date),
-            description: appData.description,
+            description,
             project: appData.project,
             task: appData.task,
             time: appData.time,
@@ -49,7 +49,7 @@ export const convertUser = (appData: Partial<IUser> | "delete") => {
 
     const now = new Date();
 
-    const user: IUserData = {
+    const user: Partial<IUserData> = {
         tasks: appData.tasks ? Array.from(appData.tasks.keys()) : undefined,
         name: appData.name,
         roles: appData.roles,
@@ -58,7 +58,7 @@ export const convertUser = (appData: Partial<IUser> | "delete") => {
         defaultClient: appData.defaultClient,
         team: appData.team,
         modified: firebase.firestore.Timestamp.fromDate(now),
-        created: firebase.firestore.Timestamp.fromDate(appData.created || now)
+        created: firebase.firestore.Timestamp.fromDate(appData.created || now),
     }
 
     // Todo: automatically remove undefined values for all keys

@@ -15,9 +15,9 @@ export interface IUserListProps {
 @observer
 export class UserList extends React.Component<IUserListProps> {
     render() {
-        if (!store.user.users.docs.size) return <></>;
+        if (!store.user.usersCollection.docs.size) return <></>;
 
-        const userItems = Array.from(store.user.users.docs.entries()).map(([id, doc]) => {
+        const userItems = Array.from(store.user.usersCollection.docs.entries()).map(([id, doc]) => {
             const { name, roles, team } = doc.data!;
 
             const teamData = team ? store.config.teamsCollection.docs.get(team) : undefined;
@@ -43,9 +43,9 @@ export class UserList extends React.Component<IUserListProps> {
     }
 
     componentDidMount() {
-        if (!store.user.users.docs.size) {
+        if (!store.user.usersCollection.docs.size) {
             when(() => canReadUsers(store.user.authenticatedUser)).then(() => {
-                store.user.users.getDocs();
+                store.user.usersCollection.getDocs();
             });
         }
     }

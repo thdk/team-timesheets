@@ -223,7 +223,10 @@ export class RegistrationStore implements IRegistrationsStore {
     public cloneRegistration(source: IRegistration) {
         if (!store.view.day) throw new Error("Can't clone a registration without a specific new date");
 
-        return { ...source, date: this.toUTC(store.view.moment.toDate()) };
+        const date = this.toUTC(store.view.moment.toDate());
+
+        // set created to undefined so a new timestamp will be set when saving it
+        return { ...source, created: undefined, date };
     }
 
     public toggleSelectedRegistrationDay(date: Date, force = false) {

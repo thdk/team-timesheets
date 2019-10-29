@@ -1,12 +1,10 @@
 import * as React from 'react';
-import { IReactProps } from '../../types';
 
-export class Box extends React.Component<IReactProps> {
-    render() {
-        return (
-            <div {...this.props} className={`box`}>
-                {this.props.children}
-            </div>
-        )
-    }
+export const Box = (props: React.HTMLProps<HTMLDivElement>) => {
+    const { children, ...rest } = props;
+    return (
+        <div {...rest} className={`box`}>
+            {children}
+        </div>
+    );
 }

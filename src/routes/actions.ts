@@ -1,10 +1,11 @@
 import { Route } from "mobx-router";
-import { goToOverview, IDate } from './timesheets/overview';
+import { IDate } from './registrations/overview';
 import store, { IRootStore } from "../stores/root-store";
 import { goToLogin } from "./login";
 import { when, transaction } from "mobx";
 import { getLoggedInUserAsync } from "../firebase/firebase-utils";
 import { auth } from "../firebase/my-firebase";
+import { setBackToOverview } from "../internal";
 
 export const goToRouteWithDate = (route: Route, s: IRootStore, date?: IDate, trackOptions?: { track?: boolean, currentDate?: number }) => {
     const { track = undefined, currentDate = undefined } = trackOptions || {};
@@ -48,14 +49,4 @@ export const beforeEnter = (_route: Route, _params: any, s: IRootStore) => {
 
 export const setTitleForRoute = (route: Route) => {
     store.view.title = route.title || "";
-}
-
-export const setBackToOverview = (action?: () => void, currentDate?: number, targetDate?: IDate) => {
-    store.view.setNavigation({
-        action: () => {
-            action && action();
-            goToOverview(store, targetDate, { track: store.view.track, currentDate });
-        },
-        icon: { label: "Back", content: "arrow_back" }
-    });
 }

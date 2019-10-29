@@ -1,0 +1,38 @@
+@import '@material/dialog/mdc-dialog';
+@import '@rmwc/icon/icon.css';
+.mdc-dialog {
+    @include mdc-dialog-min-width(400px);
+    @include mdc-dialog-max-height(600px, 100px);
+    @include mdc-dialog-container-fill-color("surface");
+
+    .mdc-dialog__container {
+        min-height: 70vh;
+
+        .icon-dialog-content {
+            overflow-x: hidden;
+            overflow-y: scroll;
+
+            .icon-dialog-content-item {
+                display: flex;
+                flex: 0 0 35px;
+                flex-direction: row;
+                justify-content: flex-start;
+                height: 3em;
+                align-items: center;
+                padding-left: 16px;
+
+                .icon-dialog-content-item-name {
+                    display: inherit;
+                }
+
+                .icon-dialog-content-item-icon {
+                    display: inherit;
+                    margin-left: 0;
+                    margin-right: 32px;
+                    width: 24px;
+                    height: 24px;
+                }
+            }
+        }
+    }
+}

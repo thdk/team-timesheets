@@ -3,7 +3,7 @@ import { observer } from "mobx-react";
 import { goToRegistration } from '../../internal';
 import store from '../../stores/root-store';
 import { Days, SortOrder } from '../../containers/registrations/days';
-import { goToOverview } from '../../routes/timesheets/overview';
+import { goToOverview } from '../../routes/registrations/overview';
 import { List, ListItem, ListDivider } from '../../mdc/list';
 import { DateSelect } from '../../components/date-select';
 import { ButtonType, Button } from '../../mdc/buttons/button';

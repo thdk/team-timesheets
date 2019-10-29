@@ -3,9 +3,8 @@ import { FlexGroup } from '../layout/flex';
 import moment from 'moment-es6';
 import { Select, SelectOption } from '../../mdc/select';
 import { FormField } from '../layout/form';
-import { IReactProps } from '../../types';
 
-export interface IDateSelectProps extends IReactProps {
+export interface IDateSelectProps extends React.HTMLProps<HTMLDivElement> {
     year?: number;
     month?: number;
     onMonthChange: (month: number) => void;
@@ -14,7 +13,7 @@ export interface IDateSelectProps extends IReactProps {
 
 export class DateSelect extends React.Component<IDateSelectProps> {
     render() {
-        const { year, month, style } = this.props;
+        const { year, month, ...rest } = this.props;
         const months = moment.months().map((m, i) => {
             return <SelectOption key={m} text={m} value={i.toString()}></SelectOption>
         });
@@ -26,7 +25,7 @@ export class DateSelect extends React.Component<IDateSelectProps> {
         });
 
         return (
-            <FlexGroup style={style}>
+            <FlexGroup {...rest}>
                 <FormField>
                     <Select value={year ? year.toString() : undefined} outlined={true} label={"Year"} onChange={this.onYearChange}>
                         {years}

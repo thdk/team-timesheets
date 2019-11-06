@@ -35,7 +35,7 @@ export interface IRegistrationsStore {
     readonly registrationsGroupedByDaySortOrder: SortOrder;
     areGroupedRegistrationsCollapsed: boolean;
     readonly setRegistrationsGroupedByDaySortOrder: (sortOrder: SortOrder) => void;
-    readonly cloneRegistration: (source: IRegistration) => IRegistration;
+    readonly copyRegistrationToDate: (source: IRegistration, newDate: Date) => IRegistration;
     readonly getRegistrationById: (id: string) => IRegistration | null;
 }
 
@@ -220,10 +220,8 @@ export class RegistrationStore implements IRegistrationsStore {
         this.registrations.addAsync(data);
     }
 
-    public cloneRegistration(source: IRegistration) {
-        if (!store.view.day) throw new Error("Can't clone a registration without a specific new date");
-
-        const date = this.toUTC(store.view.moment.toDate());
+    public copyRegistrationToDate(source: IRegistration, newDate: Date) {
+        const date = this.toUTC(newDate);
 
         // set created to undefined so a new timestamp will be set when saving it
         return { ...source, created: undefined, date };

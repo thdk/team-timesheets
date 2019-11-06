@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Route } from 'mobx-router';
 import Timesheet from '../../pages/registrations';
-import { transaction } from 'mobx';
+import { transaction, IKeyValueMap } from 'mobx';
 import { setNavigationContent, goToRouteWithDate } from '../actions';
 import { App } from '../../internal';
 import store, { IRootStore } from '../../stores/root-store';
@@ -41,8 +41,20 @@ const setActions = (s: IRootStore, alowInserts = false) => {
     const actions: IViewAction[] = [
         {
             action: selection => {
-                s.timesheets.clipboard.replace(selection);
-                s.view.selection.clear();
+                if (!selection) return;
+                transaction(() => {
+                    s.timesheets.clipboard.replace(
+                        Array.from(selection.keys())
+                            .reduce((map, id) => {
+                                const registration = store.timesheets.getRegistrationById(id);
+                                if (registration) {
+                                    map[id] = { ...registration };
+                                }
+
+                                return map;
+                            }, {} as IKeyValueMap<IRegistration>));
+                    s.view.selection.clear();
+                });
             },
             icon: { content: "content_copy", label: "Copy" },
             shortKey: { ctrlKey: true, key: "c" },
@@ -69,13 +81,12 @@ const setActions = (s: IRootStore, alowInserts = false) => {
             action: selection => {
                 if (!selection) return;
 
-                const docData = Array.from(selection.keys())
-                    .map(regId => {
-                        const reg = s.timesheets.getRegistrationById(regId);
-                        return reg ? s.timesheets.cloneRegistration(reg) : undefined;
-                    }) as IRegistration[];
-
-                s.timesheets.addRegistrations(docData.filter(r => !!r));
+                s.timesheets.addRegistrations(
+                    Array.from(selection.values())
+                        .map(reg =>
+                            store.timesheets.copyRegistrationToDate(reg, store.view.moment.toDate())
+                        )
+                );
             },
             icon: { content: "content_paste", label: "Paste" },
             shortKey: { ctrlKey: true, key: "v" },

@@ -1,4 +1,4 @@
-import { transaction, when } from 'mobx';
+import { transaction } from 'mobx';
 import { Route, RoutesConfig } from 'mobx-router';
 import * as React from 'react';
 
@@ -21,16 +21,12 @@ export const goToNewProject = () => {
 };
 
 const beforeEnter = (_route: Route, params: { id?: string }, s: IRootStore) => {
-    return when(() => !!store.user.userId).then(() => {
-        if (params.id) {
-            s.projects.setProjectId(params.id);
-        }
-        else {
-            s.projects.setDefaultProject();
-        }
-
-        return true;
-    });
+    if (params.id) {
+        s.projects.setProjectId(params.id);
+    }
+    else {
+        s.projects.setDefaultProject();
+    }
 }
 
 const onEnter = (route: Route, params: { id?: string }, s: IRootStore) => {

@@ -5,7 +5,7 @@ import { transaction, when } from "mobx";
 import { App, setNavigationContent } from "../../internal";
 import store, { IRootStore } from "../../stores/root-store";
 import { IViewAction } from "../../stores/view-store";
-import { Projects } from "../../pages/projects";
+import Projects from "../../pages/projects";
 import detailRoutes from "./detail";
 import { canManageProjects } from "../../rules/rules";
 

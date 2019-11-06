@@ -1,11 +1,10 @@
 import { Route } from "mobx-router";
 import { IDate } from './registrations/overview';
 import store, { IRootStore } from "../stores/root-store";
-import { goToLogin } from "./login";
-import { when, transaction } from "mobx";
-import { getLoggedInUserAsync } from "../firebase/firebase-utils";
-import { auth } from "../firebase/my-firebase";
+import { transaction } from "mobx";
 import { setBackToOverview } from "../internal";
+import { useEffect } from "react";
+import React from "react";
 
 export const goToRouteWithDate = (route: Route, s: IRootStore, date?: IDate, trackOptions?: { track?: boolean, currentDate?: number }) => {
     const { track = undefined, currentDate = undefined } = trackOptions || {};
@@ -38,15 +37,15 @@ export const setNavigationContent = (route: Route, isChildRoute = true, targetDa
     setTitleForRoute(route);
 }
 
-export const beforeEnter = (_route: Route, _params: any, s: IRootStore) => {
-    return getLoggedInUserAsync(auth).then(() => {
-        return when(() => !!s.user.authenticatedUser)
-    }, () => {
-        goToLogin(s);
-        return false;
-    });
-}
-
 export const setTitleForRoute = (route: Route) => {
     store.view.title = route.title || "";
 }
+
+export const Redirect = ({route, params}: {route: Route, params?: {}}) => {
+
+    useEffect(() => {
+        store.router.goTo(route, params, store);
+    });
+
+    return React.createElement(React.Fragment);
+};

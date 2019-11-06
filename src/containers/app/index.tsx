@@ -44,3 +44,5 @@ export class App extends React.Component {
         this.unobserveDrawerOpen && this.unobserveDrawerOpen();
     }
 }
+
+export default App;

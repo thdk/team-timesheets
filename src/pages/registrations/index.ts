@@ -1,3 +1,1 @@
-import Timesheet from "./registrations";
-
-export default Timesheet;
+export { default } from "./registrations";

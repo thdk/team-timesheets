@@ -8,9 +8,11 @@ import { List, ListItem, ListDivider } from '../../mdc/list';
 import { DateSelect } from '../../components/date-select';
 import { ButtonType, Button } from '../../mdc/buttons/button';
 import { FlexGroup } from '../../components/Layout/flex';
+import { withAuthentication } from '../../containers/users/with-authentication';
+import { RedirectToLogin } from '../../routes/login';
 
 @observer
-export class Reports extends React.Component {
+class Reports extends React.Component {
 
     registrationClick = (id: string) => {
         goToRegistration(id);
@@ -80,3 +82,8 @@ export class Reports extends React.Component {
         store.view.year = year;
     }
 }
+
+export default withAuthentication(
+    Reports,
+    <RedirectToLogin />,
+);

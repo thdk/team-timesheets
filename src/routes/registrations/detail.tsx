@@ -1,13 +1,13 @@
 import * as React from 'react';
 import { RoutesConfig, Route } from 'mobx-router';
 import { reaction, transaction } from 'mobx';
+import moment from 'moment';
 
 import { App, goToOverview, IDate } from '../../internal';
-import { Registration } from '../../pages/registration-detail';
-import { setTitleForRoute, beforeEnter } from '../actions';
+import Registration from '../../pages/registration-detail';
+import { setTitleForRoute } from '../actions';
 import store, { IRootStore } from '../../stores/root-store';
 import { IViewAction } from '../../stores/view-store';
-import moment from 'moment';
 
 const path = "/timesheetsdetail";
 
@@ -82,15 +82,10 @@ const routes = {
         title: "New registration",
         onEnter,
         beforeExit,
-        beforeEnter: (route: Route, params: {}, s: IRootStore, queryParams?: { date?: string }) => {
-            return beforeEnter(route, params, s)
-                .then(() => {
-                    const { date = undefined } = queryParams || {};
-                    s.timesheets.setSelectedRegistrationDefault(date ? moment(date) : undefined);
-
-                    return true;
-                })
-        }
+        beforeEnter: (_route: Route, _params: {}, s: IRootStore, queryParams?: { date?: string }) => {
+            const { date = undefined } = queryParams || {};
+            s.timesheets.setSelectedRegistrationDefault(date ? moment(date) : undefined);
+        },
     }),
     registrationDetail: new Route({
         path: path + '/:id',
@@ -98,7 +93,6 @@ const routes = {
         title: "Edit registration",
         onEnter,
         beforeExit,
-        beforeEnter
     })
 } as RoutesConfig;
 

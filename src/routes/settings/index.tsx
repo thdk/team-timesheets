@@ -1,11 +1,11 @@
 import { Route } from "mobx-router";
 import * as React from 'react';
-import { IReactionDisposer, transaction, when, Lambda } from "mobx";
+import { transaction, when } from "mobx";
 import store, { IRootStore } from "../../stores/root-store";
 import { IViewAction } from "../../stores/view-store";
 import { canDeleteTask, canDeleteClient, canManageTeams } from "../../rules/rules";
 import { App } from "../../internal";
-import { Settings } from "../../pages/settings";
+import Settings from "../../pages/settings";
 import { setNavigationContent } from "../actions";
 
 export const goToSettings = (tab: SettingsTab = "preferences") => {
@@ -14,11 +14,8 @@ export const goToSettings = (tab: SettingsTab = "preferences") => {
 
 export type SettingsTab = "tasks" | "preferences" | "clients" | "users" | "teams";
 
-let reactionDisposer: IReactionDisposer | Lambda;
-
 const setActions = (tab: SettingsTab, s: IRootStore) => {
     when(() => store.user.authenticatedUser !== undefined, () => {
-        // reactionDisposer && reactionDisposer();
         switch (tab) {
             case "tasks": {
                 const deleteAction: IViewAction | undefined = canDeleteTask(store.user.authenticatedUser)
@@ -103,8 +100,6 @@ const routes = {
                 s.config.clientId = undefined;
                 s.view.selection.clear();
             });
-
-            reactionDisposer && reactionDisposer();
         }
     })
 };

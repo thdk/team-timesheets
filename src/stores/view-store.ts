@@ -65,8 +65,8 @@ export class ViewStore implements IViewStore {
   readonly fabs = observable<IFab>([]);
 
   @observable navigationAction?: INavigationViewAction;
-  @observable readonly title: string;
-  @observable readonly isDrawerOpen: boolean;
+  @observable title = "";
+  @observable isDrawerOpen = true;
   @observable day?: number;
   @observable month?: number;
   @observable year?: number;
@@ -79,8 +79,6 @@ export class ViewStore implements IViewStore {
     this.rootStore = rootStore;
 
     const date = new Date();
-    this.title = "";
-    this.isDrawerOpen = true;
 
     transaction(() => {
       this.day = date.getDate();

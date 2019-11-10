@@ -2,16 +2,16 @@ import * as React from 'react';
 import { observer } from 'mobx-react';
 import { goToOverview, goToSettings, goToReports, goToProjects, goToDashboard, goToLogin } from "../../../internal";
 import store from '../../../stores/root-store';
-import Calendar, { CalendarTileProperties } from 'react-calendar/dist/entry.nostyle';
 import { canManageProjects } from '../../../rules/rules';
+import { IWithAuthenticatedUserProps } from '../../users/with-authenticated-user';
+import TimesheetCalendar from '../../timesheet-calendar/timesheet-calendar';
+import { withAuthentication } from '../../users/with-authentication';
+import { withAuthorisation } from '../../users/with-authorisation';
+
+type Props = Partial<IWithAuthenticatedUserProps>;
 
 @observer
-export class Menu extends React.Component {
-
-    dateChanged = (dates: Date | Date[]) => {
-        const date = dates instanceof (Date) ? dates : dates[0];
-        goToOverview(store, { year: date.getFullYear(), day: date.getDate(), month: date.getMonth() + 1 }, { track: false });
-    }
+class Menu extends React.Component<Props> {
 
     navigateToOverview = (e: React.MouseEvent, month = false) => {
         e.preventDefault();
@@ -29,78 +29,70 @@ export class Menu extends React.Component {
         navigate();
     }
 
-    getTileClassName = (tile: CalendarTileProperties) => {
-        const classNames = [];
-        if (tile.view === "month") {
-            // TODO: TIMEZONE ISSUE!!!
-            // It should be enough to check g.date.getTime() === tile.date.getTime()
-            // However due to a timezone issue it not always gives the required results!
-            // below code is NOT ready for production
-            const tileHasData = store.timesheets.registrationsGroupedByDay.some(g =>
-                g.groupKey.getDate() === tile.date.getDate()
-                && g.groupKey.getMonth() === tile.date.getMonth()
-                && g.groupKey.getFullYear() === tile.date.getFullYear());
-            if (tileHasData) classNames.push("has-data");
-        }
-
-        return classNames.length ? classNames.join(" ") : null;
-    }
-
     render() {
-        const projectsJSX =
-            canManageProjects(store.user.authenticatedUser)
-                ? <>
-                    <hr className="mdc-list-divider" />
+        const ProjectsMenuItem = withAuthorisation(() => <>
+            <hr className="mdc-list-divider" />
 
-                    <a className="mdc-list-item" onClick={e => this.navigate(e, goToProjects)} href="#">
-                        <i className="material-icons mdc-list-item__graphic" aria-hidden="true">star_border</i>
-                        <span className="mdc-list-item__text">Projects</span>
-                    </a>
-                </>
-                : null;
+            <a className="mdc-list-item" onClick={e => this.navigate(e, goToProjects)} href="#">
+                <i className="material-icons mdc-list-item__graphic" aria-hidden="true">star_border</i>
+                <span className="mdc-list-item__text">Projects</span>
+            </a>
+        </>,
+            canManageProjects
+        );
+
+        const AuthenticatedMenu = withAuthentication(() =>
+            <div className="mdc-list">
+                <a className="mdc-list-item" onClick={this.navigateToOverview} href="/" aria-selected="true">
+                    <i className="material-icons mdc-list-item__graphic" aria-hidden="true">today</i>
+                    <span className="mdc-list-item__text">Today</span>
+                </a>
+
+                <a className="mdc-list-item" onClick={e => this.navigateToOverview(e, true)} href="/" aria-selected="true">
+                    <i className="material-icons mdc-list-item__graphic" aria-hidden="true">calendar_today</i>
+                    <span className="mdc-list-item__text">This month</span>
+                </a>
+
+                <hr className="mdc-list-divider" />
+
+                <h6 className="mdc-list-group__subheader">Reports</h6>
+                <a className="mdc-list-item" onClick={e => this.navigate(e, () => { e.preventDefault(); goToReports(store); })} href="#">
+                    <i className="material-icons mdc-list-item__graphic" aria-hidden="true">list</i>
+                    <span className="mdc-list-item__text">Export</span>
+                </a>
+
+                <a className="mdc-list-item" onClick={e => this.navigate(e, () => { e.preventDefault(); goToDashboard(store); })} href="#">
+                    <i className="material-icons mdc-list-item__graphic" aria-hidden="true">bar_chart</i>
+                    <span className="mdc-list-item__text">Dashboard</span>
+                </a>
+
+                <ProjectsMenuItem />
+
+                <hr className="mdc-list-divider" />
+
+                <a className="mdc-list-item" onClick={e => this.navigate(e, goToSettings)} href="#">
+                    <i className="material-icons mdc-list-item__graphic" aria-hidden="true">settings</i>
+                    <span className="mdc-list-item__text">Settings</span>
+                </a>
+
+                <hr className="mdc-list-divider" />
+            </div>
+        );
 
         return (
             <>
-                <Calendar key={store.timesheets.registrationsGroupedByDay.toString()} tileClassName={this.getTileClassName} value={store.view.moment.toDate()} onChange={this.dateChanged}></Calendar>
+                <TimesheetCalendar />
+                <AuthenticatedMenu />
+
                 <div className="mdc-list">
-                    <a className="mdc-list-item" onClick={this.navigateToOverview} href="/" aria-selected="true">
-                        <i className="material-icons mdc-list-item__graphic" aria-hidden="true">today</i>
-                        <span className="mdc-list-item__text">Today</span>
-                    </a>
-
-                    <a className="mdc-list-item" onClick={e => this.navigateToOverview(e, true)} href="/" aria-selected="true">
-                        <i className="material-icons mdc-list-item__graphic" aria-hidden="true">calendar_today</i>
-                        <span className="mdc-list-item__text">This month</span>
-                    </a>
-
-                    <hr className="mdc-list-divider" />
-
-                    <h6 className="mdc-list-group__subheader">Reports</h6>
-                    <a className="mdc-list-item" onClick={e => this.navigate(e, () => { e.preventDefault(); goToReports(store); })} href="#">
-                        <i className="material-icons mdc-list-item__graphic" aria-hidden="true">list</i>
-                        <span className="mdc-list-item__text">Export</span>
-                    </a>
-
-                    <a className="mdc-list-item" onClick={e => this.navigate(e, () => { e.preventDefault(); goToDashboard(store); })} href="#">
-                        <i className="material-icons mdc-list-item__graphic" aria-hidden="true">bar_chart</i>
-                        <span className="mdc-list-item__text">Dashboard</span>
-                    </a>
-
-                    {projectsJSX}
-
-                    <hr className="mdc-list-divider" />
-
-                    <a className="mdc-list-item" onClick={e => this.navigate(e, goToSettings)} href="#">
-                        <i className="material-icons mdc-list-item__graphic" aria-hidden="true">settings</i>
-                        <span className="mdc-list-item__text">Settings</span>
-                    </a>
                     <a className="mdc-list-item" onClick={this.toggleLogin} href="#">
                         <i className="material-icons mdc-list-item__graphic" aria-hidden="true">perm_identity</i>
                         <span className="mdc-list-item__text">{store.user.userId ? "Logout" : "Login"}</span>
                     </a>
-
                 </div>
             </>
         );
     }
 }
+
+export default Menu;

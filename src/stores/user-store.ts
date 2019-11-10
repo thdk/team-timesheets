@@ -20,6 +20,7 @@ export interface IUserStore {
     readonly users: (IUser & { id: string })[];
     readonly updateAuthenticatedUser: (userData: Partial<IUser>) => void;
     readonly signout: () => void;
+    readonly isAuthInitialised: boolean;
 }
 
 export enum StoreState {
@@ -37,6 +38,8 @@ export class UserStore implements IUserStore {
     @observable
     private _authUser: IObservableValue<Doc<IUser, IUserData> | undefined> = observable.box(undefined);
 
+    @observable.ref isAuthInitialised = false;
+
     private readonly _selectedUser = observable.box<IUser | undefined>();
 
     private _selectedUserId = observable.box<string | undefined>();
@@ -50,7 +53,7 @@ export class UserStore implements IUserStore {
         });
 
         when(() => !!this.authenticatedUser, () => {
-            if (canReadUsers(this.authenticatedUser)) {
+            if (canReadUsers(this.authenticatedUser || undefined)) {
                 this.usersCollection.query = ref => ref.orderBy("name", "asc");
             }
         });
@@ -115,7 +118,7 @@ export class UserStore implements IUserStore {
     @computed
     public get authenticatedUser(): (IUser & { id: string }) | undefined {
         const user = this._authUser.get();
-        return user ? { ...user.data!, id: user.id } : undefined;
+        return user ? { ...user.data!, id: user.id } : user;
     }
 
     @computed
@@ -133,6 +136,7 @@ export class UserStore implements IUserStore {
     private setUser(fbUser: firebase.User | null): void {
         if (!fbUser) {
             transaction(() => {
+                this.isAuthInitialised = true;
                 this._userId = undefined;
                 this._authUser.set(undefined);
             });
@@ -162,6 +166,7 @@ export class UserStore implements IUserStore {
             this.state = StoreState.Done;
             this._userId = user.id;
             this._authUser.set(user);
+            this.isAuthInitialised = true;
         });
     }
 

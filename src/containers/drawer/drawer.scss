@@ -1,0 +1,11 @@
+.mdc-drawer-app-content {
+  flex: auto;
+  overflow: auto;
+  width: 100%;
+}
+
+.mdc-drawer {
+  .mdc-drawer__header {
+    border-bottom: solid 1px lightgrey;
+  }
+}

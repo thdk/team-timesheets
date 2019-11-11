@@ -7,7 +7,7 @@ const rev = require('gulp-rev');
 const series = require('stream-series');
 const buffer = require('gulp-buffer');
 const inject = require('gulp-inject');
-const del = require('del');
+const rimraf = require('rimraf');
 const merge = require("merge-stream");
 
 const postcss = require('gulp-postcss');
@@ -74,7 +74,7 @@ gulp.task('scsswatch', gulp.series(function (done) {
 
 gulp.task('clean:libs', gulp.series(function (done) {
     // You can use multiple globbing patterns as you would with `gulp.src`
-    return del([configuration.paths.dist + "/lib"], done);
+    return rimraf(configuration.paths.dist + "/lib", done);
 }));
 
 gulp.task("copy:libs", gulp.series("clean:libs", function () {
@@ -128,17 +128,17 @@ gulp.task('inject', function (done) {
 
 gulp.task('clean-js', function (cb) {
     // You can use multiple globbing patterns as you would with `gulp.src`
-    return del(['dist/js'], cb);
+    return rimraf('dist/js', cb);
 });
 
 gulp.task('clean-css', function (cb) {
     // You can use multiple globbing patterns as you would with `gulp.src`
-    return del(['dist/css'], cb);
+    return rimraf('dist/css', cb);
 });
 
 gulp.task('clean-dist', function (cb) {
     // You can use multiple globbing patterns as you would with `gulp.src`
-    return del(['dist'], cb);
+    return rimraf('dist', cb);
 });
 
 gulp.task('set-node-env', function (done) {

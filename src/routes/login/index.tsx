@@ -31,7 +31,9 @@ export const loginRoutes = {
                 // TODO: detect requested page so we can redirect to that page when authenticated
                 goToOverview(s);
                 return false;
-            }, () => true);
+            }, () => {
+                return true;
+            });
         },
     })
 };

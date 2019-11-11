@@ -61,17 +61,7 @@ body {
     position: absolute;
   }
 
-  .mdc-drawer-app-content {
-    flex: auto;
-    overflow: auto;
-  }
-
   .main-content {
     overflow: auto;
     height: 100%;
   }
-
-/** https://github.com/material-components/material-components-web/issues/4629 */
-:not(.mdc-list--non-interactive) > :not(.mdc-list-item--disabled).mdc-list-item:hover::before {
-    filter: opacity(100%);
-}

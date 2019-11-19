@@ -5,6 +5,7 @@ export const loadCsvAsync = <T>(bucket: string, file: string, deserialise: (data
 
     // Get the csv file from cloud storage as a json stream
     const csvConverter = new Converter();
+
     return new Promise<T[]>((resolve, reject) => {
         const storage = new gcs.Storage();
         const items = [] as T[];
@@ -12,7 +13,7 @@ export const loadCsvAsync = <T>(bucket: string, file: string, deserialise: (data
             .bucket(bucket)
             .file(file);
 
-        console.log({ gcsFile });
+        console.log({ file });
 
         gcsFile
             .createReadStream()
@@ -24,7 +25,7 @@ export const loadCsvAsync = <T>(bucket: string, file: string, deserialise: (data
                 // Without data event the stream never starts!
             })
             .on("error", err => {
-                reject("The Storage API returned an error: " + err);
+                reject({storageApiError: err});
             })
             .on("end", () => {
                 console.log("File streamed completely.");

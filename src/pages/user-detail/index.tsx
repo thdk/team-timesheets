@@ -3,13 +3,13 @@ import store from "../../stores/root-store";
 import { Box } from "../../components/layout/box";
 import { FlexGroup } from "../../components/layout/flex";
 import { FormField } from "../../components/layout/form";
-import { TextFieldOld } from "../../mdc/textfield";
 import { observer } from "mobx-react";
 import Switch from "../../mdc/switch";
 import { IRoles } from "../../../common";
 import TeamSelect from "../../containers/teams/select";
 import { withAuthentication } from "../../containers/users/with-authentication";
 import { RedirectToLogin } from "../../routes/login";
+import { TextField } from "@rmwc/textfield";
 
 @observer
 class User extends React.Component {
@@ -33,9 +33,13 @@ class User extends React.Component {
             <Box>
                 <FlexGroup>
                     <FormField>
-                        <TextFieldOld outlined={true} id="username" hint="Display name" value={name}
-                            onChange={this.onUserNameChange}>
-                        </TextFieldOld>
+                        <TextField
+                            outlined={true}
+                            id="username"
+                            placeholder="Display name"
+                            value={name}
+                            onChange={this.onUserNameChange}
+                        />
                     </FormField>
                     <TeamSelect value={team} onChange={this.onTeamChange}></TeamSelect>
                 </FlexGroup>
@@ -49,8 +53,8 @@ class User extends React.Component {
         );
     }
 
-    onUserNameChange(name: string) {
-        store.user.updateSelectedUser({ name });
+    onUserNameChange(event: React.ChangeEvent<HTMLInputElement>) {
+        store.user.updateSelectedUser({ name: event.currentTarget.value });
     }
 
     onUserRoleChange(role: keyof IRoles) {

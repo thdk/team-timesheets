@@ -2,7 +2,6 @@ import * as React from 'react';
 import { observer } from "mobx-react";
 import { Chip, ChipSet } from '@material/react-chips';
 
-import { TextFieldOld } from '../../mdc/textfield';
 import { Form, FormField } from '../../components/layout/form';
 import { FlexGroup } from '../../components/layout/flex';
 import store from '../../stores/root-store';
@@ -10,6 +9,7 @@ import ProjectSelect from '../../containers/projects/select';
 import ClientSelect from '../../containers/clients/select';
 import { withAuthentication } from '../../containers/users/with-authentication';
 import { RedirectToLogin } from '../../internal';
+import { TextField } from '@rmwc/textfield';
 
 @observer
 class Registration extends React.Component {
@@ -43,15 +43,42 @@ class Registration extends React.Component {
                 <Form>
                     <FlexGroup extraCssClass="row">
                         <FormField>
-                            <TextFieldOld type="number" outlined={true} focus={true} tabIndex={0} onChange={this.onTimeChange} value={(time || "").toString()} id="time" hint="Time" fullWidth={false}></TextFieldOld>
+                            <TextField
+                                type="number"
+                                outlined={true}
+                                autoFocus={true}
+                                tabIndex={0}
+                                onChange={this.onTimeChange}
+                                value={(time || "").toString()}
+                                id="time"
+                                label="Time"
+                            />
                         </FormField>
                         <FormField first={false}>
-                            <TextFieldOld tabIndex={-1} disabled={true} value={`${date!.getFullYear()}-${date!.getMonth() + 1}-${date!.getDate()}`} id="date" hint="Date" leadingIcon="event" outlined={true}></TextFieldOld>
+                            <TextField
+                                tabIndex={-1}
+                                disabled={true}
+                                value={`${date!.getFullYear()}-${date!.getMonth() + 1}-${date!.getDate()}`}
+                                id="date"
+                                label="Date"
+                                icon="event"
+                                outlined={true} />
                         </FormField>
                     </FlexGroup>
                     <FlexGroup extraCssClass="row">
                         <FormField>
-                            <TextFieldOld cols={250} rows={2} outlined={true} tabIndex={0} onChange={this.onDescriptionChange} value={description} id="description" hint="Description" fullWidth={false}></TextFieldOld>
+                            <TextField
+                                textarea
+                                cols={250}
+                                rows={2}
+                                outlined={true}
+                                tabIndex={0}
+                                onChange={this.onDescriptionChange}
+                                value={description}
+                                id="description"
+                                label="Description"
+                                fullwidth
+                            />
                         </FormField>
                     </FlexGroup>
                     <FlexGroup>
@@ -78,14 +105,14 @@ class Registration extends React.Component {
         );
     }
 
-    onDescriptionChange = (value: string) => {
+    onDescriptionChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         if (store.timesheets.registration && store.timesheets.registration)
-            store.timesheets.registration.description = value.trimLeft();
+            store.timesheets.registration.description = event.currentTarget.value.trimLeft();
     }
 
-    onTimeChange = (value: string) => {
+    onTimeChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         if (store.timesheets.registration && store.timesheets.registration)
-            store.timesheets.registration.time = +value;
+            store.timesheets.registration.time = +(event.currentTarget.value);
     }
 
     taskClicked = (taskId: string, selected: boolean) => {

@@ -111,6 +111,7 @@ export const watchImportSessions = functions.firestore
                                             importId,
                                             modified: admin.firestore.Timestamp.fromDate(now),
                                             created: admin.firestore.Timestamp.fromDate(now),
+                                            id: docRef.id,
                                         };
 
                                         console.log(`Inserting new user: ${userData.name}`);

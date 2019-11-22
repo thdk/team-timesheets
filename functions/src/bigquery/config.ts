@@ -145,7 +145,13 @@ const convertCsvRegistrationToFirestore = (data: any) => {
         });
     }
     catch (e) {
-        throw new Error(`Can't convert: ${data}\nError:\n${e}`);
+        console.error({
+            error: "Can't deserialize data.",
+            data,
+            exception: e,
+        });
+
+        throw new Error("Can't deserialize data.");
     }
 }
 

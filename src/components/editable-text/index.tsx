@@ -1,19 +1,22 @@
 import * as React from 'react';
-import { TextFieldOld, ITextFieldProps } from '../../mdc/textfield';
+import { TextField, TextFieldProps } from '@rmwc/textfield';
 
 export interface IEditableTextFieldProps {
-    readonly edit: ITextFieldProps & { onCancel?: () => void; },
+    readonly edit: TextFieldProps & { 
+        onCancel?: () => void; 
+        onChange: (value: string) => void;
+    },
     readonly read?: React.HTMLProps<HTMLDivElement>,
     readonly editMode: boolean,
 }
 
 const EditableTextField = React.forwardRef((props: IEditableTextFieldProps, ref?: any) => {
-    const { editMode, edit: { value, onChange, onCancel } } = props;
+    const { editMode, edit: { value, onCancel, type, onChange } } = props;
     const [textFieldValue, setTextFieldValue] = React.useState(value);
 
-    const onInputChange = (value: string) => {
-        setTextFieldValue(value);
-    };
+    const onInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        setTextFieldValue(event.currentTarget.value);
+    };    
 
     const onKeyPress = (e: React.KeyboardEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         switch (e.key) {
@@ -28,30 +31,26 @@ const EditableTextField = React.forwardRef((props: IEditableTextFieldProps, ref?
         }
     };
 
-    const onFocus = (e: React.FocusEvent) => {
-        const textBoxEl = (e.currentTarget as HTMLInputElement);
-        textBoxEl.setSelectionRange(0, textBoxEl.value.length);
-    };
-
     const onBlur = (e: React.FocusEvent) => {
         const textBoxEl = (e.currentTarget as HTMLInputElement);
         onChange && onChange(textBoxEl.value);
     };
 
     const jsx = editMode
-        ? <TextFieldOld
+        ? <TextField
             style={{
                 height: "40px",
-                maxWidth: "56px"
+                maxWidth: "120px"
             }}
             onBlur={onBlur}
-            onFocus={onFocus}
-            dense
-            focus
+            autoFocus={true}
+            type={type}
             onKeyPress={onKeyPress}
             onChange={onInputChange}
             ref={ref}
-            value={textFieldValue} />
+            value={textFieldValue}
+            step={0.5}
+            />
         : <>{value}</>;
 
     return jsx;

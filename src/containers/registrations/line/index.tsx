@@ -56,7 +56,13 @@ export default class RegistrationLine extends React.Component<IRegistrationLineP
         const timeJSX2 = <EditableTextField
             ref={this.timeInputEl}
             editMode={!!isEditing}
-            edit={{ onChange: onTimeChange, onCancel, value: (time || 0).toFixed(2) }} />;
+            edit={{
+                onChange: onTimeChange,
+                onCancel,
+                value: (time || 0).toFixed(2),
+                type: "number",
+            }}
+        />;
 
         const selectJSX = onSelect
             ? <div className="registration-line-select">

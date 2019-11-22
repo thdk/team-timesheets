@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { RoutesConfig, Route } from 'mobx-router';
-import { reaction, transaction } from 'mobx';
+import { transaction } from 'mobx';
 import moment from 'moment';
 
 import { App, goToOverview, IDate } from '../../internal';
@@ -60,13 +60,6 @@ const onEnter = (route: Route, params: { id?: string }, s: IRootStore) => {
 
         setBackToOverview(() => s.timesheets.saveSelectedRegistration(), s.timesheets.registration && s.timesheets.registration.date!.getDate());
         setTitleForRoute(route);
-    });
-
-    const u = reaction(() => s.timesheets.registration, reg => {
-        if (!reg) {
-            s.view.actions.replace([]);
-            u();
-        }
     });
 };
 

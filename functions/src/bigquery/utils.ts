@@ -7,7 +7,8 @@ export type BigQueryConfig = {
     dataSetId: string;
     tableId: string;
     tableIdPrefix: string,
-    schemes: BigQueryTableSchemes
+    schemes: BigQueryTableSchemes,
+    timePartitioningField?: string,
 };
 
 function validateTableSchemaAsync(table: any, schema: BigQueryField[]) {
@@ -17,7 +18,7 @@ function validateTableSchemaAsync(table: any, schema: BigQueryField[]) {
         } else {
             console.log("Table has no schema yet.");
         }
-        
+
         console.log(`Required schema of table ${table.id} is ${JSON.stringify(schema)}`);
 
         if (!isEqualSchema(metadata.schema.fields, schema)) {
@@ -54,15 +55,33 @@ function isEqualSchema(schema1: BigQueryField[], schema2: BigQueryField[]) {
     });
 }
 
+type InsertOptions = {
+    schema: BigQueryField[];
+    location: string;
+    timePartitioning?: {
+        type: 'DAY';
+        field: string;
+    };
+}
 export function insertRowsAsync<T>(options: BigQueryConfig, rows: ReadonlyArray<T>, bigqueryClient?: BigQuery) {
-    const { dataSetId, tableId, tableIdPrefix = "", schemes } = options;
+    const { dataSetId, tableId, tableIdPrefix = "", schemes, timePartitioningField } = options;
 
     console.log(`Inserting ${rows.length} rows into ${tableId}`);
 
-    const insertOptions = {
+    let insertOptions: InsertOptions = {
         schema: schemes[tableId],
         location: 'US'
     };
+
+    if (timePartitioningField) {
+        insertOptions = {
+            ...insertOptions,
+            timePartitioning: {
+                type: 'DAY',
+                field: timePartitioningField,
+            },
+        }
+    }
 
     if (!rows.length) return new Promise(resolve => resolve());
 

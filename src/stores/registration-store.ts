@@ -1,4 +1,4 @@
-import { observable, computed, reaction, when, action, toJS, ObservableMap, observe, IObservableArray } from 'mobx';
+import { observable, computed, reaction, when, action, toJS, ObservableMap, IObservableArray } from 'mobx';
 import { Doc, ICollection, Collection } from "firestorable";
 import store, { IRootStore } from './root-store';
 import * as deserializer from '../../common/serialization/deserializer';
@@ -22,7 +22,7 @@ export interface IRegistrationsStore {
     readonly toggleSelectedRegistrationDay: (day: Date, force?: boolean) => void;
     readonly registration: IRegistration | undefined;
     readonly registrationId?: string;
-    readonly setSelectedRegistrationId: (id: string | undefined) => void;
+    readonly setSelectedRegistration: (id: string | undefined) => void;
     readonly saveSelectedRegistration: () => void;
     readonly updateSelectedRegistration: (data: Partial<IRegistration>) => void;
     readonly setSelectedRegistrationDefault: (moment?: moment.Moment) => void;
@@ -44,9 +44,8 @@ export class RegistrationStore implements IRegistrationsStore {
     private readonly registrations: ICollection<IRegistration, IRegistrationData>;
     readonly clipboard = observable(new Map<string, IRegistration>());
 
-    @observable
     private _selectedRegistration = observable.box<IRegistration | undefined>();
-    @observable
+
     private _selectedRegistrationId = observable.box<string | undefined>();
 
     @observable
@@ -100,9 +99,7 @@ export class RegistrationStore implements IRegistrationsStore {
                     this.registrationsGroupedByDay.map(g => g.groupKey)
                 );
             }
-        })
-
-        observe(this._selectedRegistrationId, change => this.setSelectedRegistration(change.newValue), true);
+        });
     }
 
     @computed
@@ -175,27 +172,27 @@ export class RegistrationStore implements IRegistrationsStore {
         return this._selectedRegistrationId.get();
     }
 
-    @action
-    public setSelectedRegistrationId(id: string | undefined) {
-        this._selectedRegistrationId.set(id);
-    }
-
     public updateSelectedRegistration(data: Partial<IRegistration> | undefined) {
         this.registration && this._selectedRegistration.set(data ? { ...this.registration, ...data } : undefined);
     }
 
     @action
-    private setSelectedRegistration(id: string | undefined) {
-        const registration = id ? this.registrations.docs.get(id) : undefined;
+    public setSelectedRegistration(id: string | undefined) {
+        
+        if ((!id && this._selectedRegistration) || (id !== this._selectedRegistrationId.get())) {
+            this._selectedRegistrationId.set(id);
+            
+            const registration = id ? this.registrations.docs.get(id) : undefined;
 
-        if (id && !registration) {
-            // fetch the registration manually
-            this.registrations.getAsync(id)
-                .then(regDoc => this.setSelectedRegistrationObservable(regDoc.data))
-        } else if (registration) {
-            this.setSelectedRegistrationObservable(registration.data!);
-        } else {
-            this.setSelectedRegistrationObservable(undefined);
+            if (id && !registration) {
+                // fetch the registration manually
+                this.registrations.getAsync(id)
+                    .then(regDoc => this.setSelectedRegistrationObservable(regDoc.data))
+            } else if (registration) {
+                this.setSelectedRegistrationObservable(registration.data!);
+            } else {
+                this.setSelectedRegistrationObservable(undefined);
+            }
         }
     }
 
@@ -277,7 +274,7 @@ export class RegistrationStore implements IRegistrationsStore {
         if (this.registration) {
             const { registration } = this;
 
-            const saveOrUpdateAsync = (registration: IRegistration, id: string |undefined) => {
+            const saveOrUpdateAsync = (registration: IRegistration, id: string | undefined) => {
                 return id
                     ? this.registrations.updateAsync(registration, id)
                     : this.registrations.addAsync(registration);

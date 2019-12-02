@@ -14,7 +14,7 @@ import { TextField } from '@rmwc/textfield';
 @observer
 class Registration extends React.Component {
     render() {
-        if (!store.timesheets.registration || !store.user.authenticatedUser) {
+        if (!store.user.authenticatedUser) {
             return <></>;
         }
 

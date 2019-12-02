@@ -15,7 +15,7 @@ class Timesheet extends React.Component {
         if (store.view.selection.size) {
             store.view.toggleSelection(id, true);
         } else {
-            store.timesheets.setSelectedRegistrationId(id);
+            store.timesheets.setSelectedRegistration(id);
             goToRegistration(id);
         }
     }

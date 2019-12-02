@@ -29,12 +29,12 @@ export default class RegistrationLine extends React.Component<IRegistrationLineP
             if (store.timesheets.registration && store.timesheets.registration) {
                 store.timesheets.registration.time = +value;
                 store.timesheets.saveSelectedRegistration();
-                store.timesheets.setSelectedRegistrationId(undefined);
+                store.timesheets.setSelectedRegistration(undefined);
             }
         }
 
         const onCancel = () => {
-            store.timesheets.setSelectedRegistrationId(undefined);
+            store.timesheets.setSelectedRegistration(undefined);
         };
 
         const iconJSX = icon
@@ -83,7 +83,7 @@ export default class RegistrationLine extends React.Component<IRegistrationLineP
             <div className="registration-line-time" onClick={(e) => {
                 e.preventDefault();
                 e.stopPropagation();
-                store.timesheets.setSelectedRegistrationId(id);
+                store.timesheets.setSelectedRegistration(id);
             }}>
                 {timeJSX2}
             </div>

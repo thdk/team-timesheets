@@ -3,6 +3,7 @@ import { IProjectData, IBigQueryProjectData } from "../interfaces/IProjectData";
 import { IRegistrationData, IBigQueryRegistrationData } from "../interfaces/IRegistrationData";
 import * as admin from 'firebase-admin';
 import { IUserData } from "../interfaces/IUserData";
+import { createDecipher } from "crypto";
 
 export const convertRegistration = (firebaseChange: FirebaseFirestore.DocumentSnapshot) => {
     const reg = firebaseChange.data() as unknown as IRegistrationData;
@@ -220,5 +221,6 @@ export const firestoreBigQueryMap: { [collection: string]: { convert: (change: F
     "users": {
         convert: convertUser,
         schema: bigQuerySchemes["users"],
+        dateField: "created",
     }
 }

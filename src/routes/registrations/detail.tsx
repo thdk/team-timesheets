@@ -31,7 +31,7 @@ export const setBackToOverview = (action?: () => void, currentDate?: number, tar
 
 const onEnter = (route: Route, params: { id?: string }, s: IRootStore) => {
     if (params.id) {
-        s.timesheets.setSelectedRegistrationId(params.id);
+        s.timesheets.setSelectedRegistration(params.id);
     }
 
     const deleteAction: IViewAction = {
@@ -64,7 +64,7 @@ const onEnter = (route: Route, params: { id?: string }, s: IRootStore) => {
 };
 
 const beforeExit = (_route: Route, _params: any, s: IRootStore) => {
-    s.timesheets.setSelectedRegistrationId(undefined);
+    s.timesheets.setSelectedRegistration(undefined);
     s.view.setNavigation("default");
 };
 

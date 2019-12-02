@@ -181,7 +181,8 @@ export const watchImportSessions = functions.firestore
                         dataSetId,
                         tableId: collection,
                         tableIdPrefix: "",
-                        schemes: bigQuerySchemes
+                        schemes: bigQuerySchemes,
+                        timePartitioningField: collection === "registrations" ? "date" : undefined,
                     },
                     items
                 )

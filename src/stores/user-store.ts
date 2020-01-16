@@ -1,5 +1,5 @@
-import { observable, action, transaction, computed, observe, when, intercept, IObservableValue } from "mobx";
-import { ICollection, Collection, Doc } from "firestorable";
+import { observable, action, transaction, computed, observe, intercept, IObservableValue, reaction } from "mobx";
+import { ICollection, Collection, Doc, RealtimeMode, FetchMode, CollectionReference } from "firestorable";
 import { IRootStore } from "./root-store";
 import * as deserializer from "../../common/serialization/deserializer";
 import * as serializer from "../../common/serialization/serializer";
@@ -17,7 +17,6 @@ export interface IUserStore {
     readonly saveSelectedUser: () => void;
     readonly updateSelectedUser: (data: Partial<IUser>) => void;
     readonly usersCollection: ICollection<IUser, IUserData>;
-    readonly users: (IUser & { id: string })[];
     readonly updateAuthenticatedUser: (userData: Partial<IUser>) => void;
     readonly signout: () => void;
     readonly isAuthInitialised: boolean;
@@ -45,17 +44,30 @@ export class UserStore implements IUserStore {
     private _selectedUserId = observable.box<string | undefined>();
 
     public readonly usersCollection: ICollection<IUser, IUserData>;
-    constructor(rootStore: IRootStore) {
-        this.usersCollection = new Collection(firestore, rootStore.getCollection.bind(this, "users"), {
-            realtime: true,
-            serialize: serializer.convertUser,
-            deserialize: deserializer.convertUser
-        });
+    constructor(_rootStore: IRootStore) {
+        const query = (ref: CollectionReference) => ref.orderBy("name", "asc");
+        const createQuery = (user?: IUser) => {
+            return canReadUsers(user)
+                ? query
+                : null;
+        };
 
-        when(() => !!this.authenticatedUser, () => {
-            if (canReadUsers(this.authenticatedUser || undefined)) {
-                this.usersCollection.query = ref => ref.orderBy("name", "asc");
-            }
+        this.usersCollection = new Collection(firestore,
+            "users"
+            , {
+                realtimeMode: RealtimeMode.on,
+                fetchMode: FetchMode.once,
+                serialize: serializer.convertUser,
+                deserialize: deserializer.convertUser,
+                query: null,
+            },
+            {
+                logger: console.log,
+            },
+        );
+
+        reaction(() => this.authenticatedUser, user => {
+            this.usersCollection.query = createQuery(user);
         });
 
         auth.onAuthStateChanged(this.setUser.bind(this));
@@ -76,11 +88,11 @@ export class UserStore implements IUserStore {
 
     @action
     private setSelectedUser(id: string | undefined): void {
-        const user: Doc<IUser, IUserData> | undefined = id ? this.usersCollection.docs.get(id) : undefined;
+        const user: Doc<IUser, IUserData> | undefined = id ? this.usersCollection.get(id) : undefined;
 
         if (id && !user) {
             // fetch the user manually
-            this.usersCollection.getAsync(id, true)
+            this.usersCollection.getAsync(id, { watch: true })
                 .then(this.setSelectedUserObservable.bind(this));
         } else {
             this.setSelectedUserObservable(user);
@@ -178,12 +190,5 @@ export class UserStore implements IUserStore {
 
     signout(): void {
         auth.signOut();
-    }
-
-    @computed
-    public get users() {
-        return Array.from(
-            this.usersCollection.docs.values()
-        ).map(doc => ({ ...doc.data!, id: doc.id }));
     }
 }

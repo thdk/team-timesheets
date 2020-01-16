@@ -13,6 +13,13 @@ import { RedirectToLogin } from '../../routes/login';
 
 @observer
 class Reports extends React.Component {
+    componentDidMount() {
+        store.reports.reports.fetchAsync();
+    }
+
+    componentWillUnmount(){
+        store.reports.reports.dispose();
+    }
 
     registrationClick = (id: string) => {
         goToRegistration(id);

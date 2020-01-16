@@ -20,7 +20,7 @@ class Preferences extends React.Component<Props> {
     render() {
         const { authenticatedUser: user } = this.props;
 
-        if (store.config.tasks.docs.size === 0) return null;
+        if (store.config.tasks.docs.length === 0) return null;
 
         const { tasks: userTasks = new Map<string, true>(), defaultTask = undefined, defaultClient = undefined } = store.user.authenticatedUser || {};
         const tasks = Array.from(store.config.tasks.docs.values())

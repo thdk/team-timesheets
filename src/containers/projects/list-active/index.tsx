@@ -16,7 +16,7 @@ export const ActiveProjectList = observer((props: React.HTMLProps<HTMLDivElement
         if (store.view.selection.size) {
             store.view.toggleSelection(id, true);
         } else {
-            const project = store.projects.projectsCollection.docs.get(id);
+            const project = store.projects.projectsCollection.get(id);
             if (project
                 && canEditProject(project.data!, store.user.authenticatedUser, store.user.userId)
             ) {

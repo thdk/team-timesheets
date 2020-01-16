@@ -13,11 +13,11 @@ export interface IUserTasksProps {
 export class UserTasks extends React.Component<IUserTasksProps> {
 
     render() {
-        if (!store.user.authenticatedUser || store.config.tasks.docs.size === 0) return <></>;
+        if (!store.user.authenticatedUser || store.config.tasks.docs.length === 0) return <></>;
 
         const { tasks: userTasks, defaultTask } = store.user.authenticatedUser;
         const userTasksChips = Array.from(userTasks.keys()).map(t => {
-            const taskData = store.config.tasks.docs.get(t);
+            const taskData = store.config.tasks.get(t);
             if (!taskData) return null;
 
             const { id: taskId = "", data: { name: taskName = "ARCHIVED", icon: taskIcon = undefined } = {} } = taskData || {};

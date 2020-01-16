@@ -81,7 +81,7 @@ class Dashboard extends React.Component {
                             label="User"
                             onChange={this.onUserFilterChange}
                             items={
-                                Array.from(store.user.usersCollection.docs.values())
+                                store.user.usersCollection.docs
                                     .map(doc => ({ name: doc.data!.name, id: doc.id }))
                             }>
                         </CollectionSelect>
@@ -90,7 +90,7 @@ class Dashboard extends React.Component {
             </>
             : null;
 
-        const registrationsPerUserChart = canReadUsers(store.user.authenticatedUser) && store.user.usersCollection.docs.size
+        const registrationsPerUserChart = store.user.usersCollection.docs.length
             ? <RegistrationsChart {...userChartProps}>
             </RegistrationsChart>
             : null;

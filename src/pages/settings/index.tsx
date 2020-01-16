@@ -8,7 +8,7 @@ import { TaskList } from '../../containers/tasks/list';
 import { SettingsTab } from '../../routes/settings';
 import { goToSettings, RedirectToLogin } from '../../internal';
 import { ClientList } from '../../containers/clients/list';
-import { UserList } from '../../containers/users/list';
+import UserList from '../../containers/users/list';
 import { canReadUsers, canManageTeams } from '../../rules/rules';
 import { TeamList } from '../../containers/teams/list';
 import { withAuthenticatedUser, IWithAuthenticatedUserProps } from '../../containers/users/with-authenticated-user';

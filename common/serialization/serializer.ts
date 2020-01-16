@@ -2,10 +2,10 @@ import * as firebase from 'firebase/app';
 import { IRegistration, IRegistrationData, IUser, IUserData, ITeam, ITeamData, IProject, IProjectData } from '../interfaces';
 import { INameWithIconData, INameWithIcon } from '../interfaces/base';
 
-export const convertRegistration = (appData: Partial<IRegistration> | "delete") => {
+export const convertRegistration = (appData: Partial<IRegistration> | null) => {
     let registration: Partial<IRegistrationData>;
     const now = new Date();
-    if (appData === "delete") {
+    if (appData === null) {
         registration = { deleted: true, modified: firebase.firestore.Timestamp.fromDate(now) };
     }
     else {
@@ -42,8 +42,8 @@ export const convertRegistration = (appData: Partial<IRegistration> | "delete") 
     return registration;
 }
 
-export const convertUser = (appData: Partial<IUser> | "delete") => {
-    if (appData === "delete") {
+export const convertUser = (appData: Partial<IUser> | null) => {
+    if (appData === null) {
         throw new Error("Deleting user is not supported");
     }
 
@@ -77,10 +77,10 @@ export function convertTeam(appData: Partial<ITeam>): Partial<ITeamData> {
     return convertNameWithIcon(appData);
 }
 
-export function convertProject(appData: Partial<IProject> | "delete"): Partial<IProjectData> {
+export function convertProject(appData: Partial<IProject> | null): Partial<IProjectData> {
     let data: Partial<IProjectData>;
 
-    if (appData === "delete") {
+    if (appData === null) {
         const now = new Date();
         data = { deleted: true, modified: firebase.firestore.Timestamp.fromDate(now) };
     }
@@ -93,12 +93,12 @@ export function convertProject(appData: Partial<IProject> | "delete"): Partial<I
     return data;
 }
 
-export function convertNameWithIcon(appData: Partial<INameWithIcon> | "delete"): Partial<INameWithIconData> {
+export function convertNameWithIcon(appData: Partial<INameWithIcon> | null): Partial<INameWithIconData> {
     const now = new Date();
 
     let data: Partial<INameWithIconData>;
 
-    if (appData === "delete") {
+    if (appData === null) {
         const now = new Date();
         data = { deleted: true, modified: firebase.firestore.Timestamp.fromDate(now) };
     }

@@ -6,14 +6,14 @@ import { IRegistration, IRegistrationData } from '../../../../common';
 import RegistrationLine from "../line";
 
 export interface IRegistrationLinesProps extends React.HTMLProps<HTMLElement> {
-    readonly registrations: Doc<IRegistration, IRegistrationData>[];
-    readonly registrationToggleSelect?: (id: string, data: IRegistration) => void;
+    readonly registrations: Doc<Omit<IRegistration, "date">, Omit<IRegistrationData, "date">>[];
+    readonly registrationToggleSelect?: (id: string) => void;
     readonly registrationClick: (id: string) => void;
 }
 
 export const RegistrationLines = observer((props: IRegistrationLinesProps) => {
 
-    const { registrations, registrationToggleSelect, registrationClick } = props;
+    const { registrations, registrationToggleSelect, registrationClick, readOnly } = props;
 
     const rows = registrations.map(r => {
         if (!r.data) throw new Error("Found registration without Data");
@@ -32,20 +32,21 @@ export const RegistrationLines = observer((props: IRegistrationLinesProps) => {
         const line1 = projectName;
         const line2 = `${clientName ? clientName + " - " : ""}${description}`;
 
-        const onSelect = registrationToggleSelect ? () => registrationToggleSelect(id, r.data!) : undefined;
+        const onSelect = registrationToggleSelect ? () => registrationToggleSelect(id) : undefined;
 
 
         const listItemOnClick = () => registrationClick(id);
         return <RegistrationLine
-                icon={icon}
-                id={id}
-                key={id}
-                line1={line1}
-                line2={line2}
-                time={time}
-                onClick={listItemOnClick}
-                onSelect={onSelect}>
-            </RegistrationLine>
+            readOnly={readOnly}
+            icon={icon}
+            id={id}
+            key={id}
+            line1={line1}
+            line2={line2}
+            time={time}
+            onClick={listItemOnClick}
+            onSelect={onSelect}>
+        </RegistrationLine>
     });
 
     return <>{rows}</>;

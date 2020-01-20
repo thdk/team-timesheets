@@ -167,9 +167,9 @@ export class ViewStore implements IViewStore {
     this.actions.remove(action);
   }
 
-  @action toggleSelection(id: string, data: any) {
+  @action toggleSelection(id: string) {
     this.selection.has(id)
       ? this.selection.delete(id)
-      : this.selection.set(id, data);
+      : this.selection.set(id, true);
   }
 }

@@ -2,7 +2,6 @@ import * as React from 'react';
 import store from '../../../stores/root-store';
 import { observer } from 'mobx-react';
 import { Day as Day } from '../day';
-import { IRegistration } from '../../../../common/dist';
 
 export enum SortOrder {
     Ascending = 1,
@@ -11,7 +10,7 @@ export enum SortOrder {
 
 export interface IDaysProps {
     registrationClick: (id: string) => void;
-    registrationToggleSelect?: (id: string, data: IRegistration) => void;
+    registrationToggleSelect?: (id: string) => void;
     totalOnTop?: boolean;
     sortOrder?: SortOrder
     activeDate?: number;
@@ -38,16 +37,21 @@ export class Days extends React.Component<IDaysProps> {
             ? store.timesheets.registrationsGroupedByDay
             : store.timesheets.registrationsGroupedByDayReversed)
             .map((g, i) => {
-                const isLastOpenedGroup = g.groupKey && g.groupKey.getDate() === this.props.activeDate;
-                const isCollapsed =  !store.timesheets.selectedRegistrationDays
-                    .some(d => d.getTime() === g.groupKey.getTime());
+                const isLastOpenedGroup = g.groupKey && new Date(g.groupKey).getDate() === this.props.activeDate;
+                const isCollapsed = !store.timesheets.selectedRegistrationDays
+                    .some(d => d === g.groupKey);
 
                 return <Day
                     ref={isLastOpenedGroup ? this.activeRegistrationRef : null}
                     key={`group-${i}`}
                     group={g}
                     {...{ ...this.props, isCollapsed }}
-                    headerClick={() => store.timesheets.toggleSelectedRegistrationDay(g.groupKey)}
+                    headerClick={e => {
+                        if ((e.target as HTMLElement).closest(".prevent-propagation"))
+                            return;
+
+                        store.timesheets.toggleSelectedRegistrationDay(g.groupKey);
+                    }}
                     isMonthView={isMonthView}
                     showHeaderAddButton={showHeaderAddButton}
                 />

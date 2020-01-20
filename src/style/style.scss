@@ -19,6 +19,10 @@
 @import "@material/checkbox/mdc-checkbox";
 @import "@material/icon-button/mdc-icon-button";
 
+@import '@material/menu/mdc-menu';
+@import '@material/menu-surface/mdc-menu-surface';
+@import '@material/list/mdc-list';
+
 
 @import '../mdc/styles/list';
 @import '../mdc/styles/app-bar';
@@ -65,3 +69,8 @@ body {
     overflow: auto;
     height: 100%;
   }
+
+
+.mdc-menu {
+    min-width: 150px;
+}

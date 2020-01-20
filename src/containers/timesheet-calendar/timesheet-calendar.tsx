@@ -16,14 +16,8 @@ const TimesheetCalendar = observer(() => {
     const getTileClassName = (tile: CalendarTileProperties) => {
         const classNames = [];
         if (tile.view === "month") {
-            // TODO: TIMEZONE ISSUE!!!
-            // It should be enough to check g.date.getTime() === tile.date.getTime()
-            // However due to a timezone issue it not always gives the required results!
-            // below code is NOT ready for production
-            const tileHasData = store.timesheets.registrationsGroupedByDay.some(g =>
-                g.groupKey.getDate() === tile.date.getDate()
-                && g.groupKey.getMonth() === tile.date.getMonth()
-                && g.groupKey.getFullYear() === tile.date.getFullYear());
+            const tileHasData = store.timesheets.registrationsGroupedByDay
+                .some(g => g.groupKey === tile.date.toDateString());
             if (tileHasData) classNames.push("has-data");
         }
 

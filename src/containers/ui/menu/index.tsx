@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
-import { goToOverview, goToSettings, goToReports, goToProjects, goToDashboard, goToLogin } from "../../../internal";
+import { goToOverview, goToSettings, goToReports, goToProjects, goToDashboard, goToLogin, goToFavorites } from "../../../internal";
 import store from '../../../stores/root-store';
 import { canManageProjects } from '../../../rules/rules';
 import { IWithAuthenticatedUserProps } from '../../users/with-authenticated-user';
@@ -51,6 +51,11 @@ class Menu extends React.Component<Props> {
                 <a className="mdc-list-item" onClick={e => this.navigateToOverview(e, true)} href="/" aria-selected="true">
                     <i className="material-icons mdc-list-item__graphic" aria-hidden="true">calendar_today</i>
                     <span className="mdc-list-item__text">This month</span>
+                </a>
+
+                <a className="mdc-list-item" onClick={e => this.navigate(e, () => { e.preventDefault(); goToFavorites(); })} href="#">
+                    <i className="material-icons mdc-list-item__graphic" aria-hidden="true">favorite</i>
+                    <span className="mdc-list-item__text">Favorites</span>
                 </a>
 
                 <hr className="mdc-list-divider" />

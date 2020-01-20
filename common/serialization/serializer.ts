@@ -1,5 +1,5 @@
 import * as firebase from 'firebase/app';
-import { IRegistration, IRegistrationData, IUser, IUserData, ITeam, ITeamData, IProject, IProjectData } from '../interfaces';
+import { IRegistration, IRegistrationData, IUser, IUserData, ITeam, ITeamData, IProject, IProjectData, IFavoriteRegistration } from '../interfaces';
 import { INameWithIconData, INameWithIcon } from '../interfaces/base';
 
 export const convertRegistration = (appData: Partial<IRegistration> | null) => {
@@ -40,6 +40,37 @@ export const convertRegistration = (appData: Partial<IRegistration> | null) => {
     if (undefined === registration.modified) delete registration.modified;
 
     return registration;
+}
+
+export const convertFavoriteRegistration = (appData: Partial<IFavoriteRegistration> | null) => {
+    let favorite: Partial<IFavoriteRegistration>;
+    if (appData === null) {
+        throw new Error("You must call delete method to delete a favorite");
+    }
+    else {
+
+        // validation
+        if (!appData.userId) throw new Error("Favorites must have a userId set.");
+
+        const description = (appData.description || "").trim();
+        favorite = {
+            description,
+            project: appData.project,
+            task: appData.task,
+            time: appData.time,
+            userId: appData.userId,
+            client: appData.client,
+            groupId: appData.groupId,
+        };
+    }
+
+    if (undefined === favorite.description) delete favorite.description;
+    if (undefined === favorite.project) delete favorite.project;
+    if (undefined === favorite.time) delete favorite.time;
+    if (undefined === favorite.task) delete favorite.task;
+    if (undefined === favorite.client) delete favorite.client;
+
+    return favorite;
 }
 
 export const convertUser = (appData: Partial<IUser> | null) => {

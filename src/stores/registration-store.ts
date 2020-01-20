@@ -17,8 +17,8 @@ export interface IGroupedRegistrations<T> {
 
 export interface IRegistrationsStore {
     readonly clipboard: ObservableMap<string, IRegistration>;
-    readonly selectedRegistrationDays: IObservableArray<Date>;
-    readonly toggleSelectedRegistrationDay: (day: Date, force?: boolean) => void;
+    readonly selectedRegistrationDays: IObservableArray<string>;
+    readonly toggleSelectedRegistrationDay: (day: string, force?: boolean) => void;
     readonly registration: IRegistration | undefined;
     readonly registrationId?: string;
     readonly setSelectedRegistration: (id: string | undefined) => void;
@@ -29,12 +29,12 @@ export interface IRegistrationsStore {
     readonly addRegistrations: (data: IRegistration[]) => void;
 
     readonly registrationsTotalTime: number;
-    readonly registrationsGroupedByDay: IGroupedRegistrations<Date>[];
-    readonly registrationsGroupedByDayReversed: IGroupedRegistrations<Date>[];
+    readonly registrationsGroupedByDay: IGroupedRegistrations<string>[];
+    readonly registrationsGroupedByDayReversed: IGroupedRegistrations<string>[];
     readonly registrationsGroupedByDaySortOrder: SortOrder;
     areGroupedRegistrationsCollapsed: boolean;
     readonly setRegistrationsGroupedByDaySortOrder: (sortOrder: SortOrder) => void;
-    readonly copyRegistrationToDate: (source: IRegistration, newDate: Date) => IRegistration;
+    readonly copyRegistrationToDate: (source: Omit<IRegistration, "date">, newDate: Date) => IRegistration;
     readonly getRegistrationById: (id: string) => IRegistration | null;
 }
 
@@ -48,7 +48,7 @@ export class RegistrationStore implements IRegistrationsStore {
     private _selectedRegistrationId = observable.box<string | undefined>();
 
     @observable
-    public selectedRegistrationDays = observable([] as Date[]);
+    public selectedRegistrationDays = observable([] as string[]);
 
     @observable
     private registrationsGroupedByDaySortOrderField = SortOrder.Descending;
@@ -142,9 +142,9 @@ export class RegistrationStore implements IRegistrationsStore {
 
         if (regs.length === 0) return [];
         return regs
-            .reduce<IGroupedRegistrations<Date>[]>((p, c) => {
+            .reduce<IGroupedRegistrations<string>[]>((p, c) => {
                 const currentDayGroup = p[p.length - 1];
-                if (currentDayGroup && c.data!.date.getTime() === currentDayGroup.groupKey.getTime()) {
+                if (currentDayGroup && c.data!.date.toDateString() === currentDayGroup.groupKey) {
                     currentDayGroup.registrations.push(c);
 
                     // Always make sure that the order within a group is stable
@@ -157,10 +157,10 @@ export class RegistrationStore implements IRegistrationsStore {
                     currentDayGroup.totalTime = (currentDayGroup.totalTime || 0) + (c.data!.time || 0);
                 } else {
                     p.push({
-                        groupKey: c.data!.date,
+                        groupKey: c.data!.date.toDateString(),
                         registrations: [c],
                         totalTime: c.data!.time || 0,
-                        isCollapsed: !this.selectedRegistrationDays.some(d => d === c.data!.date),
+                        isCollapsed: !this.selectedRegistrationDays.some(d => d === c.data!.date.toDateString()),
                     });
                 }
 
@@ -223,15 +223,15 @@ export class RegistrationStore implements IRegistrationsStore {
         this.registrations.addAsync(data);
     }
 
-    public copyRegistrationToDate(source: IRegistration, newDate: Date) {
-        const date = this.toUTC(newDate);
+    public copyRegistrationToDate(source: Omit<IRegistration, "date">, newDate: Date) {
+        const date = newDate;
 
         // set created to undefined so a new timestamp will be set when saving it
         return { ...source, created: undefined, date };
     }
 
-    public toggleSelectedRegistrationDay(date: Date, force = false) {
-        const index = this.selectedRegistrationDays.findIndex(d => d.getTime() === date.getTime());
+    public toggleSelectedRegistrationDay(date: string, force = false) {
+        const index = this.selectedRegistrationDays.findIndex(d => d === date);
         if (index === -1) {
             this.selectedRegistrationDays.push(date);
         } else if (!force) {
@@ -264,9 +264,9 @@ export class RegistrationStore implements IRegistrationsStore {
                         .some(p => p.id === projectId));
 
                 return {
-                    date: this.toUTC(
+                    date:
                         regMoment ? regMoment.toDate() : this.rootStore.view.moment.toDate()
-                    ),
+                    ,
                     task,
                     client,
                     userId: this.rootStore.user.userId,
@@ -315,10 +315,5 @@ export class RegistrationStore implements IRegistrationsStore {
                     }
                 });
         }
-
-    }
-
-    toUTC(date: Date) {
-        return new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate(), date.getHours(), date.getMinutes(), date.getSeconds()));
     }
 }

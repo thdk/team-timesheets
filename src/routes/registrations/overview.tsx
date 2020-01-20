@@ -8,6 +8,7 @@ import store, { IRootStore } from '../../stores/root-store';
 import { IViewAction } from '../../stores/view-store';
 import { IRegistration } from '../../../common/dist';
 import detailRoutes from "./detail";
+import { goToFavorite } from '../favorites/detail';
 
 export interface IDate {
     year: number;
@@ -72,7 +73,38 @@ const setActions = (s: IRootStore, alowInserts = false) => {
             shortKey: { key: "Delete", ctrlKey: true },
             selection: s.view.selection,
             contextual: true
-        } as IViewAction<IRegistration>
+        } as IViewAction<IRegistration>,
+        {
+            action: selection => {
+                if (!selection) return;
+                let groupId: string | undefined;
+                transaction(() => {
+                    groupId = s.favorites.addFavorites(
+                        // registrations
+                        Array.from(selection.keys())
+                            .reduce((registrations, id) => {
+                                const registration = store.timesheets.getRegistrationById(id);
+                                if (registration) {
+                                    registrations.push(registration);
+                                }
+
+                                return registrations;
+                            }, [] as IRegistration[]),
+                        // group
+                        {
+                            name: "Favorite"
+                        },
+                    );
+                    s.view.selection.clear();
+                });
+
+                groupId && goToFavorite(groupId);
+            },
+            icon: { content: "favorite", label: "Favorite" },
+            shortKey: { ctrlKey: false, key: "f" },
+            selection: s.view.selection,
+            contextual: true
+        },
     ];
 
 
@@ -81,6 +113,7 @@ const setActions = (s: IRootStore, alowInserts = false) => {
             action: selection => {
                 if (!selection) return;
 
+                console.log(store.view.moment.toDate());
                 s.timesheets.addRegistrations(
                     Array.from(selection.values())
                         .map(reg =>

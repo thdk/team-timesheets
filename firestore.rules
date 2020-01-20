@@ -39,5 +39,17 @@ service cloud.firestore {
             allow create, update: if getRole('admin') == true || !request.resource.keys().hasAny(["roles"]);
             allow delete: if getRole('admin') == true;
         }
+
+        match /favorite-groups/{groupId} {
+            allow read;
+            allow create: if request.auth.uid != null;
+            allow update, delete: if request.auth.uid != null;
+        }
+
+        match /favorites/{favoriteId} {
+            allow read: if request.auth.uid != null;
+            allow create: if request.auth.uid != null;
+            allow update, delete: if request.auth.uid != null;
+        }
   	}
 }

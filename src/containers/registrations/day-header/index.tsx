@@ -2,11 +2,11 @@ import React from "react";
 import moment from "moment";
 import store from "../../../stores/root-store";
 import { goToOverview, goToNewRegistration } from "../../../internal";
-import { Button } from "@material/react-button";
 import classNames from "classnames";
+import FavoriteGroupsMenu from "../../favorite-groups/menu";
 
 export type GroupedRegistrationHeaderProps = {
-    readonly groupKey: Date;
+    readonly groupKey: string;
     readonly totalTime: number;
     readonly headerClick: (e: React.MouseEvent) => void;
     readonly isCollapsed: boolean;
@@ -67,16 +67,23 @@ const GroupedRegistrationHeader = (props: GroupedRegistrationHeaderProps) => {
         return showAddButton
             ? <>
                 {displayJSX}
-                <Button
-                    onClick={(e: React.MouseEvent) => {
-                        e.preventDefault();
-                        e.stopPropagation();
-                        store.timesheets.toggleSelectedRegistrationDay(date, true);
-                        goToNewRegistration(dateMoment);
-                    }}
-                    dense
-                    className="grouped-registration-header-add-button"
-                >+</Button>
+                <FavoriteGroupsMenu
+                    onSelect={
+                        id => {
+                            if (!id) {
+                                store.timesheets.toggleSelectedRegistrationDay(date.toDateString(), true);
+                                goToNewRegistration(dateMoment);
+                            } else {
+                                store.timesheets.addRegistrations(
+                                    store.favorites.favoritesByGroup(id)
+                                        .map(reg =>
+                                            store.timesheets.copyRegistrationToDate(reg.data!, date)
+                                        )
+                                );
+                            }
+                        }
+                    }
+                ></FavoriteGroupsMenu>
             </>
             : <>
                 {displayJSX}
@@ -84,7 +91,7 @@ const GroupedRegistrationHeader = (props: GroupedRegistrationHeaderProps) => {
 
     };
 
-    const titleJSX = createTotalLabel(groupKey, totalTime);
+    const titleJSX = createTotalLabel(new Date(groupKey), totalTime);
     const collapseIconJSX = isCollapsable
         ? <i
             className="grouped-registration-header-icon material-icons mdc-icon-button__icon">

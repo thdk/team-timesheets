@@ -3,6 +3,7 @@ import { Checkbox } from '@rmwc/checkbox';
 import store from '../../../stores/root-store';
 import { observer } from 'mobx-react';
 import EditableTextField from '../../../components/editable-text';
+import classNames from 'classnames';
 
 export interface IRegistrationLineProps extends React.HTMLProps<HTMLDivElement> {
     readonly line1: string;
@@ -23,7 +24,7 @@ export default class RegistrationLine extends React.Component<IRegistrationLineP
     }
 
     render() {
-        const { line1, line2, icon, time = 0, id, onSelect, ...restProps } = this.props;
+        const { line1, line2, icon, time = 0, id, onSelect, readOnly, ...restProps } = this.props;
 
         const onTimeChange = (value: string) => {
             if (store.timesheets.registration && store.timesheets.registration) {
@@ -75,7 +76,12 @@ export default class RegistrationLine extends React.Component<IRegistrationLineP
             </div>
             : null;
 
-        return <div className="registration-line" {...restProps}>
+        const styles = classNames("registration-line",
+            {
+                "registration-line--readonly": readOnly
+            });
+
+        return <div className={styles} {...restProps}>
             <div className="registration-line-header">
                 {iconJSX}
             </div>

@@ -6,6 +6,7 @@ import { RouterStore } from "mobx-router";
 import { IReportStore, ReportStore } from "./report-store";
 import { DashboardStore, IDashboardStore } from "./dashboard-store";
 import { IProjectStore, ProjectStore } from "./project-store";
+import { FavoriteStore } from "./favorite-store";
 
 export interface IRootStore {
 
@@ -16,6 +17,7 @@ export interface IRootStore {
     readonly reports: IReportStore;
     readonly config: IConfigStore;
     readonly projects: IProjectStore;
+    readonly favorites: FavoriteStore;
 }
 
 export class Store implements IRootStore {
@@ -27,6 +29,7 @@ export class Store implements IRootStore {
     public readonly reports: IReportStore;
     public readonly dashboard: IDashboardStore;
     public readonly projects: IProjectStore;
+    public readonly favorites: FavoriteStore;
 
     constructor() {
         this.user = new UserStore(this);
@@ -36,6 +39,7 @@ export class Store implements IRootStore {
         this.reports = new ReportStore(this);
         this.dashboard = new DashboardStore(this);
         this.projects = new ProjectStore(this);
+        this.favorites = new FavoriteStore(this);
     }
 };
 

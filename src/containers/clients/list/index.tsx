@@ -9,12 +9,7 @@ export const ClientList = observer(() => {
     const saveListItem = (data: IListItemData, id?: string) => {
         store.config.clientId = undefined;
         if (data.name) {
-            if (id) {
                 store.config.clientsCollection.addAsync({ name: data.name, icon: data.icon }, id);
-            }
-            else {
-                store.config.clientsCollection.updateAsync({ name: data.name, icon: data.icon });
-            }
         }
     };
 

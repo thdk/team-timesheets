@@ -13,12 +13,9 @@ export function withUsers<T extends Props = Props>(
     WrappedComponent: React.ComponentType<T>
 ) {
     const ComponentWithUsers = (props: Optionalize<T, IWithUsersProps>) => {
-
-        const users = store.user.users;
-
-        return users.length
+        return store.user.usersCollection.isFetched
             ? <WrappedComponent
-                users={users}
+                users={store.user.usersCollection.docs.map(doc => ({ ...doc.data!, id: doc.id }))}
                 {...(props as T)}
             />
             : <></>;

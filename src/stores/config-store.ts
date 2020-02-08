@@ -1,5 +1,5 @@
 import { observable, computed } from 'mobx';
-import { Collection, ICollection } from "firestorable";
+import { Collection, ICollection, RealtimeMode, FetchMode } from "firestorable";
 import { IRootStore } from './root-store';
 import { firestore } from '../firebase/my-firebase';
 import { IProject, ITask, IClient, IClientData, ITeam, ITeamData, ITaskData } from '../../common/dist';
@@ -28,29 +28,49 @@ export class ConfigStore implements IConfigStore {
     @observable.ref clientId?: string;
     @observable.ref teamId?: string;
 
-    constructor(_rootStore: IRootStore, getCollection: (name: string) => firebase.firestore.CollectionReference) {
+    constructor(_rootStore: IRootStore) {
         // this._rootStore = rootStore;
+        const deps = { logger: console.log };
 
-        this.tasks = observable(new Collection<ITask, ITaskData>(firestore, getCollection.bind(this, "tasks"), {
-            realtime: true,
-            query: ref => ref.orderBy("name_insensitive"),
-            serialize: serializer.convertNameWithIcon,
-            deserialize: deserializer.convertNameWithIcon,
-        }));
+        this.tasks = new Collection<ITask, ITaskData>(
+            firestore,
+            "tasks",
+            {
+                realtimeMode: RealtimeMode.on,
+                fetchMode: FetchMode.once,
+                query: ref => ref.orderBy("name_insensitive"),
+                serialize: serializer.convertNameWithIcon,
+                deserialize: deserializer.convertNameWithIcon,
+            },
+            deps,
+        );
 
-        this.clientsCollection = observable(new Collection<IClient, IClientData>(firestore, getCollection.bind(this, "clients"), {
-            realtime: true,
-            query: ref => ref.orderBy("name_insensitive"),
-            serialize: serializer.convertNameWithIcon,
-            deserialize: deserializer.convertNameWithIcon,
-        }));
+        this.clientsCollection =
+            new Collection<IClient, IClientData>(
+                firestore,
+                "clients",
+                {
+                    realtimeMode: RealtimeMode.on,
+                    fetchMode: FetchMode.once,
+                    query: ref => ref.orderBy("name_insensitive"),
+                    serialize: serializer.convertNameWithIcon,
+                    deserialize: deserializer.convertNameWithIcon,
+                },
+                deps,
+            );
 
-        this.teamsCollection = observable(new Collection<ITeam, ITeamData>(firestore, getCollection.bind(this, "teams"), {
-            realtime: true,
-            query: ref => ref.orderBy("name_insensitive"),
-            serialize: serializer.convertNameWithIcon,
-            deserialize: deserializer.convertNameWithIcon,
-        }));
+        this.teamsCollection = new Collection<ITeam, ITeamData>(
+            firestore,
+            "teams",
+            {
+                realtimeMode: RealtimeMode.on,
+                fetchMode: FetchMode.once,
+                query: ref => ref.orderBy("name_insensitive"),
+                serialize: serializer.convertNameWithIcon,
+                deserialize: deserializer.convertNameWithIcon,
+            },
+            deps,
+        );
     }
 
     @computed

@@ -1,4 +1,4 @@
-import { IRegistrationData, IRegistration, IUserData, IUser, ITeamData, ITeam, IProjectData, IProject, ITaskData, ITask } from "../interfaces";
+import { IRegistrationData, IRegistration, IUserData, IUser, ITeamData, ITeam, IProjectData, IProject, ITaskData, ITask, IFavoriteRegistrationGroupData, IFavoriteRegistration } from "../interfaces";
 import { INameWithIconData } from "../interfaces/base";
 
 
@@ -17,6 +17,20 @@ export const convertRegistration = (firestoreData: IRegistrationData) => {
     };
 
     return registration;
+}
+
+export const convertFavoriteRegistration = (firestoreData: IFavoriteRegistration) => {
+    const favorite: IFavoriteRegistration = {
+        description: firestoreData.description,
+        project: firestoreData.project,
+        task: firestoreData.task,
+        time: +(firestoreData.time ? firestoreData.time : 0),
+        userId: firestoreData.userId,
+        client: firestoreData.client,
+        groupId: firestoreData.groupId,
+    };
+
+    return favorite;
 }
 
 export const convertUser = (firestoreData: IUserData) => {

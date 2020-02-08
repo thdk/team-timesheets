@@ -19,7 +19,16 @@ export interface ISettingsListProps extends React.HTMLProps<HTMLDivElement> {
     readonly selection: ObservableMap<string, any>;
 }
 
-export const SettingsList = observer(({ onAddItem, selection, activeItemId, onToggleSelection: toggleSelection, items, readonly, onItemClick, ...restProps }: ISettingsListProps) => {
+export const SettingsList = observer(({
+    onAddItem,
+    selection,
+    activeItemId,
+    onToggleSelection: toggleSelection,
+    items,
+    readonly,
+    onItemClick,
+    ...restProps
+}: ISettingsListProps) => {
 
     const itemsJSX = items.map(i => (
         <SettingsListItem

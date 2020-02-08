@@ -2,7 +2,6 @@ import * as React from 'react';
 import { observer } from "mobx-react";
 import store from '../../stores/root-store';
 import { goToRegistration, goToOverview, RedirectToLogin } from '../../internal';
-import { IRegistration } from '../../../common';
 import { Day } from '../../containers/registrations/day';
 import { ListDivider } from '../../mdc/list';
 import { SortOrder, Days } from '../../containers/registrations/days';
@@ -20,8 +19,8 @@ class Timesheet extends React.Component {
         }
     }
 
-    registrationSelect = (id: string, data: IRegistration) => {
-        store.view.toggleSelection(id, data);
+    registrationSelect = (id: string) => {
+        store.view.toggleSelection(id, true);
     }
 
     goToMonth(e: React.MouseEvent) {
@@ -38,9 +37,9 @@ class Timesheet extends React.Component {
         let regs: React.ReactNode;
 
         if (store.view.day) {
-            const group = store.timesheets.registrationsGroupedByDay.filter(g => g.groupKey.getDate() === store.view.day);
+            const group = store.timesheets.registrationsGroupedByDay.filter(g => g.groupKey === store.view.moment.toDate().toDateString());
 
-            regs = <Day group={group[0] || { groupKey: store.view.moment.toDate(), totalTime: 0, registrations: [] }}
+            regs = <Day group={group[0] || { groupKey: store.view.moment.toDate().toDateString(), totalTime: 0, registrations: [] }}
                 registrationClick={this.registrationClick.bind(this)}
                 registrationToggleSelect={this.registrationSelect.bind(this)}
                 isCollapsed={false}

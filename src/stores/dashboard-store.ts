@@ -1,5 +1,5 @@
-import { observable, reaction, computed, action, when } from "mobx";
-import { ICollection, Collection } from "firestorable";
+import { observable, reaction, computed, action } from "mobx";
+import { ICollection, Collection, RealtimeMode } from "firestorable";
 
 import moment from 'moment-es6';
 
@@ -37,39 +37,44 @@ export class DashboardStore implements IDashboardStore {
 
     constructor(rootStore: IRootStore) {
 
-        this.registrationsField = observable(new Collection<IRegistration, IRegistrationData>(firestore, () => rootStore.getCollection("registrations"),
+        this.registrationsField = observable(new Collection<IRegistration, IRegistrationData>(
+            firestore,
+            "registrations",
             {
-                realtime: true,
+                realtimeMode: RealtimeMode.on,
                 deserialize: deserializer.convertRegistration,
-                serialize: serializer.convertRegistration
-            }));
+                serialize: serializer.convertRegistration,
+                name: "Dashboard registrations",
+            },
+            {
+                logger: console.log
+            },
+        ));
 
         const updateRegistrationQuery = () => {
-            this.registrationsField.query = ref =>
-                this.userIdFilter(
-                    this.projectIdFilter(
-                        this.endDateFilter(
-                            this.startDateFilter(
-                                ref.where("deleted", "==", false)
+            if (!rootStore.user.authenticatedUser || !this.timePeriodFilterField) {
+                this.registrationsField.query = null;
+            } else {
+                this.registrationsField.query = ref =>
+                    this.userIdFilter(
+                        this.projectIdFilter(
+                            this.endDateFilter(
+                                this.startDateFilter(
+                                    ref.where("deleted", "==", false)
+                                )
                             )
                         )
-                    )
-                );
+                    );
+            }
         };
 
         // update the query of the registration collection each time...
         // -- a filter changes (userId, startDate, endDate)
         // TODO: add a Filter button in UI to group all filter changes into one new search query
-        reaction(() => this.startDate, updateRegistrationQuery);
-        reaction(() => this.endDate, updateRegistrationQuery);
+        reaction(() => this.timePeriodFilterField, updateRegistrationQuery);
         reaction(() => this.userFilterValue, updateRegistrationQuery);
         reaction(() => this.projectFilterValue, updateRegistrationQuery);
-
-        // don't load docs without filters!!!!
-        // otherwise firebase quoata will fly pretty fast
-        when(() => !!rootStore.user.authenticatedUser && !!this.timePeriodFilterValue, () => {
-            this.registrationsField.getDocs();
-        });
+        reaction(() => rootStore.user.authenticatedUser, updateRegistrationQuery);
     }
 
     @computed
@@ -92,7 +97,9 @@ export class DashboardStore implements IDashboardStore {
 
     @computed
     private get projectIdFilter() {
-        return (query: firebase.firestore.Query) => this.projectFilterValue ? query.where("project", "==", this.projectFilterValue) : query;
+        return (query: firebase.firestore.Query) => this.projectFilterValue
+            ? query.where("project", "==", this.projectFilterValue)
+            : query;
     }
 
     @computed
@@ -177,7 +184,7 @@ export class DashboardStore implements IDashboardStore {
 
     @computed
     private get registrations() {
-        return Array.from(this.registrationsField.docs.values())
+        return this.registrationsField.docs
             .filter(doc => doc.data!.isPersisted) // don't display drafts (TODO: move to collection.ts?)
     }
 

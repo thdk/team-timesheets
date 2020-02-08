@@ -2,15 +2,14 @@ import * as React from 'react';
 import { ListDivider } from '../../../mdc/list';
 import { IGroupedRegistrations } from '../../../stores/registration-store';
 import { observer } from 'mobx-react';
-import { IRegistration } from '../../../../common/dist';
 import { RegistrationLines } from '../lines';
 import GroupedRegistrationHeader from '../day-header';
 
 export interface IDayProps {
-    group: IGroupedRegistrations<Date>;
+    group: IGroupedRegistrations<string>;
     registrationClick: (id: string) => void;
     headerClick: (e: React.MouseEvent) => void;
-    registrationToggleSelect?: (id: string, data: IRegistration) => void;
+    registrationToggleSelect?: (id: string) => void;
     totalOnTop?: boolean;
     isCollapsed: boolean;
     isMonthView?: boolean;

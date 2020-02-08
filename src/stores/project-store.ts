@@ -1,5 +1,5 @@
 import { computed, IObservableArray, action, observable, transaction } from 'mobx';
-import { Collection, ICollection } from "firestorable";
+import { Collection, ICollection, RealtimeMode, FetchMode } from "firestorable";
 import { IRootStore } from './root-store';
 import { firestore } from '../firebase/my-firebase';
 import { IProject, IProjectData } from '../../common/dist';
@@ -37,12 +37,20 @@ export class ProjectStore implements IProjectStore {
 
     constructor(rootStore: IRootStore) {
         this.rootStore = rootStore;
-        this.projectsCollection = observable(new Collection<IProject, IProjectData>(firestore, rootStore.getCollection.bind(this, "projects"), {
-            realtime: true,
-            query: ref => ref.orderBy("name_insensitive"),
-            serialize: serializer.convertProject,
-            deserialize: deserializer.convertProject,
-        }));
+        this.projectsCollection = new Collection<IProject, IProjectData>(
+            firestore,
+            "projects",
+            {
+                realtimeMode: RealtimeMode.on,
+                fetchMode: FetchMode.once,
+                query: ref => ref.orderBy("name_insensitive"),
+                serialize: serializer.convertProject,
+                deserialize: deserializer.convertProject,
+            },
+            {
+                logger: console.log,
+            },
+        );
     }
 
     public archiveProjects(...projectIds: string[]) {
@@ -60,7 +68,7 @@ export class ProjectStore implements IProjectStore {
     }
 
     public deleteProjects(...ids: string[]) {
-        ids.length && this.projectsCollection.updateAsync("delete", ...ids);
+        ids.length && this.projectsCollection.updateAsync(null, ...ids);
     }
 
     public addProject(project: IProject, id?: string) {
@@ -87,7 +95,7 @@ export class ProjectStore implements IProjectStore {
         };
 
         transaction(() => {
-            this._project.set({...defaultProject, ...project});
+            this._project.set({ ...defaultProject, ...project });
             this.projectId = undefined;
         })
     }
@@ -96,7 +104,7 @@ export class ProjectStore implements IProjectStore {
     public get project() {
         const projectId = this.projectId;
         if (projectId) {
-            const doc = this.projectsCollection.docs.get(projectId);
+            const doc = this.projectsCollection.get(projectId);
             return doc ? doc.data : undefined;
         } else {
             return this._project.get();

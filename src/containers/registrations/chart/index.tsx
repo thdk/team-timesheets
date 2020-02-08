@@ -42,11 +42,9 @@ export interface IUserRegistrationsChartProps extends IRegistrationsChartProps<I
     data: IGroupedRegistrations<string>[];
 }
 
-export class RegistrationsChart<T, K> extends React.Component<IRegistrationsChartProps<T, K>, { data: chartjs.ChartData, isLoading: boolean }> {
+export class RegistrationsChart<T, K> extends React.Component<IRegistrationsChartProps<T, K>, { data: chartjs.ChartData }> {
     private ref: React.RefObject<any>;
     private legendRef: React.RefObject<HTMLDivElement>;
-
-    private disposables: (() => void)[] = [];
 
     constructor(props: IRegistrationsChartProps<T, K>) {
         super(props);
@@ -54,7 +52,7 @@ export class RegistrationsChart<T, K> extends React.Component<IRegistrationsChar
         this.ref = React.createRef();
         this.legendRef = React.createRef();
 
-        this.state = { data: { datasets: [] }, isLoading: true };
+        this.state = { data: { datasets: [] } };
     }
 
     componentDidUpdate() {
@@ -75,31 +73,16 @@ export class RegistrationsChart<T, K> extends React.Component<IRegistrationsChar
                         }
                     ],
                     labels: data.map(d => {
-                        const label = labelCollection.docs.get(d.groupKey);
+                        const label = labelCollection.get(d.groupKey);
                         return label ? getLabel(label.data!) : "Archived";
                     })
                 }
             });
     }
 
-    componentDidMount() {
-        const { labelCollection, data } = this.props;
-
-        if (data.length && !labelCollection.docs.size) {
-
-            labelCollection.getDocs();
-        } else {
-            this.setState({ ...this.state, isLoading: false });
-        }
-    }
-
-    componentWillUnmount() {
-        this.disposables.forEach(d => d());
-    }
-
     render() {
         const { labelCollection, data, title, chart: chartType } = this.props;
-        if (!labelCollection.docs.size || !data.length) return <></>;
+        if (!labelCollection.docs.length || !data.length) return <></>;
 
         const chartProps = {
             ref: this.ref,

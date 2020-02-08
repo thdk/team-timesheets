@@ -1,4 +1,4 @@
-import { ICollection, Collection, Doc } from "firestorable";
+import { ICollection, Collection, Doc, RealtimeMode, FetchMode } from "firestorable";
 import { IRootStore } from "./root-store";
 import { reaction, computed, observable, action } from "mobx";
 
@@ -10,17 +10,27 @@ export interface IReportStore {
     requestReport: (userId: string, year: number, month: number) => void;
     report: Doc<IReport> | undefined;
     reportUrl?: string;
+    reports: ICollection<IReport>;
 }
 
 export class ReportStore implements IReportStore {
     // private rootStore: IRootStore;
-    private readonly reports: ICollection<IReport>;
+    public readonly reports: ICollection<IReport>;
+
     @observable.ref reportUrl?: string;
+
     constructor(rootStore: IRootStore) {
         // this.rootStore = rootStore;
-        this.reports = new Collection(firestore, rootStore.getCollection.bind(this, "reports"), {
-            realtime: true,
-        });
+        this.reports = new Collection(
+            firestore,
+            "reports", {
+                realtimeMode: RealtimeMode.on,
+                fetchMode: FetchMode.manual,
+            },
+            {
+                logger: console.log,
+            },
+        );
 
         const updateReportsQuery = () => {
             const { month, year } = rootStore.view;
@@ -40,11 +50,11 @@ export class ReportStore implements IReportStore {
         reaction(() => this.report, (r) => {
             if (r && r.data && r.data.status === "complete") {
                 const { month, year } = rootStore.view;
-                const {userId} = rootStore.user;
+                const { userId } = rootStore.user;
                 storage.ref(`reports/${year}/${month}/${userId}.csv`).getDownloadURL()
                     .then(url => this.reportUrl = url);
             }
-        })
+        });
     }
 
     @action
@@ -61,10 +71,6 @@ export class ReportStore implements IReportStore {
 
     @computed
     public get report() {
-        if (this.reports.docs.size) {
-            return Array.from(this.reports.docs.values())[0];
-        }
-
-        return undefined;
+        return this.reports.docs[0];
     }
 }

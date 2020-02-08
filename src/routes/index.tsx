@@ -8,6 +8,7 @@ import userRoutes from './users';
 import projectRoutes from './projects';
 import dashboardRoures from './dashboard';
 import loginRoutes from './login';
+import favoriteRoutes from './favorites';
 
 import { goToOverview } from '../internal';
 import store from '../stores/root-store';
@@ -29,5 +30,7 @@ const routes: RoutesConfig = {
   ...projectRoutes,
   ...dashboardRoures,
   ...loginRoutes,
+  ...favoriteRoutes,
 };
+
 export default routes;

@@ -1,13 +1,12 @@
 import { observable, computed, reaction, when, action, toJS, ObservableMap, IObservableArray } from 'mobx';
-import { Doc, ICollection, Collection } from "firestorable";
+import { Doc, ICollection, Collection, RealtimeMode, FetchMode } from "firestorable";
 import store, { IRootStore } from './root-store';
 import * as deserializer from '../../common/serialization/deserializer';
 import * as serializer from '../../common/serialization/serializer';
 import { SortOrder } from '../containers/registrations/days';
 import { IRegistration, IRegistrationData } from '../../common/dist';
 import moment from 'moment-es6';
-import { firestore, auth } from '../firebase/my-firebase';
-import { getLoggedInUserAsync } from '../firebase/firebase-utils';
+import { firestore } from '../firebase/my-firebase';
 
 export interface IGroupedRegistrations<T> {
     registrations: Doc<IRegistration, IRegistrationData>[];
@@ -18,8 +17,8 @@ export interface IGroupedRegistrations<T> {
 
 export interface IRegistrationsStore {
     readonly clipboard: ObservableMap<string, IRegistration>;
-    readonly selectedRegistrationDays: IObservableArray<Date>;
-    readonly toggleSelectedRegistrationDay: (day: Date, force?: boolean) => void;
+    readonly selectedRegistrationDays: IObservableArray<string>;
+    readonly toggleSelectedRegistrationDay: (day: string, force?: boolean) => void;
     readonly registration: IRegistration | undefined;
     readonly registrationId?: string;
     readonly setSelectedRegistration: (id: string | undefined) => void;
@@ -30,12 +29,12 @@ export interface IRegistrationsStore {
     readonly addRegistrations: (data: IRegistration[]) => void;
 
     readonly registrationsTotalTime: number;
-    readonly registrationsGroupedByDay: IGroupedRegistrations<Date>[];
-    readonly registrationsGroupedByDayReversed: IGroupedRegistrations<Date>[];
+    readonly registrationsGroupedByDay: IGroupedRegistrations<string>[];
+    readonly registrationsGroupedByDayReversed: IGroupedRegistrations<string>[];
     readonly registrationsGroupedByDaySortOrder: SortOrder;
     areGroupedRegistrationsCollapsed: boolean;
     readonly setRegistrationsGroupedByDaySortOrder: (sortOrder: SortOrder) => void;
-    readonly copyRegistrationToDate: (source: IRegistration, newDate: Date) => IRegistration;
+    readonly copyRegistrationToDate: (source: Omit<IRegistration, "date">, newDate: Date) => IRegistration;
     readonly getRegistrationById: (id: string) => IRegistration | null;
 }
 
@@ -49,7 +48,7 @@ export class RegistrationStore implements IRegistrationsStore {
     private _selectedRegistrationId = observable.box<string | undefined>();
 
     @observable
-    public selectedRegistrationDays = observable([] as Date[]);
+    public selectedRegistrationDays = observable([] as string[]);
 
     @observable
     private registrationsGroupedByDaySortOrderField = SortOrder.Descending;
@@ -59,17 +58,24 @@ export class RegistrationStore implements IRegistrationsStore {
 
     constructor(rootStore: IRootStore) {
         this.rootStore = rootStore;
-        this.registrations = observable(new Collection<IRegistration, IRegistrationData>(firestore, () => rootStore.getCollection("registrations"),
+        this.registrations = new Collection<IRegistration, IRegistrationData>(
+            firestore,
+            "registrations",
             {
-                realtime: true,
+                realtimeMode: RealtimeMode.on,
+                fetchMode: FetchMode.auto,
                 deserialize: deserializer.convertRegistration,
                 serialize: serializer.convertRegistration
-            }));
+            },
+            {
+                logger: console.log,
+            },
+        );
 
-        const updateRegistrationQuery = () => {
+        const updateRegistrationQuery = (userId: string | undefined) => {
             // TODO: replace when whith a if else
             // clear the docs when there is no userId
-            when(() => !!this.rootStore.user.userId, () => {
+            if (userId) {
                 const moment = rootStore.view.moment;
                 const endDate = moment.clone().endOf("month").toDate();
                 const startDate = moment.clone().startOf("month").toDate();
@@ -77,18 +83,18 @@ export class RegistrationStore implements IRegistrationsStore {
                     .where("date", ">=", startDate)
                     .where("date", "<=", endDate)
                     .where("userId", "==", rootStore.user.userId);
-            });
+            }
+            else {
+                this.registrations.query = null;
+            }
         };
 
         // update the query of the registration collection each time...
         // -- the view moment changes
         // -- the logged in user changes
-        reaction(() => rootStore.view.monthMoment, updateRegistrationQuery);
+        reaction(() => rootStore.view.monthMoment, () => updateRegistrationQuery(rootStore.user.userId));
         reaction(() => rootStore.user.userId, userId => {
-            if (userId) getLoggedInUserAsync(auth).then(() =>
-                updateRegistrationQuery()
-            );
-            else this.registrations.unsubscribeAndClear();
+            updateRegistrationQuery(userId)
         });
 
         reaction(() => this.areGroupedRegistrationsCollapsed, collapsed => {
@@ -136,9 +142,9 @@ export class RegistrationStore implements IRegistrationsStore {
 
         if (regs.length === 0) return [];
         return regs
-            .reduce<IGroupedRegistrations<Date>[]>((p, c) => {
+            .reduce<IGroupedRegistrations<string>[]>((p, c) => {
                 const currentDayGroup = p[p.length - 1];
-                if (currentDayGroup && c.data!.date.getTime() === currentDayGroup.groupKey.getTime()) {
+                if (currentDayGroup && c.data!.date.toDateString() === currentDayGroup.groupKey) {
                     currentDayGroup.registrations.push(c);
 
                     // Always make sure that the order within a group is stable
@@ -151,10 +157,10 @@ export class RegistrationStore implements IRegistrationsStore {
                     currentDayGroup.totalTime = (currentDayGroup.totalTime || 0) + (c.data!.time || 0);
                 } else {
                     p.push({
-                        groupKey: c.data!.date,
+                        groupKey: c.data!.date.toDateString(),
                         registrations: [c],
                         totalTime: c.data!.time || 0,
-                        isCollapsed: !this.selectedRegistrationDays.some(d => d === c.data!.date),
+                        isCollapsed: !this.selectedRegistrationDays.some(d => d === c.data!.date.toDateString()),
                     });
                 }
 
@@ -178,11 +184,11 @@ export class RegistrationStore implements IRegistrationsStore {
 
     @action
     public setSelectedRegistration(id: string | undefined) {
-        
+
         if ((!id && this._selectedRegistration) || (id !== this._selectedRegistrationId.get())) {
             this._selectedRegistrationId.set(id);
-            
-            const registration = id ? this.registrations.docs.get(id) : undefined;
+
+            const registration = id ? this.registrations.get(id) : undefined;
 
             if (id && !registration) {
                 // fetch the registration manually
@@ -210,22 +216,22 @@ export class RegistrationStore implements IRegistrationsStore {
 
     public deleteRegistrationsAsync(...ids: string[]) {
         // Todo: make updateAsync with data === "delete" use a batch in firestorable package.
-        return Promise.all(ids.map(id => this.registrations.updateAsync("delete", id)));
+        return this.registrations.updateAsync(null, ...ids);
     }
 
     public addRegistrations(data: IRegistration[]) {
         this.registrations.addAsync(data);
     }
 
-    public copyRegistrationToDate(source: IRegistration, newDate: Date) {
-        const date = this.toUTC(newDate);
+    public copyRegistrationToDate(source: Omit<IRegistration, "date">, newDate: Date) {
+        const date = newDate;
 
         // set created to undefined so a new timestamp will be set when saving it
         return { ...source, created: undefined, date };
     }
 
-    public toggleSelectedRegistrationDay(date: Date, force = false) {
-        const index = this.selectedRegistrationDays.findIndex(d => d.getTime() === date.getTime());
+    public toggleSelectedRegistrationDay(date: string, force = false) {
+        const index = this.selectedRegistrationDays.findIndex(d => d === date);
         if (index === -1) {
             this.selectedRegistrationDays.push(date);
         } else if (!force) {
@@ -234,7 +240,7 @@ export class RegistrationStore implements IRegistrationsStore {
     }
 
     public getRegistrationById(id: string): IRegistration | null {
-        const doc = this.registrations.docs.get(id);
+        const doc = this.registrations.get(id);
         return doc && doc.data ? doc.data : null;
     }
 
@@ -249,7 +255,7 @@ export class RegistrationStore implements IRegistrationsStore {
 
                 const {
                     recentProjects = [],
-                    defaultTask: task = this.rootStore.config.tasks.docs.size ? Array.from(this.rootStore.config.tasks.docs.keys())[0] : undefined,
+                    defaultTask: task = this.rootStore.config.tasks.docs.length ? this.rootStore.config.tasks.docs[0].id : undefined,
                     defaultClient: client = undefined
                 } = this.rootStore.user.authenticatedUser || {};
 
@@ -258,9 +264,9 @@ export class RegistrationStore implements IRegistrationsStore {
                         .some(p => p.id === projectId));
 
                 return {
-                    date: this.toUTC(
+                    date:
                         regMoment ? regMoment.toDate() : this.rootStore.view.moment.toDate()
-                    ),
+                    ,
                     task,
                     client,
                     userId: this.rootStore.user.userId,
@@ -274,7 +280,7 @@ export class RegistrationStore implements IRegistrationsStore {
         if (this.registration) {
             const { registration } = this;
 
-            const saveOrUpdateAsync = (registration: IRegistration, id: string | undefined) => {
+            const saveOrUpdateAsync = (registration: IRegistration, id: string | undefined): Promise<void[] | string> => {
                 return id
                     ? this.registrations.updateAsync(registration, id)
                     : this.registrations.addAsync(registration);
@@ -309,10 +315,5 @@ export class RegistrationStore implements IRegistrationsStore {
                     }
                 });
         }
-
-    }
-
-    toUTC(date: Date) {
-        return new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate(), date.getHours(), date.getMinutes(), date.getSeconds()));
     }
 }

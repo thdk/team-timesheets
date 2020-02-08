@@ -7,3 +7,6 @@ export * from './ITeam';
 export * from './IReport';
 export * from './IUser';
 export * from './IUserData';
+export * from './IFavoriteRegistrationGroup';
+export * from './IFavoriteRegistrationGroupData';
+export * from './IFavoriteRegistration';

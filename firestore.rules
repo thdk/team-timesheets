@@ -50,6 +50,10 @@ service cloud.firestore {
             allow read: if request.auth.uid != null;
             allow create: if request.auth.uid != null;
             allow update, delete: if request.auth.uid != null;
+        }    
+          
+        match /configs/{configId} {
+            allow read;
         }
   	}
 }

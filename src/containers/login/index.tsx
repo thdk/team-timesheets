@@ -3,11 +3,13 @@ import * as React from 'react';
 import * as firebase from 'firebase/app';
 import * as firebaseui from 'firebaseui';
 
-import { config } from '../../config';
 import { auth } from '../../firebase/my-firebase';
 import { LoginProvider } from '../../firebase/types';
+import { withConfigValues } from '../configs/with-config-values';
 
-export class Login extends React.Component {
+type Props = { configs: { loginProviders: LoginProvider[] } };
+
+class Login extends React.Component<Props> {
     private loginUi?: firebaseui.auth.AuthUI;
     render() {
         return (
@@ -18,7 +20,7 @@ export class Login extends React.Component {
     }
 
     componentDidMount() {
-        const { providers, tosUrl, privacyPolicyUrl } = config.firebaseAuth;
+        const { loginProviders } = this.props.configs;
 
         const loginUiConfig = {
             callbacks: {
@@ -26,13 +28,13 @@ export class Login extends React.Component {
                     return false;
                 }
             },
-            signInOptions: providers.map(this.getFirebaseAuthProvider),
+            signInOptions: loginProviders.map(this.getFirebaseAuthProvider),
             // tosUrl and privacyPolicyUrl accept either url string or a callback
             // function.
             // Terms of service url/callback.
-            tosUrl,
+            // tosUrl,
             // Privacy policy url/callback.
-            privacyPolicyUrl,
+            // privacyPolicyUrl,
             // privacyPolicyUrl: function () {
             //
             // },
@@ -63,3 +65,5 @@ export class Login extends React.Component {
         }
     }
 }
+
+export default withConfigValues(Login, ["loginProviders"]);

@@ -67,7 +67,7 @@ export default {
         '@material/react-dialog': ['DialogTitle', 'DialogContent'],
       }
     }),
-    typescript(),
+    typescript()
     // sizes() // uncomment to analyse packages sizes included in the bundle
   ],
   onwarn: function (warning) {

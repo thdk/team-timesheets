@@ -2,7 +2,7 @@ import * as React from 'react';
 import { Route } from 'mobx-router';
 import { IRootStore } from '../../stores/root-store';
 import { App, goToOverview } from '../../internal';
-import { Login } from '../../components/login';
+import Login from '../../containers/login';
 import { when } from 'mobx';
 import { setNavigationContent, Redirect } from '../actions';
 import { getLoggedInUserAsync } from '../../firebase/firebase-utils';

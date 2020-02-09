@@ -6,7 +6,7 @@ import { IRegistration, IRegistrationData } from '../../../../common';
 import RegistrationLine from "../line";
 
 export interface IRegistrationLinesProps extends React.HTMLProps<HTMLElement> {
-    readonly registrations: Doc<Omit<IRegistration, "date">, Omit<IRegistrationData, "date">>[];
+    readonly registrations: Doc<Omit<IRegistration, "date" | "isPersisted">, Omit<IRegistrationData, "date">>[];
     readonly registrationToggleSelect?: (id: string) => void;
     readonly registrationClick: (id: string) => void;
 }

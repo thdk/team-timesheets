@@ -34,7 +34,7 @@ export interface IRegistrationsStore {
     readonly registrationsGroupedByDaySortOrder: SortOrder;
     areGroupedRegistrationsCollapsed: boolean;
     readonly setRegistrationsGroupedByDaySortOrder: (sortOrder: SortOrder) => void;
-    readonly copyRegistrationToDate: (source: Omit<IRegistration, "date">, newDate: Date) => IRegistration;
+    readonly copyRegistrationToDate: (source: Omit<IRegistration, "date" | "isPersisted">, newDate: Date) => IRegistration;
     readonly getRegistrationById: (id: string) => IRegistration | null;
 }
 
@@ -223,11 +223,11 @@ export class RegistrationStore implements IRegistrationsStore {
         this.registrations.addAsync(data);
     }
 
-    public copyRegistrationToDate(source: Omit<IRegistration, "date">, newDate: Date) {
+    public copyRegistrationToDate(source: Omit<IRegistration, "date" | "isPersisted">, newDate: Date) {
         const date = newDate;
 
         // set created to undefined so a new timestamp will be set when saving it
-        return { ...source, created: undefined, date };
+        return { ...source, created: undefined, date, isPersisted: true };
     }
 
     public toggleSelectedRegistrationDay(date: string, force = false) {

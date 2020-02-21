@@ -1,4 +1,4 @@
-import { IRegistrationData, IRegistration, IUserData, IUser, ITeamData, ITeam, IProjectData, IProject, ITaskData, ITask, IFavoriteRegistrationGroupData, IFavoriteRegistration } from "../interfaces";
+import { IRegistrationData, IRegistration, IUserData, IUser, ITeamData, ITeam, IProjectData, IProject, ITaskData, ITask, IFavoriteRegistration } from "../interfaces";
 import { INameWithIconData } from "../interfaces/base";
 
 

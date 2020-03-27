@@ -7,7 +7,7 @@ import { goToOverview } from '../../routes/registrations/overview';
 import { List, ListItem, ListDivider } from '../../mdc/list';
 import { DateSelect } from '../../components/date-select';
 import { ButtonType, Button } from '../../mdc/buttons/button';
-import { FlexGroup } from '../../components/Layout/flex';
+import { FlexGroup } from '../../components/layout/flex';
 import { withAuthentication } from '../../containers/users/with-authentication';
 import { RedirectToLogin } from '../../routes/login';
 

@@ -15,4 +15,4 @@ steps:
     entrypoint: npm
     args: ["--prefix", "functions", "install"]
   - name: "gcr.io/$PROJECT_ID/firebase"
-    args: ["deploy", "--project", "$PROJECT_ID", "--token", "$_FIREBASE_TOKEN"]
+    args: ["deploy", "--project", "$_FIREBASE_PROJECT_ID", "--token", "$_FIREBASE_TOKEN"]

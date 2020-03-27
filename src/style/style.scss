@@ -28,7 +28,7 @@
 @import '../mdc/styles/app-bar';
 @import '../mdc/styles/switch';
 
-@import './calendar';
+@import '../containers/timesheet-calendar/timesheet-calendar';
 @import './chart';
 
 body {

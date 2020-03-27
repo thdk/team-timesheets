@@ -1,0 +1,33 @@
+@import "_react-calendar-defaults";
+
+.react-calendar {
+  border-top: none;
+  border-right: none;
+  border-color: rgba(0, 0, 0, 0.12);
+
+  .react-calendar__navigation {
+    margin-bottom: 0;
+
+    button {
+      min-width: 35px;
+    }
+  }
+
+  .react-calendar__tile {
+    &.react-calendar__tile--active {
+      @include mdc-theme-prop("background-color", "primary");
+
+      &.react-calendar__tile--now {
+        @include mdc-theme-prop("color", "on-primary");
+      }
+    }
+
+    &.has-data {
+      font-weight: bold;
+    }
+
+    &.react-calendar__tile--now {
+      @include mdc-theme-prop("color", "secondary");
+    }
+  }
+}

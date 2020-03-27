@@ -1,0 +1,18 @@
+steps:
+  - name: node:10.15.1
+    entrypoint: npm
+    args: ["install"]
+  # - name: node:10.15.1
+  #   entrypoint: npm
+  #   args: ["test"]
+  - name: node:10.15.1
+    entrypoint: npm
+    args: ["run", "build:refs"]
+  - name: node:10.15.1
+    entrypoint: npm
+    args: ["run", "build:production"]
+  - name: node:10.15.1
+    entrypoint: npm
+    args: ["--prefix", "functions", "install"]
+  - name: "gcr.io/$PROJECT_ID/firebase"
+    args: ["deploy", "--project", "$_FIREBASE_PROJECT_ID", "--token", "$_FIREBASE_TOKEN"]

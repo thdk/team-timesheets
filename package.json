@@ -4,7 +4,7 @@
   "description": "A start boiler template for typescript projects",
   "main": "src/js/app.ts",
   "scripts": {
-    "buildRefs": "tsc -p common",
+    "build:refs": "tsc -p common",
     "build": "npm run build:development",
     "build:development": "gulp --env=development",
     "build:production": "gulp --env=production",

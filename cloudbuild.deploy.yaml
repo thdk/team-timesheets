@@ -1,5 +1,9 @@
 steps:
   - name: "gcr.io/cloud-builders/docker"
     args: ["pull", "gcr.io/$PROJECT_ID/timesheets"]
+  - name: node:10.15.1
+    dir: "functions"
+    entrypoint: npm
+    args: ["ci"]
   - name: "gcr.io/$PROJECT_ID/firebase"
     args: ["deploy", "--project", "$_FIREBASE_PROJECT_ID", "--token", "$_FIREBASE_TOKEN"]

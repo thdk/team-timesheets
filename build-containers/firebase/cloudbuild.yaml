@@ -1,4 +1,4 @@
-# To create the docker image needed to build this app on google cloud build:
+# To create the docker image needed to deploy this app on google cloud build:
 # 1. Install google cloud sdk if you don't have it yet
 # 2. Authenticate with google cloud: "google cloud auth"
 # 3. Set project id: "gcloud config set project PROJECT-ID-HERE"

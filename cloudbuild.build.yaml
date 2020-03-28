@@ -11,8 +11,7 @@ steps:
   - name: node:10.15.1
     entrypoint: npm
     args: ["run", "build:production"]
-  - name: node:10.15.1
-    entrypoint: npm
-    args: ["--prefix", "functions", "install"]
-  - name: "gcr.io/$PROJECT_ID/firebase"
-    args: ["deploy", "--project", "$_FIREBASE_PROJECT_ID", "--token", "$_FIREBASE_TOKEN"]
+  - name: "gcr.io/cloud-builders/docker"
+    args: ["build", "-t", "gcr.io/$PROJECT_ID/timesheets", "."]
+images:
+  - "gcr.io/$PROJECT_ID/timesheets"

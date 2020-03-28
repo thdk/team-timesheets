@@ -1,6 +1,6 @@
 steps:
-  - name: "gcr.io/$PROJECT_ID/timesheets"
-
+  - name: "gcr.io/cloud-builders/docker"
+    args: ["pull", "gcr.io/$PROJECT_ID/timesheets"]
   - name: node:10.15.1
     entrypoint: npm
     args: ["--prefix", "functions", "install"]

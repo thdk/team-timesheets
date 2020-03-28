@@ -2,6 +2,9 @@ steps:
   - name: node:10.15.1
     entrypoint: npm
     args: ["install"]
+  - name: node:10.15.1
+    entrypoint: npm
+    args: ["--prefix", "functions", "ci"]
   # - name: node:10.15.1
   #   entrypoint: npm
   #   args: ["test"]
@@ -11,6 +14,9 @@ steps:
   - name: node:10.15.1
     entrypoint: npm
     args: ["run", "build:production"]
+  - name: node:10.15.1
+    entrypoint: npm
+    args: ["--prefix", "functions", "build"]
   - name: "gcr.io/cloud-builders/docker"
     args: ["build", "-t", "gcr.io/$PROJECT_ID/timesheets", "."]
 images:

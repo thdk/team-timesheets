@@ -6,6 +6,7 @@ steps:
     entrypoint: npm
     args: ["ci"]
   - name: "alpine"
-    args: ["sh", "ls"]
+    entrypoint: sh
+    args: ["ls"]
   - name: "gcr.io/$PROJECT_ID/firebase"
     args: ["deploy", "--project", "$_FIREBASE_PROJECT_ID", "--token", "$_FIREBASE_TOKEN"]

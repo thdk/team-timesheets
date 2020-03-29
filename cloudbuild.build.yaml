@@ -1,0 +1,21 @@
+steps:
+  - name: node:10.15.1
+    entrypoint: npm
+    args: ["install"]
+  # - name: node:10.15.1
+  #   entrypoint: npm
+  #   args: ["test"]
+  - name: node:10.15.1
+    entrypoint: npm
+    args: ["run", "build:refs"]
+  - name: node:10.15.1
+    entrypoint: npm
+    args: ["run", "build:production"]
+  - name: node:10.15.1
+    entrypoint: npm
+    dir: "functions"
+    args: ["install"]
+  - name: node:10.15.1
+    entrypoint: npm
+    dir: "functions"
+    args: ["run", "build"]

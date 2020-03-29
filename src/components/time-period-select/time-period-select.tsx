@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Select, SelectOption, ISelectProps } from '../../mdc/select';
+import { Select } from "@rmwc/select";
 
 export enum TimePeriod {
     ThisWeek = 0,
@@ -37,10 +37,10 @@ export class TimePeriodSelect extends React.Component<ITimePeriodSelectProps> {
         } = this.props;
 
         const periodSelectOptions = periods.map(p =>
-            <SelectOption value={p.toString()} key={p} text={timePeriodLabels[p]}></SelectOption>
+            <option value={p.toString()} key={p}>{timePeriodLabels[p]}</option>
         );
 
-        const selectProps: ISelectProps<string> = {
+        const selectProps = {
             onChange: this.onChange.bind(this),
             label: "Time period"
         };

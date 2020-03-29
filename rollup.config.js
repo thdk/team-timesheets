@@ -58,6 +58,7 @@ export default {
           'createContext',
           'cloneElement',
           'isValidElement',
+          'useContext',
         ],
         'node_modules/react-dom/index.js': ['findDOMNode', 'unstable_batchedUpdates', 'render'],
         '@material/react-chips': ["Chip", "ChipSet"],
@@ -65,6 +66,7 @@ export default {
         '@material/react-button': ["Button"],
         'firestorable': ['Collection', 'Document'],
         '@material/react-dialog': ['DialogTitle', 'DialogContent'],
+        'node_modules/@rmwc/select/node_modules/@material/dom/dist/mdc.dom.js': ['focusTrap']
       }
     }),
     typescript()

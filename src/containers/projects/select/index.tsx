@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 
-import { Select, SelectOption } from '../../../mdc/select';
+import { Select } from '@rmwc/select';
 import store from '../../../stores/root-store';
 import { IProject } from '../../../../common/dist';
 
@@ -48,13 +48,13 @@ export default class ProjectSelect extends React.Component {
         const projects = allProjects.reduce((p, c, i) => {
             if (typeof c === "string") {
                 p.push([
-                    <SelectOption key={i.toString()} value="" text={c} disabled={true}></SelectOption>
+                    <option key={i.toString()} value="" disabled={true}>{c}</option>
                 ]);
             }
             else {
                 const { id, name } = c;
                 p.push(
-                    <SelectOption text={name!} value={id} key={id}></SelectOption>
+                    <option value={id} key={id}>{name}</option>
                 );
             }
 

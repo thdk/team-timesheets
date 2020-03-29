@@ -12,7 +12,9 @@
     "start": "gulp watch --env=development",
     "deploy:development": "npm run build:development && firebase deploy",
     "deploy:production": "npm run build:production && firebase deploy",
-    "tsc": "tsc -p common && tsc --noEmit"
+    "tsc": "tsc -p common && tsc --noEmit",
+    "test": "jest --passWithNoTests",
+    "test:watch": "jest --watch"
   },
   "repository": {
     "type": "git",

@@ -73,3 +73,6 @@ functions/lib
 
 # macos
 **/.DS_Store
+
+# Jest
+coverage/

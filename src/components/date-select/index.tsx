@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { FlexGroup } from '../layout/flex';
-import moment from 'moment-es6';
-import { Select, SelectOption } from '../../mdc/select';
+import moment from 'moment';
+import { Select } from  "@rmwc/select";
 import { FormField } from '../layout/form';
 
 export interface IDateSelectProps extends React.HTMLProps<HTMLDivElement> {
@@ -15,13 +15,13 @@ export class DateSelect extends React.Component<IDateSelectProps> {
     render() {
         const { year, month, ...rest } = this.props;
         const months = moment.months().map((m, i) => {
-            return <SelectOption key={m} text={m} value={i.toString()}></SelectOption>
+            return <option key={m} value={i.toString()}>{m}</option>
         });
 
         const currentYear = new Date().getFullYear();
         const years = Array.from(Array(5).keys()).map((_, i) => {
             const year = currentYear - i;
-            return <SelectOption key={year} text={year.toString()} value={year.toString()}></SelectOption>
+            <option key={year} value={year.toString()}>{year.toString()}</option>
         });
 
         return (
@@ -40,11 +40,13 @@ export class DateSelect extends React.Component<IDateSelectProps> {
         );
     }
 
-    onMonthChange = (value: string) => {
+    onMonthChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
+        const value = event.currentTarget.value;
         this.props.onMonthChange(+value);
     }
 
-    onYearChange = (value: string) => {
+    onYearChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
+        const value = event.currentTarget.value;
         this.props.onYearChange(+value);
     }
 }

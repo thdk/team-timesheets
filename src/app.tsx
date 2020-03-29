@@ -6,6 +6,8 @@ import { Store } from './stores/root-store';
 import { routes } from './routes';
 import { Provider } from 'mobx-react';
 
+import '@rmwc/select/styles';
+
 const store = (window as any)["store"] = new Store();
 
 startRouter(routes, store);

@@ -1,5 +1,5 @@
 @import '@material/dialog/mdc-dialog';
-@import '@rmwc/icon/icon.css';
+
 .mdc-dialog {
     @include mdc-dialog-min-width(400px);
     @include mdc-dialog-max-height(600px, 100px);

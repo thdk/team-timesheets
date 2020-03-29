@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 
-import { Select, SelectOption } from '../../../mdc/select';
+import { Select } from '@rmwc/select';
 import { IProject } from '../../../../common/dist';
 import { StoreContext } from '../../../contexts/store-context';
 
@@ -51,13 +51,13 @@ export default class ProjectSelect extends React.Component {
         const projects = allProjects.reduce((p, c, i) => {
             if (typeof c === "string") {
                 p.push([
-                    <SelectOption key={i.toString()} value="" text={c} disabled={true}></SelectOption>
+                    <option key={i.toString()} value="" disabled={true}>{c}</option>
                 ]);
             }
             else {
                 const { id, name } = c;
                 p.push(
-                    <SelectOption text={name!} value={id} key={id}></SelectOption>
+                    <option value={id} key={id}>{name}</option>
                 );
             }
 
@@ -65,7 +65,12 @@ export default class ProjectSelect extends React.Component {
         }, new Array());
 
         return (
-            <Select disabled={isCurrentProjectArchived} value={project} outlined={true} label="Project" onChange={this.onProjectChange}>
+            <Select
+            disabled={isCurrentProjectArchived}
+            value={project}
+            outlined={true}
+            label="Project"
+            onChange={this.onProjectChange}>
                 {projects}
             </Select>
         );
@@ -78,7 +83,9 @@ export default class ProjectSelect extends React.Component {
         }
     };
 
-    onProjectChange = (value: string) => {
+    onProjectChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
+        const value = event.currentTarget.value;
+
         if (this.context.timesheets.registration && this.context.timesheets.registration)
             this.context.timesheets.registration.project = value;
     }

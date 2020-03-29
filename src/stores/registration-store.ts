@@ -5,7 +5,7 @@ import * as deserializer from '../../common/serialization/deserializer';
 import * as serializer from '../../common/serialization/serializer';
 import { SortOrder } from '../containers/registrations/days';
 import { IRegistration, IRegistrationData } from '../../common/dist';
-import moment from 'moment-es6';
+import moment from 'moment';
 import { firestore } from '../firebase/my-firebase';
 
 export interface IGroupedRegistrations<T> {

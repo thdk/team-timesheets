@@ -1,5 +1,5 @@
 import { observable, IObservableArray, action, computed, transaction, ObservableMap } from "mobx";
-import moment from 'moment-es6';
+import moment from 'moment';
 import { IRootStore } from "./root-store";
 import { IIconData } from "../mdc/buttons/icon-buttons";
 

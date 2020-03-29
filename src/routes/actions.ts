@@ -3,8 +3,7 @@ import { IDate } from './registrations/overview';
 import { IRootStore } from "../stores/root-store";
 import { transaction } from "mobx";
 import { setBackToOverview } from "../internal";
-import { useEffect } from "react";
-import React from "react";
+import * as React from 'react'
 import { StoreContext } from "../contexts/store-context";
 
 export const goToRouteWithDate = (route: Route, s: IRootStore, date?: IDate, trackOptions?: { track?: boolean, currentDate?: number }) => {
@@ -45,7 +44,7 @@ export const setTitleForRoute = (store: IRootStore, route: Route) => {
 export const Redirect = ({ route, params }: { route: Route, params?: {} }) => {
     const store = React.useContext(StoreContext);
 
-    useEffect(() => {
+    React.useEffect(() => {
         store.router.goTo(route, params, store);
     }, []);
 

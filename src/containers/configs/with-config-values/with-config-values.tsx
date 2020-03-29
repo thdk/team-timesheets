@@ -8,7 +8,7 @@ export function withConfigValues<T extends {
     [key: string]: ConfigValue;
 }>(
     WrappedComponent: React.ComponentType<{ configs: T }>,
-    configKeys: (keyof T)[]
+    configRequests: ({ key: keyof T, defaultValue?: ConfigValue })[]
 ) {
 
     const ComponentWithConfigValues = () => {
@@ -16,8 +16,11 @@ export function withConfigValues<T extends {
             return null;
         }
 
-        const configs = configKeys.reduce((p, configKey) => {
-            p[configKey] = store.config.getConfigValue(configKey as string);
+        const configs = configRequests.reduce((p, configRequest) => {
+            p[configRequest.key] = (
+                store.config.getConfigValue(configRequest.key as string, configRequest.defaultValue === undefined)
+                || configRequest.defaultValue
+            ) as T[keyof T];
             return p;
         }, {} as T);
 

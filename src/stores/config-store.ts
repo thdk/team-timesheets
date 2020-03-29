@@ -93,7 +93,8 @@ export class ConfigStore implements IConfigStore {
 
     // To investigate: does getConfigValue needs mobx @computed attribute?
     public getConfigValue<T>(key: string): T;
-    public getConfigValue<T>(key: string, isRequired: false): T | undefined;
+    public getConfigValue<T>(key: string, isRequired: true): T;
+    public getConfigValue<T>(key: string, isRequired: boolean): T | undefined;
     public getConfigValue<T extends ConfigValue>(key: string, isRequired = true): T | undefined {
         const doc = this.configsCollection.docs.find(c => c.data!.key === key);
 

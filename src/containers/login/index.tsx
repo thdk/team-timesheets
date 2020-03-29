@@ -67,3 +67,9 @@ class Login extends React.Component<Props> {
 }
 
 export default withConfigValues(Login, ["loginProviders"]);
+export default withConfigValues(Login, [
+    {
+        key: "loginProviders",
+        defaultValue: [LoginProvider.Google],
+    },
+]);

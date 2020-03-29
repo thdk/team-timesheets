@@ -94,6 +94,7 @@
     "@rmwc/icon": "^5.7.0",
     "@rmwc/list": "^5.7.0",
     "@rmwc/menu": "^5.7.2",
+    "@rmwc/select": "^6.0.3",
     "@rmwc/textfield": "^5.7.0",
     "@types/throttle-debounce": "^2.1.0",
     "chart.js": "^2.7.3",

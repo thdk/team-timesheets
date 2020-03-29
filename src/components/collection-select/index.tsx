@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
-import { SelectOption, Select } from '../../mdc/select';
+import { Select } from '@rmwc/select';
 
 export interface ICollectionListProps {
     readonly label: string;
@@ -14,12 +14,12 @@ export default class CollectionSelect extends React.Component<ICollectionListPro
     render() {
         const { items, value, onChange, label } = this.props;
         const listItems = items.map(i =>
-            <SelectOption text={i.name!} value={i.id} key={i.id}></SelectOption>
+            <option value={i.id} key={i.id}>{i.name}</option>
         );
 
         return (
             <Select value={value} outlined={true} label={label} onChange={onChange}>
-                <SelectOption text="" value=""></SelectOption>
+                <option value=""></option>
                 {listItems}
             </Select>
         );

@@ -96,7 +96,7 @@
     "firebaseui": "^3.4.1",
     "firestorable": "^0.1.18",
     "g": "^2.0.1",
-    "mobx": "^5.7.0",
+    "mobx": "^5.15.4",
     "mobx-react": "^5.4.3",
     "mobx-react-lite": "^1.4.1",
     "mobx-router": "0.0.19",

@@ -1,7 +1,7 @@
 {
-  "name": "typescript-start",
+  "name": "thdk-timesheets-app",
   "version": "0.7.0",
-  "description": "A start boiler template for typescript projects",
+  "description": "A replacement web app for old school timesheets",
   "main": "src/js/app.ts",
   "scripts": {
     "build:refs": "tsc -p common",
@@ -33,7 +33,7 @@
     "@types/react-dom": "^16.8.4",
     "autoprefixer": "^9.4.2",
     "del": "^3.0.0",
-    "firebase-tools": "^7.16.2",
+    "firebase-tools": "^8.0.1",
     "gulp": "^4.0.0",
     "gulp-buffer": "0.0.2",
     "gulp-inject": "^5.0.2",

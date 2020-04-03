@@ -92,7 +92,7 @@
     "@types/throttle-debounce": "^2.1.0",
     "chart.js": "^2.7.3",
     "classnames": "^2.2.6",
-    "firebase": "^5.9.0",
+    "firebase": "^7.13.2",
     "firebaseui": "^3.4.1",
     "firestorable": "^0.1.18",
     "g": "^2.0.1",

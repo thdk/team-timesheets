@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import { TopAppBar } from '../../../mdc/appbars';
-import store from '../../../stores/root-store';
+import { StoreContext } from '../../../contexts/store-context';
 
 // TODO: move to  mdc/TopAppBar
 export interface ITopAppBarProps {
@@ -16,16 +16,19 @@ export enum NavigationType {
 
 @observer
 export class TopNavigation extends React.Component {
+    declare context: React.ContextType<typeof StoreContext>
+    static contextType = StoreContext;
+
     navigationClick = (e: React.MouseEvent) => {
         e.preventDefault();
-        const action = store.view.navigationAction;
+        const action = this.context.view.navigationAction;
         if (action) action.action();
     }
 
     render() {
-        const { navigationAction: { icon: navigationIcon = {content: "menu", label: "Menu"}} = {}, title } = store.view;
+        const { navigationAction: { icon: navigationIcon = {content: "menu", label: "Menu"}} = {}, title } = this.context.view;
 
-        const selectionLength = Array.from(store.view.selection.keys()).length;
+        const selectionLength = Array.from(this.context.view.selection.keys()).length;
         const titleText = selectionLength
          ? `${selectionLength} selected`
          : title;

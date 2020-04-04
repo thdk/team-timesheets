@@ -4,7 +4,7 @@ import firebase from "firebase/app";
 import "firebase/firestore";
 import { CollectionReference } from "@firebase/firestore-types";
 
-import store, { IRootStore } from "../root-store";
+import { IRootStore } from "../root-store";
 import { IFavoriteRegistrationGroup, IFavoriteRegistration, IFavoriteRegistrationGroupData } from "../../../common/dist";
 import * as serializer from '../../../common/serialization/serializer';
 import * as deserializer from '../../../common/serialization/deserializer';
@@ -18,8 +18,10 @@ export class FavoriteStore {
 
     @observable.ref
     private activefavoriteGroupIdField: string | undefined;
+    private readonly rootStore: IRootStore;
 
     constructor(rootStore: IRootStore) {
+        this.rootStore = rootStore;
         this.db = firebase.firestore();
         this.favoriteGroupCollectionRef = this.db.collection("favorite-groups");
         const createQuery = () =>
@@ -114,7 +116,7 @@ export class FavoriteStore {
             : this.favoriteGroupCollectionRef.doc().id;
 
         this.db.runTransaction(() => {
-            if (!store.user.userId)
+            if (!this.rootStore.user.userId)
                 return Promise.reject("Unauthenticated");
 
             return Promise.all<string[] | string | undefined>([
@@ -122,7 +124,7 @@ export class FavoriteStore {
                     ? undefined
                     : this.favoriteGroupCollection.addAsync({
                         name: group.name,
-                        userId: store.user.userId
+                        userId: this.rootStore.user.userId
                     }, groupId),
                 this.favoriteCollection.addAsync(
                     favorites

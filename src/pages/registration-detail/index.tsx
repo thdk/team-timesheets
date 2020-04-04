@@ -4,31 +4,34 @@ import { Chip, ChipSet } from '@material/react-chips';
 
 import { Form, FormField } from '../../components/layout/form';
 import { FlexGroup } from '../../components/layout/flex';
-import store from '../../stores/root-store';
 import ProjectSelect from '../../containers/projects/select';
 import ClientSelect from '../../containers/clients/select';
 import { withAuthentication } from '../../containers/users/with-authentication';
 import { RedirectToLogin } from '../../internal';
 import { TextField } from '@rmwc/textfield';
+import { StoreContext } from '../../contexts/store-context';
 
 @observer
 class Registration extends React.Component {
+    declare context: React.ContextType<typeof StoreContext>
+    static contextType = StoreContext;
+
     render() {
-        if (!store.user.authenticatedUser) {
+        if (!this.context.user.authenticatedUser) {
             return <></>;
         }
 
-        if (!store.timesheets.registration || !store.user.userId) return <></>;
+        if (!this.context.timesheets.registration || !this.context.user.userId) return <></>;
 
-        const userTasks = Array.from(store.user.authenticatedUser.tasks.keys());
+        const userTasks = Array.from(this.context.user.authenticatedUser.tasks.keys());
         const { task,
             description,
             time,
             date,
             client
-        } = store.timesheets.registration;
+        } = this.context.timesheets.registration;
 
-        const tasks = Array.from(store.config.tasks.docs.values())
+        const tasks = Array.from(this.context.config.tasks.docs.values())
             .filter(t => t.data && userTasks.length ? userTasks.some(userTaskId => userTaskId === t.id) : true)
             .map(t => {
                 const { id: taskId, data: { name: taskName = "N/A", icon: taskIcon = undefined } = {} } = t;
@@ -106,23 +109,23 @@ class Registration extends React.Component {
     }
 
     onDescriptionChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        if (store.timesheets.registration && store.timesheets.registration)
-            store.timesheets.registration.description = event.currentTarget.value.trimLeft();
+        if (this.context.timesheets.registration && this.context.timesheets.registration)
+            this.context.timesheets.registration.description = event.currentTarget.value.trimLeft();
     }
 
     onTimeChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        if (store.timesheets.registration && store.timesheets.registration)
-            store.timesheets.registration.time = +(event.currentTarget.value);
+        if (this.context.timesheets.registration && this.context.timesheets.registration)
+            this.context.timesheets.registration.time = +(event.currentTarget.value);
     }
 
     taskClicked = (taskId: string, selected: boolean) => {
-        if (store.timesheets.registration && store.timesheets.registration.task !== taskId && selected)
-            store.timesheets.registration.task = taskId;
+        if (this.context.timesheets.registration && this.context.timesheets.registration.task !== taskId && selected)
+            this.context.timesheets.registration.task = taskId;
     }
 
     onClientChange = (value: string) => {
-        if (store.timesheets.registration && store.timesheets.registration)
-            store.timesheets.registration.client = value;
+        if (this.context.timesheets.registration && this.context.timesheets.registration)
+            this.context.timesheets.registration.client = value;
     }
 }
 

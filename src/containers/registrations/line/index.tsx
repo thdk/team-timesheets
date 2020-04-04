@@ -1,9 +1,9 @@
 import * as React from 'react';
 import { Checkbox } from '@rmwc/checkbox';
-import store from '../../../stores/root-store';
 import { observer } from 'mobx-react';
 import EditableTextField from '../../../components/editable-text';
 import classNames from 'classnames';
+import { StoreContext } from '../../../contexts/store-context';
 
 export interface IRegistrationLineProps extends React.HTMLProps<HTMLDivElement> {
     readonly line1: string;
@@ -16,6 +16,9 @@ export interface IRegistrationLineProps extends React.HTMLProps<HTMLDivElement> 
 
 @observer
 export default class RegistrationLine extends React.Component<IRegistrationLineProps> {
+    declare context: React.ContextType<typeof StoreContext>
+    static contextType = StoreContext;
+
     private timeInputEl: React.RefObject<HTMLInputElement>;
     constructor(props: IRegistrationLineProps) {
         super(props);
@@ -27,15 +30,15 @@ export default class RegistrationLine extends React.Component<IRegistrationLineP
         const { line1, line2, icon, time = 0, id, onSelect, readOnly, ...restProps } = this.props;
 
         const onTimeChange = (value: string) => {
-            if (store.timesheets.registration && store.timesheets.registration) {
-                store.timesheets.registration.time = +value;
-                store.timesheets.saveSelectedRegistration();
-                store.timesheets.setSelectedRegistration(undefined);
+            if (this.context.timesheets.registration && this.context.timesheets.registration) {
+                this.context.timesheets.registration.time = +value;
+                this.context.timesheets.saveSelectedRegistration();
+                this.context.timesheets.setSelectedRegistration(undefined);
             }
         }
 
         const onCancel = () => {
-            store.timesheets.setSelectedRegistration(undefined);
+            this.context.timesheets.setSelectedRegistration(undefined);
         };
 
         const iconJSX = icon
@@ -53,7 +56,7 @@ export default class RegistrationLine extends React.Component<IRegistrationLineP
             </span>
             : undefined;
 
-        const isEditing = store.timesheets.registration && store.timesheets.registrationId === id;
+        const isEditing = this.context.timesheets.registration && this.context.timesheets.registrationId === id;
         const timeJSX2 = <EditableTextField
             ref={this.timeInputEl}
             editMode={!!isEditing}
@@ -70,7 +73,7 @@ export default class RegistrationLine extends React.Component<IRegistrationLineP
                 <Checkbox onClick={(e: React.MouseEvent) => {
                     e.stopPropagation();
                 }}
-                    checked={store.view.selection.has(id)}
+                    checked={this.context.view.selection.has(id)}
                     onChange={onSelect}
                 ></Checkbox>
             </div>
@@ -89,7 +92,7 @@ export default class RegistrationLine extends React.Component<IRegistrationLineP
             <div className="registration-line-time" onClick={(e) => {
                 e.preventDefault();
                 e.stopPropagation();
-                store.timesheets.setSelectedRegistration(id);
+                this.context.timesheets.setSelectedRegistration(id);
             }}>
                 {timeJSX2}
             </div>

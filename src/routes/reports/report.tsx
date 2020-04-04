@@ -12,7 +12,7 @@ export const goToReports = (s: IRootStore, date?: IDate) => {
 }
 
 const routeChanged = (route: Route, params: IDate, s: IRootStore) => {
-    setNavigationContent(route, false);
+    setNavigationContent(s, route, false);
     routeWithDateChanged(route, params, s);
 };
 

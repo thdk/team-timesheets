@@ -11,8 +11,8 @@ export const goToDashboard = (s: IRootStore) => {
     s.router.goTo(routes.dashboard, null, s);
 }
 
-const routeChanged = (route: Route, _params: IDate, _s: IRootStore) => {
-    setNavigationContent(route, false);
+const routeChanged = (route: Route, _params: IDate, s: IRootStore) => {
+    setNavigationContent(s, route, false);
 };
 
 const routes = {

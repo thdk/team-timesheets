@@ -2,11 +2,12 @@ import { observer } from 'mobx-react-lite';
 import * as React from 'react';
 import Calendar, { CalendarTileProperties } from 'react-calendar/dist/entry.nostyle';
 
-import store from '../../stores/root-store';
 import { goToOverview } from '../../internal';
 import { withAuthentication } from '../users/with-authentication';
+import { StoreContext } from '../../contexts/store-context';
 
 const TimesheetCalendar = observer(() => {
+    const store = React.useContext(StoreContext);
 
     const dateChanged = React.useCallback((dates: Date | Date[]) => {
         const date = dates instanceof (Date) ? dates : dates[0];

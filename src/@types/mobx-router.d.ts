@@ -1,6 +1,6 @@
 declare module 'mobx-router' {
     import { object } from "prop-types";
-    export function startRouter(routes: RoutesConfig, store: any): void;
+    declare const startRouter: (routes: RoutesConfig, store: any) => void;
 
     export class MobxRouter extends React.Component {};
 

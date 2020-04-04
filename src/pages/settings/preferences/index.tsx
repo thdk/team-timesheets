@@ -2,7 +2,6 @@ import * as React from 'react';
 import { observer } from 'mobx-react';
 import { Chip, ChipSet } from '@material/react-chips';
 
-import store from '../../../stores/root-store';
 import { Box } from '../../../components/layout/box';
 import ClientSelect from '../../../containers/clients/select';
 import { UserTasks } from '../../../containers/users/user-tasks';
@@ -12,18 +11,22 @@ import {
     IWithAuthenticatedUserProps,
     withAuthenticatedUser
 } from '../../../containers/users/with-authenticated-user';
+import { StoreContext } from '../../../contexts/store-context';
 
 type Props = IWithAuthenticatedUserProps;
 
 @observer
 class Preferences extends React.Component<Props> {
+    declare context: React.ContextType<typeof StoreContext>
+    static contextType = StoreContext;
+
     render() {
         const { authenticatedUser: user } = this.props;
 
-        if (store.config.tasks.docs.length === 0) return null;
+        if (this.context.config.tasks.docs.length === 0) return null;
 
-        const { tasks: userTasks = new Map<string, true>(), defaultTask = undefined, defaultClient = undefined } = store.user.authenticatedUser || {};
-        const tasks = Array.from(store.config.tasks.docs.values())
+        const { tasks: userTasks = new Map<string, true>(), defaultTask = undefined, defaultClient = undefined } = this.context.user.authenticatedUser || {};
+        const tasks = Array.from(this.context.config.tasks.docs.values())
             .reduce((p, c) => {
                 if (c.data) {
                     const { id: taskId, data: { name: taskName, icon: taskIcon = undefined } } = c;
@@ -66,19 +69,19 @@ class Preferences extends React.Component<Props> {
         if (selected) tasks.set(id, true);
         else tasks.delete(id);
 
-        store.user.updateAuthenticatedUser({
+        this.context.user.updateAuthenticatedUser({
             tasks,
         });
     }
 
     defaultTaskChanged = (defaultTask: string) => {
-        store.user.updateAuthenticatedUser({
+        this.context.user.updateAuthenticatedUser({
             defaultTask
         });
     }
 
     defaultClientChanged = (defaultClient: string) => {
-        store.user.updateAuthenticatedUser({
+        this.context.user.updateAuthenticatedUser({
             defaultClient
         });
     }

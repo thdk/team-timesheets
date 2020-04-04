@@ -1,11 +1,11 @@
 import * as React from "react";
 import { observer } from "mobx-react";
 
-import store from "../../../stores/root-store";
 import { ListItem, List } from "../../../mdc/list";
 import { goToUser } from "../../../routes/users/detail";
 import { IRoles, IUser } from "../../../../common";
 import { withUsers } from "../with-users";
+import { StoreContext } from "../../../contexts/store-context";
 
 export interface IUserListProps {
     users: (IUser & {id:string})[];
@@ -13,12 +13,15 @@ export interface IUserListProps {
 
 @observer
 class UserList extends React.Component<IUserListProps> {
+    declare context: React.ContextType<typeof StoreContext>
+    static contextType = StoreContext;
+
     render() {
 
         const userItems = this.props.users.map(data => {
             const { name, roles, team, id } = data;
 
-            const teamData = team ? store.config.teamsCollection.get(team) : undefined;
+            const teamData = team ? this.context.config.teamsCollection.get(team) : undefined;
             const {name: teamName = "Archived"} = teamData ? teamData.data || {} : {};
 
             const activeRoles = (Object.keys(roles) as (keyof IRoles)[]).filter(r => !!roles[r]);
@@ -37,7 +40,7 @@ class UserList extends React.Component<IUserListProps> {
     }
 
     userClick(id: string) {
-        goToUser(id);
+        goToUser(this.context, id);
     }
 
     private capitalizeFirstLetter(input: string) {

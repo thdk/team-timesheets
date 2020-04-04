@@ -1,8 +1,8 @@
 import * as React from 'react';
 
-import store from '../../../stores/root-store';
-import CollectionSelect from '../../../components/collection-select';
+import { CollectionSelect } from '../../../components/collection-select';
 import { observer } from 'mobx-react-lite';
+import { StoreContext } from '../../../contexts/store-context';
 
 export interface IClientSelectProps {
     value?: string;
@@ -11,14 +11,15 @@ export interface IClientSelectProps {
 }
 
 export const ClientSelect = observer((props: IClientSelectProps) => {
+    const store = React.useContext(StoreContext);
+
     const { label = "Client", value = "", onChange } = props;
     return (
         <CollectionSelect
             value={value}
             items={store.config.clients}
             label={label}
-            onChange={onChange}>
-        </CollectionSelect>
+            onChange={onChange} />
     );
 });
 

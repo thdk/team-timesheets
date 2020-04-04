@@ -1,10 +1,10 @@
 import * as React from 'react';
 import { Route } from 'mobx-router';
-import Timesheet from '../../pages/registrations';
+import { RegistrationsPage } from '../../pages/registrations';
 import { transaction, IKeyValueMap } from 'mobx';
 import { setNavigationContent, goToRouteWithDate } from '../actions';
 import { App } from '../../internal';
-import store, { IRootStore } from '../../stores/root-store';
+import { IRootStore } from '../../stores/root-store';
 import { IViewAction } from '../../stores/view-store';
 import { IRegistration } from '../../../common/dist';
 import detailRoutes from "./detail";
@@ -29,7 +29,7 @@ export const goToOverview = (s: IRootStore, date?: IDate, trackOptions?: { track
 };
 
 const routeChanged = (route: Route, params: IDate, s: IRootStore) => {
-    setNavigationContent(route, !!s.view.track, s.view.track && store.view.moment ? { year: store.view.year!, month: store.view.month! } : undefined, params.day ? +params.day : undefined);
+    setNavigationContent(s, route, !!s.view.track, s.view.track && s.view.moment ? { year: s.view.year!, month: s.view.month! } : undefined, params.day ? +params.day : undefined);
 
     transaction(() => {
         s.view.year = +params.year;
@@ -47,7 +47,7 @@ const setActions = (s: IRootStore, alowInserts = false) => {
                     s.timesheets.clipboard.replace(
                         Array.from(selection.keys())
                             .reduce((map, id) => {
-                                const registration = store.timesheets.getRegistrationById(id);
+                                const registration = s.timesheets.getRegistrationById(id);
                                 if (registration) {
                                     map[id] = { ...registration };
                                 }
@@ -83,7 +83,7 @@ const setActions = (s: IRootStore, alowInserts = false) => {
                         // registrations
                         Array.from(selection.keys())
                             .reduce((registrations, id) => {
-                                const registration = store.timesheets.getRegistrationById(id);
+                                const registration = s.timesheets.getRegistrationById(id);
                                 if (registration) {
                                     registrations.push(registration);
                                 }
@@ -98,7 +98,7 @@ const setActions = (s: IRootStore, alowInserts = false) => {
                     s.view.selection.clear();
                 });
 
-                groupId && goToFavorite(groupId);
+                groupId && goToFavorite(s, groupId);
             },
             icon: { content: "favorite", label: "Favorite" },
             shortKey: { ctrlKey: false, key: "f" },
@@ -113,11 +113,11 @@ const setActions = (s: IRootStore, alowInserts = false) => {
             action: selection => {
                 if (!selection) return;
 
-                console.log(store.view.moment.toDate());
+                console.log(s.view.moment.toDate());
                 s.timesheets.addRegistrations(
                     Array.from(selection.values())
                         .map(reg =>
-                            store.timesheets.copyRegistrationToDate(reg, store.view.moment.toDate())
+                            s.timesheets.copyRegistrationToDate(reg, s.view.moment.toDate())
                         )
                 );
             },
@@ -152,7 +152,7 @@ const setActions = (s: IRootStore, alowInserts = false) => {
         s.view.setActions(actions);
         s.view.setFabs([{
             action: () => {
-                store.router.goTo(detailRoutes.newRegistration, {}, store);
+                s.router.goTo(detailRoutes.newRegistration, {}, s);
             },
             icon: {
                 content: "add",
@@ -176,7 +176,7 @@ const beforeTimesheetExit = (_route: Route, _params: any, s: IRootStore) => {
 const routes = {
     overview: new Route({
         path: path + '/:year/:month/:day',
-        component: <App><Timesheet></Timesheet></App>,
+        component: <App><RegistrationsPage></RegistrationsPage></App>,
         onEnter: (route: Route, params: IDate, s: IRootStore) => {
             routeChanged(route, params, s);
             setActions(s, true);
@@ -187,9 +187,9 @@ const routes = {
     }),
     monthOverview: new Route({
         path: path + '/:year/:month',
-        component: <App><Timesheet></Timesheet></App>,
+        component: <App><RegistrationsPage></RegistrationsPage></App>,
         onEnter: (route: Route, params: IDate, s: IRootStore) => {
-            store.view.track = false;
+            s.view.track = false;
             routeChanged(route, params, s);
             setActions(s);
         },

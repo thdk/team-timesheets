@@ -1,8 +1,9 @@
-import { observer } from 'mobx-react-lite';
 import * as React from 'react';
+import { observer } from 'mobx-react-lite';
 
 import { IAuthenticatedUser } from '../../../../common/dist';
-import store from '../../../stores/root-store';
+import { StoreContext } from '../../../contexts/store-context';
+import { useContext } from 'react';
 
 export interface IWithAuthenticationOptions {
     placeholder?: JSX.Element,
@@ -14,8 +15,8 @@ export const withAuthentication = (
     placeholder: JSX.Element = <></>,
 ) => {
     const WithAuthenticationComponent = () => {
-
-        return store.user.authenticatedUser
+        const { user } = useContext(StoreContext);
+        return user.authenticatedUser
             ? <WrappedComponent />
             : placeholder;
     };

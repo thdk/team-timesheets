@@ -3,7 +3,6 @@ import { observer } from 'mobx-react';
 
 import { TapBar, Tab, TabIcon } from '../../mdc/tabbar';
 import Preferences from './preferences';
-import store from '../../stores/root-store';
 import { TaskList } from '../../containers/tasks/list';
 import { SettingsTab } from '../../routes/settings';
 import { goToSettings, RedirectToLogin } from '../../internal';
@@ -13,6 +12,7 @@ import { canReadUsers, canManageTeams } from '../../rules/rules';
 import { TeamList } from '../../containers/teams/list';
 import { withAuthenticatedUser, IWithAuthenticatedUserProps } from '../../containers/users/with-authenticated-user';
 import { withAuthentication } from '../../containers/users/with-authentication';
+import { StoreContext } from '../../contexts/store-context';
 
 interface ITabData {
     id: SettingsTab;
@@ -26,6 +26,9 @@ type Props = IWithAuthenticatedUserProps;
 
 @observer
 class Settings extends React.Component<Props> {
+    declare context: React.ContextType<typeof StoreContext>;
+    static contextType = StoreContext;
+
     render() {
         const { authenticatedUser: user } = this.props;
 
@@ -41,7 +44,7 @@ class Settings extends React.Component<Props> {
 
         if (!validTabs.length) return <></>
 
-        const query: { tab: SettingsTab } = store.router.queryParams;
+        const query: { tab: SettingsTab } = this.context.router.queryParams;
         const { tab: activeTabId = validTabs[0].id } = query || {};
 
         let activeTab = validTabs.filter(t => t.id === activeTabId)[0];
@@ -50,7 +53,7 @@ class Settings extends React.Component<Props> {
 
         const tabs = validTabs.map(t => {
             const icon = t.icon ? <TabIcon icon={t.icon}></TabIcon> : undefined;
-            return <Tab onClick={goToSettings.bind(this, t.id)} isActive={activeTab.id === t.id} key={t.id} {...t} icon={icon}></Tab>;
+            return <Tab onClick={goToSettings.bind(this, this.context, t.id)} isActive={activeTab.id === t.id} key={t.id} {...t} icon={icon}></Tab>;
         });
 
         return (

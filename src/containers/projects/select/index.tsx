@@ -2,18 +2,21 @@ import * as React from 'react';
 import { observer } from 'mobx-react';
 
 import { Select, SelectOption } from '../../../mdc/select';
-import store from '../../../stores/root-store';
 import { IProject } from '../../../../common/dist';
+import { StoreContext } from '../../../contexts/store-context';
 
 @observer
 export default class ProjectSelect extends React.Component {
-    render() {
-        let project = store.timesheets.registration ? store.timesheets.registration.project : "";
+    declare context: React.ContextType<typeof StoreContext>
+    static contextType = StoreContext;
 
-        const userRecentProjects = store.user.authenticatedUser ? store.user.authenticatedUser.recentProjects : [];
+    render() {
+        let project = this.context.timesheets.registration ? this.context.timesheets.registration.project : "";
+
+        const userRecentProjects = this.context.user.authenticatedUser ? this.context.user.authenticatedUser.recentProjects : [];
 
         const recentProjects = userRecentProjects.slice(0, 5).reduce((p, c) => {
-            const projectData = store.projects.activeProjects.find(p => p.id === c);
+            const projectData = this.context.projects.activeProjects.find(p => p.id === c);
             if (projectData) {
                 p.push(projectData);
             } else {
@@ -26,7 +29,7 @@ export default class ProjectSelect extends React.Component {
             ? ["\/ Recent projects \/", ...recentProjects, "", "\/ More projects \/"]
             : [""];
 
-        const otherProjectItems = store.projects.activeProjects
+        const otherProjectItems = this.context.projects.activeProjects
             .filter(p => !recentProjects.some(rp => rp.id === p.id));
 
         const allProjects = [...recentProjectItems, ...otherProjectItems];
@@ -34,7 +37,7 @@ export default class ProjectSelect extends React.Component {
         let isCurrentProjectArchived = false;
         // Maybe project is archived? Add it and disable change of project!
         if (project && !allProjects.some(p => typeof p !== "string" && p.id === project)) {
-            const archivedProject = store.projects.archivedProjects.find(p => p.id === project);
+            const archivedProject = this.context.projects.archivedProjects.find(p => p.id === project);
             if (archivedProject) {
                 isCurrentProjectArchived = true;
                 allProjects.unshift(archivedProject);
@@ -70,13 +73,13 @@ export default class ProjectSelect extends React.Component {
 
     projectClicked = (id: string, selected: boolean) => {
         if (selected) {
-            if (store.timesheets.registration && store.timesheets.registration)
-                store.timesheets.registration.project = id;
+            if (this.context.timesheets.registration && this.context.timesheets.registration)
+                this.context.timesheets.registration.project = id;
         }
     };
 
     onProjectChange = (value: string) => {
-        if (store.timesheets.registration && store.timesheets.registration)
-            store.timesheets.registration.project = value;
+        if (this.context.timesheets.registration && this.context.timesheets.registration)
+            this.context.timesheets.registration.project = value;
     }
 }

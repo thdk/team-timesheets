@@ -2,7 +2,7 @@ import { transaction } from 'mobx';
 import { Route, RoutesConfig } from 'mobx-router';
 import * as React from 'react';
 
-import store, { IRootStore } from '../../stores/root-store';
+import { IRootStore } from '../../stores/root-store';
 import { IViewAction } from '../../stores/view-store';
 import { goToFavorites } from './list';
 import { setTitleForRoute } from '../actions';
@@ -11,7 +11,7 @@ import FavoriteGroupDetailPage from '../../pages/favorite-group-detail';
 
 const path = "/favoritedetail";
 
-export const goToFavorite = (id: string) => {
+export const goToFavorite = (store: IRootStore, id: string) => {
     store.router.goTo(routes.favoriteDetail, { id }, store);
 };
 
@@ -31,7 +31,7 @@ const onEnter = (route: Route, _params: any, s: IRootStore) => {
     const deleteAction: IViewAction = {
         action: () => {
             s.favorites.deleteActiveFavoriteGroup();
-            goToFavorites();
+            goToFavorites(s);
         },
         icon: { label: "Delete", content: "delete" },
         shortKey: { key: "Delete", ctrlKey: true }
@@ -40,7 +40,7 @@ const onEnter = (route: Route, _params: any, s: IRootStore) => {
     const saveAction: IViewAction = {
         action: () => {
             save();
-            goToFavorites();
+            goToFavorites(s);
         },
         icon: { label: "Save", content: "save" },
         shortKey: { key: "s", ctrlKey: true }
@@ -55,12 +55,12 @@ const onEnter = (route: Route, _params: any, s: IRootStore) => {
         s.view.setNavigation({
             action: () => {
                 save();
-                goToFavorites();
+                goToFavorites(s);
             },
             icon: { label: "Back", content: "arrow_back" }
         });
 
-        setTitleForRoute(route);
+        setTitleForRoute(s, route);
     });
 };
 

@@ -1,8 +1,8 @@
 import * as React from "react";
 
-import store from "../../../stores/root-store";
 import { observer } from "mobx-react-lite";
 import { ConfigValue } from "../../../../common/dist";
+import { StoreContext } from "../../../contexts/store-context";
 
 export function withConfigValues<T extends {
     [key: string]: ConfigValue;
@@ -12,6 +12,8 @@ export function withConfigValues<T extends {
 ) {
 
     const ComponentWithConfigValues = () => {
+        const store = React.useContext(StoreContext);
+
         if (!store.config.configsCollection.isFetched) {
             return null;
         }

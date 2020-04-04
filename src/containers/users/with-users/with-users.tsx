@@ -1,7 +1,7 @@
 import React from "react";
-import store from "../../../stores/root-store";
 import { IUser } from "../../../../common/dist";
 import { observer } from "mobx-react-lite";
+import { StoreContext } from "../../../contexts/store-context";
 
 export interface IWithUsersProps {
     users: (IUser & { id: string })[];
@@ -13,6 +13,8 @@ export function withUsers<T extends Props = Props>(
     WrappedComponent: React.ComponentType<T>
 ) {
     const ComponentWithUsers = (props: Optionalize<T, IWithUsersProps>) => {
+        const store = React.useContext(StoreContext);
+
         return store.user.usersCollection.isFetched
             ? <WrappedComponent
                 users={store.user.usersCollection.docs.map(doc => ({ ...doc.data!, id: doc.id }))}

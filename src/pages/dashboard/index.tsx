@@ -9,8 +9,7 @@ import {
     RegistrationsChart
 } from '../../containers/registrations/chart';
 import { FlexGroup } from '../../components/layout/flex';
-import store from '../../stores/root-store';
-import CollectionSelect from '../../components/collection-select';
+import { CollectionSelect } from '../../components/collection-select';
 import { Box } from '../../components/layout/box';
 import { FormField } from '../../components/layout/form';
 import { canReadUsers } from '../../rules/rules';
@@ -18,6 +17,8 @@ import { TimePeriodSelect, TimePeriod } from '../../components/time-period-selec
 import { IProject, ITask } from '../../../common/dist';
 import { withAuthentication } from '../../containers/users/with-authentication';
 import { RedirectToLogin } from '../../internal';
+import { StoreContext } from '../../contexts/store-context';
+import { IRootStore } from '../../stores/root-store';
 
 export const chartColors = {
     blue: "rgb(54, 162, 235)",
@@ -31,66 +32,68 @@ export const chartColors = {
 
 @observer
 class Dashboard extends React.Component {
+    declare context: React.ContextType<typeof StoreContext>;
+    static contextType = StoreContext;
+
     private getUsersReactionDisposer?: IReactionDisposer;
 
-    constructor(props: any) {
+    constructor(props: any, context: IRootStore) {
         super(props);
 
-        if (!store.dashboard.timePeriodFilterValue) {
-            when(() => !!store.user.userId, () => {
+        if (!context.dashboard.timePeriodFilterValue) {
+            when(() => !!context.user.userId, () => {
                 transaction(() => {
-                    store.dashboard.setUserFilter(store.user.userId);
-                    store.dashboard.setTimePeriodFilter(TimePeriod.ThisMonth);
+                    context.dashboard.setUserFilter(context.user.userId);
+                    context.dashboard.setTimePeriodFilter(TimePeriod.ThisMonth);
                 });
             });
         }
     }
 
     render() {
-        if (store.dashboard.timePeriodFilterValue === undefined) return null;
+        if (this.context.dashboard.timePeriodFilterValue === undefined) return null;
 
         const userChartProps: IUserRegistrationsChartProps = {
             title: "Time / user",
-            data: store.dashboard.registrationsGroupedByUser,
-            labelCollection: store.user.usersCollection,
+            data: this.context.dashboard.registrationsGroupedByUser,
+            labelCollection: this.context.user.usersCollection,
             getLabel: user => user.name,
             chart: ChartType.Bar
         };
 
         const projectChartProps: IRegistrationsChartProps<IProject> = {
             title: "Time / project",
-            data: store.dashboard.registrationsGroupedByProject,
-            labelCollection: store.projects.projectsCollection,
+            data: this.context.dashboard.registrationsGroupedByProject,
+            labelCollection: this.context.projects.projectsCollection,
             getLabel: project => project.name,
             chart: ChartType.Doughnut
         };
 
         const taskChartProps: IRegistrationsChartProps<ITask> = {
             title: "Time / task",
-            data: store.dashboard.registrationsGroupedByTask,
-            labelCollection: store.config.tasks,
+            data: this.context.dashboard.registrationsGroupedByTask,
+            labelCollection: this.context.config.tasks,
             getLabel: task => task.name,
             chart: ChartType.Doughnut
         };
 
-        const userFilter = canReadUsers(store.user.authenticatedUser)
+        const userFilter = canReadUsers(this.context.user.authenticatedUser)
             ? <>
                 <FlexGroup>
                     <FormField first={false}>
-                        <CollectionSelect value={store.dashboard.userFilterValue}
+                        <CollectionSelect value={this.context.dashboard.userFilterValue}
                             label="User"
-                            onChange={this.onUserFilterChange}
+                            onChange={this.onUserFilterChange.bind(this)}
                             items={
-                                store.user.usersCollection.docs
+                                this.context.user.usersCollection.docs
                                     .map(doc => ({ name: doc.data!.name, id: doc.id }))
-                            }>
-                        </CollectionSelect>
+                            } />
                     </FormField>
                 </FlexGroup>
             </>
             : null;
 
-        const registrationsPerUserChart = store.user.usersCollection.docs.length
+        const registrationsPerUserChart = this.context.user.usersCollection.docs.length
             ? <RegistrationsChart {...userChartProps}>
             </RegistrationsChart>
             : null;
@@ -102,15 +105,14 @@ class Dashboard extends React.Component {
                         <FlexGroup>
                             <FormField>
                                 <TimePeriodSelect value={
-                                    store.dashboard.timePeriodFilterValue}
-                                    onChange={this.onTimePeriodechange}></TimePeriodSelect>
+                                    this.context.dashboard.timePeriodFilterValue}
+                                    onChange={this.onTimePeriodechange.bind(this)}></TimePeriodSelect>
                             </FormField>
                             <FormField first={false}>
-                                <CollectionSelect value={store.dashboard.projectFilterValue}
+                                <CollectionSelect value={this.context.dashboard.projectFilterValue}
                                     label="Project"
-                                    onChange={this.onProjectFilterChange}
-                                    items={store.projects.activeProjects}>
-                                </CollectionSelect>
+                                    onChange={this.onProjectFilterChange.bind(this)}
+                                    items={this.context.projects.activeProjects} />
                             </FormField>
                         </FlexGroup>
                         {userFilter}
@@ -129,8 +131,8 @@ class Dashboard extends React.Component {
     }
 
     componentDidMount() {
-        store.dashboard.setTaskFilter(undefined);
-        store.dashboard.setProjectFilter(undefined);
+        this.context.dashboard.setTaskFilter(undefined);
+        this.context.dashboard.setProjectFilter(undefined);
     }
 
     componentWillUnmount() {
@@ -138,19 +140,19 @@ class Dashboard extends React.Component {
     }
 
     onTimePeriodechange(value: TimePeriod) {
-        store.dashboard.setTimePeriodFilter(value);
+        this.context.dashboard.setTimePeriodFilter(value);
     }
 
     onProjectFilterChange(value: string) {
-        store.dashboard.setProjectFilter(value);
+        this.context.dashboard.setProjectFilter(value);
     }
 
     onUserFilterChange(value: string) {
-        store.dashboard.setUserFilter(value);
+        this.context.dashboard.setUserFilter(value);
     }
 
     onTaskFilterChange(value: string) {
-        store.dashboard.setTaskFilter(value);
+        this.context.dashboard.setTaskFilter(value);
     }
 }
 

@@ -1,11 +1,12 @@
 import * as React from 'react';
 import { observer } from 'mobx-react-lite';
-import store from '../../../stores/root-store';
 import { canEditProject, canManageProjects } from '../../../rules/rules';
 import { SettingsList } from '../../../components/settings-list';
 import { goToProject } from '../../../internal';
+import { StoreContext } from '../../../contexts/store-context';
 
 export const ActiveProjectList = observer((props: React.HTMLProps<HTMLDivElement>) => {
+    const store = React.useContext(StoreContext);
 
     const handleItemClicked = (id: string | undefined) => {
         if (!id) return;
@@ -21,7 +22,7 @@ export const ActiveProjectList = observer((props: React.HTMLProps<HTMLDivElement
                 && canEditProject(project.data!, store.user.authenticatedUser, store.user.userId)
             ) {
                 // store.projects.setProjectId(id);
-                goToProject(id);
+                goToProject(store, id);
             }
         }
     };

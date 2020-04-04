@@ -1,6 +1,6 @@
 import * as React from 'react';
 
-import CollectionSelect, { ICollectionListProps } from '../../../components/collection-select';
+import { ICollectionListProps, CollectionSelect } from '../../../components/collection-select';
 import { observer } from 'mobx-react-lite';
 import { IWithUsersProps, withUsers } from '../with-users';
 
@@ -14,8 +14,7 @@ export const UserSelect = observer((props: Props) => {
         <CollectionSelect
             items={props.users}
             label={"User"}
-            {...rest}>
-        </CollectionSelect>
+            {...rest} />
     );
 });
 

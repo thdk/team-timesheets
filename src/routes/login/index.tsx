@@ -10,32 +10,35 @@ import { auth } from '../../firebase/my-firebase';
 
 const path = "/login";
 
+const login = new Route({
+    path,
+    component: <App><Login></Login></App>,
+    onEnter: (route: Route, _params: any, s: IRootStore) => {
+        when(() => !!s.user.authenticatedUser, () => goToOverview(s));
+        setNavigationContent(s, route, false);
+    },
+    title: "Login",
+    beforeEnter: (_route: Route, _params: any, s: IRootStore) => {
+        return getLoggedInUserAsync(auth).then(() => {
+            // TODO: detect requested page so we can redirect to that page when authenticated
+            goToOverview(s);
+            return false;
+        }, () => {
+            return true;
+        });
+    },
+});
+
 export const goToLogin = (s: IRootStore) => {
-    s.router.goTo(loginRoutes.login, null, s);
+    s.router.goTo(login, null, s);
 }
 
-export const RedirectToLogin = () =>
-    <Redirect route={loginRoutes.login} />;
+export const RedirectToLogin = () => {
+    return <Redirect route={login} />;
+}
 
 export const loginRoutes = {
-    login: new Route({
-        path,
-        component: <App><Login></Login></App>,
-        onEnter: (route: Route, _params: any, s: IRootStore) => {
-            when(() => !!s.user.authenticatedUser, () => goToOverview(s));
-            setNavigationContent(route, false);
-        },
-        title: "Login",
-        beforeEnter: (_route: Route, _params: any, s: IRootStore) => {
-            return getLoggedInUserAsync(auth).then(() => {
-                // TODO: detect requested page so we can redirect to that page when authenticated
-                goToOverview(s);
-                return false;
-            }, () => {
-                return true;
-            });
-        },
-    })
+    login,
 };
 
 export default loginRoutes;

@@ -3,12 +3,12 @@ import { observer } from 'mobx-react';
 import React from 'react';
 
 import { TapBar, Tab, TabIcon } from '../../mdc/tabbar';
-import store from '../../stores/root-store';
 import { ProjectsTab, goToProjects } from '../../routes/projects/list';
 import { ActiveProjectList } from '../../containers/projects/list-active';
 import { ArchivedProjectList } from '../../containers/projects/list-archived';
 import { withAuthentication } from '../../containers/users/with-authentication';
 import { RedirectToLogin } from '../../routes/login';
+import { StoreContext } from '../../contexts/store-context';
 
 interface ITabData {
     id: ProjectsTab;
@@ -20,6 +20,9 @@ interface ITabData {
 
 @observer
 class Projects extends React.Component {
+    declare context: React.ContextType<typeof StoreContext>
+    static contextType = StoreContext;
+
     render() {
         const tabData: ITabData[] = [
             {
@@ -38,7 +41,7 @@ class Projects extends React.Component {
 
         if (!validTabs.length) return <></>
 
-        const query: { tab: ProjectsTab } = store.router.queryParams;
+        const query: { tab: ProjectsTab } = this.context.router.queryParams;
         const { tab: activeTabId = validTabs[0].id } = query || {};
 
         let activeTab = validTabs.filter(t => t.id === activeTabId)[0];
@@ -47,7 +50,7 @@ class Projects extends React.Component {
 
         const tabs = validTabs.map(t => {
             const icon = t.icon ? <TabIcon icon={t.icon}></TabIcon> : undefined;
-            return <Tab onClick={goToProjects.bind(this, t.id)} isActive={activeTab.id === t.id} key={t.id} {...t} icon={icon}></Tab>;
+            return <Tab onClick={goToProjects.bind(this, this.context, t.id)} isActive={activeTab.id === t.id} key={t.id} {...t} icon={icon}></Tab>;
         });
 
         return (

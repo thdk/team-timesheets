@@ -1,8 +1,7 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import { Chip, ChipSet } from '@material/react-chips';
-
-import store from '../../../stores/root-store';
+import { StoreContext } from '../../../contexts/store-context';
 
 export interface IUserTasksProps {
     onChange: (taskId: string) => void;
@@ -11,13 +10,15 @@ export interface IUserTasksProps {
 
 @observer
 export class UserTasks extends React.Component<IUserTasksProps> {
+    declare context: React.ContextType<typeof StoreContext>
+    static contextType = StoreContext;
 
     render() {
-        if (!store.user.authenticatedUser || store.config.tasks.docs.length === 0) return <></>;
+        if (!this.context.user.authenticatedUser || this.context.config.tasks.docs.length === 0) return <></>;
 
-        const { tasks: userTasks, defaultTask } = store.user.authenticatedUser;
+        const { tasks: userTasks, defaultTask } = this.context.user.authenticatedUser;
         const userTasksChips = Array.from(userTasks.keys()).map(t => {
-            const taskData = store.config.tasks.get(t);
+            const taskData = this.context.config.tasks.get(t);
             if (!taskData) return null;
 
             const { id: taskId = "", data: { name: taskName = "ARCHIVED", icon: taskIcon = undefined } = {} } = taskData || {};

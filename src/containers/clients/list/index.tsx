@@ -1,11 +1,14 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 
-import store from '../../../stores/root-store';
+
 import { canWriteClient } from '../../../rules/rules';
 import { SettingsList, IListItemData } from '../../../components/settings-list';
+import { StoreContext } from '../../../contexts/store-context';
 
 export const ClientList = observer(() => {
+    const store = React.useContext(StoreContext);
+
     const saveListItem = (data: IListItemData, id?: string) => {
         store.config.clientId = undefined;
         if (data.name) {

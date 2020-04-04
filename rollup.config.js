@@ -23,7 +23,7 @@ export default {
   // they must either be included as script in html
   // or copied into dist/lib in gulp task copy:libs
   external,
-  input: 'src/app.ts', // can be a typescript file if we have a rollup typescript plugin
+  input: 'src/app.tsx', // can be a typescript file if we have a rollup typescript plugin
   format: 'iife',
   globals: {
     'firebase/app': 'firebase',
@@ -58,6 +58,7 @@ export default {
           'createContext',
           'cloneElement',
           'isValidElement',
+          'useContext',
         ],
         'node_modules/react-dom/index.js': ['findDOMNode', 'unstable_batchedUpdates', 'render'],
         '@material/react-chips': ["Chip", "ChipSet"],

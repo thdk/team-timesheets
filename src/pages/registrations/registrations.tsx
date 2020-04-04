@@ -1,52 +1,56 @@
 import * as React from 'react';
 import { observer } from "mobx-react";
-import store from '../../stores/root-store';
 import { goToRegistration, goToOverview, RedirectToLogin } from '../../internal';
 import { Day } from '../../containers/registrations/day';
 import { ListDivider } from '../../mdc/list';
 import { SortOrder, Days } from '../../containers/registrations/days';
 import { FlexGroup } from '../../components/layout/flex';
 import { withAuthentication } from '../../containers/users/with-authentication';
+import { StoreContext } from '../../contexts/store-context';
+
 
 @observer
 class Timesheet extends React.Component {
+    declare context: React.ContextType<typeof StoreContext>
+    static contextType = StoreContext;
+
     registrationClick = (id: string) => {
-        if (store.view.selection.size) {
-            store.view.toggleSelection(id, true);
+        if (this.context.view.selection.size) {
+            this.context.view.toggleSelection(id, true);
         } else {
-            store.timesheets.setSelectedRegistration(id);
-            goToRegistration(id);
+            this.context.timesheets.setSelectedRegistration(id);
+            goToRegistration(this.context, id);
         }
     }
 
     registrationSelect = (id: string) => {
-        store.view.toggleSelection(id, true);
+        this.context.view.toggleSelection(id, true);
     }
 
     goToMonth(e: React.MouseEvent) {
         e.preventDefault();
-        goToOverview(store, {
-            year: store.view.year!,
-            month: store.view.month!
-        }, { track: false, currentDate: store.view.track ? store.view.day! : undefined });
+        goToOverview(this.context, {
+            year: this.context.view.year!,
+            month: this.context.view.month!
+        }, { track: false, currentDate: this.context.view.track ? this.context.view.day! : undefined });
     }
 
     render() {
-        if (!store.view.moment) return null;
+        if (!this.context.view.moment) return null;
 
         let regs: React.ReactNode;
 
-        if (store.view.day) {
-            const group = store.timesheets.registrationsGroupedByDay.filter(g => g.groupKey === store.view.moment.toDate().toDateString());
+        if (this.context.view.day) {
+            const group = this.context.timesheets.registrationsGroupedByDay.filter(g => g.groupKey === this.context.view.moment.toDate().toDateString());
 
-            regs = <Day group={group[0] || { groupKey: store.view.moment.toDate().toDateString(), totalTime: 0, registrations: [] }}
+            regs = <Day group={group[0] || { groupKey: this.context.view.moment.toDate().toDateString(), totalTime: 0, registrations: [] }}
                 registrationClick={this.registrationClick.bind(this)}
                 registrationToggleSelect={this.registrationSelect.bind(this)}
                 isCollapsed={false}
                 headerClick={() => { }}
             />;
         } else {
-            const totalTime = store.timesheets.registrationsTotalTime;
+            const totalTime = this.context.timesheets.registrationsTotalTime;
 
             const totalLabel = `Total time: ${parseFloat(totalTime.toFixed(2))} hours`;
             const total = <div
@@ -59,12 +63,12 @@ class Timesheet extends React.Component {
                 <ListDivider></ListDivider>
             </div>;
 
-            const sortOrder = store.timesheets.registrationsGroupedByDaySortOrder;
+            const sortOrder = this.context.timesheets.registrationsGroupedByDaySortOrder;
             const today = new Date();
             const activeDate =
                 sortOrder === SortOrder.Descending
-                    && store.view.month
-                    && (store.view.month - 1) === today.getMonth()
+                    && this.context.view.month
+                    && (this.context.view.month - 1) === today.getMonth()
                     ? today.getDate()
                     : undefined;
 
@@ -77,16 +81,16 @@ class Timesheet extends React.Component {
                     registrationToggleSelect={this.registrationSelect.bind(this)}
                     sortOrder={sortOrder}
                     isCollapsable={true}
-                    isMonthView={!store.view.day}
+                    isMonthView={!this.context.view.day}
                 >
                 </Days>
             </>;
         }
 
 
-        const title = store.view.day
-            ? <>Timesheet <a href="#" onClick={this.goToMonth}>{store.view.moment.format('MMMM')}</a> {store.view.moment.format('D, YYYY')}</>
-            : `Timesheet ${store.view.moment.format('MMMM YYYY')}`;
+        const title = this.context.view.day
+            ? <>Timesheet <a href="#" onClick={this.goToMonth}>{this.context.view.moment.format('MMMM')}</a> {this.context.view.moment.format('D, YYYY')}</>
+            : `Timesheet ${this.context.view.moment.format('MMMM YYYY')}`;
         return (
             <>
                 <FlexGroup direction="vertical">
@@ -102,7 +106,7 @@ class Timesheet extends React.Component {
     }
 }
 
-export default withAuthentication(
+export const RegistrationsPage = withAuthentication(
     Timesheet,
     <RedirectToLogin />,
 );

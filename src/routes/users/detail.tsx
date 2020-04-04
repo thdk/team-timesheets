@@ -3,13 +3,13 @@ import { Route, RoutesConfig } from "mobx-router";
 
 import { App } from "../../internal";
 import User from "../../pages/user-detail";
-import store, { IRootStore } from "../../stores/root-store";
+import { IRootStore } from "../../stores/root-store";
 import { setTitleForRoute } from "../actions";
 import { goToSettings } from "../settings";
 import { transaction } from "mobx";
 import { IViewAction } from "../../stores/view-store";
 
-export const goToUser = (id?: string) => {
+export const goToUser = (store: IRootStore, id?: string) => {
     store.router.goTo(routes.registrationDetail, {id}, store);
 };
 
@@ -25,7 +25,7 @@ const routes = {
             const saveAction: IViewAction = {
                 action: () => {
                     s.user.saveSelectedUser();
-                    goToSettings("users");
+                    goToSettings(s, "users");
                 },
                 icon: { label: "Save", content: "save" },
                 shortKey: { key: "s", ctrlKey: true }
@@ -34,7 +34,7 @@ const routes = {
             const deleteAction: IViewAction = {
                 action: () => {
                     s.user.selectedUserId && s.user.usersCollection.deleteAsync(s.user.selectedUserId);
-                    goToSettings("users");
+                    goToSettings(s, "users");
                 },
                 icon: { label: "Delete", content: "delete" },
                 shortKey: { key: "Delete", ctrlKey: true }
@@ -45,11 +45,11 @@ const routes = {
             };
 
             transaction(() => {
-                setTitleForRoute(route);
+                setTitleForRoute(s, route);
                 s.view.setNavigation({
                     action: () => {
                         save();
-                        goToSettings("users");
+                        goToSettings(s, "users");
                     },
                     icon: { label: "Back", content: "arrow_back" }
                 });

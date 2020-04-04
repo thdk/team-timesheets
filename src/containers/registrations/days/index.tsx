@@ -1,7 +1,7 @@
 import * as React from 'react';
-import store from '../../../stores/root-store';
-import { observer } from 'mobx-react';
+import { observer } from 'mobx-react-lite';
 import { Day as Day } from '../day';
+import { StoreContext } from '../../../contexts/store-context';
 
 export enum SortOrder {
     Ascending = 1,
@@ -19,46 +19,34 @@ export interface IDaysProps {
     showHeaderAddButton?: boolean;
 }
 
-@observer
-export class Days extends React.Component<IDaysProps> {
-    private activeRegistrationRef: React.RefObject<Day>;
-    constructor(props: IDaysProps) {
-        super(props);
-        this.activeRegistrationRef = React.createRef<Day>();
-    }
-    render() {
-        const {
-            sortOrder = SortOrder.Ascending,
-            isMonthView,
-            showHeaderAddButton = true,
-        } = this.props;
+export const Days = observer((props: IDaysProps) => {
+    const store = React.useContext(StoreContext);
 
-        return (sortOrder > 0
-            ? store.timesheets.registrationsGroupedByDay
-            : store.timesheets.registrationsGroupedByDayReversed)
-            .map((g, i) => {
-                const isLastOpenedGroup = g.groupKey && new Date(g.groupKey).getDate() === this.props.activeDate;
-                const isCollapsed = !store.timesheets.selectedRegistrationDays
-                    .some(d => d === g.groupKey);
+    const {
+        sortOrder = SortOrder.Ascending,
+        isMonthView,
+        showHeaderAddButton = true,
+    } = props;
 
-                return <Day
-                    ref={isLastOpenedGroup ? this.activeRegistrationRef : null}
-                    key={`group-${i}`}
-                    group={g}
-                    {...{ ...this.props, isCollapsed }}
-                    headerClick={e => {
-                        if ((e.target as HTMLElement).closest(".prevent-propagation"))
-                            return;
+    return <>{(sortOrder > 0
+        ? store.timesheets.registrationsGroupedByDay
+        : store.timesheets.registrationsGroupedByDayReversed)
+        .map((g, i) => {
+            const isCollapsed = !store.timesheets.selectedRegistrationDays
+                .some(d => d === g.groupKey);
 
-                        store.timesheets.toggleSelectedRegistrationDay(g.groupKey);
-                    }}
-                    isMonthView={isMonthView}
-                    showHeaderAddButton={showHeaderAddButton}
-                />
-            });
-    }
+            return <Day
+                key={`group-${i}`}
+                group={g}
+                {...{ ...props, isCollapsed }}
+                headerClick={e => {
+                    if ((e.target as HTMLElement).closest(".prevent-propagation"))
+                        return;
 
-    componentDidMount() {
-        // this.activeRegistrationRef.current && this.activeRegistrationRef.current.scrollIntoView();
-    }
-}
+                    store.timesheets.toggleSelectedRegistrationDay(g.groupKey);
+                }}
+                isMonthView={isMonthView}
+                showHeaderAddButton={showHeaderAddButton}
+            />
+        })}</>;
+});

@@ -3,29 +3,40 @@ import { TopNavigation } from '../ui/top-navigation';
 import { Fabs } from '../ui/fabs';
 import Drawer from '../drawer';
 import { DrawerAppContent } from '@rmwc/drawer';
-import store from '../../stores/root-store';
 import { observer } from 'mobx-react-lite';
+import { StoreProvider } from '../../contexts/store-context';
+import { inject } from 'mobx-react';
+import { IRootStore } from '../../stores/root-store';
 
-type Props = React.HTMLProps<HTMLDivElement>;
+interface IProps extends React.HTMLProps<HTMLDivElement> {
+    store?: IRootStore
+}
 
-export const App = observer((props: Props) => {
-    return store.user.isAuthInitialised
-        ? (
-            <div className="body-wrapper">
-                <Drawer />
+export const App = inject("store")(
+    observer(
+        (props: IProps) => {
+            const { store } = props;
+            if (!store) {
+                throw new Error("App needs mobx-react Provider");
+            }
 
-                <DrawerAppContent>
-                    <TopNavigation></TopNavigation>
+            return <StoreProvider value={store}>
+                <div className="body-wrapper">
+                    <Drawer />
 
-                    <main className="main-content" id="main-content">
-                        <div style={{ paddingBottom: "100px" }} className="mdc-top-app-bar--fixed-adjust">
-                            {props.children}
-                            <Fabs></Fabs>
-                        </div>
-                    </main>
-                </DrawerAppContent>
+                    <DrawerAppContent>
+                        <TopNavigation></TopNavigation>
 
-            </div>
-        )
-        : <></>;
-});
+                        <main className="main-content" id="main-content">
+                            <div style={{ paddingBottom: "100px" }} className="mdc-top-app-bar--fixed-adjust">
+                                {props.children}
+                                <Fabs></Fabs>
+                            </div>
+                        </main>
+                    </DrawerAppContent>
+
+                </div>
+            </StoreProvider>;
+        }
+    )
+);

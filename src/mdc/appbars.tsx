@@ -2,9 +2,9 @@ import * as React from 'react';
 
 import { MDCTopAppBar } from '@material/top-app-bar/index';
 import { observer } from 'mobx-react';
-import store from '../stores/root-store';
 import { IViewAction } from '../stores/view-store';
 import { IIconData, IconButtonToggle } from './buttons/icon-buttons';
+import { StoreContext } from '../contexts/store-context';
 
 export interface TopAppBarProps {
     showNavigationIcon: boolean,
@@ -16,6 +16,9 @@ export interface TopAppBarProps {
 
 @observer
 export class TopAppBar extends React.Component<TopAppBarProps> {
+    declare context: React.ContextType<typeof StoreContext>
+    static contextType = StoreContext;
+
     render() {
         const { title, navigationIcon, navigationClick, mode } = this.props;
 
@@ -53,7 +56,7 @@ export class TopAppBar extends React.Component<TopAppBarProps> {
 
     onLeaveContextualMode(e: React.MouseEvent) {
         e.preventDefault();
-        store.view.selection.clear();
+        this.context.view.selection.clear();
     }
 }
 
@@ -63,9 +66,12 @@ export interface IAppBarActionsProps {
 
 @observer
 class AppBarActions extends React.Component<IAppBarActionsProps> {
+    declare context: React.ContextType<typeof StoreContext>
+    static contextType = StoreContext;
+
     render() {
         const { contextual = false } = this.props;
-        return store.view.actions
+        return this.context.view.actions
         .filter(a => !!a.contextual === contextual)
         .map((a, i) => {
             const active = a.isActive !== undefined ? (a.isActive === true ? true : a.isActive === false ? false : a.isActive()) : false;

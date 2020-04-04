@@ -9,7 +9,6 @@ import { IProjectStore, ProjectStore } from "./project-store";
 import { FavoriteStore } from "./favorite-store";
 
 export interface IRootStore {
-
     readonly user: IUserStore;
     readonly view: IViewStore;
     readonly router: RouterStore;
@@ -18,6 +17,7 @@ export interface IRootStore {
     readonly config: IConfigStore;
     readonly projects: IProjectStore;
     readonly favorites: FavoriteStore;
+    readonly dashboard: IDashboardStore;
 }
 
 export class Store implements IRootStore {
@@ -42,8 +42,3 @@ export class Store implements IRootStore {
         this.favorites = new FavoriteStore(this);
     }
 };
-
-const store = (window as any)["store"] = new Store();
-
-export default store;
-

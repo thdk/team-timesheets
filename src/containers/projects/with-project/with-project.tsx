@@ -1,4 +1,4 @@
-import React from "react";
+import * as React from 'react'
 import { IProject } from "../../../../common/dist";
 import { observer } from "mobx-react-lite";
 import { StoreContext } from "../../../contexts/store-context";

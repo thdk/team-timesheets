@@ -1,5 +1,6 @@
 import * as React from 'react';
-import { SelectOption, Select } from '../../mdc/select';
+import { Select } from '@rmwc/select';
+import { useCallback } from 'react';
 
 export interface ICollectionListProps {
     readonly label: string;
@@ -9,15 +10,18 @@ export interface ICollectionListProps {
 }
 
 export const CollectionSelect = (props: ICollectionListProps) => {
-
-    const { items, value, onChange, label } = props;
+    const { items, value, label, onChange: onValueChange } = props;
     const listItems = items.map(i =>
-        <SelectOption text={i.name!} value={i.id} key={i.id}></SelectOption>
+        <option value={i.id} key={i.id}>{i.name}</option>
     );
+
+    const onChange = useCallback((event: React.ChangeEvent<HTMLSelectElement>) => {
+        onValueChange(event.currentTarget.value);
+    }, [onValueChange])
 
     return (
         <Select value={value} outlined={true} label={label} onChange={onChange}>
-            <SelectOption text="" value=""></SelectOption>
+            <option value=""></option>
             {listItems}
         </Select>
     );

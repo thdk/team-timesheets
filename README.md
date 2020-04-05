@@ -33,7 +33,7 @@ If you want develop for an existing project, ask the project admin to add you as
 
 You can manage firebase projects from the [Firebase console](https://console.firebase.google.com).
 
-I have two firebase projects: 
+I have two firebase projects:
 
 * dev-thdk-timesheets
 * thdk-timesheets

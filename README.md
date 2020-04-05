@@ -2,6 +2,8 @@
 
 Web base timesheet app. Built to replace old school excel timesheets.
 
+![Cloud Build](https://storage.googleapis.com/timesheets-ffc4b-badges/builds/timesheets/branches/develop.svg)
+
 Demo:
 * Master branch - [Latest release](https://timesheets-ffc4b.firebaseapp.com)
 

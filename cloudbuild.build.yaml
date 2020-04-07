@@ -10,7 +10,7 @@ steps:
     args: ["test", "--", "--coverage"]
   - name: 'gcr.io/cloud-builders/curl'
     entrypoint: bash
-    args: ['./scripts/codecov-upload', '$_CODECOV_TOKEN']
+    args: ['./scripts/codecov-upload.bash', '$_CODECOV_TOKEN']
   - name: node:10.15.1
     entrypoint: npm
     args: ["run", "build:production"]

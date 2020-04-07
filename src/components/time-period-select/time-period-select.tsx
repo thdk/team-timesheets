@@ -42,11 +42,11 @@ export class TimePeriodSelect extends React.Component<ITimePeriodSelectProps> {
 
         const selectProps = {
             onChange: this.onChange.bind(this),
-            label: "Time period"
+            label: "Time period 2"
         };
 
         return (
-            <Select value={value.toString()} outlined={true} {...selectProps}>
+            <Select data-testid="time-period-select" value={value.toString()} outlined={true} {...selectProps}>
                 {periodSelectOptions}
             </Select>
         );

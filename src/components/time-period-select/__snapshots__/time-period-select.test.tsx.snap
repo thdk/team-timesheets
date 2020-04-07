@@ -33,10 +33,10 @@ exports[`renders 1`] = `
         >
           <span
             class="mdc-floating-label mdc-floating-label--float-above"
-            for="select-Time period"
+            for="select-Time period 2"
             style="transition-duration: 0s;"
           >
-            Time period
+            Time period 2
           </span>
         </div>
         <div
@@ -45,6 +45,7 @@ exports[`renders 1`] = `
       </div>
       <select
         class="rmwc-select__native-control "
+        data-testid="time-period-select"
         tabindex="0"
       >
         <option

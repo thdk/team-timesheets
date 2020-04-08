@@ -10,7 +10,13 @@ steps:
     args: ["test", "--", "--coverage"]
   - name: "gcr.io/$PROJECT_ID/builder"
     entrypoint: bash
-    args: ["./scripts/codecov-upload.bash", "$_CODECOV_TOKEN"]
+    args:
+      [
+        "./scripts/codecov-upload.bash",
+        "$_CODECOV_TOKEN",
+        "$COMMIT_SHA",
+        "$BRANCH_NAME",
+      ]
   - name: node:10.15.1
     entrypoint: npm
     args: ["run", "build:production"]

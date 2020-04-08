@@ -1,1 +1,1 @@
-bash <(curl -s https://codecov.io/bash) -t $1
+bash <(curl -s https://codecov.io/bash) -t $1 -C $2 -B $3

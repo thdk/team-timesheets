@@ -6,7 +6,8 @@ export enum TimePeriod {
     ThisMonth,
     LastMonth,
     ThisYear,
-    LastYear
+    LastYear,
+    NextYear
 }
 
 const timePeriodLabels: { [timePeriod: number]: string } = {
@@ -14,7 +15,8 @@ const timePeriodLabels: { [timePeriod: number]: string } = {
     1: "This Month",
     2: "Last Month",
     3: "This Year",
-    4: "Last Year"
+    4: "Last Year",
+    5: "Next Year"
 };
 
 export interface ITimePeriodSelectProps {
@@ -31,7 +33,8 @@ export class TimePeriodSelect extends React.Component<ITimePeriodSelectProps> {
                 TimePeriod.ThisMonth,
                 TimePeriod.LastMonth,
                 TimePeriod.ThisYear,
-                TimePeriod.LastYear
+                TimePeriod.LastYear,
+                TimePeriod.NextYear,
             ],
             value
         } = this.props;

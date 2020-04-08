@@ -8,7 +8,7 @@ steps:
   - name: node:10.15.1
     entrypoint: npm
     args: ["test", "--", "--coverage"]
-  - name: "gcr.io/cloud-builders/curl"
+  - name: "gcr.io/$PROJECT_ID/builder"
     entrypoint: bash
     args: ["./scripts/codecov-upload.bash", "$_CODECOV_TOKEN"]
   - name: node:10.15.1

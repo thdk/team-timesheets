@@ -8,15 +8,9 @@ steps:
   - name: node:10.15.1
     entrypoint: npm
     args: ["test", "--", "--coverage"]
-  - name: "gcr.io/$PROJECT_ID/builder"
+  - name: 'gcr.io/cloud-builders/curl'
     entrypoint: bash
-    args:
-      [
-        "./scripts/codecov-upload.bash",
-        "$_CODECOV_TOKEN",
-        "$COMMIT_SHA",
-        "$BRANCH_NAME",
-      ]
+    args: ['-c', 'bash <(curl -s https://codecov.io/bash) -t $_CODECOV_TOKEN']
   - name: node:10.15.1
     entrypoint: npm
     args: ["run", "build:production"]

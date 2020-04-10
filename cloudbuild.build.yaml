@@ -1,19 +1,25 @@
 steps:
   - name: node:10.15.1
     entrypoint: npm
-    args: ["install"]
+    args: ["ci"]
   - name: node:10.15.1
     entrypoint: npm
     args: ["run", "build:refs"]
   - name: node:10.15.1
     entrypoint: npm
     args: ["test", "--", "--coverage"]
-  - name: 'gcr.io/cloud-builders/curl'
-    entrypoint: bash
-    args: ['-c', 'bash <(curl -s https://codecov.io/bash) -t $_CODECOV_TOKEN']
   - name: node:10.15.1
     entrypoint: npm
     args: ["run", "build:production"]
+  - name: "gcr.io/$PROJECT_ID/builder"
+    entrypoint: bash
+    args: ['-c', 'bash <(curl -s https://codecov.io/bash) -X gcov -X coveragepy -X fix']
+    env:
+    - 'VCS_COMMIT_ID=$COMMIT_SHA'
+    - 'VCS_BRANCH_NAME=$BRANCH_NAME'
+    - 'VCS_PULL_REQUEST=$_PR_NUMBER'
+    - 'CI_BUILD_ID=$BUILD_ID'
+    - 'CODECOV_TOKEN=$_CODECOV_TOKEN'
   - name: node:10.15.1
     entrypoint: npm
     dir: "functions"

@@ -1,0 +1,80 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`renders 1`] = `
+<DocumentFragment>
+  <div
+    class="mdc-select mdc-select--outlined"
+    role="listbox"
+  >
+    <div
+      class="mdc-select__anchor"
+    >
+      <i
+        class="mdc-select__dropdown-icon"
+      />
+      <div
+        aria-disabled="false"
+        aria-haspopup="listbox"
+        class="mdc-select__selected-text"
+        role="button"
+        tabindex="0"
+      >
+        Last Month
+      </div>
+      <div
+        class="mdc-notched-outline mdc-notched-outline--upgraded"
+        notch="0"
+      >
+        <div
+          class="mdc-notched-outline__leading"
+        />
+        <div
+          class="mdc-notched-outline__notch"
+        >
+          <span
+            class="mdc-floating-label mdc-floating-label--float-above"
+            for="select-Time period 2"
+            style="transition-duration: 0s;"
+          >
+            Time period 2
+          </span>
+        </div>
+        <div
+          class="mdc-notched-outline__trailing"
+        />
+      </div>
+      <select
+        class="rmwc-select__native-control "
+        data-testid="time-period-select"
+        tabindex="0"
+      >
+        <option
+          value="0"
+        >
+          This Week
+        </option>
+        <option
+          value="1"
+        >
+          This Month
+        </option>
+        <option
+          value="2"
+        >
+          Last Month
+        </option>
+        <option
+          value="3"
+        >
+          This Year
+        </option>
+        <option
+          value="4"
+        >
+          Last Year
+        </option>
+      </select>
+    </div>
+  </div>
+</DocumentFragment>
+`;

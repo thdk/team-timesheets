@@ -11,7 +11,9 @@
     "server": "firebase serve --only hosting",
     "deploy:development": "npm run build:development && firebase deploy",
     "deploy:production": "npm run build:production && firebase deploy",
-    "tsc": "tsc -p common && tsc --noEmit"
+    "tsc": "tsc -p common && tsc --noEmit",
+    "test": "jest --passWithNoTests",
+    "test:watch": "jest --watch"
   },
   "repository": {
     "type": "git",
@@ -25,8 +27,10 @@
   "homepage": "https://github.com/thdk/typescript-start#readme",
   "devDependencies": {
     "@material/theme": "^0.43.0",
+    "@testing-library/react": "^10.0.1",
     "@types/chart.js": "^2.8.7",
     "@types/classnames": "^2.2.9",
+    "@types/jest": "^25.1.4",
     "@types/node": "^12.7.12",
     "@types/react": "^16.8.23",
     "@types/react-dom": "^16.8.4",
@@ -44,6 +48,7 @@
     "gulp-sass": "^4.0.2",
     "gulp-typescript": "^5.0.0",
     "html-webpack-plugin": "^4.0.3",
+    "jest": "^25.2.3",
     "mini-css-extract-plugin": "^0.9.0",
     "node-sass": "^4.13.1",
     "path": "^0.12.7",
@@ -52,6 +57,7 @@
     "source-map-loader": "^0.2.4",
     "style-loader": "^1.1.3",
     "ts-loader": "^6.2.2",
+    "ts-jest": "^25.2.1",
     "tslib": "^1.9.3",
     "typescript": "^3.5.2",
     "webpack": "^4.42.1",

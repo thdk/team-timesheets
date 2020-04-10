@@ -73,11 +73,6 @@ exports[`renders 1`] = `
         >
           Last Year
         </option>
-        <option
-          value="5"
-        >
-          Next Year
-        </option>
       </select>
     </div>
   </div>

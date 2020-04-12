@@ -3,7 +3,7 @@ import { observer } from 'mobx-react-lite';
 
 import { FormField } from '../../../components/layout/form';
 import { CollectionSelect } from '../../../components/collection-select';
-import { StoreContext } from '../../../contexts/store-context';
+import { useStore } from '../../../contexts/store-context';
 
 export interface ITeamSelectProps {
     value?: string;
@@ -12,7 +12,7 @@ export interface ITeamSelectProps {
 }
 
 export const TeamSelect = observer((props: ITeamSelectProps) => {
-    const store = React.useContext(StoreContext);
+    const store = useStore();
 
     const { label = "Team", value = "", onChange } = props;
     return (

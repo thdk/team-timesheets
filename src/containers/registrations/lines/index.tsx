@@ -3,7 +3,7 @@ import { observer } from 'mobx-react-lite';
 import { Doc } from "firestorable";
 import { IRegistration, IRegistrationData } from '../../../../common';
 import RegistrationLine from "../line";
-import { StoreContext } from "../../../contexts/store-context";
+import { useStore } from "../../../contexts/store-context";
 
 export interface IRegistrationLinesProps extends React.HTMLProps<HTMLElement> {
     readonly registrations: Doc<Omit<IRegistration, "date" | "isPersisted">, Omit<IRegistrationData, "date">>[];
@@ -12,7 +12,7 @@ export interface IRegistrationLinesProps extends React.HTMLProps<HTMLElement> {
 }
 
 export const RegistrationLines = observer((props: IRegistrationLinesProps) => {
-    const store = React.useContext(StoreContext);
+    const store = useStore();
 
     const { registrations, registrationToggleSelect, registrationClick, readOnly } = props;
 

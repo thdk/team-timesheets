@@ -1,10 +1,10 @@
 import * as React from "react";
 import { FavoriteGroupsMenuProps, FavoriteGroupsMenu } from "./favorite-groups-menu";
 import { observer } from "mobx-react-lite";
-import { StoreContext } from "../../../contexts/store-context";
+import { useStore } from "../../../contexts/store-context";
 
 const FavoriteGroupsMenuMobx = (props: Omit<FavoriteGroupsMenuProps, "groups">) => {
-    const store = React.useContext(StoreContext);
+    const store = useStore();
 
     const groups = store.favorites.groups;
 

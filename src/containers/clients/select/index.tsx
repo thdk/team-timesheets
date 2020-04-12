@@ -2,7 +2,7 @@ import * as React from 'react';
 
 import { CollectionSelect } from '../../../components/collection-select';
 import { observer } from 'mobx-react-lite';
-import { StoreContext } from '../../../contexts/store-context';
+import { useStore } from '../../../contexts/store-context';
 
 export interface IClientSelectProps {
     value?: string;
@@ -11,7 +11,7 @@ export interface IClientSelectProps {
 }
 
 export const ClientSelect = observer((props: IClientSelectProps) => {
-    const store = React.useContext(StoreContext);
+    const store = useStore();
 
     const { label = "Client", value = "", onChange } = props;
     return (

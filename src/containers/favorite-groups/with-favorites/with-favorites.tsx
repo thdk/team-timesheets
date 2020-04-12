@@ -1,7 +1,7 @@
 import * as React from 'react'
 import { IFavoriteRegistration, IFavoriteRegistrationGroup } from "../../../../common/dist";
 import { observer } from "mobx-react-lite";
-import { StoreContext } from "../../../contexts/store-context";
+import { useStore } from "../../../contexts/store-context";
 
 export interface IWithFavoriteInjectedProps {
     favorites: IFavoriteRegistration[];
@@ -15,7 +15,7 @@ export function withFavorites<T extends IWithFavoriteInjectedProps = any>(
     WrappedComponent: React.ComponentType<T>
 ) {
     const ComponentWithFavorites = (props: any) => {
-        const store = React.useContext(StoreContext);
+        const store = useStore();
 
         const { group } = props;
         if (!group) return <></>;

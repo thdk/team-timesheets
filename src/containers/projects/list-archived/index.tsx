@@ -3,11 +3,11 @@ import { observer } from 'mobx-react-lite';
 
 import { SettingsList } from '../../../components/settings-list';
 import { canManageProjects } from '../../../rules/rules';
-import { StoreContext } from '../../../contexts/store-context';
+import { useStore } from '../../../contexts/store-context';
 
 
 export const ArchivedProjectList = observer((props: React.HTMLProps<HTMLDivElement>) => {
-    const store = React.useContext(StoreContext);
+    const store = useStore();
 
     return <SettingsList {...props}
         readonly={!canManageProjects(store.user.authenticatedUser)}

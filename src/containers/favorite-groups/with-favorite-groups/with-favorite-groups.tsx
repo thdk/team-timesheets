@@ -1,7 +1,7 @@
 import * as React from 'react'
 import { IFavoriteRegistrationGroup } from "../../../../common/dist";
 import { observer } from "mobx-react-lite";
-import { StoreContext } from "../../../contexts/store-context";
+import { useStore } from "../../../contexts/store-context";
 
 export interface IWithFavoriteGroupsProps {
     groups: (IFavoriteRegistrationGroup & { id: string })[];
@@ -13,7 +13,7 @@ export function withFavoriteGroups<T extends Props = Props>(
     WrappedComponent: React.ComponentType<T>
 ) {
     const ComponentWithFavoriteGroups = (props: Optionalize<T, IWithFavoriteGroupsProps>) => {
-        const store = React.useContext(StoreContext);
+        const store = useStore();
 
         return store.favorites.favoriteGroupCollection.isFetched
             ? <WrappedComponent

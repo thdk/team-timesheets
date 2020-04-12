@@ -3,11 +3,11 @@ import { Drawer as RMWCDrawer, DrawerHeader, DrawerTitle, DrawerSubtitle, Drawer
 
 import { observer } from 'mobx-react-lite';
 import Menu from '../ui/menu';
-import { StoreContext } from '../../contexts/store-context';
+import { useStore } from '../../contexts/store-context';
 import { ErrorBoundary } from '../../components/error-boundary/error-boundary';
 
 const Drawer = () => {
-    const store = React.useContext(StoreContext);
+    const store = useStore();
 
     const displayName = store.user.authenticatedUser ? store.user.authenticatedUser.name || "Guest" : "";
     return (

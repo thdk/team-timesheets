@@ -46,7 +46,11 @@ export class TimePeriodSelect extends React.Component<ITimePeriodSelectProps> {
         };
 
         return (
-            <Select data-testid="time-period-select" value={value.toString()} outlined={true} {...selectProps}>
+            <Select
+                id="time-period-select"
+                value={value.toString()}
+                outlined={true}
+                {...selectProps}>
                 {periodSelectOptions}
             </Select>
         );

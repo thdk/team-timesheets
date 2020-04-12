@@ -17,7 +17,13 @@ export const TeamSelect = observer((props: ITeamSelectProps) => {
     const { label = "Team", value = "", onChange } = props;
     return (
         <FormField first={false}>
-            <CollectionSelect value={value} items={store.config.teams} label={label} onChange={onChange}></CollectionSelect>
+            <CollectionSelect
+                id={"teams-collection"}
+                value={value}
+                items={store.config.teams.map(({ id, name }) => ({ label: name, value: id }))}
+                label={label}
+                onChange={onChange}
+            />
         </FormField>
     );
 });

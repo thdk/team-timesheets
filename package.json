@@ -12,7 +12,7 @@
     "deploy:development": "npm run build:development && firebase deploy",
     "deploy:production": "npm run build:production && firebase deploy",
     "tsc": "tsc -p common && tsc --noEmit",
-    "test": "jest --passWithNoTests",
+    "test": "jest",
     "test:watch": "jest --watch"
   },
   "repository": {

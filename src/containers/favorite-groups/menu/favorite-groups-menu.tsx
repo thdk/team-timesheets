@@ -1,10 +1,10 @@
 import * as React from "react";
 import { Menu, MenuItem, MenuSurfaceAnchor } from "@rmwc/menu";
-
-import { IFavoriteRegistrationGroup } from "../../../../common/dist";
 import { Button } from "@rmwc/button";
 import { CustomEventT } from "@rmwc/types";
 import { ListDivider, ListItem } from "@rmwc/list";
+
+import { IFavoriteRegistrationGroup } from "../../../../common/dist";
 
 export type FavoriteGroupsMenuProps = {
     groups: ({ id: string } & IFavoriteRegistrationGroup)[];
@@ -41,6 +41,7 @@ export const FavoriteGroupsMenu = (props: FavoriteGroupsMenuProps) => {
             open={isOpen}
             onSelect={handleSelect}
             onClose={handleClose}
+            style={{ width: "178px" }}
         >
             {groups.map(group => <ListItem role="menuitem" tabIndex={0} key={group.id} data-id={group.id}>
                 <div>{group.name}</div>

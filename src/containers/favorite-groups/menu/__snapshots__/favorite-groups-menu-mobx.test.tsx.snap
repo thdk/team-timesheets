@@ -1,0 +1,99 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`should display favorite groups 1`] = `
+<DocumentFragment>
+  <div
+    class="mdc-menu-surface--anchor"
+  >
+    <div
+      aria-hidden="true"
+      class="mdc-menu  mdc-menu-surface"
+      style="width: 178px;"
+    >
+      <div
+        class="mdc-list mdc-menu__items mdc-list"
+        role="menu"
+      >
+        <div
+          class="mdc-list-item"
+          data-id="1"
+          role="menuitem"
+          tabindex="0"
+        >
+          <div>
+            group 1
+          </div>
+        </div>
+        <div
+          class="mdc-list-item"
+          data-id="2"
+          role="menuitem"
+          tabindex="0"
+        >
+          <div>
+            group 2
+          </div>
+        </div>
+        <div
+          class="mdc-list-divider"
+        />
+        <div
+          class="mdc-list-item"
+          role="menuitem"
+          tabindex="0"
+        >
+          New
+        </div>
+      </div>
+    </div>
+    <button
+      class="grouped-registration-header-add-button prevent-propagation grouped-registration-header-add-button prevent-propagation mdc-button mdc-button--dense"
+    >
+      <span
+        class="mdc-button__label"
+      >
+        +
+      </span>
+    </button>
+  </div>
+</DocumentFragment>
+`;
+
+exports[`should not crash without favorite groups 1`] = `
+<DocumentFragment>
+  <div
+    class="mdc-menu-surface--anchor"
+  >
+    <div
+      aria-hidden="true"
+      class="mdc-menu  mdc-menu-surface"
+      style="width: 178px;"
+    >
+      <div
+        class="mdc-list mdc-menu__items mdc-list"
+        role="menu"
+      >
+        <div
+          class="mdc-list-divider"
+        />
+        <div
+          class="mdc-list-item"
+          role="menuitem"
+          tabindex="0"
+        >
+          New
+        </div>
+      </div>
+    </div>
+    <button
+      class="grouped-registration-header-add-button prevent-propagation grouped-registration-header-add-button prevent-propagation mdc-button mdc-button--dense"
+    >
+      <span
+        class="mdc-button__label"
+      >
+        +
+      </span>
+    </button>
+  </div>
+</DocumentFragment>
+`;

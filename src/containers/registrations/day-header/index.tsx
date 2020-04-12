@@ -4,7 +4,7 @@ import { goToOverview, goToNewRegistration } from "../../../internal";
 import classNames from "classnames";
 import FavoriteGroupsMenu from "../../favorite-groups/menu";
 import { IRootStore } from "../../../stores/root-store";
-import { StoreContext } from "../../../contexts/store-context";
+import { useStore } from "../../../contexts/store-context";
 
 export type GroupedRegistrationHeaderProps = {
     readonly groupKey: string;
@@ -17,7 +17,7 @@ export type GroupedRegistrationHeaderProps = {
 }
 
 const GroupedRegistrationHeader = (props: GroupedRegistrationHeaderProps) => {
-    const store = React.useContext(StoreContext);
+    const store = useStore();
 
     const {
         groupKey,

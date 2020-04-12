@@ -5,7 +5,7 @@ import { goToFavorite } from '../../../internal';
 import { Box } from '../../../components/layout/box';
 import withFavoriteGroups from '../with-favorite-groups';
 import { IFavoriteRegistrationGroup } from '../../../../common/dist';
-import { StoreContext } from '../../../contexts/store-context';
+import { useStore } from '../../../contexts/store-context';
 
 type FavoriteGroupListProps = React.HTMLProps<HTMLDivElement> &
 {
@@ -13,7 +13,7 @@ type FavoriteGroupListProps = React.HTMLProps<HTMLDivElement> &
 }
 
 const FavoriteGroupList = observer((props: FavoriteGroupListProps) => {
-    const store = React.useContext(StoreContext);
+    const store = useStore();
 
     const { groups, ...restProps } = props;
 

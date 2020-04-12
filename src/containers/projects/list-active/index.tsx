@@ -3,10 +3,10 @@ import { observer } from 'mobx-react-lite';
 import { canEditProject, canManageProjects } from '../../../rules/rules';
 import { SettingsList } from '../../../components/settings-list';
 import { goToProject } from '../../../internal';
-import { StoreContext } from '../../../contexts/store-context';
+import { useStore } from '../../../contexts/store-context';
 
 export const ActiveProjectList = observer((props: React.HTMLProps<HTMLDivElement>) => {
-    const store = React.useContext(StoreContext);
+    const store = useStore();
 
     const handleItemClicked = (id: string | undefined) => {
         if (!id) return;

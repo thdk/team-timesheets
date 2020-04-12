@@ -3,10 +3,10 @@ import { observer } from "mobx-react-lite";
 
 import { canManageTeams } from "../../../rules/rules";
 import { SettingsList, IListItemData } from "../../../components/settings-list";
-import { StoreContext } from "../../../contexts/store-context";
+import { useStore } from "../../../contexts/store-context";
 
 export const TeamList = observer(() => {
-    const store = React.useContext(StoreContext);
+    const store = useStore();
 
     const saveListItem = (data: IListItemData, id?: string) => {
         store.config.teamId = undefined;

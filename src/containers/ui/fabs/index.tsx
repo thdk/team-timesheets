@@ -1,10 +1,10 @@
 import * as React from 'react';
 import { observer } from 'mobx-react-lite';
 import { Fab } from '../../../mdc/buttons/fab';
-import { StoreContext } from '../../../contexts/store-context';
+import { useStore } from '../../../contexts/store-context';
 
 export const Fabs = observer(() => {
-    const store = React.useContext(StoreContext);
+    const store = useStore();
 
     return <>
         {store.view.fabs.map(fab => (

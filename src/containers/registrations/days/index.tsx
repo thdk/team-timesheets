@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { observer } from 'mobx-react-lite';
 import { Day as Day } from '../day';
-import { StoreContext } from '../../../contexts/store-context';
+import { useStore } from '../../../contexts/store-context';
 
 export enum SortOrder {
     Ascending = 1,
@@ -20,7 +20,7 @@ export interface IDaysProps {
 }
 
 export const Days = observer((props: IDaysProps) => {
-    const store = React.useContext(StoreContext);
+    const store = useStore();
 
     const {
         sortOrder = SortOrder.Ascending,

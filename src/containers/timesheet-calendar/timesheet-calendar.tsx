@@ -4,10 +4,10 @@ import Calendar, { CalendarTileProperties } from 'react-calendar/dist/entry.nost
 
 import { goToOverview } from '../../internal';
 import { withAuthentication } from '../users/with-authentication';
-import { StoreContext } from '../../contexts/store-context';
+import { useStore } from '../../contexts/store-context';
 
 const TimesheetCalendar = observer(() => {
-    const store = React.useContext(StoreContext);
+    const store = useStore();
 
     const dateChanged = React.useCallback((dates: Date | Date[]) => {
         const date = dates instanceof (Date) ? dates : dates[0];

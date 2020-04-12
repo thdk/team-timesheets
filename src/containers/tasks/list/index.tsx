@@ -3,10 +3,10 @@ import { observer } from 'mobx-react-lite';
 
 import { canEditTask, canDeleteTask, canManageTasks } from '../../../rules/rules';
 import { SettingsList, IListItemData } from '../../../components/settings-list';
-import { StoreContext } from '../../../contexts/store-context';
+import { useStore } from '../../../contexts/store-context';
 
 export const TaskList = observer((props: React.HTMLProps<HTMLDivElement>) => {
-    const store = React.useContext(StoreContext);
+    const store = useStore();
 
     const selectItem = (id: string | undefined) => {
         if (canEditTask(store.user.authenticatedUser) || canDeleteTask(store.user.authenticatedUser)) {

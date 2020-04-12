@@ -18,12 +18,12 @@ class Reports extends React.Component {
 
     componentDidMount() {
         this.context
-        .reports.reports.fetchAsync();
+            .reports.reports.fetchAsync();
     }
 
-    componentWillUnmount(){
+    componentWillUnmount() {
         this.context
-        .reports.reports.dispose();
+            .reports.reports.dispose();
     }
 
     registrationClick = (id: string) => {
@@ -33,13 +33,13 @@ class Reports extends React.Component {
     goToDate(e: React.MouseEvent, date: Date) {
         e.preventDefault();
         this.context
-        .view.track = true;
+            .view.track = true;
         goToOverview(this.context
             , {
-            year: date.getFullYear(),
-            month: date.getMonth() + 1,
-            day: date.getDate()
-        }, { track: true });
+                year: date.getFullYear(),
+                month: date.getMonth() + 1,
+                day: date.getDate()
+            }, { track: true });
     }
 
     render() {
@@ -47,7 +47,7 @@ class Reports extends React.Component {
             .view.moment) return null;
 
         const totalTime = this.context
-        .timesheets.registrationsTotalTime;
+            .timesheets.registrationsTotalTime;
 
         const totalLabel = `Total in ${this.context
             .view.moment.format('MMMM')}`;
@@ -56,16 +56,16 @@ class Reports extends React.Component {
         const totalList = <List style={{ width: "100%" }}><ListDivider></ListDivider>{total}<ListDivider></ListDivider></List>;
 
         const { month, year } = this.context
-        .view;
+            .view;
 
         const download = (this.context
             .reports.report && this.context
-            .reports.report.data) ? this.context
-        .reports.reportUrl
-            ? <a href={this.context
-                .reports.reportUrl}>Download report</a>
-            : this.context
-            .reports.report.data.status : undefined;
+                .reports.report.data) ? this.context
+                    .reports.reportUrl
+                ? <a href={this.context
+                    .reports.reportUrl}>Download report</a>
+                : this.context
+                    .reports.report.data.status : undefined;
         const downloadReport = download &&
             <FlexGroup direction={"vertical"} style={{ paddingRight: "1em", alignItems: "flex-end" }}>{download}</FlexGroup>
 
@@ -73,7 +73,12 @@ class Reports extends React.Component {
             <>
                 <FlexGroup direction="vertical">
                     <FlexGroup style={{ alignItems: "center", justifyContent: "space-between", width: "100%" }}>
-                        <DateSelect style={{ margin: "1em" }} onMonthChange={this.changeMonth} onYearChange={this.changeYear} month={month ? month - 1 : undefined} year={year}></DateSelect>
+                        <DateSelect
+                            style={{ margin: "1em" }}
+                            onMonthChange={this.changeMonth.bind(this)}
+                            onYearChange={this.changeYear.bind(this)}
+                            month={month ? month - 1 : undefined}
+                            year={year} />
                         <Button onClick={this.export} style={{ margin: "1em" }} type={ButtonType.Outlined}>Export</Button>
                     </FlexGroup>
                     {downloadReport}
@@ -92,16 +97,16 @@ class Reports extends React.Component {
 
     export = () => {
         this.context
-        .user.userId
+            .user.userId
             && this.context
-            .view.year
+                .view.year
             && this.context
-            .view.month
+                .view.month
             && this.context
-            .reports.requestReport(this.context
-                .user.userId, this.context
-                .view.year, this.context
-                .view.month);
+                .reports.requestReport(this.context
+                    .user.userId, this.context
+                        .view.year, this.context
+                            .view.month);
     }
 
     changeMonth(month: number) {

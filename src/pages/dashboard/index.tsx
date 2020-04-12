@@ -82,11 +82,12 @@ class Dashboard extends React.Component {
                 <FlexGroup>
                     <FormField first={false}>
                         <CollectionSelect value={this.context.dashboard.userFilterValue}
+                            id={"users-collection"}
                             label="User"
                             onChange={this.onUserFilterChange.bind(this)}
                             items={
                                 this.context.user.usersCollection.docs
-                                    .map(doc => ({ name: doc.data!.name, id: doc.id }))
+                                    .map(doc => ({ label: doc.data!.name, value: doc.id }))
                             } />
                     </FormField>
                 </FlexGroup>
@@ -109,10 +110,14 @@ class Dashboard extends React.Component {
                                     onChange={this.onTimePeriodechange.bind(this)}></TimePeriodSelect>
                             </FormField>
                             <FormField first={false}>
-                                <CollectionSelect value={this.context.dashboard.projectFilterValue}
+                                <CollectionSelect
+                                    id={"project-collection"}
+                                    value={this.context.dashboard.projectFilterValue}
                                     label="Project"
                                     onChange={this.onProjectFilterChange.bind(this)}
-                                    items={this.context.projects.activeProjects} />
+                                    items={this.context.projects.activeProjects
+                                        .map(({ id, name }) => ({ label: name, value: id }))
+                                    } />
                             </FormField>
                         </FlexGroup>
                         {userFilter}

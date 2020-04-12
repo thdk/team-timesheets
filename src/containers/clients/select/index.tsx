@@ -16,8 +16,9 @@ export const ClientSelect = observer((props: IClientSelectProps) => {
     const { label = "Client", value = "", onChange } = props;
     return (
         <CollectionSelect
+            id={"client-collection"}
             value={value}
-            items={store.config.clients}
+            items={store.config.clients.map(({ id, name }) => ({ label: name, value: id }))}
             label={label}
             onChange={onChange} />
     );

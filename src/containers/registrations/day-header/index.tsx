@@ -77,12 +77,15 @@ const GroupedRegistrationHeader = (props: GroupedRegistrationHeaderProps) => {
                                 store.timesheets.toggleSelectedRegistrationDay(date.toDateString(), true);
                                 goToNewRegistration(store, dateMoment);
                             } else {
-                                store.timesheets.addRegistrations(
-                                    store.favorites.favoritesByGroup(id)
-                                        .map(reg =>
-                                            store.timesheets.copyRegistrationToDate(reg.data!, date)
-                                        )
-                                );
+                                store.favorites.getFavoritesByGroupIdAsync(id)
+                                    .then(favoriteDocs => {
+                                        store.timesheets.addRegistrations(
+                                            favoriteDocs.map(reg =>
+                                                store.timesheets.copyRegistrationToDate(reg.data!, date)
+                                            )
+                                        );
+                                    })
+
                             }
                         }
                     }

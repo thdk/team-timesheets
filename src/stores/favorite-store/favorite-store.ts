@@ -1,4 +1,4 @@
-import { ICollection, Collection, FetchMode, RealtimeMode, Doc } from "firestorable";
+import { ICollection, Collection, FetchMode, RealtimeMode } from "firestorable";
 import { observable, reaction, computed, action } from "mobx";
 import firebase from "firebase/app";
 import "firebase/firestore";
@@ -46,8 +46,8 @@ export class FavoriteStore {
             this.db,
             "favorites",
             {
-                fetchMode: FetchMode.once,
-                realtimeMode: RealtimeMode.on,
+                fetchMode: FetchMode.manual,
+                realtimeMode: RealtimeMode.off,
                 serialize: serializer.convertFavoriteRegistration,
                 deserialize: deserializer.convertFavoriteRegistration,
             },
@@ -91,18 +91,13 @@ export class FavoriteStore {
             );
     }
 
-    @computed
-    public get favorites() {
-        return this.favoriteCollection.docs.reduce((p, c) => {
-            const { groupId = undefined } = c.data || {};
-            p.set(groupId, [...(p.get(groupId) || []), c]);
-            return p;
-        }, new Map<string | undefined, Doc<IFavoriteRegistration>[]>());
-    }
+    public getFavoritesByGroupIdAsync(groupId: string) {
 
-    @computed
-    public get favoritesByGroup() {
-        return (id: string) => this.favorites.get(id) || [];
+        this.favoriteCollection.query = collRef => collRef
+            .where("groupId", "==", groupId);
+
+        return this.favoriteCollection.fetchAsync()
+            .then(() => this.favoriteCollection.docs);
     }
 
     @action

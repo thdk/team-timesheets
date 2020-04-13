@@ -24,7 +24,7 @@ export const RegistrationLines = observer((props: IRegistrationLinesProps) => {
         const projectData = project ? store.projects.projectsCollection.get(project) : null;
         const { data: { name: projectName = "" } = {} } = projectData || {};
 
-        const taskData = task ? store.config.tasks.get(task) : null;
+        const taskData = task ? store.config.tasksCollection.get(task) : null;
         const { data: { icon = undefined } = {} } = taskData || {};
 
         const clientData = client ? store.config.clientsCollection.get(client) : null;

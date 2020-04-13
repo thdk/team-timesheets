@@ -17,13 +17,13 @@ export const TaskList = observer((props: React.HTMLProps<HTMLDivElement>) => {
     const saveListItem = (data: IListItemData, id?: string) => {
         store.config.taskId = undefined;
         if (data.name) {
-            store.config.tasks.addAsync({ name: data.name, icon: data.icon }, id);
+            store.config.tasksCollection.addAsync({ name: data.name, icon: data.icon }, id);
         }
     }
 
     return <SettingsList {...props}
         readonly={!canManageTasks(store.user.authenticatedUser)}
-        items={Array.from(store.config.tasks.docs.values()).map(task => ({ ...task.data!, id: task.id }))}
+        items={store.config.tasks}
         onAddItem={saveListItem}
         onToggleSelection={id => store.view.toggleSelection(id, true)}
         onItemClick={selectItem}

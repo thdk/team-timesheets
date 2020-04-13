@@ -255,7 +255,7 @@ export class RegistrationStore implements IRegistrationsStore {
 
                 const {
                     recentProjects = [],
-                    defaultTask: task = this.rootStore.config.tasks.docs.length ? this.rootStore.config.tasks.docs[0].id : undefined,
+                    defaultTask: task = this.rootStore.config.tasks.length ? this.rootStore.config.tasks[0].id : undefined,
                     defaultClient: client = undefined
                 } = this.rootStore.user.authenticatedUser || {};
 

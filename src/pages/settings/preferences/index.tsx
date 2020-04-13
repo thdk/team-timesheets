@@ -23,18 +23,16 @@ class Preferences extends React.Component<Props> {
     render() {
         const { authenticatedUser: user } = this.props;
 
-        if (this.context.config.tasks.docs.length === 0) return null;
+        if (this.context.config.tasks.length === 0) return null;
 
         const { tasks: userTasks = new Map<string, true>(), defaultTask = undefined, defaultClient = undefined } = this.context.user.authenticatedUser || {};
-        const tasks = Array.from(this.context.config.tasks.docs.values())
+        const tasks =this.context.config.tasks
             .reduce((p, c) => {
-                if (c.data) {
-                    const { id: taskId, data: { name: taskName, icon: taskIcon = undefined } } = c;
+                    const { id: taskId, name: taskName, icon: taskIcon = undefined } = c;
                     const leadingIcon = taskIcon ? <i className="material-icons mdc-chip__icon mdc-chip__icon--leading">{taskIcon}</i> : undefined;
                     p.push(
                         <Chip leadingIcon={leadingIcon} handleSelect={this.handleTaskSelect} id={taskId} label={taskName!} key={taskId}></Chip>
                     );
-                }
                 return p;
             }, new Array());
 

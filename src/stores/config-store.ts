@@ -17,7 +17,7 @@ export interface IConfigStore extends ConfigStore {};
 
 export class ConfigStore implements IConfigStore {
     //private readonly _rootStore: IRootStore;
-    readonly tasks: ICollection<IProject, ITaskData>;
+    readonly tasksCollection: ICollection<IProject, ITaskData>;
     readonly clientsCollection: ICollection<IClient>;
     readonly teamsCollection: ICollection<ITeam, ITeamData>;
     readonly configsCollection: Collection<IConfig>;
@@ -30,7 +30,7 @@ export class ConfigStore implements IConfigStore {
         // this._rootStore = rootStore;
         const deps = { logger: console.log };
 
-        this.tasks = new Collection<ITask, ITaskData>(
+        this.tasksCollection = new Collection<ITask, ITaskData>(
             firestore,
             "tasks",
             {
@@ -89,6 +89,12 @@ export class ConfigStore implements IConfigStore {
     public get teams() {
         return Array.from(this.teamsCollection.docs.values())
             .map(doc => ({ ...doc.data!, id: doc.id, isSelected: doc.id === this.teamId }));
+    }
+
+    @computed
+    public get tasks() {
+        return Array.from(this.tasksCollection.docs.values())
+            .map(doc => ({ ...doc.data!, id: doc.id, isSelected: doc.id === this.taskId }));
     }
 
     // To investigate: does getConfigValue needs mobx @computed attribute?

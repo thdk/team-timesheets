@@ -21,7 +21,7 @@ const setActions = (tab: SettingsTab, store: IRootStore) => {
                 const deleteAction: IViewAction | undefined = canDeleteTask(store.user.authenticatedUser)
                     ? {
                         action: () => {
-                            store.view.selection.size && store.config.tasks.deleteAsync(...store.view.selection.keys());
+                            store.view.selection.size && store.config.tasksCollection.deleteAsync(...store.view.selection.keys());
                             store.view.selection.clear();
                         },
                         icon: { label: "Delete", content: "delete" },

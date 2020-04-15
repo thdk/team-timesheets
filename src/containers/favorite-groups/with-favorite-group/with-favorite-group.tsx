@@ -18,11 +18,9 @@ export function withFavoriteGroup<T extends Props = Props>(
         const store = useStore();
 
         const group = store.favorites.activeFavoriteGroup;
-        const favorites = group && store.favorites.favoritesByGroup(group.id);
         return group
             ? <WrappedComponent
                 group={group}
-                favorites={favorites}
                 {...(props as T)}
             />
             : <></>;

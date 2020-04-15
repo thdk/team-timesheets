@@ -1,24 +1,27 @@
 import * as React from "react";
-import store from "../../stores/root-store";
 import { Box } from "../../components/layout/box";
 import { FlexGroup } from "../../components/layout/flex";
 import { FormField } from "../../components/layout/form";
 import { observer } from "mobx-react";
 import Switch from "../../mdc/switch";
 import { IRoles } from "../../../common";
-import TeamSelect from "../../containers/teams/select";
+import { TeamSelect } from "../../containers/teams/select";
 import { withAuthentication } from "../../containers/users/with-authentication";
 import { RedirectToLogin } from "../../routes/login";
 import { TextField } from "@rmwc/textfield";
+import { StoreContext } from "../../contexts/store-context";
 
 @observer
 class User extends React.Component {
+    declare context: React.ContextType<typeof StoreContext>
+    static contextType = StoreContext;
+
     render() {
-        if (!store.user.selectedUser) return <></>;
+        if (!this.context.user.selectedUser) return <></>;
 
         const roles: (keyof IRoles)[] = ["admin", "editor", "user"];
 
-        const { name, roles: userRoles, team } = store.user.selectedUser;
+        const { name, roles: userRoles, team } = this.context.user.selectedUser;
 
         const userRolesEls = roles
             .map((role, i: number) =>
@@ -54,19 +57,19 @@ class User extends React.Component {
     }
 
     onUserNameChange(event: React.ChangeEvent<HTMLInputElement>) {
-        store.user.updateSelectedUser({ name: event.currentTarget.value });
+        this.context.user.updateSelectedUser({ name: event.currentTarget.value });
     }
 
     onUserRoleChange(role: keyof IRoles) {
-        if (!store.user.selectedUser) return;
-        const roles = { ...store.user.selectedUser.roles };
+        if (!this.context.user.selectedUser) return;
+        const roles = { ...this.context.user.selectedUser.roles };
         roles[role] = !roles[role];
-        store.user.updateSelectedUser({ roles });
+        this.context.user.updateSelectedUser({ roles });
     }
 
     onTeamChange = (value: string) => {
-        if (store.user.selectedUser)
-            store.user.updateSelectedUser({ team: value });
+        if (this.context.user.selectedUser)
+            this.context.user.updateSelectedUser({ team: value });
     }
 }
 

@@ -1,55 +1,71 @@
 import * as React from 'react';
 import { observer } from "mobx-react";
 import { goToRegistration } from '../../internal';
-import store from '../../stores/root-store';
 import { Days, SortOrder } from '../../containers/registrations/days';
 import { goToOverview } from '../../routes/registrations/overview';
 import { List, ListItem, ListDivider } from '../../mdc/list';
 import { DateSelect } from '../../components/date-select';
 import { ButtonType, Button } from '../../mdc/buttons/button';
-import { FlexGroup } from '../../components/Layout/flex';
+import { FlexGroup } from '../../components/layout/flex';
 import { withAuthentication } from '../../containers/users/with-authentication';
 import { RedirectToLogin } from '../../routes/login';
+import { StoreContext } from '../../contexts/store-context';
 
 @observer
 class Reports extends React.Component {
+    declare context: React.ContextType<typeof StoreContext>;
+    static contextType = StoreContext;
+
     componentDidMount() {
-        store.reports.reports.fetchAsync();
+        this.context
+            .reports.reports.fetchAsync();
     }
 
-    componentWillUnmount(){
-        store.reports.reports.dispose();
+    componentWillUnmount() {
+        this.context
+            .reports.reports.dispose();
     }
 
     registrationClick = (id: string) => {
-        goToRegistration(id);
+        goToRegistration(this.context, id);
     }
 
     goToDate(e: React.MouseEvent, date: Date) {
         e.preventDefault();
-        store.view.track = true;
-        goToOverview(store, {
-            year: date.getFullYear(),
-            month: date.getMonth() + 1,
-            day: date.getDate()
-        }, { track: true });
+        this.context
+            .view.track = true;
+        goToOverview(this.context
+            , {
+                year: date.getFullYear(),
+                month: date.getMonth() + 1,
+                day: date.getDate()
+            }, { track: true });
     }
 
     render() {
-        if (!store.view.moment) return null;
+        if (!this.context
+            .view.moment) return null;
 
-        const totalTime = store.timesheets.registrationsTotalTime;
+        const totalTime = this.context
+            .timesheets.registrationsTotalTime;
 
-        const totalLabel = `Total in ${store.view.moment.format('MMMM')}`;
+        const totalLabel = `Total in ${this.context
+            .view.moment.format('MMMM')}`;
         const total = <ListItem key={`total-month`} lines={[totalLabel]} meta={parseFloat(totalTime.toFixed(2)) + " hours"} disabled={true}></ListItem>
 
         const totalList = <List style={{ width: "100%" }}><ListDivider></ListDivider>{total}<ListDivider></ListDivider></List>;
 
-        const { month, year } = store.view;
+        const { month, year } = this.context
+            .view;
 
-        const download = (store.reports.report && store.reports.report.data) ? store.reports.reportUrl
-            ? <a href={store.reports.reportUrl}>Download report</a>
-            : store.reports.report.data.status : undefined;
+        const download = (this.context
+            .reports.report && this.context
+                .reports.report.data) ? this.context
+                    .reports.reportUrl
+                ? <a href={this.context
+                    .reports.reportUrl}>Download report</a>
+                : this.context
+                    .reports.report.data.status : undefined;
         const downloadReport = download &&
             <FlexGroup direction={"vertical"} style={{ paddingRight: "1em", alignItems: "flex-end" }}>{download}</FlexGroup>
 
@@ -57,7 +73,12 @@ class Reports extends React.Component {
             <>
                 <FlexGroup direction="vertical">
                     <FlexGroup style={{ alignItems: "center", justifyContent: "space-between", width: "100%" }}>
-                        <DateSelect style={{ margin: "1em" }} onMonthChange={this.changeMonth} onYearChange={this.changeYear} month={month ? month - 1 : undefined} year={year}></DateSelect>
+                        <DateSelect
+                            style={{ margin: "1em" }}
+                            onMonthChange={this.changeMonth.bind(this)}
+                            onYearChange={this.changeYear.bind(this)}
+                            month={month ? month - 1 : undefined}
+                            year={year} />
                         <Button onClick={this.export} style={{ margin: "1em" }} type={ButtonType.Outlined}>Export</Button>
                     </FlexGroup>
                     {downloadReport}
@@ -75,18 +96,25 @@ class Reports extends React.Component {
     }
 
     export = () => {
-        store.user.userId
-            && store.view.year
-            && store.view.month
-            && store.reports.requestReport(store.user.userId, store.view.year, store.view.month);
+        this.context
+            .user.userId
+            && this.context
+                .view.year
+            && this.context
+                .view.month
+            && this.context
+                .reports.requestReport(this.context
+                    .user.userId, this.context
+                        .view.year, this.context
+                            .view.month);
     }
 
     changeMonth(month: number) {
-        store.view.month = month + 1;
+        this.context.view.month = month + 1;
     }
 
     changeYear(year: number) {
-        store.view.year = year;
+        this.context.view.year = year;
     }
 }
 

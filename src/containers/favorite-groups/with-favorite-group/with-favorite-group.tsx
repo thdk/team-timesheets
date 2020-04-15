@@ -1,8 +1,8 @@
-import React from "react";
-import store from "../../../stores/root-store";
+import * as React from 'react'
 import { IFavoriteRegistrationGroup, IFavoriteRegistration } from "../../../../common/dist";
 import { observer } from "mobx-react-lite";
 import { Doc } from "firestorable";
+import { useStore } from "../../../contexts/store-context";
 
 export interface IWithFavoriteGroupInjectedProps {
     group: Doc<IFavoriteRegistrationGroup>;
@@ -15,13 +15,12 @@ export function withFavoriteGroup<T extends Props = Props>(
     WrappedComponent: React.ComponentType<T>
 ) {
     const ComponentWithFavoriteGroup = (props: Optionalize<T, IWithFavoriteGroupInjectedProps>) => {
+        const store = useStore();
 
         const group = store.favorites.activeFavoriteGroup;
-        const favorites = group && store.favorites.favoritesByGroup(group.id);
         return group
             ? <WrappedComponent
                 group={group}
-                favorites={favorites}
                 {...(props as T)}
             />
             : <></>;

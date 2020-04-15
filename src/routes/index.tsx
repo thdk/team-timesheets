@@ -11,26 +11,24 @@ import loginRoutes from './login';
 import favoriteRoutes from './favorites';
 
 import { goToOverview } from '../internal';
-import store from '../stores/root-store';
+import { IRootStore } from '../stores/root-store';
 
-const routes: RoutesConfig = {
+export const routes: RoutesConfig = {
   root: new Route({
     path: '/',
     component: <App></App>,
-    onEnter: () => {
-      goToOverview(store); // TODO: verify if we can't use the global store inside goToOverview
+    onEnter: (_route: Route, _params: { id?: string }, s: IRootStore) => {
+      goToOverview(s); // TODO: verify if we can't use the global store inside goToOverview
     },
     // beforeEnter,
     title: "Root"
   }),
+  ...loginRoutes,
   ...timesheetsRoutes,
   ...settingsRoutes,
   ...reportRoutes,
   ...userRoutes,
   ...projectRoutes,
   ...dashboardRoures,
-  ...loginRoutes,
   ...favoriteRoutes,
 };
-
-export default routes;

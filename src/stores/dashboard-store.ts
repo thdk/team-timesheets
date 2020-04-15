@@ -1,7 +1,7 @@
 import { observable, reaction, computed, action } from "mobx";
 import { ICollection, Collection, RealtimeMode } from "firestorable";
 
-import moment from 'moment-es6';
+import moment from 'moment';
 
 import { IRootStore } from "./root-store";
 import { IGroupedRegistrations } from "./registration-store";
@@ -37,7 +37,7 @@ export class DashboardStore implements IDashboardStore {
 
     constructor(rootStore: IRootStore) {
 
-        this.registrationsField = observable(new Collection<IRegistration, IRegistrationData>(
+        this.registrationsField = new Collection<IRegistration, IRegistrationData>(
             firestore,
             "registrations",
             {
@@ -49,7 +49,7 @@ export class DashboardStore implements IDashboardStore {
             {
                 logger: console.log
             },
-        ));
+        );
 
         const updateRegistrationQuery = () => {
             if (!rootStore.user.authenticatedUser || !this.timePeriodFilterField) {

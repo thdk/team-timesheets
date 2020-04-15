@@ -1,25 +1,23 @@
 import React, { useCallback } from "react";
+import { observer } from "mobx-react-lite";
 
 import { IWithFavoriteGroupInjectedProps, withFavoriteGroup } from "../with-favorite-group";
-import FavoriteGroupDetail from "./favorite-group-detail";
-import { observer } from "mobx-react-lite";
-import { IWithFavoriteInjectedProps } from "../with-favorites";
+import { FavoriteGroupDetailForm as PureFavoriteGroupDetailForm } from "./favorite-group-detail";
 
-type Props = IWithFavoriteGroupInjectedProps & IWithFavoriteInjectedProps;
+type Props = IWithFavoriteGroupInjectedProps;
 
-const FavoriteGroupContainer = observer((props: Props) => {
-    const { group, favorites } = props;
+export const FavoriteGroupDetailForm = withFavoriteGroup(
+    observer((props: Props) => {
+        const { group } = props;
 
-    const handleNameChanged = useCallback((name: string) => {
-        group.data!.name = name;
-    }, [group]);
+        const handleNameChanged = useCallback((name: string) => {
+            group.data!.name = name;
+        }, [group]);
 
 
-    return <FavoriteGroupDetail
-        onNameChanged={handleNameChanged}
-        favorites={favorites}
-        name={group.data!.name}
-    />;
-});
-
-export default withFavoriteGroup(FavoriteGroupContainer);
+        return <PureFavoriteGroupDetailForm
+            onNameChanged={handleNameChanged}
+            name={group.data!.name}
+        />;
+    })
+);

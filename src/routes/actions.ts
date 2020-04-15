@@ -1,10 +1,10 @@
 import { Route } from "mobx-router";
 import { IDate } from './registrations/overview';
-import store, { IRootStore } from "../stores/root-store";
+import { IRootStore } from "../stores/root-store";
 import { transaction } from "mobx";
 import { setBackToOverview } from "../internal";
-import { useEffect } from "react";
-import React from "react";
+import * as React from 'react'
+import { StoreContext } from "../contexts/store-context";
 
 export const goToRouteWithDate = (route: Route, s: IRootStore, date?: IDate, trackOptions?: { track?: boolean, currentDate?: number }) => {
     const { track = undefined, currentDate = undefined } = trackOptions || {};
@@ -25,27 +25,28 @@ export const routeWithDateChanged = (_route: Route, params: IDate, s: IRootStore
     });
 }
 
-export const setNavigationContent = (route: Route, isChildRoute = true, targetDate?: IDate, currentDate?: number) => {
+export const setNavigationContent = (store: IRootStore, route: Route, isChildRoute = true, targetDate?: IDate, currentDate?: number) => {
     if (isChildRoute) {
-        setBackToOverview(undefined, currentDate, targetDate);
+        setBackToOverview(store, undefined, currentDate, targetDate);
         store.view.track = true;
     }
     else {
         store.view.setNavigation("default");
         store.view.track = false;
     }
-    setTitleForRoute(route);
+    setTitleForRoute(store, route);
 }
 
-export const setTitleForRoute = (route: Route) => {
+export const setTitleForRoute = (store: IRootStore, route: Route) => {
     store.view.title = route.title || "";
 }
 
-export const Redirect = ({route, params}: {route: Route, params?: {}}) => {
+export const Redirect = ({ route, params }: { route: Route, params?: {} }) => {
+    const store = React.useContext(StoreContext);
 
-    useEffect(() => {
+    React.useEffect(() => {
         store.router.goTo(route, params, store);
-    });
+    }, []);
 
     return React.createElement(React.Fragment);
 };

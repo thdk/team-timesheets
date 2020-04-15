@@ -3,19 +3,19 @@ import * as React from 'react';
 import { transaction, when } from "mobx";
 
 import { App, setNavigationContent } from "../../internal";
-import store, { IRootStore } from "../../stores/root-store";
+import { IRootStore } from "../../stores/root-store";
 import { IViewAction } from "../../stores/view-store";
 import Projects from "../../pages/projects";
 import detailRoutes from "./detail";
 import { canManageProjects } from "../../rules/rules";
 
-export const goToProjects = (tab: ProjectsTab = "active") => {
+export const goToProjects = (store: IRootStore, tab: ProjectsTab = "active") => {
     store.router.goTo(routes.projects, {}, store, { tab });
 }
 
 export type ProjectsTab = "active" | "archived";
 
-const setActions = (tab: ProjectsTab, s: IRootStore) => {
+const setActions = (tab: ProjectsTab, store: IRootStore) => {
     when(() => store.user.authenticatedUser !== undefined, () => {
         if (!canManageProjects(store.user.authenticatedUser)) {
             return;
@@ -23,8 +23,8 @@ const setActions = (tab: ProjectsTab, s: IRootStore) => {
 
         const deleteAction: IViewAction = {
             action: () => {
-                s.view.selection.size && s.projects.deleteProjects(...s.view.selection.keys());
-                s.view.selection.clear();
+                store.view.selection.size && store.projects.deleteProjects(...store.view.selection.keys());
+                store.view.selection.clear();
             },
             icon: { label: "Delete", content: "delete" },
             shortKey: { key: "Delete", ctrlKey: true },
@@ -39,8 +39,8 @@ const setActions = (tab: ProjectsTab, s: IRootStore) => {
             case "active":
                 const archiveAction: IViewAction = {
                     action: () => {
-                        s.projects.archiveProjects(...s.view.selection.keys());
-                        s.view.selection.clear();
+                        store.projects.archiveProjects(...store.view.selection.keys());
+                        store.view.selection.clear();
                     },
                     icon: { label: "Archive", content: "archive" },
                     shortKey: { key: "e" },
@@ -55,8 +55,8 @@ const setActions = (tab: ProjectsTab, s: IRootStore) => {
             case "archived":
                 const unarchiveAction: IViewAction = {
                     action: () => {
-                        s.projects.unarchiveProjects(...s.view.selection.keys());
-                        s.view.selection.clear();
+                        store.projects.unarchiveProjects(...store.view.selection.keys());
+                        store.view.selection.clear();
                     },
                     icon: { label: "Unarchive", content: "unarchive" },
                     contextual: true,
@@ -69,8 +69,8 @@ const setActions = (tab: ProjectsTab, s: IRootStore) => {
                 break;
         }
 
-        s.view.setActions(actions);
-        s.view.setFabs([{
+        store.view.setActions(actions);
+        store.view.setFabs([{
             action: () => {
                 store.router.goTo(detailRoutes.newProject, {}, store);
             },
@@ -92,7 +92,7 @@ const routes = {
         component: <App><Projects></Projects></App>,
         onEnter: (route: Route, _params, s: IRootStore, queryParams: { tab: ProjectsTab }) => {
             setActions(queryParams.tab, s);
-            setNavigationContent(route, false);
+            setNavigationContent(s, route, false);
         },
         onParamsChange: (_route, _params, s: IRootStore, queryParams: { tab: ProjectsTab }) => {
             transaction(() => {

@@ -1,11 +1,11 @@
 import { observable, computed, reaction, when, action, toJS, ObservableMap, IObservableArray } from 'mobx';
 import { Doc, ICollection, Collection, RealtimeMode, FetchMode } from "firestorable";
-import store, { IRootStore } from './root-store';
+import { IRootStore } from './root-store';
 import * as deserializer from '../../common/serialization/deserializer';
 import * as serializer from '../../common/serialization/serializer';
 import { SortOrder } from '../containers/registrations/days';
 import { IRegistration, IRegistrationData } from '../../common/dist';
-import moment from 'moment-es6';
+import moment from 'moment';
 import { firestore } from '../firebase/my-firebase';
 
 export interface IGroupedRegistrations<T> {
@@ -260,7 +260,7 @@ export class RegistrationStore implements IRegistrationsStore {
                 } = this.rootStore.user.authenticatedUser || {};
 
                 const recentActiveProjects = recentProjects
-                    .filter(projectId => store.projects.activeProjects
+                    .filter(projectId => this.rootStore.projects.activeProjects
                         .some(p => p.id === projectId));
 
                 return {
@@ -292,8 +292,8 @@ export class RegistrationStore implements IRegistrationsStore {
                     const { project = undefined } = registration || {};
                     // TODO: move set recent project to firebase function
                     // triggering for every update/insert of a registration?
-                    if (store.user.userId && store.user.authenticatedUser && project) {
-                        const recentProjects = toJS(store.user.authenticatedUser.recentProjects);
+                    if (this.rootStore.user.userId && this.rootStore.user.authenticatedUser && project) {
+                        const recentProjects = toJS(this.rootStore.user.authenticatedUser.recentProjects);
                         const oldProjectIndex = recentProjects.indexOf(project);
 
                         // don't update the user document if the current project was already most recent
@@ -310,7 +310,7 @@ export class RegistrationStore implements IRegistrationsStore {
                                 recentProjects.unshift(project);
                             }
 
-                            store.user.updateAuthenticatedUser({ recentProjects });
+                            this.rootStore.user.updateAuthenticatedUser({ recentProjects });
                         }
                     }
                 });

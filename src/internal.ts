@@ -10,12 +10,12 @@
 // Note that this step (3) is only relevant if your are publishing a library that is consumed by others.
 
 export * from './containers/app';
+export * from './routes/login';
 export * from './routes/projects/list';
 export * from './routes/registrations/overview';
 export * from './routes/registrations/detail';
 export * from './routes/reports/report';
 export * from './routes/dashboard/dashboard';
-export * from './routes/login';
 export * from './routes/settings';
 export * from './routes/actions';
 export * from './routes/projects/detail';

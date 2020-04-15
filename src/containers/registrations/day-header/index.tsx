@@ -1,9 +1,10 @@
-import React from "react";
+import * as React from 'react'
 import moment from "moment";
-import store from "../../../stores/root-store";
 import { goToOverview, goToNewRegistration } from "../../../internal";
 import classNames from "classnames";
 import FavoriteGroupsMenu from "../../favorite-groups/menu";
+import { IRootStore } from "../../../stores/root-store";
+import { useStore } from "../../../contexts/store-context";
 
 export type GroupedRegistrationHeaderProps = {
     readonly groupKey: string;
@@ -16,6 +17,8 @@ export type GroupedRegistrationHeaderProps = {
 }
 
 const GroupedRegistrationHeader = (props: GroupedRegistrationHeaderProps) => {
+    const store = useStore();
+
     const {
         groupKey,
         totalTime,
@@ -26,7 +29,7 @@ const GroupedRegistrationHeader = (props: GroupedRegistrationHeaderProps) => {
         showAddButton = true,
     } = props;
 
-    const goToDate = (e: React.MouseEvent, date: Date) => {
+    const goToDate = (store: IRootStore, e: React.MouseEvent, date: Date) => {
         e.preventDefault();
         goToOverview(store, {
             year: date.getFullYear(),
@@ -35,7 +38,7 @@ const GroupedRegistrationHeader = (props: GroupedRegistrationHeaderProps) => {
         }, { track: true })
     };
 
-    const createTotalLabel = (date: Date, total?: number) => {
+    const createTotalLabel = (store: IRootStore, date: Date, total?: number) => {
         const dateMoment = moment(date);
         const totalJSX = total !== undefined
             ? <div className="grouped-registration-header-total">
@@ -55,7 +58,7 @@ const GroupedRegistrationHeader = (props: GroupedRegistrationHeaderProps) => {
                     onClick={(e: React.MouseEvent) => {
                         e.preventDefault();
                         e.stopPropagation();
-                        goToDate(e, date);
+                        goToDate(store, e, date);
                     }}
                     className="grouped-registration-header-date"
                 >
@@ -72,14 +75,17 @@ const GroupedRegistrationHeader = (props: GroupedRegistrationHeaderProps) => {
                         id => {
                             if (!id) {
                                 store.timesheets.toggleSelectedRegistrationDay(date.toDateString(), true);
-                                goToNewRegistration(dateMoment);
+                                goToNewRegistration(store, dateMoment);
                             } else {
-                                store.timesheets.addRegistrations(
-                                    store.favorites.favoritesByGroup(id)
-                                        .map(reg =>
-                                            store.timesheets.copyRegistrationToDate(reg.data!, date)
-                                        )
-                                );
+                                store.favorites.getFavoritesByGroupIdAsync(id)
+                                    .then(favoriteDocs => {
+                                        store.timesheets.addRegistrations(
+                                            favoriteDocs.map(reg =>
+                                                store.timesheets.copyRegistrationToDate(reg.data!, date)
+                                            )
+                                        );
+                                    })
+
                             }
                         }
                     }
@@ -91,7 +97,7 @@ const GroupedRegistrationHeader = (props: GroupedRegistrationHeaderProps) => {
 
     };
 
-    const titleJSX = createTotalLabel(new Date(groupKey), totalTime);
+    const titleJSX = createTotalLabel(store, new Date(groupKey), totalTime);
     const collapseIconJSX = isCollapsable
         ? <i
             className="grouped-registration-header-icon material-icons mdc-icon-button__icon">

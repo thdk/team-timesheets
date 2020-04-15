@@ -3,16 +3,16 @@ import * as React from 'react';
 import { transaction, when } from "mobx";
 
 import { App, setNavigationContent } from "../../internal";
-import store, { IRootStore } from "../../stores/root-store";
+import { IRootStore } from "../../stores/root-store";
 import { IViewAction } from "../../stores/view-store";
 import Favorites from "../../pages/favorites";
 
-export const goToFavorites = () => {
+export const goToFavorites = (store: IRootStore) => {
     store.router.goTo(routes.favorites, {}, store);
 }
 
 const setActions = (s: IRootStore) => {
-    when(() => store.user.authenticatedUser !== undefined, () => {
+    when(() => s.user.authenticatedUser !== undefined, () => {
 
         const deleteAction: IViewAction = {
             action: () => {
@@ -22,7 +22,7 @@ const setActions = (s: IRootStore) => {
             icon: { label: "Delete", content: "delete" },
             shortKey: { key: "Delete", ctrlKey: true },
             contextual: true,
-            selection: store.view.selection,
+            selection: s.view.selection,
         };
 
         const actions = [deleteAction] as IViewAction[];
@@ -38,7 +38,7 @@ const routes = {
         component: <App><Favorites/></App>,
         onEnter: (route: Route, _params, s: IRootStore) => {
             setActions(s);
-            setNavigationContent(route, false);
+            setNavigationContent(s, route, false);
         },
         title: "Favorites",
         beforeExit: (_route, _param, s: IRootStore) => {

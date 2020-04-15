@@ -1,6 +1,6 @@
 import * as React from 'react';
 
-import CollectionSelect, { ICollectionListProps } from '../../../components/collection-select';
+import { ICollectionListProps, CollectionSelect } from '../../../components/collection-select';
 import { observer } from 'mobx-react-lite';
 import { IWithUsersProps, withUsers } from '../with-users';
 
@@ -12,10 +12,10 @@ export const UserSelect = observer((props: Props) => {
     const { users, ...rest } = props;
     return (
         <CollectionSelect
-            items={props.users}
+            id={"users-collection"}
+            items={props.users.map(({ id, name }) => ({ label: name, value: id }))}
             label={"User"}
-            {...rest}>
-        </CollectionSelect>
+            {...rest} />
     );
 });
 

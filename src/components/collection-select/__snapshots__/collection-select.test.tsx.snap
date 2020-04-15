@@ -1,0 +1,127 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`should render with items 1`] = `
+<DocumentFragment>
+  <div
+    class="mdc-select mdc-select--outlined"
+    role="listbox"
+  >
+    <div
+      class="mdc-select__anchor"
+    >
+      <i
+        class="mdc-select__dropdown-icon"
+      />
+      <div
+        aria-disabled="false"
+        aria-haspopup="listbox"
+        class="mdc-select__selected-text"
+        role="button"
+        tabindex="0"
+      >
+         
+      </div>
+      <div
+        class="mdc-notched-outline mdc-notched-outline--upgraded"
+      >
+        <div
+          class="mdc-notched-outline__leading"
+        />
+        <div
+          class="mdc-notched-outline__notch"
+        >
+          <span
+            class="mdc-floating-label"
+            for="test-collection"
+            style="transition-duration: 0s;"
+          >
+            collection label
+          </span>
+        </div>
+        <div
+          class="mdc-notched-outline__trailing"
+        />
+      </div>
+      <select
+        class="rmwc-select__native-control "
+        id="test-collection"
+        tabindex="0"
+      >
+        <option
+          disabled=""
+          selected=""
+          value=""
+        />
+        <option
+          value="1"
+        >
+          foo
+        </option>
+        <option
+          value="2"
+        >
+          bar
+        </option>
+      </select>
+    </div>
+  </div>
+</DocumentFragment>
+`;
+
+exports[`should render without items 1`] = `
+<DocumentFragment>
+  <div
+    class="mdc-select mdc-select--outlined"
+    role="listbox"
+  >
+    <div
+      class="mdc-select__anchor"
+    >
+      <i
+        class="mdc-select__dropdown-icon"
+      />
+      <div
+        aria-disabled="false"
+        aria-haspopup="listbox"
+        class="mdc-select__selected-text"
+        role="button"
+        tabindex="0"
+      >
+         
+      </div>
+      <div
+        class="mdc-notched-outline mdc-notched-outline--upgraded"
+      >
+        <div
+          class="mdc-notched-outline__leading"
+        />
+        <div
+          class="mdc-notched-outline__notch"
+        >
+          <span
+            class="mdc-floating-label"
+            for="test-collection"
+            style="transition-duration: 0s;"
+          >
+            collection label
+          </span>
+        </div>
+        <div
+          class="mdc-notched-outline__trailing"
+        />
+      </div>
+      <select
+        class="rmwc-select__native-control "
+        id="test-collection"
+        tabindex="0"
+      >
+        <option
+          disabled=""
+          selected=""
+          value=""
+        />
+      </select>
+    </div>
+  </div>
+</DocumentFragment>
+`;

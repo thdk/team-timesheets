@@ -6,20 +6,20 @@ import moment from 'moment';
 import { App, goToOverview, IDate } from '../../internal';
 import Registration from '../../pages/registration-detail';
 import { setTitleForRoute } from '../actions';
-import store, { IRootStore } from '../../stores/root-store';
+import { IRootStore } from '../../stores/root-store';
 import { IViewAction } from '../../stores/view-store';
 
 const path = "/timesheetsdetail";
 
-export const goToRegistration = (id?: string) => {
+export const goToRegistration = (store: IRootStore, id?: string) => {
     store.router.goTo(id ? routes.registrationDetail : routes.newRegistration, { id }, store);
 };
 
-export const goToNewRegistration = (date: moment.Moment) => {
+export const goToNewRegistration = (store: IRootStore, date: moment.Moment) => {
     store.router.goTo(routes.newRegistration, { id: undefined }, store, { date: moment(date).format("YYYY-MM-DD") });
 };
 
-export const setBackToOverview = (action?: () => void, currentDate?: number, targetDate?: IDate) => {
+export const setBackToOverview = (store: IRootStore, action?: () => void, currentDate?: number, targetDate?: IDate) => {
     store.view.setNavigation({
         action: () => {
             action && action();
@@ -58,8 +58,8 @@ const onEnter = (route: Route, params: { id?: string }, s: IRootStore) => {
             deleteAction
         ]);
 
-        setBackToOverview(() => s.timesheets.saveSelectedRegistration(), s.timesheets.registration && s.timesheets.registration.date!.getDate());
-        setTitleForRoute(route);
+        setBackToOverview(s, () => s.timesheets.saveSelectedRegistration(), s.timesheets.registration && s.timesheets.registration.date!.getDate());
+        setTitleForRoute(s, route);
     });
 };
 

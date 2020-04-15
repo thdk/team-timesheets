@@ -4,14 +4,15 @@ import commonJS from 'rollup-plugin-commonjs';
 // current both rollup-plugin-typescript and rollup-plugin-typescript2 are listed as dependency in tsconfig
 // rollup-plugin-typescript2 takes too long time (30+seconds) but will display ts error on build
 // need to split up the codebase with typescript project references and see if rollup-plugin-typescript2 can be used
-import typescript from 'rollup-plugin-typescript';
+import typescript from 'rollup-plugin-typescript2';
 import replace from 'rollup-plugin-replace';
 // import sizes from "rollup-plugin-sizes";
 
 const external = [
   "moment",
   "firebase/app",
-  "@firebase/firestore",
+  "firebase/firestore",
+  "firebase/auth",
   "firebaseui",
   "chart.js",
   "mobx",
@@ -23,7 +24,7 @@ export default {
   // they must either be included as script in html
   // or copied into dist/lib in gulp task copy:libs
   external,
-  input: 'src/app.ts', // can be a typescript file if we have a rollup typescript plugin
+  input: 'src/app.tsx', // can be a typescript file if we have a rollup typescript plugin
   format: 'iife',
   globals: {
     'firebase/app': 'firebase',
@@ -58,6 +59,7 @@ export default {
           'createContext',
           'cloneElement',
           'isValidElement',
+          'useContext',
         ],
         'node_modules/react-dom/index.js': ['findDOMNode', 'unstable_batchedUpdates', 'render'],
         '@material/react-chips': ["Chip", "ChipSet"],
@@ -65,9 +67,10 @@ export default {
         '@material/react-button': ["Button"],
         'firestorable': ['Collection', 'Document'],
         '@material/react-dialog': ['DialogTitle', 'DialogContent'],
+        'node_modules/@rmwc/select/node_modules/@material/dom/dist/mdc.dom.js': ['focusTrap']
       }
     }),
-    typescript(),
+    typescript()
     // sizes() // uncomment to analyse packages sizes included in the bundle
   ],
   onwarn: function (warning) {

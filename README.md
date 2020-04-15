@@ -1,9 +1,10 @@
 # Timesheets app
 
+![Cloud Build](https://storage.googleapis.com/timesheets-ffc4b-badges/builds/timesheets/branches/develop.svg?branch=develop)
+
 Web base timesheet app. Built to replace old school excel timesheets.
 
-Demo:
-* Master branch - [Latest release](https://timesheets-ffc4b.firebaseapp.com)
+Demo: [Develop branch](https://timesheets-ffc4b.firebaseapp.com)
 
 ## Getting Started
 
@@ -31,7 +32,7 @@ If you want develop for an existing project, ask the project admin to add you as
 
 You can manage firebase projects from the [Firebase console](https://console.firebase.google.com).
 
-I have two firebase projects: 
+I have two firebase projects:
 
 * dev-thdk-timesheets
 * thdk-timesheets
@@ -115,10 +116,6 @@ Start development server (open `http://localhost:5000/`)
 
     npm run server
 
-Build (development) and watch scss and ts files
-
-    npm start
-
 ## Running the tests
 
     npm run test (Sorry, no tests yet 👎)
@@ -145,7 +142,7 @@ firebase deploy --only hosting
 * Typescript
 * React
 * Mobx
-* Rollup
+* Webpack
 * Gulp
 * Material Design ([Material Components for the web](https://github.com/material-components/material-components-web))
 * Firebase

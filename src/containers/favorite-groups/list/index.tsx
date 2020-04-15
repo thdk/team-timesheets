@@ -1,11 +1,11 @@
 import * as React from 'react';
 import { observer } from 'mobx-react-lite';
-import store from '../../../stores/root-store';
 import { SettingsList } from '../../../components/settings-list';
 import { goToFavorite } from '../../../internal';
 import { Box } from '../../../components/layout/box';
 import withFavoriteGroups from '../with-favorite-groups';
 import { IFavoriteRegistrationGroup } from '../../../../common/dist';
+import { useStore } from '../../../contexts/store-context';
 
 type FavoriteGroupListProps = React.HTMLProps<HTMLDivElement> &
 {
@@ -13,6 +13,8 @@ type FavoriteGroupListProps = React.HTMLProps<HTMLDivElement> &
 }
 
 const FavoriteGroupList = observer((props: FavoriteGroupListProps) => {
+    const store = useStore();
+
     const { groups, ...restProps } = props;
 
     const handleItemClicked = (id: string | undefined) => {
@@ -21,7 +23,7 @@ const FavoriteGroupList = observer((props: FavoriteGroupListProps) => {
         if (store.view.selection.size) {
             store.view.toggleSelection(id, true);
         } else {
-            goToFavorite(id);
+            goToFavorite(store, id);
         }
     };
 

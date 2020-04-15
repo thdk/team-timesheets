@@ -2,7 +2,7 @@ import { transaction } from 'mobx';
 import { Route, RoutesConfig } from 'mobx-router';
 import * as React from 'react';
 
-import store, { IRootStore } from '../../stores/root-store';
+import { IRootStore } from '../../stores/root-store';
 import { IViewAction } from '../../stores/view-store';
 import { goToProjects } from './list';
 import { setTitleForRoute } from '../actions';
@@ -12,11 +12,11 @@ import { IProject } from '../../../common/dist';
 
 const path = "/projectdetail";
 
-export const goToProject = (id?: string) => {
+export const goToProject = (store: IRootStore, id?: string) => {
     store.router.goTo(id ? routes.projectDetail : routes.newProject, { id }, store);
 };
 
-export const goToNewProject = () => {
+export const goToNewProject = (store: IRootStore) => {
     store.router.goTo(routes.newProject, { id: undefined }, store);
 };
 
@@ -45,7 +45,7 @@ const onEnter = (route: Route, params: { id?: string }, s: IRootStore) => {
     const deleteAction: IViewAction = {
         action: () => {
             s.projects.projectId && s.projects.deleteProjects(s.projects.projectId);
-            goToProjects();
+            goToProjects(s);
         },
         icon: { label: "Delete", content: "delete" },
         shortKey: { key: "Delete", ctrlKey: true }
@@ -54,7 +54,7 @@ const onEnter = (route: Route, params: { id?: string }, s: IRootStore) => {
     const saveAction: IViewAction = {
         action: () => {
             save();
-            goToProjects();
+            goToProjects(s);
         },
         icon: { label: "Save", content: "save" },
         shortKey: { key: "s", ctrlKey: true }
@@ -69,12 +69,12 @@ const onEnter = (route: Route, params: { id?: string }, s: IRootStore) => {
         s.view.setNavigation({
             action: () => {
                 save();
-                goToProjects();
+                goToProjects(s);
             },
             icon: { label: "Back", content: "arrow_back" }
         });
 
-        setTitleForRoute(route);
+        setTitleForRoute(s, route);
     });
 };
 

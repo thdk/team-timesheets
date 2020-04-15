@@ -1,9 +1,9 @@
 import * as React from "react";
-import store from '../../../stores/root-store';
-import { observer } from 'mobx-react';
+import { observer } from 'mobx-react-lite';
 import { Doc } from "firestorable";
 import { IRegistration, IRegistrationData } from '../../../../common';
 import RegistrationLine from "../line";
+import { useStore } from "../../../contexts/store-context";
 
 export interface IRegistrationLinesProps extends React.HTMLProps<HTMLElement> {
     readonly registrations: Doc<Omit<IRegistration, "date" | "isPersisted">, Omit<IRegistrationData, "date">>[];
@@ -12,6 +12,7 @@ export interface IRegistrationLinesProps extends React.HTMLProps<HTMLElement> {
 }
 
 export const RegistrationLines = observer((props: IRegistrationLinesProps) => {
+    const store = useStore();
 
     const { registrations, registrationToggleSelect, registrationClick, readOnly } = props;
 

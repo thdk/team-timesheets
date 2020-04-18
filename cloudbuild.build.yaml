@@ -1,13 +1,13 @@
 steps:
   - name: node:10.15.1
     entrypoint: npm
-    args: ["ci"]
+    args: ["install"]
   - name: node:10.15.1
     entrypoint: npm
     args: ["run", "build:refs"]
   - name: "gcr.io/$PROJECT_ID/firebase"
     entrypoint: npm
-    args: ["run", "emulator:exec", "npm run test", "-- --coverage\""]
+    args: ["run", "emulator:exec", "npm run test"]
   - name: node:10.15.1
     entrypoint: npm
     args: ["run", "build:production"]

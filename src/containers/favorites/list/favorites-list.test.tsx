@@ -171,7 +171,7 @@ describe("FavoritesList", () => {
 
             // FavoritesList will fetch favorites by groupId once it get's rendered
             // so we have to wait here for those favorites to be fetched and rendered
-            await waitAsync(100);
+            await waitAsync(1000);
 
             asFragment = renderResult.asFragment;
         });

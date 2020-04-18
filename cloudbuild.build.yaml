@@ -1,7 +1,7 @@
 steps:
   - name: node:latest
     entrypoint: npm
-    args: ["install"]
+    args: ["ci"]
   - name: node:latest
     entrypoint: npm
     args: ["run", "build:refs"]

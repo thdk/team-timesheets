@@ -100,7 +100,16 @@ export class FavoriteStore {
             .where("groupId", "==", groupId);
 
         return this.favoriteCollection.fetchAsync()
-            .then(() => this.favoriteCollection.docs);
+            .then(() => {
+
+                return this.favoriteCollection.docs
+                    .sort((a, b) => {
+                        // TODO: Use stable sort method
+                        return (a.data!.description || "") > (b.data!.description || "")
+                            ? 1
+                            : -1;
+                    });
+            });
     }
 
     @action

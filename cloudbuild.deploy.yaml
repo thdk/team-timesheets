@@ -7,7 +7,7 @@ steps:
     args: ["run", "build:refs"]
   - name: node:10.15.1
     entrypoint: npm
-    args: ["emulator:exec", "\"npm run test\""]
+    args: ["emulator:exec \"npm run test\""]
   - name: node:10.15.1
     entrypoint: npm
     args: ["run", "build:production"]

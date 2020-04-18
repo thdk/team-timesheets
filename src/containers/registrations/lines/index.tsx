@@ -8,13 +8,13 @@ import { useStore } from "../../../contexts/store-context";
 export interface IRegistrationLinesProps extends React.HTMLProps<HTMLElement> {
     readonly registrations: Doc<Omit<IRegistration, "date" | "isPersisted">, Omit<IRegistrationData, "date">>[];
     readonly registrationToggleSelect?: (id: string) => void;
-    readonly registrationClick: (id: string) => void;
+    readonly registrationClick?: (id: string) => void;
 }
 
 export const RegistrationLines = observer((props: IRegistrationLinesProps) => {
     const store = useStore();
 
-    const { registrations, registrationToggleSelect, registrationClick, readOnly } = props;
+    const { registrations, registrationToggleSelect, registrationClick } = props;
 
     const rows = registrations.map(r => {
         if (!r.data) throw new Error("Found registration without Data");
@@ -36,9 +36,12 @@ export const RegistrationLines = observer((props: IRegistrationLinesProps) => {
         const onSelect = registrationToggleSelect ? () => registrationToggleSelect(id) : undefined;
 
 
-        const listItemOnClick = () => registrationClick(id);
+        const listItemOnClick = registrationClick
+            ? () => registrationClick(id)
+            : undefined;
+
         return <RegistrationLine
-            readOnly={readOnly}
+            readOnly={!listItemOnClick}
             icon={icon}
             id={id}
             key={id}

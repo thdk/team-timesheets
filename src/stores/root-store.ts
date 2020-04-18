@@ -31,14 +31,60 @@ export class Store implements IRootStore {
     public readonly projects: IProjectStore;
     public readonly favorites: FavoriteStore;
 
-    constructor() {
-        this.user = new UserStore(this);
+    constructor({
+        auth,
+        firestore,
+        storage,
+     }: {
+        firestore: firebase.firestore.Firestore,
+        auth: firebase.auth.Auth,
+        storage: firebase.storage.Storage,
+    }) {
+        this.user = new UserStore(
+            this,
+            {
+                auth,
+                firestore,
+            }
+        );
+
         this.view = new ViewStore(this);
-        this.config = new ConfigStore(this);
-        this.timesheets = new RegistrationStore(this);
-        this.reports = new ReportStore(this);
-        this.dashboard = new DashboardStore(this);
-        this.projects = new ProjectStore(this);
-        this.favorites = new FavoriteStore(this);
+        this.config = new ConfigStore(
+            this,
+            {
+                firestore,
+            },
+        );
+        this.timesheets = new RegistrationStore(
+            this,
+            {
+                firestore,
+            },
+        );
+        this.reports = new ReportStore(
+            this,
+            {
+                firestore,
+                storage,
+            },
+        );
+        this.dashboard = new DashboardStore(
+            this,
+            {
+                firestore,
+            },
+        );
+        this.projects = new ProjectStore(
+            this,
+            {
+                firestore,
+            },
+        );
+        this.favorites = new FavoriteStore(
+            this,
+            {
+                firestore,
+            },
+        );
     }
 };

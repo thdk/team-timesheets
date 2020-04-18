@@ -4,7 +4,6 @@ import { reaction, computed, observable, action } from "mobx";
 
 import * as firebase from 'firebase/app';
 import { IReport } from "../../common/dist";
-import { firestore, storage } from "../firebase/my-firebase";
 
 export interface IReportStore {
     requestReport: (userId: string, year: number, month: number) => void;
@@ -19,14 +18,23 @@ export class ReportStore implements IReportStore {
 
     @observable.ref reportUrl?: string;
 
-    constructor(rootStore: IRootStore) {
+    constructor(
+        rootStore: IRootStore,
+        {
+            firestore,
+            storage,
+        }: {
+            firestore: firebase.firestore.Firestore,
+            storage: firebase.storage.Storage,
+        },
+    ) {
         // this.rootStore = rootStore;
         this.reports = new Collection(
             firestore,
             "reports", {
-                realtimeMode: RealtimeMode.on,
-                fetchMode: FetchMode.manual,
-            },
+            realtimeMode: RealtimeMode.on,
+            fetchMode: FetchMode.manual,
+        },
             {
                 logger: console.log,
             },

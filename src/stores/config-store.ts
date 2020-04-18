@@ -1,7 +1,6 @@
 import { observable, computed } from 'mobx';
 import { Collection, ICollection, RealtimeMode, FetchMode } from "firestorable";
 import { IRootStore } from './root-store';
-import { firestore } from '../firebase/my-firebase';
 import { IProject, ITask, IClient, IClientData, ITeam, ITeamData, ITaskData, IConfig, ConfigValue } from '../../common/dist';
 
 import * as serializer from '../../common/serialization/serializer';
@@ -13,7 +12,7 @@ export type Configs = {
     loginProviders: LoginProvider[];
 }
 
-export interface IConfigStore extends ConfigStore {};
+export interface IConfigStore extends ConfigStore { };
 
 export class ConfigStore implements IConfigStore {
     //private readonly _rootStore: IRootStore;
@@ -26,7 +25,14 @@ export class ConfigStore implements IConfigStore {
     @observable.ref clientId?: string;
     @observable.ref teamId?: string;
 
-    constructor(_rootStore: IRootStore) {
+    constructor(
+        _rootStore: IRootStore,
+        {
+            firestore,
+        }: {
+            firestore: firebase.firestore.Firestore,
+        }
+    ) {
         // this._rootStore = rootStore;
         const deps = { logger: console.log };
 

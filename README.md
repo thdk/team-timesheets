@@ -118,7 +118,16 @@ Start development server (open `http://localhost:5000/`)
 
 ## Running the tests
 
-    npm run test (Sorry, no tests yet 👎)
+Before you can run tests, you must start the firestore emulator.
+
+```shell
+npm run emulator
+```
+Keep the emulator running in one terminal window while running tests in another terminal.
+
+```shell
+npm run test
+```
 
 ## Deployment
 

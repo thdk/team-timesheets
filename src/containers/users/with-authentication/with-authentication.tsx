@@ -9,14 +9,14 @@ export interface IWithAuthenticationOptions {
     condition?: (user?: IAuthenticatedUser) => boolean,
 }
 
-export const withAuthentication = (
-    WrappedComponent: React.ComponentType,
+export function withAuthentication<T extends object>(
+    WrappedComponent: React.ComponentType<T>,
     placeholder: JSX.Element = <></>,
-) => {
-    const WithAuthenticationComponent = () => {
+) {
+    const WithAuthenticationComponent = (props: T) => {
         const store = useStore();
         return store.user.authenticatedUser
-            ? <WrappedComponent />
+            ? <WrappedComponent {...props} />
             : placeholder;
     };
 

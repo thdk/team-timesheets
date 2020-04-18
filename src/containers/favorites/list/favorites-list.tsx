@@ -10,8 +10,6 @@ export const FavoritesList = ({
 }) => {
     return (
         <RegistrationLines
-            readOnly={true}
-            registrationClick={() => { }}
             registrations={favorites}
         ></RegistrationLines>
     );

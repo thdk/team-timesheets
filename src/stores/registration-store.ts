@@ -6,7 +6,6 @@ import * as serializer from '../../common/serialization/serializer';
 import { SortOrder } from '../containers/registrations/days';
 import { IRegistration, IRegistrationData } from '../../common/dist';
 import moment from 'moment';
-import { firestore } from '../firebase/my-firebase';
 
 export interface IGroupedRegistrations<T> {
     registrations: Doc<IRegistration, IRegistrationData>[];
@@ -56,7 +55,14 @@ export class RegistrationStore implements IRegistrationsStore {
     public areGroupedRegistrationsCollapsed = true;
 
 
-    constructor(rootStore: IRootStore) {
+    constructor(
+        rootStore: IRootStore,
+        {
+            firestore,
+        }: {
+            firestore: firebase.firestore.Firestore,
+        },
+    ) {
         this.rootStore = rootStore;
         this.registrations = new Collection<IRegistration, IRegistrationData>(
             firestore,

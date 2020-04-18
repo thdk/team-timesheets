@@ -13,7 +13,11 @@
     "deploy:production": "npm run build:production && firebase deploy",
     "tsc": "tsc -p common && tsc --noEmit",
     "test": "jest",
-    "test:watch": "jest --watch"
+    "test:watch": "jest --watch",
+    "emulator": "firebase emulators:start --only firestore",
+    "emulator:exec": "firebase emulators:exec --only firestore",
+    "test:emulator": "firebase emulators:exec --only firestore jest",
+    "test:emulator:coverage": "firebase emulators:exec --only firestore \"jest --coverage\""
   },
   "repository": {
     "type": "git",
@@ -26,6 +30,7 @@
   },
   "homepage": "https://github.com/thdk/typescript-start#readme",
   "devDependencies": {
+    "@firebase/testing": "^0.19.1",
     "@material/theme": "^0.43.0",
     "@testing-library/react": "^10.0.1",
     "@types/chart.js": "^2.8.7",
@@ -39,7 +44,7 @@
     "copy-webpack-plugin": "^5.1.1",
     "css-loader": "^3.4.2",
     "del": "^3.0.0",
-    "firebase-tools": "^8.0.1",
+    "firebase-tools": "^8.1.0",
     "gulp": "^4.0.0",
     "gulp-buffer": "0.0.2",
     "gulp-inject": "^5.0.2",
@@ -56,8 +61,8 @@
     "sort-stream": "^1.0.1",
     "source-map-loader": "^0.2.4",
     "style-loader": "^1.1.3",
-    "ts-loader": "^6.2.2",
     "ts-jest": "^25.2.1",
+    "ts-loader": "^6.2.2",
     "tslib": "^1.9.3",
     "typescript": "^3.5.2",
     "webpack": "^4.42.1",

@@ -5,8 +5,6 @@ import { App, goToOverview } from '../../internal';
 import Login from '../../containers/login';
 import { when } from 'mobx';
 import { setNavigationContent, Redirect } from '../actions';
-import { getLoggedInUserAsync } from '../../firebase/firebase-utils';
-import { auth } from '../../firebase/my-firebase';
 
 const path = "/login";
 
@@ -19,7 +17,7 @@ const login = new Route({
     },
     title: "Login",
     beforeEnter: (_route: Route, _params: any, s: IRootStore) => {
-        return getLoggedInUserAsync(auth).then(() => {
+        return s.user.getLoggedInUserAsync().then(() => {
             // TODO: detect requested page so we can redirect to that page when authenticated
             goToOverview(s);
             return false;

@@ -1,7 +1,6 @@
 import { computed, IObservableArray, action, observable, transaction } from 'mobx';
 import { Collection, ICollection, RealtimeMode, FetchMode } from "firestorable";
 import { IRootStore } from './root-store';
-import { firestore } from '../firebase/my-firebase';
 import { IProject, IProjectData } from '../../common/dist';
 
 import * as serializer from '../../common/serialization/serializer';
@@ -35,7 +34,14 @@ export class ProjectStore implements IProjectStore {
     // public project: IObservableValue<(IProject & { id: string }) | undefined>;
     @observable.ref projectId?: string;
 
-    constructor(rootStore: IRootStore) {
+    constructor(
+        rootStore: IRootStore,
+        {
+            firestore,
+        }: {
+            firestore: firebase.firestore.Firestore,
+        }
+        ) {
         this.rootStore = rootStore;
         this.projectsCollection = new Collection<IProject, IProjectData>(
             firestore,

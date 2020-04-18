@@ -1,3 +1,80 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`FavoritesList should render favorites 1`] = `
+<DocumentFragment>
+  <div
+    class="registration-line registration-line--readonly"
+  >
+    <div
+      class="registration-line-header"
+    />
+    <div
+      class="registration-line-time"
+    >
+      3.00
+    </div>
+    <div
+      class="registration-line-content"
+    >
+      <span
+        class="line1 mdc-typography--subtitle1"
+      />
+      <span
+        class="line2 mdc-typography--subtitle2"
+      >
+        client 1 - Favorite desc 1
+      </span>
+    </div>
+  </div>
+  <div
+    class="registration-line registration-line--readonly"
+  >
+    <div
+      class="registration-line-header"
+    />
+    <div
+      class="registration-line-time"
+    >
+      2.00
+    </div>
+    <div
+      class="registration-line-content"
+    >
+      <span
+        class="line1 mdc-typography--subtitle1"
+      />
+      <span
+        class="line2 mdc-typography--subtitle2"
+      >
+        Favorite desc 3
+      </span>
+    </div>
+  </div>
+  <div
+    class="registration-line registration-line--readonly"
+  >
+    <div
+      class="registration-line-header"
+    />
+    <div
+      class="registration-line-time"
+    >
+      2.00
+    </div>
+    <div
+      class="registration-line-content"
+    >
+      <span
+        class="line1 mdc-typography--subtitle1"
+      />
+      <span
+        class="line2 mdc-typography--subtitle2"
+      >
+        Favorite desc 2
+      </span>
+    </div>
+  </div>
+</DocumentFragment>
+`;
+
 exports[`FavoritesList should render without favorites 1`] = `<DocumentFragment />`;

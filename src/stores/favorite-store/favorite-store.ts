@@ -1,7 +1,5 @@
 import { ICollection, Collection, FetchMode, RealtimeMode } from "firestorable";
 import { observable, reaction, computed, action } from "mobx";
-import firebase from "firebase/app";
-import "firebase/firestore";
 import { CollectionReference } from "@firebase/firestore-types";
 
 import { IRootStore } from "../root-store";
@@ -20,9 +18,13 @@ export class FavoriteStore {
     private activefavoriteGroupIdField: string | undefined;
     private readonly rootStore: IRootStore;
 
-    constructor(rootStore: IRootStore) {
+    constructor(rootStore: IRootStore, {
+        firestore,
+    }: {
+        firestore: firebase.firestore.Firestore,
+    }) {
         this.rootStore = rootStore;
-        this.db = firebase.firestore();
+        this.db = firestore;
         this.favoriteGroupCollectionRef = this.db.collection("favorite-groups");
         const createQuery = () =>
             rootStore.user.authenticatedUser
@@ -68,6 +70,7 @@ export class FavoriteStore {
         }
 
         const doc = this.favoriteGroupCollection.get(this.activefavoriteGroupIdField);
+
         return doc && doc.data
             ? doc
             : undefined;

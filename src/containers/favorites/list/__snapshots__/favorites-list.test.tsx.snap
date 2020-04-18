@@ -46,7 +46,7 @@ exports[`FavoritesList should render favorites 1`] = `
       <span
         class="line2 mdc-typography--subtitle2"
       >
-        Favorite desc 3
+        Favorite desc 2
       </span>
     </div>
   </div>
@@ -70,7 +70,7 @@ exports[`FavoritesList should render favorites 1`] = `
       <span
         class="line2 mdc-typography--subtitle2"
       >
-        Favorite desc 2
+        Favorite desc 3
       </span>
     </div>
   </div>

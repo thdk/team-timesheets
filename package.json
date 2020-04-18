@@ -13,6 +13,7 @@
     "deploy:production": "npm run build:production && firebase deploy",
     "tsc": "tsc -p common && tsc --noEmit",
     "test": "jest",
+    "test:cloudbuild": "firebase emulators:exec --only firestore \"jest --coverage\"",
     "test:watch": "jest --watch",
     "emulator": "firebase emulators:start --only firestore",
     "emulator:exec": "firebase emulators:exec --only firestore",

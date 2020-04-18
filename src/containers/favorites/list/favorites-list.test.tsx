@@ -7,10 +7,9 @@ import { TestCollection } from "../../../__tests__/utils/firestorable/collection
 import { IClientData, IFavoriteRegistrationGroup, IProjectData, ITaskData } from "../../../../common";
 import { StoreProvider } from "../../../contexts/store-context";
 import { IRootStore } from "../../../stores/root-store";
-import { render, act } from "@testing-library/react";
+import { render, act, waitFor, findByText } from "@testing-library/react";
 import { FavoriteStore } from "../../../stores/favorite-store";
 import { UserStore } from "../../../stores/user-store";
-import { waitAsync } from "../../../__tests__/utils/firestorable/wait";
 import { ConfigStore } from "../../../stores/config-store";
 import { ProjectStore } from "../../../stores/project-store";
 
@@ -171,7 +170,9 @@ describe("FavoritesList", () => {
 
             // FavoritesList will fetch favorites by groupId once it get's rendered
             // so we have to wait here for those favorites to be fetched and rendered
-            await waitAsync(100);
+            await waitFor(
+                () => findByText(renderResult.container, "Favorite desc 2"),
+            );
 
             asFragment = renderResult.asFragment;
         });

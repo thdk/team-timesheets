@@ -5,7 +5,7 @@ steps:
   - name: node:10.15.1
     entrypoint: npm
     args: ["run", "build:refs"]
-  - name: node:10.15.1
+  - name: "gcr.io/$PROJECT_ID/builder"
     entrypoint: npm
     args: ["run", "emulator:exec", "\"npm run test\""]
   - name: node:10.15.1

@@ -1,7 +1,8 @@
 import * as React from 'react'
 import { IProject } from "../../../../common/dist";
 import { observer } from "mobx-react-lite";
-import { useStore } from "../../../contexts/store-context";
+
+import { useProjectStore } from '../../../stores/project-store';
 
 export interface IWithProjectInjectedProps {
     project: Partial<IProject>;
@@ -13,9 +14,9 @@ export function withProject<T extends Props = Props>(
     WrappedComponent: React.ComponentType<T>
 ) {
     const ComponentWithProject = (props: Optionalize<T, IWithProjectInjectedProps>) => {
-        const store = useStore();
+        const projects = useProjectStore();
 
-        const project = store.projects.project;
+        const project = projects.project;
 
         return project
             ? <WrappedComponent

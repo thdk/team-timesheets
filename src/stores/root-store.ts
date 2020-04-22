@@ -1,8 +1,9 @@
-import { IRegistrationsStore, RegistrationStore } from "./registration-store";
+import { RouterStore } from "mobx-router";
+
+import { IRegistrationsStore, RegistrationStore } from "./registration-store/registration-store";
 import { IConfigStore, ConfigStore } from "./config-store";
 import { IUserStore, UserStore } from "./user-store";
 import { IViewStore, ViewStore } from "./view-store";
-import { RouterStore } from "mobx-router";
 import { IReportStore, ReportStore } from "./report-store";
 import { DashboardStore, IDashboardStore } from "./dashboard-store";
 import { IProjectStore, ProjectStore } from "./project-store";

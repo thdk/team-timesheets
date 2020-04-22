@@ -4,7 +4,7 @@ import { Chip, ChipSet } from '@material/react-chips';
 
 import { Form, FormField } from '../../components/layout/form';
 import { FlexGroup } from '../../components/layout/flex';
-import ProjectSelect from '../../containers/projects/select';
+import { ProjectSelect } from '../../containers/projects/select';
 import ClientSelect from '../../containers/clients/select';
 import { withAuthentication } from '../../containers/users/with-authentication';
 import { RedirectToLogin } from '../../internal';
@@ -21,7 +21,7 @@ class Registration extends React.Component {
             return <></>;
         }
 
-        if (!this.context.timesheets.registration || !this.context.user.userId) return <></>;
+        if (!this.context.timesheets.registration || !this.context.user.authenticatedUserId) return <></>;
 
         const userTasks = Array.from(this.context.user.authenticatedUser.tasks.keys());
         const { task,

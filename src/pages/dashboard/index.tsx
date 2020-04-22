@@ -41,9 +41,9 @@ class Dashboard extends React.Component {
         super(props);
 
         if (!context.dashboard.timePeriodFilterValue) {
-            when(() => !!context.user.userId, () => {
+            when(() => !!context.user.authenticatedUserId, () => {
                 transaction(() => {
-                    context.dashboard.setUserFilter(context.user.userId);
+                    context.dashboard.setUserFilter(context.user.authenticatedUserId);
                     context.dashboard.setTimePeriodFilter(TimePeriod.ThisMonth);
                 });
             });

@@ -1,29 +1,13 @@
-import { computed, IObservableArray, action, observable, transaction } from 'mobx';
 import { Collection, ICollection, RealtimeMode, FetchMode } from "firestorable";
-import { IRootStore } from './root-store';
-import { IProject, IProjectData } from '../../common/dist';
+import { observable, action, transaction, computed } from "mobx";
 
-import * as serializer from '../../common/serialization/serializer';
-import * as deserializer from '../../common/serialization/deserializer';
+import { IRootStore } from '../root-store';
+import { IProject, IProjectData } from '../../../common/dist';
 
-export interface IProjectStore {
-    activeProjects: IObservableArray<IProject & { id: string }>;
-    archivedProjects: IObservableArray<IProject & { id: string }>;
+import * as serializer from '../../../common/serialization/serializer';
+import * as deserializer from '../../../common/serialization/deserializer';
 
-    projectsCollection: ICollection<IProject, IProjectData>;
-
-    setDefaultProject: (project?: Partial<IProject>) => void;
-    addProject: (project: IProject, id?: string) => void;
-    updateProject: (project: Partial<IProject>, id: string) => void;
-    archiveProjects: (...projectIds: string[]) => void;
-    unarchiveProjects: (...projectIds: string[]) => void;
-    deleteProjects: (...ids: string[]) => void;
-
-    setProjectId: (id?: string) => void;
-
-    readonly project?: Partial<IProject> | null;
-    projectId?: string;
-}
+export interface IProjectStore extends ProjectStore {};
 
 export class ProjectStore implements IProjectStore {
     private readonly rootStore: IRootStore;
@@ -97,7 +81,7 @@ export class ProjectStore implements IProjectStore {
     @action
     public setDefaultProject(project?: Partial<IProject>) {
         const defaultProject: Partial<IProject> = {
-            createdBy: this.rootStore.user.userId,
+            createdBy: this.rootStore.user.authenticatedUserId,
         };
 
         transaction(() => {

@@ -28,7 +28,7 @@ export class FavoriteStore {
         this.favoriteGroupCollectionRef = this.db.collection("favorite-groups");
         const createQuery = () =>
             rootStore.user.authenticatedUser
-                ? (ref: CollectionReference) => ref.where("userId", "==", rootStore.user.userId).orderBy("name")
+                ? (ref: CollectionReference) => ref.where("userId", "==", rootStore.user.authenticatedUserId).orderBy("name")
                 : null;
 
         this.favoriteGroupCollection = new Collection(
@@ -58,7 +58,7 @@ export class FavoriteStore {
             },
         )
 
-        reaction(() => rootStore.user.userId, () => {
+        reaction(() => rootStore.user.authenticatedUserId, () => {
             this.favoriteGroupCollection.query = createQuery();
         });
     }
@@ -123,7 +123,7 @@ export class FavoriteStore {
             : this.favoriteGroupCollectionRef.doc().id;
 
         this.db.runTransaction(() => {
-            if (!this.rootStore.user.userId)
+            if (!this.rootStore.user.authenticatedUserId)
                 return Promise.reject("Unauthenticated");
 
             return Promise.all<string[] | string | undefined>([
@@ -131,7 +131,7 @@ export class FavoriteStore {
                     ? undefined
                     : this.favoriteGroupCollection.addAsync({
                         name: group.name,
-                        userId: this.rootStore.user.userId
+                        userId: this.rootStore.user.authenticatedUserId
                     }, groupId),
                 this.favoriteCollection.addAsync(
                     favorites

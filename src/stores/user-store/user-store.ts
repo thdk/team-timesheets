@@ -1,11 +1,11 @@
 import { observable, action, transaction, computed, observe, intercept, IObservableValue, reaction } from "mobx";
 import { ICollection, Collection, Doc, RealtimeMode, FetchMode, CollectionReference } from "firestorable";
-import { IRootStore } from "./root-store";
-import * as deserializer from "../../common/serialization/deserializer";
-import * as serializer from "../../common/serialization/serializer";
-import { IUser, IUserData } from "../../common/dist";
-import { canReadUsers } from "../rules/rules";
-import { getLoggedInUserAsync } from "../firebase/firebase-utils";
+import { IRootStore } from "../root-store";
+import * as deserializer from "../../../common/serialization/deserializer";
+import * as serializer from "../../../common/serialization/serializer";
+import { IUser, IUserData } from "../../../common/dist";
+import { canReadUsers } from "../../rules/rules";
+import { getLoggedInUserAsync } from "../../firebase/firebase-utils";
 
 export interface IUserStore extends UserStore {}
 
@@ -135,7 +135,7 @@ export class UserStore implements IUserStore {
     }
 
     @computed
-    get userId(): string | undefined {
+    get authenticatedUserId(): string | undefined {
         return this._userId;
     }
 

@@ -4,7 +4,7 @@ import { observer } from 'mobx-react';
 import { TapBar, Tab, TabIcon } from '../../mdc/tabbar';
 import Preferences from './preferences';
 import { TaskList } from '../../containers/tasks/list';
-import { SettingsTab } from '../../routes/settings';
+import { SettingsTab, SettingsRouteQueryParams } from '../../routes/settings';
 import { goToSettings, RedirectToLogin } from '../../internal';
 import { ClientList } from '../../containers/clients/list';
 import UserList from '../../containers/users/list';
@@ -44,7 +44,7 @@ class Settings extends React.Component<Props> {
 
         if (!validTabs.length) return <></>
 
-        const query: { tab: SettingsTab } = this.context.router.queryParams;
+        const query: { tab: SettingsTab } = this.context.router.queryParams as SettingsRouteQueryParams;
         const { tab: activeTabId = validTabs[0].id } = query || {};
 
         let activeTab = validTabs.filter(t => t.id === activeTabId)[0];

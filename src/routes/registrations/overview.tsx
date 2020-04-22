@@ -10,15 +10,17 @@ import { IRegistration } from '../../../common/dist';
 import detailRoutes from "./detail";
 import { goToFavorite } from '../favorites/detail';
 
-export interface IDate {
+export type DateObject = {
     year: number;
     month: number;
     day?: number;
-}
+};
 
 export const path = "/timesheets";
 
-export const goToOverview = (s: IRootStore, date?: IDate, trackOptions?: { track?: boolean, currentDate?: number }) => {
+type RegistrationsOverviewRoute = Route<IRootStore, DateObject, { last: string }>;
+
+export const goToOverview = (s: IRootStore, date?: DateObject, trackOptions?: { track?: boolean, currentDate?: number }) => {
     let route = routes.monthOverview;
     if ((date && date.day) || (!date && s.view.day)) {
         route = routes.overview;
@@ -28,7 +30,7 @@ export const goToOverview = (s: IRootStore, date?: IDate, trackOptions?: { track
     goToRouteWithDate(route, s, date, trackOptions);
 };
 
-const routeChanged = (route: Route, params: IDate, s: IRootStore) => {
+const routeChanged = (route: RegistrationsOverviewRoute, params: DateObject, s: IRootStore) => {
     setNavigationContent(s, route, !!s.view.track, s.view.track && s.view.moment ? { year: s.view.year!, month: s.view.month! } : undefined, params.day ? +params.day : undefined);
 
     transaction(() => {
@@ -165,7 +167,7 @@ const setActions = (s: IRootStore, alowInserts = false) => {
     });
 };
 
-const beforeTimesheetExit = (_route: Route, _params: any, s: IRootStore) => {
+const beforeTimesheetExit = (_route: RegistrationsOverviewRoute, _params: any, s: IRootStore) => {
     transaction(() => {
         s.view.selection.size && s.view.selection.clear();
         s.view.setActions([]);
@@ -177,7 +179,7 @@ const routes = {
     overview: new Route({
         path: path + '/:year/:month/:day',
         component: <App><RegistrationsPage></RegistrationsPage></App>,
-        onEnter: (route: Route, params: IDate, s: IRootStore) => {
+        onEnter: (route: RegistrationsOverviewRoute, params: DateObject, s: IRootStore) => {
             routeChanged(route, params, s);
             setActions(s, true);
         },
@@ -188,7 +190,7 @@ const routes = {
     monthOverview: new Route({
         path: path + '/:year/:month',
         component: <App><RegistrationsPage></RegistrationsPage></App>,
-        onEnter: (route: Route, params: IDate, s: IRootStore) => {
+        onEnter: (route: RegistrationsOverviewRoute, params: DateObject, s: IRootStore) => {
             s.view.track = false;
             routeChanged(route, params, s);
             setActions(s);

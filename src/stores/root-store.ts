@@ -8,8 +8,9 @@ import { IReportStore, ReportStore } from "./report-store";
 import { DashboardStore, IDashboardStore } from "./dashboard-store";
 import { IProjectStore, ProjectStore } from "./project-store";
 import { FavoriteStore } from "./favorite-store";
+import { Store as MobxRouterStore } from "mobx-router/types/router-store";
 
-export interface IRootStore {
+export interface IRootStore extends MobxRouterStore {
     readonly user: IUserStore;
     readonly view: IViewStore;
     readonly router: RouterStore;
@@ -36,7 +37,7 @@ export class Store implements IRootStore {
         auth,
         firestore,
         storage,
-     }: {
+    }: {
         firestore: firebase.firestore.Firestore,
         auth: firebase.auth.Auth,
         storage: firebase.storage.Storage,

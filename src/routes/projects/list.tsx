@@ -86,11 +86,14 @@ const setActions = (tab: ProjectsTab, store: IRootStore) => {
 }
 
 const path = '/projects'
+export type ProjectRouteQueryParams = { tab: ProjectsTab };
+type ProjectRoute = Route<IRootStore, {}, ProjectRouteQueryParams>;
+
 const routes = {
     projects: new Route({
         path,
         component: <App><Projects></Projects></App>,
-        onEnter: (route: Route, _params, s: IRootStore, queryParams: { tab: ProjectsTab }) => {
+        onEnter: (route: ProjectRoute, _params, s: IRootStore, queryParams: { tab: ProjectsTab }) => {
             setActions(queryParams.tab, s);
             setNavigationContent(s, route, false);
         },

@@ -1,5 +1,5 @@
 import * as React from "react";
-import { Route, RoutesConfig } from "mobx-router";
+import { Route } from "mobx-router";
 
 import { App } from "../../internal";
 import User from "../../pages/user-detail";
@@ -13,15 +13,18 @@ export const goToUser = (store: IRootStore, id?: string) => {
     store.router.goTo(routes.registrationDetail, {id}, store);
 };
 
+type RouteParams =  { id?: string };
+type UserDetailsRoute = Route<IRootStore, RouteParams>;
+
 const routes = {
     registrationDetail: new Route({
         path: '/user/:id',
         component: <App><User></User></App>,
         title: "Edit user details",
-        beforeEnter: (_route: Route, params: { id?: string }, s: IRootStore) => {
+        beforeEnter: (_route: UserDetailsRoute, params: RouteParams, s: IRootStore) => {
             s.user.setSelectedUserId(params.id || s.user.authenticatedUserId);
         },
-        onEnter: (route: Route, _params: {id?: string}, s: IRootStore) => {
+        onEnter: (route: UserDetailsRoute, _params: RouteParams, s: IRootStore) => {
             const saveAction: IViewAction = {
                 action: () => {
                     s.user.saveSelectedUser();
@@ -59,6 +62,6 @@ const routes = {
 
         }
     })
-} as RoutesConfig;
+};
 
 export default routes;

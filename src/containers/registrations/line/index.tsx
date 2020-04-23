@@ -9,6 +9,7 @@ export interface IRegistrationLineProps extends React.HTMLProps<HTMLDivElement> 
     readonly line1: string;
     readonly line2?: string;
     readonly icon?: string;
+    readonly taskName: string;
     readonly time?: number;
     readonly id: string;
     readonly onSelect?: () => void;
@@ -27,7 +28,7 @@ export default class RegistrationLine extends React.Component<IRegistrationLineP
     }
 
     render() {
-        const { line1, line2, icon, time = 0, id, onSelect, readOnly, ...restProps } = this.props;
+        const { line1, line2, icon, taskName, time = 0, id, onSelect, readOnly, ...restProps } = this.props;
 
         const onTimeChange = (value: string) => {
             if (this.context.timesheets.registration && this.context.timesheets.registration) {
@@ -42,7 +43,7 @@ export default class RegistrationLine extends React.Component<IRegistrationLineP
         };
 
         const iconJSX = icon
-            ? <span className="icon material-icons" aria-hidden="true">{icon}</span>
+            ? <span className="icon material-icons" aria-hidden="true" title={taskName}>{icon}</span>
             : undefined;
 
         const line1JSX =

@@ -25,7 +25,7 @@ export const RegistrationLines = observer((props: IRegistrationLinesProps) => {
         const { data: { name: projectName = "" } = {} } = projectData || {};
 
         const taskData = task ? store.config.tasksCollection.get(task) : null;
-        const { data: { icon = undefined } = {} } = taskData || {};
+        const { data: { icon = undefined, name: taskName = ""} = {} } = taskData || {};
 
         const clientData = client ? store.config.clientsCollection.get(client) : null;
         const { data: { name: clientName = undefined } = {} } = clientData || {};
@@ -43,6 +43,7 @@ export const RegistrationLines = observer((props: IRegistrationLinesProps) => {
         return <RegistrationLine
             readOnly={!listItemOnClick}
             icon={icon}
+            taskName={taskName}
             id={id}
             key={id}
             line1={line1}

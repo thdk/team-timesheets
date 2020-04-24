@@ -97,14 +97,14 @@ class Reports extends React.Component {
 
     export = () => {
         this.context
-            .user.userId
+            .user.authenticatedUserId
             && this.context
                 .view.year
             && this.context
                 .view.month
             && this.context
                 .reports.requestReport(this.context
-                    .user.userId, this.context
+                    .user.authenticatedUserId, this.context
                         .view.year, this.context
                             .view.month);
     }

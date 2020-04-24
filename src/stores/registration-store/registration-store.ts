@@ -1,11 +1,12 @@
-import { observable, computed, reaction, when, action, toJS, ObservableMap, IObservableArray } from 'mobx';
 import { Doc, ICollection, Collection, RealtimeMode, FetchMode } from "firestorable";
-import { IRootStore } from './root-store';
-import * as deserializer from '../../common/serialization/deserializer';
-import * as serializer from '../../common/serialization/serializer';
-import { SortOrder } from '../containers/registrations/days';
-import { IRegistration, IRegistrationData } from '../../common/dist';
+import { observable, computed, reaction, when, action, toJS, ObservableMap, IObservableArray } from 'mobx';
 import moment from 'moment';
+
+import { IRootStore } from '../root-store';
+import * as deserializer from '../../../common/serialization/deserializer';
+import * as serializer from '../../../common/serialization/serializer';
+import { SortOrder } from '../../containers/registrations/days';
+import { IRegistration, IRegistrationData } from '../../../common/dist';
 
 export interface IGroupedRegistrations<T> {
     registrations: Doc<IRegistration, IRegistrationData>[];
@@ -88,7 +89,7 @@ export class RegistrationStore implements IRegistrationsStore {
                 this.registrations.query = ref => ref
                     .where("date", ">=", startDate)
                     .where("date", "<=", endDate)
-                    .where("userId", "==", rootStore.user.userId);
+                    .where("userId", "==", rootStore.user.authenticatedUserId);
             }
             else {
                 this.registrations.query = null;
@@ -98,8 +99,8 @@ export class RegistrationStore implements IRegistrationsStore {
         // update the query of the registration collection each time...
         // -- the view moment changes
         // -- the logged in user changes
-        reaction(() => rootStore.view.monthMoment, () => updateRegistrationQuery(rootStore.user.userId));
-        reaction(() => rootStore.user.userId, userId => {
+        reaction(() => rootStore.view.monthMoment, () => updateRegistrationQuery(rootStore.user.authenticatedUserId));
+        reaction(() => rootStore.user.authenticatedUserId, userId => {
             updateRegistrationQuery(userId)
         });
 
@@ -257,7 +258,7 @@ export class RegistrationStore implements IRegistrationsStore {
                     ? registrationMoment
                     : this.rootStore.view.day === undefined ? moment().startOf("day") : undefined;
 
-                if (!this.rootStore.user.authenticatedUser || !this.rootStore.user.userId) throw new Error("User must be set");
+                if (!this.rootStore.user.authenticatedUser || !this.rootStore.user.authenticatedUserId) throw new Error("User must be set");
 
                 const {
                     recentProjects = [],
@@ -275,7 +276,7 @@ export class RegistrationStore implements IRegistrationsStore {
                     ,
                     task,
                     client,
-                    userId: this.rootStore.user.userId,
+                    userId: this.rootStore.user.authenticatedUserId,
                     project: recentActiveProjects.length ? recentActiveProjects[0] : undefined,
                     isPersisted: false,
                 };
@@ -298,7 +299,7 @@ export class RegistrationStore implements IRegistrationsStore {
                     const { project = undefined } = registration || {};
                     // TODO: move set recent project to firebase function
                     // triggering for every update/insert of a registration?
-                    if (this.rootStore.user.userId && this.rootStore.user.authenticatedUser && project) {
+                    if (this.rootStore.user.authenticatedUserId && this.rootStore.user.authenticatedUser && project) {
                         const recentProjects = toJS(this.rootStore.user.authenticatedUser.recentProjects);
                         const oldProjectIndex = recentProjects.indexOf(project);
 

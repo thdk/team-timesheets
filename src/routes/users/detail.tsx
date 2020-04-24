@@ -19,7 +19,7 @@ const routes = {
         component: <App><User></User></App>,
         title: "Edit user details",
         beforeEnter: (_route: Route, params: { id?: string }, s: IRootStore) => {
-            s.user.setSelectedUserId(params.id || s.user.userId);
+            s.user.setSelectedUserId(params.id || s.user.authenticatedUserId);
         },
         onEnter: (route: Route, _params: {id?: string}, s: IRootStore) => {
             const saveAction: IViewAction = {

@@ -9,11 +9,23 @@ import { setTitleForRoute } from '../actions';
 import { App } from '../../internal';
 import ProjectDetailPage from '../../pages/project-detail';
 import { IProject } from '../../../common/dist';
+import { useEffect } from 'react';
+import { useStore } from '../../contexts/store-context';
 
 const path = "/projectdetail";
 
-export const goToProject = (store: IRootStore, id?: string) => {
-    store.router.goTo(id ? routes.projectDetail : routes.newProject, { id }, store);
+export const GoToProject = ({
+    id,
+}: {
+    id?: string,
+}) => {
+    const store = useStore();
+
+    useEffect(() => {
+        store.router.goTo(id ? routes.projectDetail : routes.newProject, { id }, store);
+    }, []);
+
+    return <></>;
 };
 
 export const goToNewProject = (store: IRootStore) => {

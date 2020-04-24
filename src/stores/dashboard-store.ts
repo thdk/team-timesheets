@@ -4,7 +4,7 @@ import { ICollection, Collection, RealtimeMode } from "firestorable";
 import moment from 'moment';
 
 import { IRootStore } from "./root-store";
-import { IGroupedRegistrations } from "./registration-store";
+import { IGroupedRegistrations } from "./registration-store/registration-store";
 import * as deserializer from '../../common/serialization/deserializer';
 import * as serializer from '../../common/serialization/serializer';
 import { TimePeriod } from "../components/time-period-select";

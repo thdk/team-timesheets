@@ -2,7 +2,7 @@ import * as React from 'react';
 import * as chartjs from 'chart.js';
 import { Doughnut, Bar } from 'react-chartjs-2';
 import { ICollection } from "firestorable";
-import { IGroupedRegistrations } from '../../../stores/registration-store';
+import { IGroupedRegistrations } from '../../../stores/registration-store/registration-store';
 import { IUser, IUserData } from '../../../../common/dist';
 import { legendCallback } from './helpers';
 

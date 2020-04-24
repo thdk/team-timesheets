@@ -8,5 +8,6 @@ COPY --from=node_base . .
 
 # install Firebase CLI
 RUN npm install -g firebase-tools
+RUN firebase setup:emulators:firestore
 
 ENTRYPOINT ["/usr/local/bin/firebase"]

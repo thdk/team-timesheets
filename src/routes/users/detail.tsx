@@ -1,5 +1,5 @@
 import * as React from "react";
-import { Route } from "mobx-router";
+import { Route } from "mobx-router-typescript";
 
 import { App } from "../../internal";
 import User from "../../pages/user-detail";

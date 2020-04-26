@@ -1,4 +1,4 @@
-import { Route } from "mobx-router";
+import { Route } from "mobx-router-typescript";
 import * as React from 'react';
 import { transaction, when } from "mobx";
 import { IRootStore } from "../../stores/root-store";
@@ -12,7 +12,7 @@ export type SettingsRouteQueryParams = { tab: SettingsTab };
 type SettingsRoute = Route<IRootStore, {}, SettingsRouteQueryParams>;
 
 export const goToSettings = (store: IRootStore, tab: SettingsTab = "preferences") => {
-    store.router.goTo(routes.preferences, {}, store, { tab });
+    store.router.goTo(routes.preferences, {}, { tab });
 }
 
 export type SettingsTab = "tasks" | "preferences" | "clients" | "users" | "teams";

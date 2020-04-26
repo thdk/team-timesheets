@@ -1,5 +1,5 @@
 import { transaction } from 'mobx';
-import { Route } from 'mobx-router';
+import { Route } from 'mobx-router-typescript';
 import * as React from 'react';
 
 import { IRootStore } from '../../stores/root-store';

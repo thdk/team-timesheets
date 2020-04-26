@@ -1,4 +1,4 @@
-import { RouterStore } from "mobx-router";
+import { RouterStore } from "mobx-router-typescript";
 
 import { IRegistrationsStore, RegistrationStore } from "./registration-store/registration-store";
 import { IConfigStore, ConfigStore } from "./config-store";
@@ -8,12 +8,11 @@ import { IReportStore, ReportStore } from "./report-store";
 import { DashboardStore, IDashboardStore } from "./dashboard-store";
 import { IProjectStore, ProjectStore } from "./project-store";
 import { FavoriteStore } from "./favorite-store";
-import { Store as MobxRouterStore } from "mobx-router/types/router-store";
 
-export interface IRootStore extends MobxRouterStore {
+export interface IRootStore {
     readonly user: IUserStore;
     readonly view: IViewStore;
-    readonly router: RouterStore;
+    readonly router: RouterStore<IRootStore>;
     readonly timesheets: IRegistrationsStore;
     readonly reports: IReportStore;
     readonly config: IConfigStore;
@@ -27,7 +26,7 @@ export class Store implements IRootStore {
     public readonly view: IViewStore;
     public readonly user: IUserStore;
     public readonly config: IConfigStore;
-    public readonly router = new RouterStore();
+    public readonly router: RouterStore<IRootStore>;
     public readonly reports: IReportStore;
     public readonly dashboard: IDashboardStore;
     public readonly projects: IProjectStore;
@@ -88,5 +87,6 @@ export class Store implements IRootStore {
                 firestore,
             },
         );
+        this.router = new RouterStore<IRootStore>(this);
     }
 };

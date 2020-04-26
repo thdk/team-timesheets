@@ -1,5 +1,5 @@
 import { transaction } from 'mobx';
-import { Route, QueryParams } from 'mobx-router';
+import { Route, QueryParams } from 'mobx-router-typescript';
 import * as React from 'react';
 
 import { IRootStore } from '../../stores/root-store';
@@ -15,7 +15,7 @@ type RouteParams = {id?: string};
 type FavoriteDetailRoute = Route<IRootStore, RouteParams, QueryParams>;
 
 export const goToFavorite = (store: IRootStore, id: string) => {
-    store.router.goTo(routes.favoriteDetail, { id }, store);
+    store.router.goTo(routes.favoriteDetail, { id });
 };
 
 const beforeEnter = (_route: FavoriteDetailRoute, params: RouteParams, s: IRootStore) => {

@@ -1,4 +1,4 @@
-import { Route } from "mobx-router";
+import { Route } from "mobx-router-typescript";
 import * as React from 'react';
 import { transaction, when } from "mobx";
 
@@ -10,7 +10,7 @@ import detailRoutes from "./detail";
 import { canManageProjects } from "../../rules/rules";
 
 export const goToProjects = (store: IRootStore, tab: ProjectsTab = "active") => {
-    store.router.goTo(routes.projects, {}, store, { tab });
+    store.router.goTo(routes.projects, {}, { tab });
 }
 
 export type ProjectsTab = "active" | "archived";

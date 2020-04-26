@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Route } from 'mobx-router';
+import { Route } from 'mobx-router-typescript';
 import { setNavigationContent, goToRouteWithDate, routeWithDateChanged } from '../actions';
 import { App, DateObject } from '../../internal';
 import { IRootStore } from '../../stores/root-store';

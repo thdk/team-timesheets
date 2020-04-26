@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Route } from 'mobx-router';
+import { Route } from 'mobx-router-typescript';
 import { RegistrationsPage } from '../../pages/registrations';
 import { transaction, IKeyValueMap } from 'mobx';
 import { setNavigationContent, goToRouteWithDate } from '../actions';
@@ -154,7 +154,7 @@ const setActions = (s: IRootStore, alowInserts = false) => {
         s.view.setActions(actions);
         s.view.setFabs([{
             action: () => {
-                s.router.goTo(detailRoutes.newRegistration, {}, s);
+                s.router.goTo(detailRoutes.newRegistration);
             },
             icon: {
                 content: "add",

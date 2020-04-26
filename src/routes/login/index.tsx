@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Route } from 'mobx-router';
+import { Route } from 'mobx-router-typescript';
 import { IRootStore } from '../../stores/root-store';
 import { App, goToOverview } from '../../internal';
 import Login from '../../containers/login';

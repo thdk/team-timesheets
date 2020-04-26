@@ -1,4 +1,4 @@
-import { Route } from "mobx-router";
+import { Route } from "mobx-router-typescript";
 import { DateObject } from './registrations/overview';
 import { IRootStore } from "../stores/root-store";
 import { transaction } from "mobx";
@@ -17,7 +17,7 @@ export const goToRouteWithDate = (route: Route<
         year: date ? date.year : s.view.year!,
         month: date ? date.month : s.view.month!,
         day: date ? date.day! : s.view.day!,
-    }, s, { last: currentDate!.toString() });
+    }, { last: currentDate });
 }
 
 export const routeWithDateChanged = (_route: Route<IRootStore, any, any>, params: DateObject, s: IRootStore) => {

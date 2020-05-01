@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Route } from 'mobx-router-typescript';
+import { Route } from 'mobx-router';
 import { setNavigationContent } from '../actions';
 import { App } from '../../internal';
 import { IRootStore } from '../../stores/root-store';

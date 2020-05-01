@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Route } from 'mobx-router-typescript';
+import { Route } from 'mobx-router';
 
 import { App, goToOverview } from '../internal';
 import timesheetsRoutes from './registrations';

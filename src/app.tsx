@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { render } from 'react-dom';
-import { startRouter, MobxRouter } from 'mobx-router-typescript';
+import { startRouter, MobxRouter } from 'mobx-router';
 import * as firebase from "firebase/app";
 import "firebase/auth";
 import "firebase/firestore";

@@ -1,4 +1,4 @@
-import { Route } from "mobx-router-typescript";
+import { Route } from "mobx-router";
 import { DateObject } from './registrations/overview';
 import { IRootStore } from "../stores/root-store";
 import { transaction } from "mobx";

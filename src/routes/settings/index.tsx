@@ -1,4 +1,4 @@
-import { Route } from "mobx-router-typescript";
+import { Route } from "mobx-router";
 import * as React from 'react';
 import { transaction, when } from "mobx";
 import { IRootStore } from "../../stores/root-store";

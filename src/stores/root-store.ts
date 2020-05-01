@@ -1,4 +1,4 @@
-import { RouterStore } from "mobx-router-typescript";
+import { RouterStore } from "mobx-router";
 
 import { IRegistrationsStore, RegistrationStore } from "./registration-store/registration-store";
 import { IConfigStore, ConfigStore } from "./config-store";

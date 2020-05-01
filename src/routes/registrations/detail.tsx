@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Route } from 'mobx-router-typescript';
+import { Route } from 'mobx-router';
 import { transaction } from 'mobx';
 import moment from 'moment';
 

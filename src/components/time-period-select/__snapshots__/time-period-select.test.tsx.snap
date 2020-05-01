@@ -17,7 +17,7 @@ exports[`renders 1`] = `
         aria-haspopup="listbox"
         class="mdc-select__selected-text"
         role="button"
-        tabindex="0"
+        tabindex="-1"
       >
         Last Month
       </div>

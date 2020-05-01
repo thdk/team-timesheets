@@ -1,9 +1,9 @@
 import * as React from 'react';
-import { RoutesConfig, Route } from 'mobx-router';
+import { Route } from 'mobx-router';
 import { transaction } from 'mobx';
 import moment from 'moment';
 
-import { App, goToOverview, IDate } from '../../internal';
+import { App, goToOverview, DateObject } from '../../internal';
 import Registration from '../../pages/registration-detail';
 import { setTitleForRoute } from '../actions';
 import { IRootStore } from '../../stores/root-store';
@@ -11,15 +11,19 @@ import { IViewAction } from '../../stores/view-store';
 
 const path = "/timesheetsdetail";
 
+type RouteParams = { id?: string };
+type QueryParams = { date: string; };
+type RegistrationsDetailRoute = Route<IRootStore, RouteParams, QueryParams>;
+
 export const goToRegistration = (store: IRootStore, id?: string) => {
-    store.router.goTo(id ? routes.registrationDetail : routes.newRegistration, { id }, store);
+    store.router.goTo(id ? routes.registrationDetail : routes.newRegistration, { id });
 };
 
 export const goToNewRegistration = (store: IRootStore, date: moment.Moment) => {
-    store.router.goTo(routes.newRegistration, { id: undefined }, store, { date: moment(date).format("YYYY-MM-DD") });
+    store.router.goTo(routes.newRegistration, undefined, { date: moment(date).format("YYYY-MM-DD") });
 };
 
-export const setBackToOverview = (store: IRootStore, action?: () => void, currentDate?: number, targetDate?: IDate) => {
+export const setBackToOverview = (store: IRootStore, action?: () => void, currentDate?: number, targetDate?: DateObject) => {
     store.view.setNavigation({
         action: () => {
             action && action();
@@ -29,8 +33,8 @@ export const setBackToOverview = (store: IRootStore, action?: () => void, curren
     });
 }
 
-const onEnter = (route: Route, params: { id?: string }, s: IRootStore) => {
-    if (params.id) {
+const onEnter = (route: RegistrationsDetailRoute, params: RouteParams, s: IRootStore) => {
+    if (params && params.id) {
         s.timesheets.setSelectedRegistration(params.id);
     }
 
@@ -63,7 +67,7 @@ const onEnter = (route: Route, params: { id?: string }, s: IRootStore) => {
     });
 };
 
-const beforeExit = (_route: Route, _params: any, s: IRootStore) => {
+const beforeExit = (_route: RegistrationsDetailRoute, _params: RouteParams, s: IRootStore) => {
     s.timesheets.setSelectedRegistration(undefined);
     s.view.setNavigation("default");
 };
@@ -75,7 +79,7 @@ const routes = {
         title: "New registration",
         onEnter,
         beforeExit,
-        beforeEnter: (_route: Route, _params: {}, s: IRootStore, queryParams?: { date?: string }) => {
+        beforeEnter: (_route: RegistrationsDetailRoute, _params: RouteParams, s: IRootStore, queryParams?: { date?: string }) => {
             const { date = undefined } = queryParams || {};
             s.timesheets.setSelectedRegistrationDefault(date ? moment(date) : undefined);
         },
@@ -87,6 +91,6 @@ const routes = {
         onEnter,
         beforeExit,
     })
-} as RoutesConfig;
+};
 
 export default routes;

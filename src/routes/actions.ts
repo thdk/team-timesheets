@@ -1,23 +1,26 @@
 import { Route } from "mobx-router";
-import { IDate } from './registrations/overview';
+import { DateObject } from './registrations/overview';
 import { IRootStore } from "../stores/root-store";
 import { transaction } from "mobx";
 import { setBackToOverview } from "../internal";
 import * as React from 'react'
 import { StoreContext } from "../contexts/store-context";
 
-export const goToRouteWithDate = (route: Route, s: IRootStore, date?: IDate, trackOptions?: { track?: boolean, currentDate?: number }) => {
+export const goToRouteWithDate = (route: Route<
+    IRootStore,
+    DateObject,
+    any>, s: IRootStore, date?: DateObject, trackOptions?: { track?: boolean, currentDate?: number }) => {
     const { track = undefined, currentDate = undefined } = trackOptions || {};
 
     s.view.track = track;
-    s.router.goTo(route, date || {
-        year: s.view.year,
-        month: s.view.month,
-        day: s.view.day,
-    }, s, { last: currentDate });
+    s.router.goTo(route, {
+        year: date ? date.year : s.view.year!,
+        month: date ? date.month : s.view.month!,
+        day: date ? date.day! : s.view.day!,
+    }, { last: currentDate });
 }
 
-export const routeWithDateChanged = (_route: Route, params: IDate, s: IRootStore) => {
+export const routeWithDateChanged = (_route: Route<IRootStore, any, any>, params: DateObject, s: IRootStore) => {
     transaction(() => {
         s.view.year = +params.year;
         s.view.month = +params.month;
@@ -25,7 +28,7 @@ export const routeWithDateChanged = (_route: Route, params: IDate, s: IRootStore
     });
 }
 
-export const setNavigationContent = (store: IRootStore, route: Route, isChildRoute = true, targetDate?: IDate, currentDate?: number) => {
+export const setNavigationContent = (store: IRootStore, route: Route<IRootStore, any, any>, isChildRoute = true, targetDate?: DateObject, currentDate?: number) => {
     if (isChildRoute) {
         setBackToOverview(store, undefined, currentDate, targetDate);
         store.view.track = true;
@@ -37,11 +40,11 @@ export const setNavigationContent = (store: IRootStore, route: Route, isChildRou
     setTitleForRoute(store, route);
 }
 
-export const setTitleForRoute = (store: IRootStore, route: Route) => {
+export const setTitleForRoute = (store: IRootStore, route: Route<IRootStore, any, any>) => {
     store.view.title = route.title || "";
 }
 
-export const Redirect = ({ route, params }: { route: Route, params?: {} }) => {
+export const Redirect = ({ route, params }: { route: Route<IRootStore, any, any>, params?: {} }) => {
     const store = React.useContext(StoreContext);
 
     React.useEffect(() => {

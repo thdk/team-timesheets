@@ -12,7 +12,7 @@ import { FavoriteStore } from "./favorite-store";
 export interface IRootStore {
     readonly user: IUserStore;
     readonly view: IViewStore;
-    readonly router: RouterStore;
+    readonly router: RouterStore<IRootStore>;
     readonly timesheets: IRegistrationsStore;
     readonly reports: IReportStore;
     readonly config: IConfigStore;
@@ -26,7 +26,7 @@ export class Store implements IRootStore {
     public readonly view: IViewStore;
     public readonly user: IUserStore;
     public readonly config: IConfigStore;
-    public readonly router = new RouterStore();
+    public readonly router: RouterStore<IRootStore>;
     public readonly reports: IReportStore;
     public readonly dashboard: IDashboardStore;
     public readonly projects: IProjectStore;
@@ -36,7 +36,7 @@ export class Store implements IRootStore {
         auth,
         firestore,
         storage,
-     }: {
+    }: {
         firestore: firebase.firestore.Firestore,
         auth: firebase.auth.Auth,
         storage: firebase.storage.Storage,
@@ -87,5 +87,6 @@ export class Store implements IRootStore {
                 firestore,
             },
         );
+        this.router = new RouterStore<IRootStore>(this);
     }
 };

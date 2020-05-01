@@ -1,5 +1,5 @@
 import { transaction } from 'mobx';
-import { Route, RoutesConfig } from 'mobx-router';
+import { Route, QueryParams } from 'mobx-router';
 import * as React from 'react';
 
 import { IRootStore } from '../../stores/root-store';
@@ -11,11 +11,14 @@ import FavoriteGroupDetailPage from '../../pages/favorite-group-detail';
 
 const path = "/favoritedetail";
 
+type RouteParams = {id?: string};
+type FavoriteDetailRoute = Route<IRootStore, RouteParams, QueryParams>;
+
 export const goToFavorite = (store: IRootStore, id: string) => {
-    store.router.goTo(routes.favoriteDetail, { id }, store);
+    store.router.goTo(routes.favoriteDetail, { id });
 };
 
-const beforeEnter = (_route: Route, params: { id?: string }, s: IRootStore) => {
+const beforeEnter = (_route: FavoriteDetailRoute, params: RouteParams, s: IRootStore) => {
     if (params.id) {
         s.favorites.setActiveFavoriteGroupId(params.id);
     }
@@ -24,7 +27,7 @@ const beforeEnter = (_route: Route, params: { id?: string }, s: IRootStore) => {
     }
 }
 
-const onEnter = (route: Route, _params: any, s: IRootStore) => {
+const onEnter = (route: FavoriteDetailRoute, _params: RouteParams, s: IRootStore) => {
     const save = () => {
         s.favorites.updateActiveFavoriteGroup();
     };
@@ -64,7 +67,7 @@ const onEnter = (route: Route, _params: any, s: IRootStore) => {
     });
 };
 
-const beforeExit = (_route: Route, _params: any, s: IRootStore) => {
+const beforeExit = (_route: FavoriteDetailRoute, _params: RouteParams, s: IRootStore) => {
     transaction(() => {
         s.favorites.setActiveFavoriteGroupId(undefined);
         s.view.setNavigation("default");
@@ -81,6 +84,6 @@ const routes = {
         beforeExit,
         beforeEnter,
     })
-} as RoutesConfig;
+};
 
 export default routes;

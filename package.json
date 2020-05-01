@@ -45,7 +45,7 @@
     "copy-webpack-plugin": "^5.1.1",
     "css-loader": "^3.4.2",
     "del": "^3.0.0",
-    "firebase-tools": "^8.1.0",
+    "firebase-tools": "^8.2.0",
     "gulp": "^4.0.0",
     "gulp-buffer": "0.0.2",
     "gulp-inject": "^5.0.2",

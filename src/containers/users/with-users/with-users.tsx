@@ -17,7 +17,7 @@ export function withUsers<T extends Props = Props>(
 
         return store.user.usersCollection.isFetched
             ? <WrappedComponent
-                users={store.user.usersCollection.docs.map(doc => ({ ...doc.data!, id: doc.id }))}
+                users={store.user.users}
                 {...(props as T)}
             />
             : <></>;

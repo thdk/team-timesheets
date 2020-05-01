@@ -3,13 +3,13 @@ import { observer } from "mobx-react";
 import { goToRegistration } from '../../internal';
 import { Days, SortOrder } from '../../containers/registrations/days';
 import { goToOverview } from '../../routes/registrations/overview';
-import { List, ListItem, ListDivider } from '../../mdc/list';
 import { DateSelect } from '../../components/date-select';
 import { ButtonType, Button } from '../../mdc/buttons/button';
 import { FlexGroup } from '../../components/layout/flex';
 import { withAuthentication } from '../../containers/users/with-authentication';
 import { RedirectToLogin } from '../../routes/login';
 import { StoreContext } from '../../contexts/store-context';
+import { ListItem, List, ListDivider, ListItemText, ListItemMeta } from '@rmwc/list';
 
 @observer
 class Reports extends React.Component {
@@ -51,7 +51,16 @@ class Reports extends React.Component {
 
         const totalLabel = `Total in ${this.context
             .view.moment.format('MMMM')}`;
-        const total = <ListItem key={`total-month`} lines={[totalLabel]} meta={parseFloat(totalTime.toFixed(2)) + " hours"} disabled={true}></ListItem>
+        const total = (
+            <ListItem key={`total-month`} disabled={true}>
+                <ListItemText>
+                    {totalLabel}
+                </ListItemText>
+                <ListItemMeta>
+                    {parseFloat(totalTime.toFixed(2)) + " hours"}
+                </ListItemMeta>
+            </ListItem>
+        );
 
         const totalList = <List style={{ width: "100%" }}><ListDivider></ListDivider>{total}<ListDivider></ListDivider></List>;
 

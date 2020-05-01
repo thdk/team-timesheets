@@ -9,10 +9,6 @@ import { goToSettings } from "../settings";
 import { transaction } from "mobx";
 import { IViewAction } from "../../stores/view-store";
 
-export const goToUser = (store: IRootStore, id?: string) => {
-    store.router.goTo(routes.registrationDetail, { id });
-};
-
 type RouteParams = { id?: string };
 type UserDetailsRoute = Route<IRootStore, RouteParams>;
 

@@ -1,0 +1,114 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`UserListContainer should render without users 1`] = `
+<DocumentFragment>
+  <div
+    class="mdc-list mdc-list--two-line"
+  />
+</DocumentFragment>
+`;
+
+exports[`UserListContainer when logged in user is admin should render users 1`] = `
+<DocumentFragment>
+  <div
+    class="mdc-list mdc-list--two-line"
+  >
+    <div
+      class="mdc-list-item"
+      tabindex="0"
+    >
+      <i
+        class="rmwc-icon material-icons mdc-list-item__graphic"
+      >
+        person_outline
+      </i>
+      <span
+        class="mdc-list-item__text"
+      >
+        <span
+          class="mdc-list-item__primary-text"
+        >
+          admin 1
+        </span>
+        <span
+          class="mdc-list-item__secondary-text"
+        >
+          team 1 - Admin, user
+        </span>
+      </span>
+    </div>
+    <div
+      class="mdc-list-item"
+      tabindex="0"
+    >
+      <i
+        class="rmwc-icon material-icons mdc-list-item__graphic"
+      >
+        person_outline
+      </i>
+      <span
+        class="mdc-list-item__text"
+      >
+        <span
+          class="mdc-list-item__primary-text"
+        >
+          user 1
+        </span>
+        <span
+          class="mdc-list-item__secondary-text"
+        >
+          team 1 - User
+        </span>
+      </span>
+    </div>
+    <div
+      class="mdc-list-item"
+      tabindex="0"
+    >
+      <i
+        class="rmwc-icon material-icons mdc-list-item__graphic"
+      >
+        person_outline
+      </i>
+      <span
+        class="mdc-list-item__text"
+      >
+        <span
+          class="mdc-list-item__primary-text"
+        >
+          user 2
+        </span>
+        <span
+          class="mdc-list-item__secondary-text"
+        >
+          User
+        </span>
+      </span>
+    </div>
+    <div
+      class="mdc-list-item"
+      tabindex="0"
+    >
+      <i
+        class="rmwc-icon material-icons mdc-list-item__graphic"
+      >
+        person_outline
+      </i>
+      <span
+        class="mdc-list-item__text"
+      >
+        <span
+          class="mdc-list-item__primary-text"
+        >
+          user 3
+        </span>
+        <span
+          class="mdc-list-item__secondary-text"
+        >
+          User
+        </span>
+      </span>
+    </div>
+  </div>
+</DocumentFragment>
+`;

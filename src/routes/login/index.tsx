@@ -29,7 +29,7 @@ const login = new Route({
 });
 
 export const goToLogin = (s: IRootStore) => {
-    s.router.goTo(login, undefined, s);
+    s.router.goTo(login, undefined);
 }
 
 export const RedirectToLogin = () => {

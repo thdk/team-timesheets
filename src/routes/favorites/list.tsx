@@ -10,7 +10,7 @@ import Favorites from "../../pages/favorites";
 type FavoritesListRoute = Route<IRootStore>;
 
 export const goToFavorites = (store: IRootStore) => {
-    store.router.goTo(routes.favorites, undefined, store);
+    store.router.goTo(routes.favorites, undefined);
 }
 
 const setActions = (s: IRootStore) => {

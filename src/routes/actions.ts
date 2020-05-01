@@ -48,7 +48,7 @@ export const Redirect = ({ route, params }: { route: Route<IRootStore, any, any>
     const store = React.useContext(StoreContext);
 
     React.useEffect(() => {
-        store.router.goTo(route, params, store);
+        store.router.goTo(route, params);
     }, []);
 
     return React.createElement(React.Fragment);

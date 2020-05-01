@@ -72,7 +72,7 @@ const setActions = (tab: ProjectsTab, store: IRootStore) => {
         store.view.setActions(actions);
         store.view.setFabs([{
             action: () => {
-                store.router.goTo(detailRoutes.newProject, {}, store);
+                store.router.goTo(detailRoutes.newProject, {});
             },
             icon: {
                 content: "add",

@@ -26,14 +26,14 @@ export const GoToProject = ({
     const store = useStore();
 
     useEffect(() => {
-        store.router.goTo(id ? routes.projectDetail : routes.newProject, { id }, store);
+        store.router.goTo(id ? routes.projectDetail : routes.newProject, { id });
     }, []);
 
     return <></>;
 };
 
 export const goToNewProject = (store: IRootStore) => {
-    store.router.goTo(routes.newProject, { id: undefined }, store);
+    store.router.goTo(routes.newProject, { id: undefined });
 };
 
 const beforeEnter = (_route: ProjectDetailRoute, params: Params, s: IRootStore) => {

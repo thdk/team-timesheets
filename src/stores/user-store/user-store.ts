@@ -7,7 +7,7 @@ import { IUser, IUserData } from "../../../common/dist";
 import { canReadUsers } from "../../rules/rules";
 import { getLoggedInUserAsync } from "../../firebase/firebase-utils";
 
-export interface IUserStore extends UserStore {}
+export interface IUserStore extends UserStore { }
 
 export enum StoreState {
     Done,
@@ -106,6 +106,18 @@ export class UserStore implements IUserStore {
 
     public saveSelectedUser(): void {
         if (this.selectedUserId && this.selectedUser) { this.usersCollection.updateAsync(this.selectedUser, this.selectedUserId || ""); }
+    }
+
+    @computed
+    public get users() {
+        return this.usersCollection.docs
+            .map(doc => ({ ...doc.data!, id: doc.id }))
+            .sort((a, b) => {
+                // TODO: Use stable sort method
+                return (a.name || "") > (b.name || "")
+                    ? 1
+                    : -1;
+            });;
     }
 
     @action.bound

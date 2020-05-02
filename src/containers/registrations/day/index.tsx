@@ -1,9 +1,9 @@
 import * as React from 'react';
-import { ListDivider } from '../../../mdc/list';
 import { IGroupedRegistrations } from '../../../stores/registration-store/registration-store';
 import { observer } from 'mobx-react';
 import { RegistrationLines } from '../lines';
 import GroupedRegistrationHeader from '../day-header';
+import { ListDivider } from '@rmwc/list';
 
 export interface IDayProps {
     group: IGroupedRegistrations<string>;

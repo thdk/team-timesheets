@@ -9,10 +9,10 @@ import { StoreProvider } from "../../../contexts/store-context";
 import { IRootStore } from "../../../stores/root-store";
 import { UserStore } from "../../../stores/user-store";
 import { ConfigStore } from "../../../stores/config-store";
-import { UserList } from "./";
 import { ITeamData } from "../../../../common";
 import { RouterStore } from "mobx-router";
 import { ViewStore } from "../../../stores/view-store";
+import { UserList } from ".";
 
 jest.mock("@material/top-app-bar/index", () => ({
     MDCTopAppBar: () => <></>,
@@ -40,13 +40,14 @@ const {
         userRef,
         teamRef,
     ],
-    //clearFirestoreDataAsync
+    clearFirestoreDataAsync
 } = initTestFirestore("user-list-test",
     [
         "users",
         "teams",
     ]);
 
+beforeAll(clearFirestoreDataAsync);
 afterAll(() => deleteFirebaseAppsAsync());
 
 class TestStore {
@@ -64,9 +65,10 @@ class TestStore {
     public router = new RouterStore(this.rootStore);
 }
 
+const userCollection = new TestCollection(firestore, userRef);
+const teamCollection = new TestCollection<ITeamData>(firestore, teamRef);
+
 const setupAsync = () => {
-    const userCollection = new TestCollection(firestore, userRef);
-    const teamCollection = new TestCollection<ITeamData>(firestore, teamRef);
 
     return Promise.all([
         userCollection.addAsync(
@@ -185,6 +187,84 @@ describe("UserListContainer", () => {
                     id: "user-1"
                 },
             );
+        });
+
+        describe("when user is added in the collection", () => {
+            it("should rerender to add the user to the list", async () => {
+                const { queryByText, getByText } = render(
+                    <StoreProvider value={store}>
+                        <UserList />
+                    </StoreProvider>
+                );
+
+                // user should originally not be in the list
+                expect(queryByText("user b")).toBeNull();
+
+                // add user in database
+                const userId = await userCollection.addAsync({
+                    name: "user b",
+                    roles: {
+                        user: true,
+                    },
+                });
+
+                // list should be updated with new user
+                await waitFor(() => expect(getByText("user b")));
+
+                // clean up the database by removing the user again
+                await userCollection.deleteAsync(userId);
+            });
+        });
+
+        describe("when user is removed from the collection", () => {
+            let userId: string;
+            beforeEach(() => userCollection.addAsync({
+                name: "user b",
+                roles: {
+                    user: true,
+                },
+            }).then((id) => userId = id));
+
+            it("should rerender to removed the user from the list", async () => {
+                const { getByText, queryByText } = render(
+                    <StoreProvider value={store}>
+                        <UserList />
+                    </StoreProvider>
+                );
+
+                // user should originally be in the list
+                expect(getByText("user b")).not.toBeNull();
+
+                // delete user in database
+                await userCollection.deleteAsync(userId);
+
+                // list should be updated to remove the user
+                await waitFor(() => expect(queryByText("user b")).toBeNull());
+            });
+        });
+
+        describe("when user is updated in the collection", () => {
+            it("should rerender to show the updated user in the list", async () => {
+                const { getByText } = render(
+                    <StoreProvider value={store}>
+                        <UserList />
+                    </StoreProvider>
+                );
+
+                // user should originally be in the list
+                expect(getByText("user 1"));
+
+                // update user in database
+                await userCollection.updateAsync({
+                    name: "user 1 b",
+                }, "user-1");
+
+                // list should be updated with new user name
+                await waitFor(() => expect(getByText("user 1 b")));
+
+                // clean up the database by changing user name again
+                await userCollection.updateAsync({ name: "user 1" }, "user-1");
+            });
         });
     });
 });

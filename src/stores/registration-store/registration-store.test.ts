@@ -144,7 +144,7 @@ const store = new TestStore();
 beforeAll(clearFirestoreDataAsync);
 beforeAll(setupAsync);
 afterAll(() => {
-    store.dispose();
+    // store.dispose();
     return Promise.all([
         deleteFirebaseAppsAsync(),
     ])

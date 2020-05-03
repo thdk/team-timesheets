@@ -75,10 +75,10 @@ export class ViewStore implements IViewStore {
 
   private readonly rootStore: IRootStore;
 
-  constructor(rootStore: IRootStore) {
+  constructor(rootStore: IRootStore, testDate?: Date) {
     this.rootStore = rootStore;
 
-    const date = new Date();
+    const date = testDate || new Date();
 
     transaction(() => {
       this.day = date.getDate();

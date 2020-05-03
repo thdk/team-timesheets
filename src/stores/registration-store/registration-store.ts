@@ -22,7 +22,7 @@ export interface IRegistrationsStore {
     readonly registration: IRegistration | undefined;
     readonly registrationId?: string;
     readonly setSelectedRegistration: (id: string | undefined) => void;
-    readonly saveSelectedRegistration: () => void;
+    readonly saveSelectedRegistration: () => Promise<any>;
     readonly updateSelectedRegistration: (data: Partial<IRegistration>) => void;
     readonly setSelectedRegistrationDefault: (moment?: moment.Moment) => void;
     readonly deleteRegistrationsAsync: (...ids: string[]) => Promise<void[]>;
@@ -65,6 +65,22 @@ export class RegistrationStore implements IRegistrationsStore {
         },
     ) {
         this.rootStore = rootStore;
+
+        const createQuery = (userId: string | undefined) => {
+            if (userId) {
+                const moment = rootStore.view.moment;
+                const endDate = moment.clone().endOf("month").toDate();
+                const startDate = moment.clone().startOf("month").toDate();
+                return (ref: firebase.firestore.CollectionReference) => ref
+                    .where("date", ">=", startDate)
+                    .where("date", "<=", endDate)
+                    .where("userId", "==", rootStore.user.authenticatedUserId);
+            }
+            else {
+                return null;
+            }
+        };
+
         this.registrations = new Collection<IRegistration, IRegistrationData>(
             firestore,
             "registrations",
@@ -72,7 +88,8 @@ export class RegistrationStore implements IRegistrationsStore {
                 realtimeMode: RealtimeMode.on,
                 fetchMode: FetchMode.auto,
                 deserialize: deserializer.convertRegistration,
-                serialize: serializer.convertRegistration
+                serialize: serializer.convertRegistration,
+                query: createQuery(rootStore.user.authenticatedUserId),
             },
             {
                 logger: console.log,
@@ -80,20 +97,7 @@ export class RegistrationStore implements IRegistrationsStore {
         );
 
         const updateRegistrationQuery = (userId: string | undefined) => {
-            // TODO: replace when whith a if else
-            // clear the docs when there is no userId
-            if (userId) {
-                const moment = rootStore.view.moment;
-                const endDate = moment.clone().endOf("month").toDate();
-                const startDate = moment.clone().startOf("month").toDate();
-                this.registrations.query = ref => ref
-                    .where("date", ">=", startDate)
-                    .where("date", "<=", endDate)
-                    .where("userId", "==", rootStore.user.authenticatedUserId);
-            }
-            else {
-                this.registrations.query = null;
-            }
+            this.registrations.query = createQuery(userId);
         };
 
         // update the query of the registration collection each time...
@@ -211,7 +215,7 @@ export class RegistrationStore implements IRegistrationsStore {
 
     @action
     public setSelectedRegistrationDefault(moment?: moment.Moment) {
-        this.getNewRegistrationDataAsync(moment).then(data => {
+        return this.getNewRegistrationDataAsync(moment).then(data => {
             this.setSelectedRegistrationObservable(data);
         });
     }
@@ -242,7 +246,10 @@ export class RegistrationStore implements IRegistrationsStore {
         if (index === -1) {
             this.selectedRegistrationDays.push(date);
         } else if (!force) {
-            this.selectedRegistrationDays.replace([...this.selectedRegistrationDays.slice(0, index), ...this.selectedRegistrationDays.slice(index + 1)]);
+            this.selectedRegistrationDays.replace([
+                ...this.selectedRegistrationDays.slice(0, index),
+                ...this.selectedRegistrationDays.slice(index + 1),
+            ]);
         }
     }
 
@@ -294,7 +301,7 @@ export class RegistrationStore implements IRegistrationsStore {
 
             };
 
-            saveOrUpdateAsync(registration, this.registrationId)
+            return saveOrUpdateAsync(registration, this.registrationId)
                 .then(() => {
                     const { project = undefined } = registration || {};
                     // TODO: move set recent project to firebase function
@@ -322,5 +329,12 @@ export class RegistrationStore implements IRegistrationsStore {
                     }
                 });
         }
+        else {
+            return Promise.reject("No registration selected to save");
+        }
+    }
+
+    public dispose() {
+        this.registrations.dispose();
     }
 }

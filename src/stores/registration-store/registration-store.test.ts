@@ -143,7 +143,6 @@ const store = new TestStore();
 beforeAll(clearFirestoreDataAsync);
 beforeAll(setupAsync);
 afterAll(() => {
-    console.log("Disposing store");
     store.dispose();
     return Promise.all([
         deleteFirebaseAppsAsync(),
@@ -151,14 +150,14 @@ afterAll(() => {
 });
 
 describe("RegistrationStore", () => {
-    // let unsubscribe: () => void;
+    let unsubscribe: () => void;
 
     beforeAll(() => {
         store.user.setUser({ uid: "user-1", displayName: "user 1" } as firebase.User);
-        reaction(() => store.timesheets.registrationsGroupedByDay, () => { })
+        unsubscribe = reaction(() => store.timesheets.registrationsGroupedByDay, () => { })
     });
 
-    // afterAll(() => unsubscribe());
+    afterAll(() => unsubscribe());
 
     describe("registrationsGroupedByDay / registrationsGroupedByDayReversed", () => {
 
@@ -251,8 +250,6 @@ describe("RegistrationStore", () => {
         });
 
         describe("when there are no registrations for the current user", () => {
-
-
             it("should return an empty list", async () => {
                 store.user.setUser({ uid: "user-2", displayName: "user 2" } as firebase.User)
 

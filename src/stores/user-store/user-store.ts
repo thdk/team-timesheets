@@ -215,4 +215,8 @@ export class UserStore implements IUserStore {
     public get firebaseAuth() {
         return this.auth;
     }
+
+    public dispose() {
+        this.usersCollection.dispose();
+    }
 }

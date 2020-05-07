@@ -1,6 +1,7 @@
 # Timesheets app
 
 ![Cloud Build](https://storage.googleapis.com/timesheets-ffc4b-badges/builds/timesheets/branches/develop.svg?branch=develop)
+![Codecov](https://codecov.io/gh/thdk/timesheets/branch/develop/graph/badge.svg)
 
 Web base timesheet app. Built to replace old school excel timesheets.
 

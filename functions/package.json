@@ -20,6 +20,7 @@
     "fs-extra": "^7.0.1",
     "json2csv": "^4.3.2",
     "moment-es6": "^1.0.0",
+    "moment-timezone": "^0.5.28",
     "os": "^0.1.1",
     "path": "^0.12.7",
     "xlsx": "^0.14.3"
@@ -27,11 +28,12 @@
   "devDependencies": {
     "@types/fs-extra": "^5.0.4",
     "@types/json2csv": "^4.2.0",
+    "@types/moment-timezone": "^0.5.13",
     "tslint": "~5.12.1",
     "typescript": "^3.5.3"
   },
   "private": true,
   "engines": {
-    "node": "8"
+    "node": "10"
   }
 }

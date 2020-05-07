@@ -22,7 +22,7 @@
     "no-void-expression": [true, "ignore-arrow-function-shorthand"],
     "no-duplicate-imports": true,
     "no-empty-interface": {"severity": "warning"},
-    "no-import-side-effect": {"severity": "warning"},
+    "no-import-side-effect": [true, {"ignore-module": "moment-timezone"}],
     "no-var-keyword": {"severity": "warning"},
     "triple-equals": {"severity": "warning"},
     "deprecation": {"severity": "warning"},

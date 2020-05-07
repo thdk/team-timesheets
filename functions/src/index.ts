@@ -7,6 +7,7 @@ import { BigQuery } from '@google-cloud/bigquery';
 import 'firebase-functions';
 
 import moment from 'moment-es6';
+import 'moment-timezone';
 
 import { parse as json2csv } from 'json2csv';
 
@@ -56,7 +57,8 @@ exports.createCSV = functions.firestore
         let tasksMap: Map<string, any>;
         let clientsMap: Map<string, any>;
 
-        const startMoment = moment(`${year}-${month}`, 'YYYY-MM');
+        // TODO: use timezone saved on user account
+        const startMoment = moment(`${year}-${month}`, 'YYYY-MM').tz('Europe/Brussels');
         const endDate = startMoment.clone().endOf("month").toDate();
         const startDate = startMoment.clone().startOf("month").toDate();
 

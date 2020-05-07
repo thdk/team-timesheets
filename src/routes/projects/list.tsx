@@ -10,7 +10,7 @@ import detailRoutes from "./detail";
 import { canManageProjects } from "../../rules/rules";
 
 export const goToProjects = (store: IRootStore, tab: ProjectsTab = "active") => {
-    store.router.goTo(routes.projects, {}, store, { tab });
+    store.router.goTo(routes.projects, {}, { tab });
 }
 
 export type ProjectsTab = "active" | "archived";
@@ -72,7 +72,7 @@ const setActions = (tab: ProjectsTab, store: IRootStore) => {
         store.view.setActions(actions);
         store.view.setFabs([{
             action: () => {
-                store.router.goTo(detailRoutes.newProject, {}, store);
+                store.router.goTo(detailRoutes.newProject, {});
             },
             icon: {
                 content: "add",
@@ -86,11 +86,14 @@ const setActions = (tab: ProjectsTab, store: IRootStore) => {
 }
 
 const path = '/projects'
+export type ProjectRouteQueryParams = { tab: ProjectsTab };
+type ProjectRoute = Route<IRootStore, {}, ProjectRouteQueryParams>;
+
 const routes = {
     projects: new Route({
         path,
         component: <App><Projects></Projects></App>,
-        onEnter: (route: Route, _params, s: IRootStore, queryParams: { tab: ProjectsTab }) => {
+        onEnter: (route: ProjectRoute, _params, s: IRootStore, queryParams: { tab: ProjectsTab }) => {
             setActions(queryParams.tab, s);
             setNavigationContent(s, route, false);
         },

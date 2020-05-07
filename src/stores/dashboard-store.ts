@@ -4,12 +4,11 @@ import { ICollection, Collection, RealtimeMode } from "firestorable";
 import moment from 'moment';
 
 import { IRootStore } from "./root-store";
-import { IGroupedRegistrations } from "./registration-store";
+import { IGroupedRegistrations } from "./registration-store/registration-store";
 import * as deserializer from '../../common/serialization/deserializer';
 import * as serializer from '../../common/serialization/serializer';
 import { TimePeriod } from "../components/time-period-select";
 import { IRegistration, IRegistrationData } from "../../common/dist";
-import { firestore } from "../firebase/my-firebase";
 
 export interface IDashboardStore {
     readonly setProjectFilter: (projectId: string | undefined) => void;
@@ -35,7 +34,14 @@ export class DashboardStore implements IDashboardStore {
     @observable.ref private projectFilterValueField: string | undefined = undefined;
     @observable.ref private timePeriodFilterField: TimePeriod | undefined = undefined;
 
-    constructor(rootStore: IRootStore) {
+    constructor(
+        rootStore: IRootStore,
+        {
+            firestore,
+        }: {
+            firestore: firebase.firestore.Firestore,
+        },
+    ) {
 
         this.registrationsField = new Collection<IRegistration, IRegistrationData>(
             firestore,

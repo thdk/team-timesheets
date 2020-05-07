@@ -6,27 +6,27 @@ import { RedirectToLogin } from "../../routes/login";
 import { FavoritesList } from "../../containers/favorites/list";
 
 const FavoriteGroupPage = () => (
-    <>
-        <div style={{ paddingLeft: "2em", paddingTop: "1em" }}>
-            <h3 className="mdc-typography--subtitle1">
-                Favorite group details
+        <>
+            <div style={{ paddingLeft: "2em", paddingTop: "1em" }}>
+                <h3 className="mdc-typography--subtitle1">
+                    Favorite group details
             </h3>
-        </div>
+            </div>
 
-        <FavoriteGroupDetailForm />
+            <FavoriteGroupDetailForm />
 
-        <div style={{ paddingLeft: "2em" }}>
-            <h3 className="mdc-typography--subtitle1">
-                Included registrations
+            <div style={{ paddingLeft: "2em" }}>
+                <h3 className="mdc-typography--subtitle1">
+                    Included registrations
             </h3>
-        </div>
-        <hr className="mdc-list-divider" />
+            </div>
+            <hr className="mdc-list-divider" />
 
-        <FavoritesList />
+            <FavoritesList />
 
-        <hr className="mdc-list-divider" />
-    </>
-);
+            <hr className="mdc-list-divider" />
+        </>
+    );
 
 export default withAuthentication(
     FavoriteGroupPage,

@@ -6,6 +6,8 @@ Web base timesheet app. Built to replace old school excel timesheets.
 
 Demo: [Develop branch](https://timesheets-ffc4b.firebaseapp.com)
 
+This app is build using [Firestorable](https://github.com/thdk/firestorable). Have a look, it's great! (I made it :))
+
 ## Getting Started
 
 These instructions will get you a copy of the project up and running on your local machine for development and testing purposes. See deployment for notes on how to deploy the project on a live system.
@@ -14,11 +16,13 @@ These instructions will get you a copy of the project up and running on your loc
 
 #### Node
 
-If you don't have node installed yet, install [node](https://nodejs.org/en/download/)
+Supported node version: 10 (I'm using 10.18.0)
 
 #### Firebase tools
 
+```
 npm install -g firebase-tools
+```
 
 ### Firebase
 
@@ -26,18 +30,11 @@ The project is build entirely for Google Cloud Firebase.
 
 #### Firebase project
 
-To seperate a development environment from the production environment you'll need two firebase projects so you can deploy dev and production seperately.
+If you want to develop for an existing project, ask the project admin to add you as a user for that firebase project.
 
-If you want develop for an existing project, ask the project admin to add you as a user for that firebase project.
+You can [create and/or manage firebase projects here](https://console.firebase.google.com).
 
-You can manage firebase projects from the [Firebase console](https://console.firebase.google.com).
-
-I have two firebase projects:
-
-* dev-thdk-timesheets
-* thdk-timesheets
-
-Follow the instructions below for each environment you want to configure.
+Once you have setup your firebase project, continue below.
 
 #### Get authenticated
 
@@ -48,56 +45,7 @@ Follow the instructions below for each environment you want to configure.
 
 (follow instructions)
 
-(I'll use *dev* as alias for *dev-thdk-timesheets* project and *production* for *thdk-timesheets* project.)
-
 When your project was succesfully selected, it will be stored in the file called: *.firebasesrc*
-
-#### Firebase hosting
-
-Go back to the firebase console and create a new site from the *hosting* menu.
-I've created a site with name *timesheets-web*.
-
-This project will use *web-app* as target name for the hosting environment of the timesheets web app.
-
-You'll need to map each target name with one of your firebase sites. Run the following command form your working directory:
-
-`firebase target:apply hosting [target-name] [resource-name]`
-
-So you 'll have to run something like:
-
-```
-firebase target:apply hosting web-app timesheets-web
-```
-
-These settings will also be stored in the file called: *.firebasesrc*
-
-This is how *.firebasesrc* file looks like after following the instructions above:
-
-```
-{
-  "projects": {
-    "dev": "dev-thdk-timesheets",
-  },
-  "targets": {
-    "dev-thdk-timesheets": {
-      "hosting": {
-        "web-app": [
-          "timesheets-web"
-        ]
-      }
-    }
-  }
-}
-```
-
-#### Firebase authentication
-
-From the firebase console, go to the authentication tab.
-Activate authentication and set up the desired authentication providers.
-
-Verify the authorized domain list. You'll need:
-* localhost
-* your hosting site url
 
 ### Installing
 
@@ -118,24 +66,33 @@ Start development server (open `http://localhost:5000/`)
 
 ## Running the tests
 
-    npm run test (Sorry, no tests yet 👎)
+Before you can run tests, you must start the firestore emulator.
 
-## Deployment
-
-The whole project is set up to be deployed with firebase.
-
-Running `firebase deploy` will deploy:
-* Hosting: Everything in the dist folder will be deployed in a firebase hosting site.
-* Firestore: Will set up read, write, update and delete rules from firestore.rules file on the active Firebase Firestore database. Will also set up the database indexes from *firestore.indexes.json*
-* Functions: All functions from the functions subpackage of this project will be build and deployed as Firebase functions.
-
-## Hosting
-
-To deploy the timesheets application to firebase hosting run:
-
+```shell
+npm run emulator
 ```
-firebase deploy --only hosting
+Keep the emulator running in one terminal window while running tests in another terminal.
+
+```shell
+npm run test
 ```
+
+If you only need to run the test once, you can use:
+
+```shell
+npm run test:emulator
+```
+This will start the emulator, run the tests and finally also stop the firebase emulator.
+
+## Google cloud build (CI/CD)
+
+A google cloud build trigger has been setup for CI/CD purposes for this repo.
+
+For pull requests, google cloud build will use `cloudbuild.build.yaml`.
+
+Commits on the `develop` branch will trigger a build using `cloudbuild.deploy.yaml` and deploy the project.
+
+See these files for information of the build steps.
 
 ## Built With
 
@@ -146,6 +103,7 @@ firebase deploy --only hosting
 * Gulp
 * Material Design ([Material Components for the web](https://github.com/material-components/material-components-web))
 * Firebase
+* Google cloud build
 
 ## Contributing
 

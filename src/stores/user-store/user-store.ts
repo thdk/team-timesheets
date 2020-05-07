@@ -1,26 +1,13 @@
 import { observable, action, transaction, computed, observe, intercept, IObservableValue, reaction } from "mobx";
 import { ICollection, Collection, Doc, RealtimeMode, FetchMode, CollectionReference } from "firestorable";
-import { IRootStore } from "./root-store";
-import * as deserializer from "../../common/serialization/deserializer";
-import * as serializer from "../../common/serialization/serializer";
-import { IUser, IUserData } from "../../common/dist";
-import { canReadUsers } from "../rules/rules";
+import { IRootStore } from "../root-store";
+import * as deserializer from "../../../common/serialization/deserializer";
+import * as serializer from "../../../common/serialization/serializer";
+import { IUser, IUserData } from "../../../common/dist";
+import { canReadUsers } from "../../rules/rules";
+import { getLoggedInUserAsync } from "../../firebase/firebase-utils";
 
-import { firestore, auth } from "../firebase/my-firebase";
-
-export interface IUserStore {
-    readonly userId?: string;
-    readonly authenticatedUser?: IUser & { id: string };
-    readonly selectedUser?: IUser;
-    readonly selectedUserId: string | undefined;
-    readonly setSelectedUserId: (id: string | undefined) => void;
-    readonly saveSelectedUser: () => void;
-    readonly updateSelectedUser: (data: Partial<IUser>) => void;
-    readonly usersCollection: ICollection<IUser, IUserData>;
-    readonly updateAuthenticatedUser: (userData: Partial<IUser>) => void;
-    readonly signout: () => void;
-    readonly isAuthInitialised: boolean;
-}
+export interface IUserStore extends UserStore { }
 
 export enum StoreState {
     Done,
@@ -43,8 +30,21 @@ export class UserStore implements IUserStore {
 
     private _selectedUserId = observable.box<string | undefined>();
 
+    private auth?: firebase.auth.Auth;
+
     public readonly usersCollection: ICollection<IUser, IUserData>;
-    constructor(_rootStore: IRootStore) {
+    constructor(
+        _rootStore: IRootStore,
+        {
+            firestore,
+            auth,
+        }: {
+            firestore: firebase.firestore.Firestore,
+            auth?: firebase.auth.Auth,
+        }
+    ) {
+        this.auth = auth;
+
         const query = (ref: CollectionReference) => ref.orderBy("name", "asc");
         const createQuery = (user?: IUser) => {
             return canReadUsers(user)
@@ -70,7 +70,7 @@ export class UserStore implements IUserStore {
             this.usersCollection.query = createQuery(user);
         });
 
-        auth.onAuthStateChanged(this.setUser.bind(this));
+        this.auth && this.auth.onAuthStateChanged(this.setUser.bind(this));
 
         // tODO: move to Firestorable/Document?
         intercept(this._authUser, change => {
@@ -88,6 +88,7 @@ export class UserStore implements IUserStore {
 
     @action
     private setSelectedUser(id: string | undefined): void {
+
         const user: Doc<IUser, IUserData> | undefined = id ? this.usersCollection.get(id) : undefined;
 
         if (id && !user) {
@@ -105,6 +106,18 @@ export class UserStore implements IUserStore {
 
     public saveSelectedUser(): void {
         if (this.selectedUserId && this.selectedUser) { this.usersCollection.updateAsync(this.selectedUser, this.selectedUserId || ""); }
+    }
+
+    @computed
+    public get users() {
+        return this.usersCollection.docs
+            .map(doc => ({ ...doc.data!, id: doc.id }))
+            .sort((a, b) => {
+                // TODO: Use stable sort method
+                return (a.name || "") > (b.name || "")
+                    ? 1
+                    : -1;
+            });;
     }
 
     @action.bound
@@ -134,7 +147,7 @@ export class UserStore implements IUserStore {
     }
 
     @computed
-    get userId(): string | undefined {
+    get authenticatedUserId(): string | undefined {
         return this._userId;
     }
 
@@ -145,7 +158,7 @@ export class UserStore implements IUserStore {
     }
 
     @action
-    private setUser(fbUser: firebase.User | null): void {
+    public setUser(fbUser: firebase.User | null): void {
         if (!fbUser) {
             transaction(() => {
                 this.isAuthInitialised = true;
@@ -189,6 +202,21 @@ export class UserStore implements IUserStore {
     }
 
     signout(): void {
-        auth.signOut();
+        this.auth && this.auth.signOut();
+    }
+
+    public getLoggedInUserAsync() {
+        return this.auth
+            ? getLoggedInUserAsync(this.auth)
+            : Promise.reject(new Error("Firebase auth not initialized"));
+    }
+
+    // TODO: should be taken from context using FirebaseProvider component
+    public get firebaseAuth() {
+        return this.auth;
+    }
+
+    public dispose() {
+        this.usersCollection.dispose();
     }
 }

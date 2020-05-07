@@ -4,7 +4,7 @@ import { Chip, ChipSet } from '@material/react-chips';
 
 import { Form, FormField } from '../../components/layout/form';
 import { FlexGroup } from '../../components/layout/flex';
-import ProjectSelect from '../../containers/projects/select';
+import { ProjectSelect } from '../../containers/projects/select';
 import ClientSelect from '../../containers/clients/select';
 import { withAuthentication } from '../../containers/users/with-authentication';
 import { RedirectToLogin } from '../../internal';
@@ -21,7 +21,7 @@ class Registration extends React.Component {
             return <></>;
         }
 
-        if (!this.context.timesheets.registration || !this.context.user.userId) return <></>;
+        if (!this.context.timesheets.registration || !this.context.user.authenticatedUserId) return <></>;
 
         const userTasks = Array.from(this.context.user.authenticatedUser.tasks.keys());
         const { task,
@@ -31,10 +31,10 @@ class Registration extends React.Component {
             client
         } = this.context.timesheets.registration;
 
-        const tasks = Array.from(this.context.config.tasks.docs.values())
-            .filter(t => t.data && userTasks.length ? userTasks.some(userTaskId => userTaskId === t.id) : true)
+        const tasks = this.context.config.tasks
+            .filter(t => userTasks.length ? userTasks.some(userTaskId => userTaskId === t.id) : true)
             .map(t => {
-                const { id: taskId, data: { name: taskName = "N/A", icon: taskIcon = undefined } = {} } = t;
+                const { id: taskId, name: taskName = "N/A", icon: taskIcon = undefined } = t;
                 const leadingIcon = taskIcon ? <i className="material-icons mdc-chip__icon mdc-chip__icon--leading">{taskIcon}</i> : undefined;
                 return (
                     <Chip leadingIcon={leadingIcon} handleSelect={this.taskClicked} id={taskId} label={taskName!} key={taskId}></Chip>

@@ -5,21 +5,20 @@ import { App, goToOverview } from '../../internal';
 import Login from '../../containers/login';
 import { when } from 'mobx';
 import { setNavigationContent, Redirect } from '../actions';
-import { getLoggedInUserAsync } from '../../firebase/firebase-utils';
-import { auth } from '../../firebase/my-firebase';
 
 const path = "/login";
+type LoginRoute = Route<IRootStore>;
 
 const login = new Route({
     path,
     component: <App><Login></Login></App>,
-    onEnter: (route: Route, _params: any, s: IRootStore) => {
+    onEnter: (route: LoginRoute, _params: any, s: IRootStore) => {
         when(() => !!s.user.authenticatedUser, () => goToOverview(s));
         setNavigationContent(s, route, false);
     },
     title: "Login",
-    beforeEnter: (_route: Route, _params: any, s: IRootStore) => {
-        return getLoggedInUserAsync(auth).then(() => {
+    beforeEnter: (_route: LoginRoute, _params: any, s: IRootStore) => {
+        return s.user.getLoggedInUserAsync().then(() => {
             // TODO: detect requested page so we can redirect to that page when authenticated
             goToOverview(s);
             return false;
@@ -30,7 +29,7 @@ const login = new Route({
 });
 
 export const goToLogin = (s: IRootStore) => {
-    s.router.goTo(login, null, s);
+    s.router.goTo(login, undefined);
 }
 
 export const RedirectToLogin = () => {

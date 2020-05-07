@@ -3,7 +3,7 @@ import { observer } from 'mobx-react';
 import * as React from 'react'
 
 import { TapBar, Tab, TabIcon } from '../../mdc/tabbar';
-import { ProjectsTab, goToProjects } from '../../routes/projects/list';
+import { ProjectsTab, goToProjects, ProjectRouteQueryParams } from '../../routes/projects/list';
 import { ActiveProjectList } from '../../containers/projects/list-active';
 import { ArchivedProjectList } from '../../containers/projects/list-archived';
 import { withAuthentication } from '../../containers/users/with-authentication';
@@ -41,7 +41,7 @@ class Projects extends React.Component {
 
         if (!validTabs.length) return <></>
 
-        const query: { tab: ProjectsTab } = this.context.router.queryParams;
+        const query: { tab: ProjectsTab } = this.context.router.queryParams as ProjectRouteQueryParams;
         const { tab: activeTabId = validTabs[0].id } = query || {};
 
         let activeTab = validTabs.filter(t => t.id === activeTabId)[0];

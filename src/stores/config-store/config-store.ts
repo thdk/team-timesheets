@@ -1,36 +1,42 @@
-import { observable, computed } from 'mobx';
+import { observable, computed, action } from 'mobx';
 import { Collection, ICollection, RealtimeMode, FetchMode } from "firestorable";
-import { IRootStore } from './root-store';
-import { firestore } from '../firebase/my-firebase';
-import { IProject, ITask, IClient, IClientData, ITeam, ITeamData, ITaskData, IConfig, ConfigValue } from '../../common/dist';
+import { IRootStore } from '../root-store';
+import { IProject, ITask, IClient, IClientData, ITeam, ITeamData, ITaskData, IConfig, ConfigValue } from '../../../common/dist';
 
-import * as serializer from '../../common/serialization/serializer';
-import * as deserializer from '../../common/serialization/deserializer';
-import { LoginProvider } from '../firebase/types';
+import * as serializer from '../../../common/serialization/serializer';
+import * as deserializer from '../../../common/serialization/deserializer';
+import { LoginProvider } from '../../firebase/types';
 
 export type Configs = {
     // authClientId: string;
     loginProviders: LoginProvider[];
 }
 
-export interface IConfigStore extends ConfigStore {};
+export interface IConfigStore extends ConfigStore { };
 
 export class ConfigStore implements IConfigStore {
     //private readonly _rootStore: IRootStore;
-    readonly tasks: ICollection<IProject, ITaskData>;
+    readonly tasksCollection: ICollection<IProject, ITaskData>;
     readonly clientsCollection: ICollection<IClient>;
     readonly teamsCollection: ICollection<ITeam, ITeamData>;
     readonly configsCollection: Collection<IConfig>;
 
-    @observable.ref taskId?: string;
+    @observable.ref private taskIdField?: string;
     @observable.ref clientId?: string;
     @observable.ref teamId?: string;
 
-    constructor(_rootStore: IRootStore) {
+    constructor(
+        _rootStore: IRootStore,
+        {
+            firestore,
+        }: {
+            firestore: firebase.firestore.Firestore,
+        }
+    ) {
         // this._rootStore = rootStore;
         const deps = { logger: console.log };
 
-        this.tasks = new Collection<ITask, ITaskData>(
+        this.tasksCollection = new Collection<ITask, ITaskData>(
             firestore,
             "tasks",
             {
@@ -89,6 +95,22 @@ export class ConfigStore implements IConfigStore {
     public get teams() {
         return Array.from(this.teamsCollection.docs.values())
             .map(doc => ({ ...doc.data!, id: doc.id, isSelected: doc.id === this.teamId }));
+    }
+
+    @computed
+    public get tasks() {
+        return Array.from(this.tasksCollection.docs.values())
+            .map(doc => ({ ...doc.data!, id: doc.id, isSelected: doc.id === this.taskIdField }));
+    }
+
+    @computed
+    public get taskId() {
+        return this.taskIdField;
+    }
+
+    @action
+    public setTaskId(id: string |undefined) {
+        this.taskIdField = id;
     }
 
     // To investigate: does getConfigValue needs mobx @computed attribute?

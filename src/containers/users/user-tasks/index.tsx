@@ -14,11 +14,11 @@ export class UserTasks extends React.Component<IUserTasksProps> {
     static contextType = StoreContext;
 
     render() {
-        if (!this.context.user.authenticatedUser || this.context.config.tasks.docs.length === 0) return <></>;
+        if (!this.context.user.authenticatedUser || this.context.config.tasksCollection.docs.length === 0) return <></>;
 
         const { tasks: userTasks, defaultTask } = this.context.user.authenticatedUser;
         const userTasksChips = Array.from(userTasks.keys()).map(t => {
-            const taskData = this.context.config.tasks.get(t);
+            const taskData = this.context.config.tasksCollection.get(t);
             if (!taskData) return null;
 
             const { id: taskId = "", data: { name: taskName = "ARCHIVED", icon: taskIcon = undefined } = {} } = taskData || {};

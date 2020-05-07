@@ -1,7 +1,7 @@
 import { observable, IObservableArray, action, computed, transaction, ObservableMap } from "mobx";
 import moment from 'moment';
-import { IRootStore } from "./root-store";
-import { IIconData } from "../mdc/buttons/icon-buttons";
+import { IRootStore } from "../root-store";
+import { IIconData } from "../../mdc/buttons/icon-buttons";
 
 export interface IShortKey {
   ctrlKey?: boolean;
@@ -75,10 +75,10 @@ export class ViewStore implements IViewStore {
 
   private readonly rootStore: IRootStore;
 
-  constructor(rootStore: IRootStore) {
+  constructor(rootStore: IRootStore, testDate?: Date) {
     this.rootStore = rootStore;
 
-    const date = new Date();
+    const date = testDate || new Date();
 
     transaction(() => {
       this.day = date.getDate();

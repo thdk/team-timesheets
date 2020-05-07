@@ -5,7 +5,7 @@ export interface IUserData extends IPersistedEntity{
     tasks?: string[];
     roles?: IRoles;
     name?: string;
-    defaultTask: string;
+    defaultTask?: string;
     defaultClient?: string;
     recentProjects?: RecentlyUsedProjects;
     team?: string;

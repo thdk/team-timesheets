@@ -7,8 +7,10 @@ import { IRootStore } from "../../stores/root-store";
 import { IViewAction } from "../../stores/view-store";
 import Favorites from "../../pages/favorites";
 
+type FavoritesListRoute = Route<IRootStore>;
+
 export const goToFavorites = (store: IRootStore) => {
-    store.router.goTo(routes.favorites, {}, store);
+    store.router.goTo(routes.favorites, undefined);
 }
 
 const setActions = (s: IRootStore) => {
@@ -36,7 +38,7 @@ const routes = {
     favorites: new Route({
         path,
         component: <App><Favorites/></App>,
-        onEnter: (route: Route, _params, s: IRootStore) => {
+        onEnter: (route: FavoritesListRoute, _params, s: IRootStore) => {
             setActions(s);
             setNavigationContent(s, route, false);
         },

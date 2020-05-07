@@ -1,7 +1,5 @@
 import { ICollection, Collection, FetchMode, RealtimeMode } from "firestorable";
 import { observable, reaction, computed, action } from "mobx";
-import firebase from "firebase/app";
-import "firebase/firestore";
 import { CollectionReference } from "@firebase/firestore-types";
 
 import { IRootStore } from "../root-store";
@@ -20,13 +18,17 @@ export class FavoriteStore {
     private activefavoriteGroupIdField: string | undefined;
     private readonly rootStore: IRootStore;
 
-    constructor(rootStore: IRootStore) {
+    constructor(rootStore: IRootStore, {
+        firestore,
+    }: {
+        firestore: firebase.firestore.Firestore,
+    }) {
         this.rootStore = rootStore;
-        this.db = firebase.firestore();
+        this.db = firestore;
         this.favoriteGroupCollectionRef = this.db.collection("favorite-groups");
         const createQuery = () =>
             rootStore.user.authenticatedUser
-                ? (ref: CollectionReference) => ref.where("userId", "==", rootStore.user.userId).orderBy("name")
+                ? (ref: CollectionReference) => ref.where("userId", "==", rootStore.user.authenticatedUserId).orderBy("name")
                 : null;
 
         this.favoriteGroupCollection = new Collection(
@@ -56,7 +58,7 @@ export class FavoriteStore {
             },
         )
 
-        reaction(() => rootStore.user.userId, () => {
+        reaction(() => rootStore.user.authenticatedUserId, () => {
             this.favoriteGroupCollection.query = createQuery();
         });
     }
@@ -68,6 +70,7 @@ export class FavoriteStore {
         }
 
         const doc = this.favoriteGroupCollection.get(this.activefavoriteGroupIdField);
+
         return doc && doc.data
             ? doc
             : undefined;
@@ -97,7 +100,16 @@ export class FavoriteStore {
             .where("groupId", "==", groupId);
 
         return this.favoriteCollection.fetchAsync()
-            .then(() => this.favoriteCollection.docs);
+            .then(() => {
+
+                return this.favoriteCollection.docs
+                    .sort((a, b) => {
+                        // TODO: Use stable sort method
+                        return (a.data!.description || "") > (b.data!.description || "")
+                            ? 1
+                            : -1;
+                    });
+            });
     }
 
     @action
@@ -111,7 +123,7 @@ export class FavoriteStore {
             : this.favoriteGroupCollectionRef.doc().id;
 
         this.db.runTransaction(() => {
-            if (!this.rootStore.user.userId)
+            if (!this.rootStore.user.authenticatedUserId)
                 return Promise.reject("Unauthenticated");
 
             return Promise.all<string[] | string | undefined>([
@@ -119,7 +131,7 @@ export class FavoriteStore {
                     ? undefined
                     : this.favoriteGroupCollection.addAsync({
                         name: group.name,
-                        userId: this.rootStore.user.userId
+                        userId: this.rootStore.user.authenticatedUserId
                     }, groupId),
                 this.favoriteCollection.addAsync(
                     favorites

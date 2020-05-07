@@ -27,8 +27,6 @@ export function withFavorites(
                 });
         }, []);
 
-        if (favorites === undefined) return <></>;
-
         return favorites
             ? <WrappedComponent
                 favorites={favorites}

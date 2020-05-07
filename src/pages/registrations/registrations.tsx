@@ -2,11 +2,11 @@ import * as React from 'react';
 import { observer } from "mobx-react";
 import { goToRegistration, goToOverview, RedirectToLogin } from '../../internal';
 import { Day } from '../../containers/registrations/day';
-import { ListDivider } from '../../mdc/list';
 import { SortOrder, Days } from '../../containers/registrations/days';
 import { FlexGroup } from '../../components/layout/flex';
 import { withAuthentication } from '../../containers/users/with-authentication';
 import { StoreContext } from '../../contexts/store-context';
+import { ListDivider } from '@rmwc/list';
 
 
 @observer

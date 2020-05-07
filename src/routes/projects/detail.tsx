@@ -1,5 +1,5 @@
 import { transaction } from 'mobx';
-import { Route, RoutesConfig } from 'mobx-router';
+import { Route } from 'mobx-router';
 import * as React from 'react';
 
 import { IRootStore } from '../../stores/root-store';
@@ -9,18 +9,34 @@ import { setTitleForRoute } from '../actions';
 import { App } from '../../internal';
 import ProjectDetailPage from '../../pages/project-detail';
 import { IProject } from '../../../common/dist';
+import { useEffect } from 'react';
+import { useStore } from '../../contexts/store-context';
 
 const path = "/projectdetail";
 
-export const goToProject = (store: IRootStore, id?: string) => {
-    store.router.goTo(id ? routes.projectDetail : routes.newProject, { id }, store);
+type Params = { id?: string };
+
+type ProjectDetailRoute = Route<IRootStore, Params, {}>;
+
+export const GoToProject = ({
+    id,
+}: {
+    id?: string,
+}) => {
+    const store = useStore();
+
+    useEffect(() => {
+        store.router.goTo(id ? routes.projectDetail : routes.newProject, { id });
+    }, []);
+
+    return <></>;
 };
 
 export const goToNewProject = (store: IRootStore) => {
-    store.router.goTo(routes.newProject, { id: undefined }, store);
+    store.router.goTo(routes.newProject, { id: undefined });
 };
 
-const beforeEnter = (_route: Route, params: { id?: string }, s: IRootStore) => {
+const beforeEnter = (_route: ProjectDetailRoute, params: Params, s: IRootStore) => {
     if (params.id) {
         s.projects.setProjectId(params.id);
     }
@@ -29,7 +45,7 @@ const beforeEnter = (_route: Route, params: { id?: string }, s: IRootStore) => {
     }
 }
 
-const onEnter = (route: Route, params: { id?: string }, s: IRootStore) => {
+const onEnter = (route: ProjectDetailRoute, params: Params, s: IRootStore) => {
     const save = () => {
 
         const isValidProject = (project?: Partial<IProject> | null): project is IProject => {
@@ -78,7 +94,7 @@ const onEnter = (route: Route, params: { id?: string }, s: IRootStore) => {
     });
 };
 
-const beforeExit = (_route: Route, _params: any, s: IRootStore) => {
+const beforeExit = (_route: ProjectDetailRoute, _params: Params, s: IRootStore) => {
     transaction(() => {
         s.projects.setProjectId(undefined);
         s.view.setNavigation("default");
@@ -104,7 +120,7 @@ const routes = {
         beforeExit,
         beforeEnter,
     })
-} as RoutesConfig;
+};
 
 export default routes;
 

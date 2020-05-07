@@ -41,9 +41,9 @@ class Dashboard extends React.Component {
         super(props);
 
         if (!context.dashboard.timePeriodFilterValue) {
-            when(() => !!context.user.userId, () => {
+            when(() => !!context.user.authenticatedUserId, () => {
                 transaction(() => {
-                    context.dashboard.setUserFilter(context.user.userId);
+                    context.dashboard.setUserFilter(context.user.authenticatedUserId);
                     context.dashboard.setTimePeriodFilter(TimePeriod.ThisMonth);
                 });
             });
@@ -72,7 +72,7 @@ class Dashboard extends React.Component {
         const taskChartProps: IRegistrationsChartProps<ITask> = {
             title: "Time / task",
             data: this.context.dashboard.registrationsGroupedByTask,
-            labelCollection: this.context.config.tasks,
+            labelCollection: this.context.config.tasksCollection,
             getLabel: task => task.name,
             chart: ChartType.Doughnut
         };

@@ -1,8 +1,9 @@
-import { IRegistrationsStore, RegistrationStore } from "./registration-store";
+import { RouterStore } from "mobx-router";
+
+import { IRegistrationsStore, RegistrationStore } from "./registration-store/registration-store";
 import { IConfigStore, ConfigStore } from "./config-store";
 import { IUserStore, UserStore } from "./user-store";
 import { IViewStore, ViewStore } from "./view-store";
-import { RouterStore } from "mobx-router";
 import { IReportStore, ReportStore } from "./report-store";
 import { DashboardStore, IDashboardStore } from "./dashboard-store";
 import { IProjectStore, ProjectStore } from "./project-store";
@@ -11,7 +12,7 @@ import { FavoriteStore } from "./favorite-store";
 export interface IRootStore {
     readonly user: IUserStore;
     readonly view: IViewStore;
-    readonly router: RouterStore;
+    readonly router: RouterStore<IRootStore>;
     readonly timesheets: IRegistrationsStore;
     readonly reports: IReportStore;
     readonly config: IConfigStore;
@@ -25,20 +26,67 @@ export class Store implements IRootStore {
     public readonly view: IViewStore;
     public readonly user: IUserStore;
     public readonly config: IConfigStore;
-    public readonly router = new RouterStore();
+    public readonly router: RouterStore<IRootStore>;
     public readonly reports: IReportStore;
     public readonly dashboard: IDashboardStore;
     public readonly projects: IProjectStore;
     public readonly favorites: FavoriteStore;
 
-    constructor() {
-        this.user = new UserStore(this);
+    constructor({
+        auth,
+        firestore,
+        storage,
+    }: {
+        firestore: firebase.firestore.Firestore,
+        auth: firebase.auth.Auth,
+        storage: firebase.storage.Storage,
+    }) {
+        this.user = new UserStore(
+            this,
+            {
+                auth,
+                firestore,
+            }
+        );
+
         this.view = new ViewStore(this);
-        this.config = new ConfigStore(this);
-        this.timesheets = new RegistrationStore(this);
-        this.reports = new ReportStore(this);
-        this.dashboard = new DashboardStore(this);
-        this.projects = new ProjectStore(this);
-        this.favorites = new FavoriteStore(this);
+        this.config = new ConfigStore(
+            this,
+            {
+                firestore,
+            },
+        );
+        this.timesheets = new RegistrationStore(
+            this,
+            {
+                firestore,
+            },
+        );
+        this.reports = new ReportStore(
+            this,
+            {
+                firestore,
+                storage,
+            },
+        );
+        this.dashboard = new DashboardStore(
+            this,
+            {
+                firestore,
+            },
+        );
+        this.projects = new ProjectStore(
+            this,
+            {
+                firestore,
+            },
+        );
+        this.favorites = new FavoriteStore(
+            this,
+            {
+                firestore,
+            },
+        );
+        this.router = new RouterStore<IRootStore>(this);
     }
 };

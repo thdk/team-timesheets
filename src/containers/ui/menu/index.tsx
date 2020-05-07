@@ -95,7 +95,7 @@ class Menu extends React.Component<Props> {
                 <div className="mdc-list">
                     <a className="mdc-list-item" onClick={this.toggleLogin} href="#">
                         <i className="material-icons mdc-list-item__graphic" aria-hidden="true">perm_identity</i>
-                        <span className="mdc-list-item__text">{this.context.user.userId ? "Logout" : "Login"}</span>
+                        <span className="mdc-list-item__text">{this.context.user.authenticatedUserId ? "Logout" : "Login"}</span>
                     </a>
                 </div>
             </>

@@ -15,8 +15,8 @@ import { parse as json2csv } from 'json2csv';
 
 
 export const createCSV = functions.firestore
-.document('reports/{reportId}')
-.onCreate(snapshot => {
+    .document('reports/{reportId}')
+    .onCreate(snapshot => {
         const db = admin.firestore();
 
         const adminConfig = getAdminConfig();
@@ -81,7 +81,15 @@ export const createCSV = functions.firestore
                     const project = projectData ? projectData.name : fireStoreData.project;
                     const task = taskData ? taskData.name : fireStoreData.task;
                     const client = clientData ? clientData.name : fireStoreData.client;
-                    const date = fireStoreData.date ? fireStoreData.date.toDate().getDate() : "";
+
+                    const utcDate = fireStoreData.date ? fireStoreData.date.toDate() : undefined;
+                    const localDate = utcDate
+                        ? (utcDate as any).toLocaleString("nl-BE", { timeZone: "Europe/Brussels" })
+                        : undefined;
+                    const date = localDate
+                        ? new Date(localDate).getDate()
+                        : "";
+
                     const time = fireStoreData.time ? parseFloat(fireStoreData.time.toFixed(2)) : 0;
                     const description = fireStoreData.description ? stripInvalidCSVChars(fireStoreData.description) : "";
 

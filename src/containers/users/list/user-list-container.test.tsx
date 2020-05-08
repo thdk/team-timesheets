@@ -5,7 +5,7 @@ import { initTestFirestore, deleteFirebaseAppsAsync } from "../../../__tests__/u
 
 import { TestCollection } from "../../../__tests__/utils/firestorable/collection";
 
-import { StoreProvider } from "../../../contexts/store-context";
+import { StoreContext } from "../../../contexts/store-context";
 import { IRootStore } from "../../../stores/root-store";
 import { UserStore } from "../../../stores/user-store";
 import { ConfigStore } from "../../../stores/config-store";
@@ -130,9 +130,9 @@ describe("UserListContainer", () => {
     it("should render without users", () => {
 
         const { asFragment } = render(
-            <StoreProvider value={store}>
+            <StoreContext.Provider value={store}>
                 <UserList />
-            </StoreProvider>
+            </StoreContext.Provider>
         );
 
         expect(asFragment()).toMatchSnapshot();
@@ -151,9 +151,9 @@ describe("UserListContainer", () => {
 
         it("should render users", async () => {
             const { findByText, asFragment } = render(
-                <StoreProvider value={store}>
+                <StoreContext.Provider value={store}>
                     <UserList />
-                </StoreProvider>
+                </StoreContext.Provider>
             );
 
             await waitFor(
@@ -168,9 +168,9 @@ describe("UserListContainer", () => {
             store.router.goTo = goTo;
 
             const { findByText } = render(
-                <StoreProvider value={store}>
+                <StoreContext.Provider value={store}>
                     <UserList />
-                </StoreProvider>
+                </StoreContext.Provider>
             );
 
             const userListItemEl = await findByText("user 1");
@@ -192,9 +192,9 @@ describe("UserListContainer", () => {
         describe("when user is added in the collection", () => {
             it("should rerender to add the user to the list", async () => {
                 const { queryByText, getByText } = render(
-                    <StoreProvider value={store}>
+                    <StoreContext.Provider value={store}>
                         <UserList />
-                    </StoreProvider>
+                    </StoreContext.Provider>
                 );
 
                 // user should originally not be in the list
@@ -227,9 +227,9 @@ describe("UserListContainer", () => {
 
             it("should rerender to removed the user from the list", async () => {
                 const { getByText, queryByText } = render(
-                    <StoreProvider value={store}>
+                    <StoreContext.Provider value={store}>
                         <UserList />
-                    </StoreProvider>
+                    </StoreContext.Provider>
                 );
 
                 // user should originally be in the list
@@ -246,9 +246,9 @@ describe("UserListContainer", () => {
         describe("when user is updated in the collection", () => {
             it("should rerender to show the updated user in the list", async () => {
                 const { getByText } = render(
-                    <StoreProvider value={store}>
+                    <StoreContext.Provider value={store}>
                         <UserList />
-                    </StoreProvider>
+                    </StoreContext.Provider>
                 );
 
                 // user should originally be in the list

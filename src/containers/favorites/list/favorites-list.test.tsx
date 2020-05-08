@@ -5,7 +5,7 @@ import { FavoriteCollection } from "../../../__tests__/utils/firestorable/favori
 import { UserCollection } from "../../../__tests__/utils/firestorable/user-collection";
 import { TestCollection } from "../../../__tests__/utils/firestorable/collection";
 import { IClientData, IFavoriteRegistrationGroup, IProjectData, ITaskData } from "../../../../common";
-import { StoreProvider } from "../../../contexts/store-context";
+import { StoreContext } from "../../../contexts/store-context";
 import { IRootStore } from "../../../stores/root-store";
 import { render, act, waitFor, findByText } from "@testing-library/react";
 import { FavoriteStore } from "../../../stores/favorite-store";
@@ -66,9 +66,9 @@ describe("FavoritesList", () => {
         const store = new TestStore() as unknown as IRootStore;
 
         const { asFragment } = render(
-            <StoreProvider value={store}>
+            <StoreContext.Provider value={store}>
                 <FavoritesList />
-            </StoreProvider>
+            </StoreContext.Provider>
         );
 
         expect(asFragment()).toMatchSnapshot();
@@ -162,9 +162,9 @@ describe("FavoritesList", () => {
         await act(async () => {
             const renderResult = render(
                 // <FirebaseProvider>
-                <StoreProvider value={store}>
+                <StoreContext.Provider value={store}>
                     <FavoritesList />
-                </StoreProvider>
+                </StoreContext.Provider>
                 //</FirebaseProvider>
             );
 

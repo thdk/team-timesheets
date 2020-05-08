@@ -3,7 +3,7 @@ import { Route } from 'mobx-router';
 import { setNavigationContent, goToRouteWithDate, routeWithDateChanged } from '../actions';
 import { App, DateObject } from '../../internal';
 import { IRootStore } from '../../stores/root-store';
-import Reports from '../../pages/export';
+import { Reports } from '../../pages/export';
 
 const path = "/reports";
 

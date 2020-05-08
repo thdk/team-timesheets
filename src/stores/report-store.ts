@@ -22,7 +22,6 @@ export class ReportStore implements IReportStore {
         rootStore: IRootStore,
         {
             firestore,
-            storage,
         }: {
             firestore: firebase.firestore.Firestore,
             storage: firebase.storage.Storage,
@@ -53,16 +52,7 @@ export class ReportStore implements IReportStore {
         };
 
         reaction(() => rootStore.view.monthMoment, updateReportsQuery);
-        reaction(() => rootStore.user.authenticatedUserId, updateReportsQuery);
-
-        reaction(() => this.report, (r) => {
-            if (r && r.data && r.data.status === "complete") {
-                const { month, year } = rootStore.view;
-                const { authenticatedUserId: userId } = rootStore.user;
-                storage.ref(`reports/${year}/${month}/${userId}.csv`).getDownloadURL()
-                    .then(url => this.reportUrl = url);
-            }
-        });
+        reaction(() => rootStore.user.authenticatedUserId, updateReportsQuery);       
     }
 
     @action

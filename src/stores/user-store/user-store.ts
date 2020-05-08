@@ -211,11 +211,6 @@ export class UserStore implements IUserStore {
             : Promise.reject(new Error("Firebase auth not initialized"));
     }
 
-    // TODO: should be taken from context using FirebaseProvider component
-    public get firebaseAuth() {
-        return this.auth;
-    }
-
     public dispose() {
         this.usersCollection.dispose();
     }

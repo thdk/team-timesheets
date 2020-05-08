@@ -47,7 +47,7 @@ const {
     ]);
 
 
-class TestStore {
+export class TestStore {
     rootStore: IRootStore = this as unknown as IRootStore;
 
     public user = new UserStore(this.rootStore, { firestore });

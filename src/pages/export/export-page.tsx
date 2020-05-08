@@ -9,7 +9,7 @@ import { withAuthentication } from '../../containers/users/with-authentication';
 import { RedirectToLogin } from '../../routes/login';
 import { useStore } from '../../contexts/store-context';
 import { ReportDownload } from '../../containers/report-download';
-import { TotalList } from '../../containers/registrations-list-total';
+import { RegistrationsListTotal } from '../../containers/registrations-list-total';
 
 export const Reports = withAuthentication(
     observer(() => {
@@ -74,7 +74,7 @@ export const Reports = withAuthentication(
                         showHeaderAddButton={false}
                     />
 
-                    <TotalList />
+                    <RegistrationsListTotal />
                 </FlexGroup>
             </>
         );

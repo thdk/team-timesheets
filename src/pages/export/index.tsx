@@ -1,131 +1,138 @@
-import * as React from 'react';
-import { observer } from "mobx-react";
+import React, { useCallback } from 'react';
+import { observer } from "mobx-react-lite";
 import { goToRegistration } from '../../internal';
 import { Days, SortOrder } from '../../containers/registrations/days';
-import { goToOverview } from '../../routes/registrations/overview';
 import { DateSelect } from '../../components/date-select';
 import { ButtonType, Button } from '../../mdc/buttons/button';
 import { FlexGroup } from '../../components/layout/flex';
 import { withAuthentication } from '../../containers/users/with-authentication';
 import { RedirectToLogin } from '../../routes/login';
-import { StoreContext } from '../../contexts/store-context';
+import { useStore } from '../../contexts/store-context';
 import { ListItem, List, ListDivider, ListItemText, ListItemMeta } from '@rmwc/list';
+import { IReport } from '../../../common';
 
-@observer
-class Reports extends React.Component {
-    declare context: React.ContextType<typeof StoreContext>;
-    static contextType = StoreContext;
+const ReportDownloadLink = observer(({ report }: { report: IReport }) => {
+    const store = useStore();
 
-    componentDidMount() {
-        this.context
-            .reports.reports.fetchAsync();
+    return <>
+        {
+            store.reports.reportUrl
+                ? <a href={store.reports.reportUrl}>Download report</a>
+                : report.status
+        }
+    </>;
+});
+
+const ReportDownload = observer(() => {
+    const store = useStore();
+    const report = store.reports.report && store.reports.report.data;
+
+    if (!report) {
+        return null;
     }
 
-    componentWillUnmount() {
-        this.context
-            .reports.reports.dispose();
+    return (
+        <FlexGroup
+            direction={"vertical"}
+            style={{ paddingRight: "1em", alignItems: "flex-end" }}
+        >
+            <ReportDownloadLink report={report} />
+        </FlexGroup>
+    )
+});
+
+const TotalList = observer(() => {
+    const store = useStore();
+
+    const totalTime = store.timesheets.registrationsTotalTime;
+
+    const Total = () => (
+        <ListItem key={`total-month`} disabled={true}>
+            <ListItemText>
+                {`Total in ${store.view.moment.format('MMMM')}`}
+            </ListItemText>
+            <ListItemMeta>
+                {parseFloat(totalTime.toFixed(2)) + " hours"}
+            </ListItemMeta>
+        </ListItem>
+    );
+
+    return (
+        <List style={{ width: "100%" }}>
+            <ListDivider />
+            <Total />
+            <ListDivider />
+        </List>
+    )
+});
+
+export const Reports = observer(() => {
+    const store = useStore();
+
+    const onRegistrationClick = useCallback((id: string) => {
+        goToRegistration(store, id);
+    }, [goToRegistration, store]);
+
+    const onExportClick = () => {
+        store.user.authenticatedUserId
+            && store.view.year
+            && store.view.month
+            && store.reports.requestReport(
+                store.user.authenticatedUserId,
+                store.view.year,
+                store.view.month,
+            );
     }
 
-    registrationClick = (id: string) => {
-        goToRegistration(this.context, id);
+    const onChangeMonthClick = (month: number) => {
+        store.view.month = month + 1;
     }
 
-    goToDate(e: React.MouseEvent, date: Date) {
-        e.preventDefault();
-        this.context
-            .view.track = true;
-        goToOverview(this.context
-            , {
-                year: date.getFullYear(),
-                month: date.getMonth() + 1,
-                day: date.getDate()
-            }, { track: true });
+    const onChangeYearClick = (year: number) => {
+        store.view.year = year;
     }
 
-    render() {
-        if (!this.context
-            .view.moment) return null;
 
-        const totalTime = this.context
-            .timesheets.registrationsTotalTime;
+    if (!store.view.moment) {
+        return null;
+    }
 
-        const totalLabel = `Total in ${this.context
-            .view.moment.format('MMMM')}`;
-        const total = (
-            <ListItem key={`total-month`} disabled={true}>
-                <ListItemText>
-                    {totalLabel}
-                </ListItemText>
-                <ListItemMeta>
-                    {parseFloat(totalTime.toFixed(2)) + " hours"}
-                </ListItemMeta>
-            </ListItem>
-        );
+    const { month, year } = store.view;
 
-        const totalList = <List style={{ width: "100%" }}><ListDivider></ListDivider>{total}<ListDivider></ListDivider></List>;
-
-        const { month, year } = this.context
-            .view;
-
-        const download = (this.context
-            .reports.report && this.context
-                .reports.report.data) ? this.context
-                    .reports.reportUrl
-                ? <a href={this.context
-                    .reports.reportUrl}>Download report</a>
-                : this.context
-                    .reports.report.data.status : undefined;
-        const downloadReport = download &&
-            <FlexGroup direction={"vertical"} style={{ paddingRight: "1em", alignItems: "flex-end" }}>{download}</FlexGroup>
-
-        return (
-            <>
-                <FlexGroup direction="vertical">
-                    <FlexGroup style={{ alignItems: "center", justifyContent: "space-between", width: "100%" }}>
-                        <DateSelect
-                            style={{ margin: "1em" }}
-                            onMonthChange={this.changeMonth.bind(this)}
-                            onYearChange={this.changeYear.bind(this)}
-                            month={month ? month - 1 : undefined}
-                            year={year} />
-                        <Button onClick={this.export} style={{ margin: "1em" }} type={ButtonType.Outlined}>Export</Button>
-                    </FlexGroup>
-                    {downloadReport}
-                    <Days
-                        sortOrder={SortOrder.Ascending}
-                        totalOnTop={true}
-                        registrationClick={this.registrationClick.bind(this)}
-                        isMonthView={true}
-                        showHeaderAddButton={false}
-                    />
-                    {totalList}
+    return (
+        <>
+            <FlexGroup direction="vertical">
+                <FlexGroup style={{ alignItems: "center", justifyContent: "space-between", width: "100%" }}>
+                    <DateSelect
+                        style={{ margin: "1em" }}
+                        onMonthChange={onChangeMonthClick}
+                        onYearChange={onChangeYearClick}
+                        month={month ? month - 1 : undefined}
+                        year={year} />
+                    <Button
+                        onClick={onExportClick}
+                        style={{ margin: "1em" }}
+                        type={ButtonType.Outlined}
+                    >
+                        Export
+                    </Button>
                 </FlexGroup>
-            </>
-        );
-    }
 
-    export = () => {
-        this.context
-            .user.authenticatedUserId
-            && this.context
-                .view.year
-            && this.context
-                .view.month
-            && this.context
-                .reports.requestReport(this.context
-                    .user.authenticatedUserId, this.context
-                        .view.year, this.context
-                            .view.month);
-    }
+                <ReportDownload />
 
-    changeMonth(month: number) {
-        this.context.view.month = month + 1;
-    }
+                <Days
+                    sortOrder={SortOrder.Ascending}
+                    totalOnTop={true}
+                    registrationClick={onRegistrationClick}
+                    isMonthView={true}
+                    showHeaderAddButton={false}
+                />
 
-    changeYear(year: number) {
-        this.context.view.year = year;
-    }
-}
+                <TotalList />
+            </FlexGroup>
+        </>
+    );
+});
 
 export default withAuthentication(
     Reports,

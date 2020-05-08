@@ -33,7 +33,7 @@ export class ReportStore implements IReportStore {
             firestore,
             "reports", {
             realtimeMode: RealtimeMode.on,
-            fetchMode: FetchMode.manual,
+            fetchMode: FetchMode.auto,
         },
             {
                 logger: console.log,

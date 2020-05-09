@@ -1,13 +1,13 @@
 import { RouterStore } from "mobx-router";
 
-import { IRegistrationsStore, RegistrationStore } from "./registration-store/registration-store";
-import { IConfigStore, ConfigStore } from "./config-store";
-import { IUserStore, UserStore } from "./user-store";
-import { IViewStore, ViewStore } from "./view-store";
-import { IReportStore, ReportStore } from "./report-store";
-import { DashboardStore, IDashboardStore } from "./dashboard-store";
-import { IProjectStore, ProjectStore } from "./project-store";
-import { FavoriteStore } from "./favorite-store";
+import { IRegistrationsStore, RegistrationStore } from "../registration-store/registration-store";
+import { IConfigStore, ConfigStore } from "../config-store";
+import { IUserStore, UserStore } from "../user-store";
+import { IViewStore, ViewStore } from "../view-store";
+import { IReportStore, ReportStore } from "../report-store/report-store";
+import { DashboardStore, IDashboardStore } from "../dashboard-store";
+import { IProjectStore, ProjectStore } from "../project-store";
+import { FavoriteStore } from "../favorite-store";
 
 export interface IRootStore {
     readonly user: IUserStore;
@@ -35,11 +35,9 @@ export class Store implements IRootStore {
     constructor({
         auth,
         firestore,
-        storage,
     }: {
         firestore: firebase.firestore.Firestore,
-        auth: firebase.auth.Auth,
-        storage: firebase.storage.Storage,
+        auth?: firebase.auth.Auth,
     }) {
         this.user = new UserStore(
             this,
@@ -66,7 +64,6 @@ export class Store implements IRootStore {
             this,
             {
                 firestore,
-                storage,
             },
         );
         this.dashboard = new DashboardStore(
@@ -88,5 +85,16 @@ export class Store implements IRootStore {
             },
         );
         this.router = new RouterStore<IRootStore>(this);
+    }
+
+    public dispose() {
+        // this.config.dispose();
+        // this.dashboard.dispose();
+        // this.favorites.dispose();
+        // this.projects.dispose();
+        // this.reports.dispose();
+        // this.timesheets.dispose();
+        this.user.dispose();
+        // this.view.dispose();
     }
 };

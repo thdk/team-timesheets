@@ -6,12 +6,8 @@ import { initTestFirestore, deleteFirebaseAppsAsync } from "../../../__tests__/u
 import { TestCollection } from "../../../__tests__/utils/firestorable/collection";
 
 import { StoreContext } from "../../../contexts/store-context";
-import { IRootStore } from "../../../stores/root-store";
-import { UserStore } from "../../../stores/user-store";
-import { ConfigStore } from "../../../stores/config-store";
+import { Store } from "../../../stores/root-store";
 import { ITeamData } from "../../../../common";
-import { RouterStore } from "mobx-router";
-import { ViewStore } from "../../../stores/view-store";
 import { UserList } from ".";
 
 jest.mock("@material/top-app-bar/index", () => ({
@@ -49,21 +45,6 @@ const {
 
 beforeAll(clearFirestoreDataAsync);
 afterAll(() => deleteFirebaseAppsAsync());
-
-class TestStore {
-    rootStore = this as unknown as IRootStore;
-    public user = new UserStore(this.rootStore, {
-        firestore,
-    });
-
-    public config = new ConfigStore(this.rootStore, {
-        firestore,
-    });
-
-    public view = new ViewStore(this.rootStore);
-
-    public router = new RouterStore(this.rootStore);
-}
 
 const userCollection = new TestCollection(firestore, userRef);
 const teamCollection = new TestCollection<ITeamData>(firestore, teamRef);
@@ -125,7 +106,7 @@ beforeAll(() => setupAsync());
 
 describe("UserListContainer", () => {
 
-    const store = new TestStore() as unknown as IRootStore;
+    const store = new Store({ firestore });
 
     it("should render without users", () => {
 

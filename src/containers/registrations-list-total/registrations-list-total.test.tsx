@@ -1,32 +1,12 @@
 import React from "react";
 import { initTestFirestore, deleteFirebaseAppsAsync } from "../../__tests__/utils/firebase";
-import { IRootStore } from "../../stores/root-store";
+import { Store } from "../../stores/root-store";
 import { TestCollection } from "../../__tests__/utils/firestorable/collection";
 import { IRegistrationData } from "../../../common";
 import { waitFor, render } from "@testing-library/react";
 import { RegistrationsListTotal } from "./registrations-list-total";
 import { StoreProvider } from "../../contexts/store-context";
-import { UserStore } from "../../stores/user-store";
-import { ViewStore } from "../../stores/view-store";
-import { ConfigStore } from "../../stores/config-store";
-import { RegistrationStore } from "../../stores/registration-store";
-
-export class TestStore {
-    rootStore: IRootStore = this as unknown as IRootStore;
-
-    public user = new UserStore(this.rootStore, { firestore });
-    public view = new ViewStore(this.rootStore, new Date(2020, 3, 1));
-    public config = new ConfigStore(this.rootStore, { firestore });
-    public timesheets = new RegistrationStore(
-        this.rootStore, { firestore }
-    );
-
-    public dispose() {
-        this.user.dispose();
-        this.timesheets.dispose();
-        // this.config.dispose();
-    }
-}
+import { transaction } from "mobx";
 
 jest.mock("@material/top-app-bar/index", () => ({
     MDCTopAppBar: () => <></>,
@@ -134,10 +114,14 @@ const setupAsync = () => {
     ]);
 };
 
-const store = new TestStore();
+const store = new Store({
+    firestore,
+});
 
 beforeAll(clearFirestoreDataAsync);
-beforeAll(setupAsync);
+beforeAll(() => {
+    setupAsync();
+});
 afterAll(() => {
     store.dispose();
     return Promise.all([
@@ -146,13 +130,20 @@ afterAll(() => {
 });
 
 describe("RegistrationsListTotal", () => {
-    beforeAll(() => {
-        store.user.setUser({ uid: "user-1", displayName: "user 1" } as firebase.User);
+    beforeEach(() => {
+        transaction(() => {
+            store.user.setUser({ uid: "user-1", displayName: "user 1" } as firebase.User);
+            store.view.setViewDate({
+                year: 2020,
+                month: 4,
+                day: 1,
+            });
+        });
     });
 
     it("should display total time", async () => {
         const { getByText } = render(
-            <StoreProvider testStore={store as unknown as IRootStore}>
+            <StoreProvider testStore={store}>
                 <RegistrationsListTotal />
             </StoreProvider>
         );
@@ -160,6 +151,34 @@ describe("RegistrationsListTotal", () => {
         await waitFor(() => {
             expect(getByText("Total in April"));
             expect(getByText("13.5 hours"));
+        });
+    });
+
+    it("rerenders when view date changes", async () => {
+        store.view.setViewDate({
+            year: 2020,
+            month: 1,
+        });
+
+        const { getByText } = render(
+            <StoreProvider testStore={store}>
+                <RegistrationsListTotal />
+            </StoreProvider>
+        );
+
+        await waitFor(() => {
+            expect(getByText("Total in January"));
+            expect(getByText("0 hours"));
+        });
+
+        store.view.setViewDate({
+            year: 2020,
+            month: 6,
+        });
+
+        await waitFor(() => {
+            expect(getByText("Total in June"));
+            expect(getByText("4.5 hours"));
         });
     });
 });

@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Route } from 'mobx-router';
+import { Route, RouterStore } from 'mobx-router';
 import { transaction } from 'mobx';
 import moment from 'moment';
 
@@ -15,8 +15,8 @@ type RouteParams = { id?: string };
 type QueryParams = { date: string; };
 type RegistrationsDetailRoute = Route<IRootStore, RouteParams, QueryParams>;
 
-export const goToRegistration = (store: IRootStore, id?: string) => {
-    store.router.goTo(id ? routes.registrationDetail : routes.newRegistration, { id });
+export const goToRegistration = (router: RouterStore<IRootStore>, id?: string) => {
+    router.goTo(id ? routes.registrationDetail : routes.newRegistration, { id });
 };
 
 export const goToNewRegistration = (store: IRootStore, date: moment.Moment) => {

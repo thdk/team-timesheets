@@ -7,43 +7,48 @@ import { ButtonType, Button } from '../../mdc/buttons/button';
 import { FlexGroup } from '../../components/layout/flex';
 import { withAuthentication } from '../../containers/users/with-authentication';
 import { RedirectToLogin } from '../../routes/login';
-import { useStore } from '../../contexts/store-context';
-import { ReportDownload } from '../../containers/report-download';
 import { RegistrationsListTotal } from '../../containers/registrations-list-total';
+import { ReportDownloadLink } from '../../containers/report-download-link';
+import { useViewStore } from '../../stores/view-store';
+import { useUserStore } from '../../stores/user-store';
+import { useReportStore } from '../../stores/report-store';
+import { useRouterStore } from '../../stores/router-store';
 
 export const Reports = withAuthentication(
     observer(() => {
-        const store = useStore();
+        const user = useUserStore();
+        const view = useViewStore();
+        const reports = useReportStore();
+        const router = useRouterStore();
 
         const onRegistrationClick = useCallback((id: string) => {
-            goToRegistration(store, id);
-        }, [goToRegistration, store]);
+            goToRegistration(router, id);
+        }, [goToRegistration, router]);
 
         const onExportClick = () => {
-            store.user.authenticatedUserId
-                && store.view.year
-                && store.view.month
-                && store.reports.requestReport(
-                    store.user.authenticatedUserId,
-                    store.view.year,
-                    store.view.month,
+            user.authenticatedUserId
+                && view.year
+                && view.month
+                && reports.requestReport(
+                    user.authenticatedUserId,
+                    view.year,
+                    view.month,
                 );
         }
 
         const onChangeMonthClick = (month: number) => {
-            store.view.month = month + 1;
+            view.month = month + 1;
         }
 
         const onChangeYearClick = (year: number) => {
-            store.view.year = year;
+            view.year = year;
         }
 
-
-        if (!store.view.moment) {
+        if (!view.moment) {
             return null;
         }
 
-        const { month, year } = store.view;
+        const { month, year } = view;
 
         return (
             <>
@@ -64,7 +69,12 @@ export const Reports = withAuthentication(
                     </Button>
                     </FlexGroup>
 
-                    <ReportDownload />
+                    <FlexGroup
+                        direction={"vertical"}
+                        style={{ paddingRight: "1em", alignItems: "flex-end" }}
+                    >
+                        <ReportDownloadLink />
+                    </FlexGroup>
 
                     <Days
                         sortOrder={SortOrder.Ascending}

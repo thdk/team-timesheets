@@ -19,7 +19,7 @@ class Timesheet extends React.Component {
             this.context.view.toggleSelection(id, true);
         } else {
             this.context.timesheets.setSelectedRegistration(id);
-            goToRegistration(this.context, id);
+            goToRegistration(this.context.router, id);
         }
     }
 

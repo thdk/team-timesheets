@@ -24,7 +24,7 @@ export const ClientList = observer(() => {
             icon: client.data!.icon
         }))}
         onAddItem={saveListItem}
-        onToggleSelection={id => id && store.view.toggleSelection(id, true)}
+        onToggleSelection={id => id && store.view.toggleSelection(id)}
         onItemClick={id => store.config.clientId = id}
         activeItemId={store.config.clientId}
         selection={store.view.selection}

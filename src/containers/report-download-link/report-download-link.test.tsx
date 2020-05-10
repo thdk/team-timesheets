@@ -129,9 +129,6 @@ describe("ReportDownloadLink", () => {
         // TODO: Setup firebase functions emulator so we don't have to fake this here
         await reportsCollection.updateAsync({ status: "complete" }, store.reports.report!.id);
 
-        // Report status should be updated to 'complete'
-        await findByText("complete");
-
         // The download url is fetched and should be displayed when finished
         await findByText("Download report");
     });

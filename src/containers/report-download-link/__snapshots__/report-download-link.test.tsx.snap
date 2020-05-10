@@ -1,0 +1,3 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`ReportDownloadLink should not render when there is no report 1`] = `<DocumentFragment />`;

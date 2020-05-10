@@ -1,19 +1,19 @@
 import React, { useState, useEffect } from 'react';
 import { observer } from 'mobx-react-lite';
-import { useStore } from '../../contexts/store-context';
 import { useUserStore } from '../../stores/user-store';
 import { useViewStore } from '../../stores/view-store';
-import { useFirebase } from '../../contexts/firebase-context/firebase-context';
+import { useFirebase } from '../../contexts/firebase-context';
 import { reaction } from 'mobx';
+import { useReportStore } from '../../stores/report-store';
 
 export const ReportDownloadLink = observer(() => {
-    const store = useStore();
-
-    const reportDoc = store.reports.report;
+    const reportStore = useReportStore();
     const userStore = useUserStore();
     const view = useViewStore();
     const firebase = useFirebase();
     const [reportUrl, setReportUrl] = useState<string | undefined>(undefined);
+
+    const reportDoc = reportStore.report;
 
     useEffect(() => {
         reportDoc?.watch();
@@ -33,6 +33,7 @@ export const ReportDownloadLink = observer(() => {
             if (status === "complete") {
                 const { month, year } = view;
                 const { authenticatedUserId: userId } = userStore;
+
                 firebase.storage().ref(`reports/${year}/${month}/${userId}.csv`).getDownloadURL()
                     .then(url => setReportUrl(url));
             }
@@ -46,7 +47,8 @@ export const ReportDownloadLink = observer(() => {
         {
             reportUrl
                 ? (
-                    <a href={reportUrl}>
+                    <a href={reportUrl}
+                    >
                         Download report
                     </a>
                 )

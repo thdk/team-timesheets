@@ -1,3 +1,5 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`ReportDownloadLink should not crash when report is deleted in database 1`] = `<DocumentFragment />`;
+
 exports[`ReportDownloadLink should not render when there is no report 1`] = `<DocumentFragment />`;

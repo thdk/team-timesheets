@@ -23,25 +23,30 @@ export const ReportDownloadLink = observer(() => {
         };
     }, [reportDoc]);
 
+    useEffect(() => {
+        if (!reportDoc) {
+            return;
+        }
+
+        return reaction<"waiting" | "error" | "complete" | undefined>(
+            () => reportDoc.data?.status, (status: "waiting" | "error" | "complete" | undefined) => {
+                if (status === "complete") {
+                    const { month, year } = view;
+                    const { authenticatedUserId: userId } = userStore;
+
+                    firebase.storage().ref(`reports/${year}/${month}/${userId}.csv`).getDownloadURL()
+                        .then(url => setReportUrl(url));
+                }
+            },
+            {
+                fireImmediately: true,
+            },
+        );
+    }, [reportDoc]);
+
     if (!reportDoc || !reportDoc.data) {
-        return null;
+        return <></>;
     }
-
-
-    reaction(
-        () => reportDoc.data!.status, (status: string) => {
-            if (status === "complete") {
-                const { month, year } = view;
-                const { authenticatedUserId: userId } = userStore;
-
-                firebase.storage().ref(`reports/${year}/${month}/${userId}.csv`).getDownloadURL()
-                    .then(url => setReportUrl(url));
-            }
-        },
-        {
-            fireImmediately: true,
-        },
-    );
 
     return <>
         {
@@ -52,9 +57,7 @@ export const ReportDownloadLink = observer(() => {
                         Download report
                     </a>
                 )
-                : reportDoc.data
-                    ? reportDoc.data.status
-                    : ""
+                : reportDoc.data.status
         }
     </>;
 });

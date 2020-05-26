@@ -16,6 +16,7 @@ export const ReportDownloadLink = observer(() => {
     const reportDoc = reportStore.report;
 
     useEffect(() => {
+        setReportUrl(undefined);
         reportDoc?.watch();
 
         return () => {

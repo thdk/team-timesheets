@@ -1,7 +1,6 @@
 import { Route } from "mobx-router";
 import { DateObject } from './registrations/overview';
 import { IRootStore } from "../stores/root-store";
-import { transaction } from "mobx";
 import { setBackToOverview } from "../internal";
 import * as React from 'react'
 import { StoreContext } from "../contexts/store-context";
@@ -21,10 +20,10 @@ export const goToRouteWithDate = (route: Route<
 }
 
 export const routeWithDateChanged = (_route: Route<IRootStore, any, any>, params: DateObject, s: IRootStore) => {
-    transaction(() => {
-        s.view.year = +params.year;
-        s.view.month = +params.month;
-        s.view.day = params.day ? +params.day : undefined;
+    s.view.setViewDate({
+        year: params.year,
+        month: params.month,
+        day: params.day || undefined,
     });
 }
 

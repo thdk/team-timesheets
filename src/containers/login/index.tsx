@@ -5,7 +5,7 @@ import * as firebaseui from 'firebaseui';
 
 import { LoginProvider } from '../../firebase/types';
 import { withConfigValues } from '../configs/with-config-values';
-import { useStore } from '../../contexts/store-context';
+import { useFirebase } from '../../contexts/firebase-context/firebase-context';
 
 const getFirebaseAuthProvider = (provider: LoginProvider) => {
     switch (provider) {
@@ -24,7 +24,7 @@ type Props = { configs: { loginProviders: LoginProvider[] } };
 
 export const Login = ({ configs }: Props) => {
 
-    const store = useStore();
+    const firebase = useFirebase();
 
     React.useEffect(() => {
         const { loginProviders } = configs;
@@ -50,7 +50,7 @@ export const Login = ({ configs }: Props) => {
         };
 
         // Initialize the FirebaseUI Widget using Firebase.
-        const loginUi = new firebaseui.auth.AuthUI(store.user.firebaseAuth);
+        const loginUi = new firebaseui.auth.AuthUI(firebase.auth());
         // The start method will wait until the DOM is loaded.
         loginUi.start('#firebaseui-auth-container', loginUiConfig);
 

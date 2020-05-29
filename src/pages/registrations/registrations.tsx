@@ -16,15 +16,15 @@ class Timesheet extends React.Component {
 
     registrationClick = (id: string) => {
         if (this.context.view.selection.size) {
-            this.context.view.toggleSelection(id, true);
+            this.context.view.toggleSelection(id);
         } else {
             this.context.timesheets.setSelectedRegistration(id);
-            goToRegistration(this.context, id);
+            goToRegistration(this.context.router, id);
         }
     }
 
     registrationSelect = (id: string) => {
-        this.context.view.toggleSelection(id, true);
+        this.context.view.toggleSelection(id);
     }
 
     goToMonth(e: React.MouseEvent) {

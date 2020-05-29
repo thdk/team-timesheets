@@ -25,7 +25,7 @@ export const ActiveProjectList = (props: React.HTMLProps<HTMLDivElement>) => {
         // While in select mode, simply select the items checkbox instead of
         // opening the clicked row.
         if (selection.size) {
-            toggleSelection(id, true);
+            toggleSelection(id);
         } else {
             const project = projectsCollection.get(id);
             if (project && canEditProject(project.data!, authenticatedUser, authenticatedUserId)
@@ -40,7 +40,7 @@ export const ActiveProjectList = (props: React.HTMLProps<HTMLDivElement>) => {
             setProjectId(undefined);
         }
 
-        toggleSelection(id, true);
+        toggleSelection(id);
     };
 
     return goToProject

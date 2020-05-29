@@ -1,9 +1,9 @@
 import { ICollection, Collection, Doc, RealtimeMode, FetchMode } from "firestorable";
-import { IRootStore } from "./root-store";
+import { IRootStore } from "../root-store";
 import { reaction, computed, observable, action } from "mobx";
 
 import * as firebase from 'firebase/app';
-import { IReport } from "../../common/dist";
+import { IReport } from "../../../common/dist";
 
 export interface IReportStore {
     requestReport: (userId: string, year: number, month: number) => void;
@@ -22,10 +22,8 @@ export class ReportStore implements IReportStore {
         rootStore: IRootStore,
         {
             firestore,
-            storage,
         }: {
             firestore: firebase.firestore.Firestore,
-            storage: firebase.storage.Storage,
         },
     ) {
         // this.rootStore = rootStore;
@@ -33,10 +31,10 @@ export class ReportStore implements IReportStore {
             firestore,
             "reports", {
             realtimeMode: RealtimeMode.on,
-            fetchMode: FetchMode.manual,
+            fetchMode: FetchMode.auto,
         },
             {
-                logger: console.log,
+                // logger: console.log,
             },
         );
 
@@ -54,15 +52,6 @@ export class ReportStore implements IReportStore {
 
         reaction(() => rootStore.view.monthMoment, updateReportsQuery);
         reaction(() => rootStore.user.authenticatedUserId, updateReportsQuery);
-
-        reaction(() => this.report, (r) => {
-            if (r && r.data && r.data.status === "complete") {
-                const { month, year } = rootStore.view;
-                const { authenticatedUserId: userId } = rootStore.user;
-                storage.ref(`reports/${year}/${month}/${userId}.csv`).getDownloadURL()
-                    .then(url => this.reportUrl = url);
-            }
-        });
     }
 
     @action

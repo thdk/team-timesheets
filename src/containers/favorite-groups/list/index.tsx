@@ -21,7 +21,7 @@ const FavoriteGroupList = observer((props: FavoriteGroupListProps) => {
         if (!id) return;
 
         if (store.view.selection.size) {
-            store.view.toggleSelection(id, true);
+            store.view.toggleSelection(id);
         } else {
             goToFavorite(store, id);
         }
@@ -32,7 +32,7 @@ const FavoriteGroupList = observer((props: FavoriteGroupListProps) => {
             store.favorites.setActiveFavoriteGroupId(undefined);
         }
 
-        store.view.toggleSelection(id, true);
+        store.view.toggleSelection(id);
     };
 
     const FavoriteGroups = () => groups.length

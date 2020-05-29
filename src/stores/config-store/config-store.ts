@@ -34,7 +34,9 @@ export class ConfigStore implements IConfigStore {
         }
     ) {
         // this._rootStore = rootStore;
-        const deps = { logger: console.log };
+        const deps = {
+            // logger: console.log
+        };
 
         this.tasksCollection = new Collection<ITask, ITaskData>(
             firestore,
@@ -109,7 +111,7 @@ export class ConfigStore implements IConfigStore {
     }
 
     @action
-    public setTaskId(id: string |undefined) {
+    public setTaskId(id: string | undefined) {
         this.taskIdField = id;
     }
 

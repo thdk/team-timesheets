@@ -62,7 +62,7 @@ export class UserStore implements IUserStore {
                 query: null,
             },
             {
-                logger: console.log,
+                // logger: console.log,
             },
         );
 
@@ -209,11 +209,6 @@ export class UserStore implements IUserStore {
         return this.auth
             ? getLoggedInUserAsync(this.auth)
             : Promise.reject(new Error("Firebase auth not initialized"));
-    }
-
-    // TODO: should be taken from context using FirebaseProvider component
-    public get firebaseAuth() {
-        return this.auth;
     }
 
     public dispose() {

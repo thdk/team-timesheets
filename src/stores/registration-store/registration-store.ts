@@ -92,7 +92,7 @@ export class RegistrationStore implements IRegistrationsStore {
                 query: createQuery(rootStore.user.authenticatedUserId),
             },
             {
-                logger: console.log,
+                // logger: console.log,
             },
         );
 

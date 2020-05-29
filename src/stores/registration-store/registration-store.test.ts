@@ -1,16 +1,12 @@
 import { initTestFirestore, deleteFirebaseAppsAsync } from "../../__tests__/utils/firebase";
-import { RegistrationStore } from "./registration-store";
-import { IRootStore } from "../root-store";
+
 import React from "react";
-import { UserStore } from "../user-store";
 import { TestCollection } from "../../__tests__/utils/firestorable/collection";
 import { IRegistrationData } from "../../../common";
 import firebase from "firebase/app";
-import { ViewStore } from "../view-store";
 import { waitFor } from "@testing-library/react";
-import { reaction } from "mobx";
-import { ConfigStore } from "../config-store";
-
+import { reaction, transaction } from "mobx";
+import { Store } from "../root-store";
 
 jest.mock("@material/top-app-bar/index", () => ({
     MDCTopAppBar: () => React.Fragment,
@@ -46,27 +42,10 @@ const {
         "users",
     ]);
 
-
-class TestStore {
-    rootStore: IRootStore = this as unknown as IRootStore;
-
-    public user = new UserStore(this.rootStore, { firestore });
-    public view = new ViewStore(this.rootStore, new Date(2020, 3, 1));
-    public config = new ConfigStore(this.rootStore, { firestore });
-    public timesheets = new RegistrationStore(
-        this.rootStore, { firestore }
-    );
-
-    public dispose() {
-        this.user.dispose();
-        this.timesheets.dispose();
-        // this.config.dispose();
-    }
-}
-
-
 const userCollection = new TestCollection(firestore, userRef);
 const registrationCollection = new TestCollection<IRegistrationData>(firestore, registrationRef);
+
+const store = new Store({ firestore });
 
 const setupAsync = () => {
     return Promise.all([
@@ -138,22 +117,25 @@ const setupAsync = () => {
     ]);
 };
 
-const store = new TestStore();
+beforeAll(() => Promise.all([
+    clearFirestoreDataAsync(),
+    setupAsync(),
+]));
 
-beforeAll(clearFirestoreDataAsync);
-beforeAll(setupAsync);
-afterAll(() => {
-    store.dispose();
-    return Promise.all([
-        deleteFirebaseAppsAsync(),
-    ])
-});
+afterAll(deleteFirebaseAppsAsync);
 
 describe("RegistrationStore", () => {
     let unsubscribe: () => void;
 
     beforeAll(() => {
-        store.user.setUser({ uid: "user-1", displayName: "user 1" } as firebase.User);
+        transaction(() => {
+            store.user.setUser({ uid: "user-1", displayName: "user 1" } as firebase.User);
+            store.view.setViewDate({
+                year: 2020,
+                month: 4,
+                day: 1,
+            });
+        });
         unsubscribe = reaction(() => store.timesheets.registrationsGroupedByDay, () => { })
     });
 

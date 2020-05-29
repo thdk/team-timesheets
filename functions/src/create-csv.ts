@@ -18,7 +18,7 @@ export const createCSV = functions.firestore
     .document('reports/{reportId}')
     .onCreate(snapshot => {
         const db = admin.firestore();
-
+        throw new Error("Failed");
         const adminConfig = getAdminConfig();
         const bucketName = adminConfig.storageBucket;
 

@@ -1,15 +1,35 @@
 import * as React from "react";
 import FavoriteGroupsMenu from "./favorite-groups-menu-mobx";
-import { StoreProvider } from "../../../contexts/store-context";
+import { StoreContext } from "../../../contexts/store-context";
 import { IRootStore } from "../../../stores/root-store";
 import { render } from "@testing-library/react";
 import { IFavoriteRegistrationGroup } from "../../../../common";
+
+jest.mock("@material/top-app-bar/index", () => ({
+    MDCTopAppBar: () => React.Fragment,
+}));
+
+jest.mock("@material/icon-button/index", () => ({
+    MDCIconButtonToggle: () => React.Fragment,
+}));
+
+jest.mock("@material/tab-bar/index", () => ({
+    MDCTabBar: () => React.Fragment,
+}));
+
+jest.mock("@material/ripple/index", () => ({
+    MDCRipple: () => React.Fragment,
+}));
+
+jest.mock("@material/switch/index", () => ({
+    MDCSwitch: () => React.Fragment,
+}));
 
 it("should not crash without favorite groups", () => {
     const Test = () => {
         const onSelect = jest.fn();
         return (
-            <StoreProvider value={{
+            <StoreContext.Provider value={{
                 favorites: {
                     groups: []
                 }
@@ -17,7 +37,7 @@ it("should not crash without favorite groups", () => {
                 <FavoriteGroupsMenu
                     onSelect={onSelect}
                 />
-            </StoreProvider>
+            </StoreContext.Provider>
         );
     };
 
@@ -29,7 +49,7 @@ it("should display favorite groups", () => {
     const Test = () => {
         const onSelect = jest.fn();
         return (
-            <StoreProvider value={{
+            <StoreContext.Provider value={{
                 favorites: {
                     groups: [
                         {
@@ -48,7 +68,7 @@ it("should display favorite groups", () => {
                 <FavoriteGroupsMenu
                     onSelect={onSelect}
                 />
-            </StoreProvider>
+            </StoreContext.Provider>
         );
     };
 

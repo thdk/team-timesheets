@@ -30,7 +30,7 @@ export const TaskList = observer((props: React.HTMLProps<HTMLDivElement>) => {
             readonly={!canManageTasks(authenticatedUser)}
             items={tasks}
             onAddItem={saveListItem}
-            onToggleSelection={id => toggleSelection(id, true)}
+            onToggleSelection={id => toggleSelection(id)}
             onItemClick={selectItem}
             selection={selection}
             activeItemId={taskId}

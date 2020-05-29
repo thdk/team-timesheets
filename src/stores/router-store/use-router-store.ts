@@ -1,7 +1,7 @@
 import { useStore } from "../../contexts/store-context";
 
-export const useViewStore = () => {
+export const useRouterStore = () => {
     const store = useStore();
 
-    return store.view;
-};
+    return store.router;
+}

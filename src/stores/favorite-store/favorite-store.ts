@@ -40,7 +40,7 @@ export class FavoriteStore {
                 query: createQuery(),
             },
             {
-                logger: console.log
+                // logger: console.log
             },
         );
 
@@ -54,7 +54,7 @@ export class FavoriteStore {
                 deserialize: deserializer.convertFavoriteRegistration,
             },
             {
-                logger: console.log
+                // logger: console.log
             },
         )
 

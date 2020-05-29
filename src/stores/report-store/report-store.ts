@@ -34,7 +34,7 @@ export class ReportStore implements IReportStore {
             fetchMode: FetchMode.auto,
         },
             {
-                logger: console.log,
+                // logger: console.log,
             },
         );
 

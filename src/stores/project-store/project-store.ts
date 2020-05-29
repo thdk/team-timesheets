@@ -38,7 +38,7 @@ export class ProjectStore implements IProjectStore {
                 deserialize: deserializer.convertProject,
             },
             {
-                logger: console.log,
+                // logger: console.log,
             },
         );
     }

@@ -62,7 +62,7 @@ export class UserStore implements IUserStore {
                 query: null,
             },
             {
-                logger: console.log,
+                // logger: console.log,
             },
         );
 

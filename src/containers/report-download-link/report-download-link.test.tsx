@@ -115,7 +115,7 @@ describe("ReportDownloadLink", () => {
     });
 
     it("should display report status and download link when report is completed", async () => {
-        const { findByText } = render(
+        const { findByText, asFragment } = render(
             <ReportDownloadLink />
         );
 
@@ -131,6 +131,10 @@ describe("ReportDownloadLink", () => {
 
         // The download url is fetched and should be displayed when finished
         await findByText("Download report");
+
+        // Cleanup
+        await reportsCollection.deleteAsync(store.reports.report!.id);
+        await waitFor(() => expect(asFragment()).toMatchSnapshot());
     });
 
     it("should not crash when report is deleted in database", async () => {
@@ -140,12 +144,11 @@ describe("ReportDownloadLink", () => {
             <ReportDownloadLink />
         );
 
-         // Report status should be updated to 'waiting'
+        // Report status should be updated to 'waiting'
         await findByText("waiting");
 
+        // Cleanup
         await reportsCollection.deleteAsync(store.reports.report!.id);
-
-        // Component should be removed from dom when the report gets deleted
         await waitFor(() => expect(asFragment()).toMatchSnapshot());
     });
 });

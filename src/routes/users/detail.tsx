@@ -24,7 +24,7 @@ const routes = {
             const saveAction: IViewAction = {
                 action: () => {
                     s.user.saveSelectedUser();
-                    goToSettings(s, "users");
+                    goToSettings(s.router, "users");
                 },
                 icon: { label: "Save", content: "save" },
                 shortKey: { key: "s", ctrlKey: true }
@@ -33,7 +33,7 @@ const routes = {
             const deleteAction: IViewAction = {
                 action: () => {
                     s.user.selectedUserId && s.user.usersCollection.deleteAsync(s.user.selectedUserId);
-                    goToSettings(s, "users");
+                    goToSettings(s.router, "users");
                 },
                 icon: { label: "Delete", content: "delete" },
                 shortKey: { key: "Delete", ctrlKey: true }
@@ -48,7 +48,7 @@ const routes = {
                 s.view.setNavigation({
                     action: () => {
                         save();
-                        goToSettings(s, "users");
+                        goToSettings(s.router, "users");
                     },
                     icon: { label: "Back", content: "arrow_back" }
                 });

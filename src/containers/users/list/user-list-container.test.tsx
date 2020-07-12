@@ -18,10 +18,6 @@ jest.mock("@material/icon-button/index", () => ({
     MDCIconButtonToggle: () => <></>,
 }));
 
-jest.mock("@material/tab-bar/index", () => ({
-    MDCTabBar: () => <></>,
-}));
-
 jest.mock("@material/ripple/index", () => ({
     MDCRipple: () => <></>,
 }));

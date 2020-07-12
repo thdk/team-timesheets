@@ -1,18 +1,18 @@
-import { Route } from "mobx-router";
+import { Route, RouterStore } from "mobx-router";
 import * as React from 'react';
 import { transaction, when } from "mobx";
 import { IRootStore } from "../../stores/root-store";
 import { IViewAction } from "../../stores/view-store";
 import { canDeleteTask, canDeleteClient, canManageTeams } from "../../rules/rules";
 import { App } from "../../internal";
-import Settings from "../../pages/settings";
+import SettingsPage from "../../pages/settings/settings-page-container";
 import { setNavigationContent } from "../actions";
 
 export type SettingsRouteQueryParams = { tab: SettingsTab };
 type SettingsRoute = Route<IRootStore, {}, SettingsRouteQueryParams>;
 
-export const goToSettings = (store: IRootStore, tab: SettingsTab = "preferences") => {
-    store.router.goTo(routes.preferences, {}, { tab });
+export const goToSettings = (router: RouterStore<IRootStore>, tab: SettingsTab = "preferences") => {
+    router.goTo(routes.preferences, {}, { tab });
 }
 
 export type SettingsTab = "tasks" | "preferences" | "clients" | "users" | "teams";
@@ -83,7 +83,7 @@ const path = '/settings'
 const routes = {
     preferences: new Route<IRootStore, {}, SettingsRouteQueryParams>({
         path,
-        component: <App><Settings></Settings></App>,
+        component: <App><SettingsPage></SettingsPage></App>,
         onEnter: (route: SettingsRoute, _params, s: IRootStore, queryParams: SettingsRouteQueryParams) => {
             setActions(queryParams.tab, s);
             setNavigationContent(s, route, false);

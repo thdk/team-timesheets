@@ -2,7 +2,7 @@ import { observer } from 'mobx-react-lite';
 import * as React from 'react';
 
 import { IAuthenticatedUser } from '../../../../common/dist';
-import { useStore } from '../../../contexts/store-context';
+import { useUserStore } from '../../../stores/user-store';
 
 export interface IWithAuthenticatedUserProps {
     authenticatedUser: IAuthenticatedUser;
@@ -12,13 +12,13 @@ export const withAuthenticatedUser = (
     WrappedComponent: React.ComponentType<IWithAuthenticatedUserProps>,
 ) => {
     const WithAuthenticatedUserProps = () => {
-        const store = useStore();
+        const user = useUserStore();
 
-        if (!store.user.authenticatedUser) {
+        if (!user.authenticatedUser) {
             throw new Error("Authenticated user is undefined. (Wrap in withAuthenticatedUser?)");
         }
 
-        return <WrappedComponent authenticatedUser={store.user.authenticatedUser}/>;
+        return <WrappedComponent authenticatedUser={user.authenticatedUser}/>;
     };
 
     return observer(WithAuthenticatedUserProps);

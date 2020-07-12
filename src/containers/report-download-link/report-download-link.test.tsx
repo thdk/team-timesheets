@@ -6,6 +6,7 @@ import { IReport } from "../../../common";
 import { waitFor, render } from "@testing-library/react";
 import { transaction } from "mobx";
 import { ReportDownloadLink } from "./report-download-link";
+import { act } from "react-dom/test-utils";
 
 jest.mock("../../contexts/firebase-context", () => ({
     useFirebase: () => ({
@@ -48,10 +49,6 @@ jest.mock("@material/top-app-bar/index", () => ({
 
 jest.mock("@material/icon-button/index", () => ({
     MDCIconButtonToggle: () => <></>,
-}));
-
-jest.mock("@material/tab-bar/index", () => ({
-    MDCTabBar: () => <></>,
 }));
 
 jest.mock("@material/ripple/index", () => ({
@@ -127,7 +124,10 @@ describe("ReportDownloadLink", () => {
 
         // Set report status as completed in collection
         // TODO: Setup firebase functions emulator so we don't have to fake this here
-        await reportsCollection.updateAsync({ status: "complete" }, store.reports.report!.id);
+        await act(async () => {
+            return reportsCollection.updateAsync({ status: "complete" }, store.reports.report!.id)
+                .then(() => { /* voidify */ });
+        });
 
         // The download url is fetched and should be displayed when finished
         await findByText("Download report");

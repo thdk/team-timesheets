@@ -17,10 +17,6 @@ jest.mock("@material/icon-button/index", () => ({
     MDCIconButtonToggle: () => React.Fragment,
 }));
 
-jest.mock("@material/tab-bar/index", () => ({
-    MDCTabBar: () => React.Fragment,
-}));
-
 jest.mock("@material/ripple/index", () => ({
     MDCRipple: () => React.Fragment,
 }));

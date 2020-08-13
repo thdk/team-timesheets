@@ -5,6 +5,7 @@ import { useViewStore } from '../../stores/view-store';
 import { useFirebase } from '../../contexts/firebase-context';
 import { reaction } from 'mobx';
 import { useReportStore } from '../../stores/report-store';
+import { usePromise } from "react-use";
 
 export const ReportDownloadLink = observer(() => {
     const reportStore = useReportStore();
@@ -15,9 +16,13 @@ export const ReportDownloadLink = observer(() => {
 
     const reportDoc = reportStore.report;
 
+    const resolveIfMounted = usePromise();
+
     useEffect(() => {
-        setReportUrl(undefined);
-        reportDoc?.watch();
+        if (reportDoc) {
+            setReportUrl(undefined);
+            reportDoc.watch();
+        }
 
         return () => {
             reportDoc?.unwatch();
@@ -35,8 +40,9 @@ export const ReportDownloadLink = observer(() => {
                     const { month, year } = view;
                     const { authenticatedUserId: userId } = userStore;
 
-                    firebase.storage().ref(`reports/${year}/${month}/${userId}.csv`).getDownloadURL()
-                        .then(url => setReportUrl(url));
+                    resolveIfMounted(
+                        firebase.storage().ref(`reports/${year}/${month}/${userId}.csv`).getDownloadURL()
+                    ).then(url => setReportUrl(url));
                 }
             },
             {

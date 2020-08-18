@@ -42,10 +42,6 @@ jest.mock('../../containers/teams/list', () => ({
     TeamList: () => <>Teams-Content</>,
 }));
 
-jest.mock("@material/top-app-bar/index", () => ({
-    MDCTopAppBar: () => <></>,
-}));
-
 jest.mock("@material/icon-button/index", () => ({
     MDCIconButtonToggle: () => <></>,
 }));

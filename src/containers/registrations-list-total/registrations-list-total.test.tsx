@@ -8,10 +8,6 @@ import { RegistrationsListTotal } from "./registrations-list-total";
 import { StoreProvider } from "../../contexts/store-context";
 import { transaction } from "mobx";
 
-jest.mock("@material/top-app-bar/index", () => ({
-    MDCTopAppBar: () => <></>,
-}));
-
 jest.mock("@material/icon-button/index", () => ({
     MDCIconButtonToggle: () => <></>,
 }));

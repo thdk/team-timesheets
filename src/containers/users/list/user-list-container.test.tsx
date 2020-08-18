@@ -10,10 +10,6 @@ import { Store } from "../../../stores/root-store";
 import { ITeamData } from "../../../../common";
 import { UserList } from ".";
 
-jest.mock("@material/top-app-bar/index", () => ({
-    MDCTopAppBar: () => <></>,
-}));
-
 jest.mock("@material/icon-button/index", () => ({
     MDCIconButtonToggle: () => <></>,
 }));

@@ -47,7 +47,7 @@ export class Store implements IRootStore {
             }
         );
 
-        this.view = new ViewStore(this);
+        this.view = new ViewStore();
         this.config = new ConfigStore(
             this,
             {

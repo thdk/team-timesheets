@@ -5,10 +5,6 @@ import { IRootStore } from "../../../stores/root-store";
 import { render } from "@testing-library/react";
 import { IFavoriteRegistrationGroup } from "../../../../common";
 
-jest.mock("@material/top-app-bar/index", () => ({
-    MDCTopAppBar: () => React.Fragment,
-}));
-
 jest.mock("@material/icon-button/index", () => ({
     MDCIconButtonToggle: () => React.Fragment,
 }));

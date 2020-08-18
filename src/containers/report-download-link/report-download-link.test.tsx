@@ -43,10 +43,6 @@ jest.mock("../../contexts/store-context", () => ({
     useStore: () => store,
 }));
 
-jest.mock("@material/top-app-bar/index", () => ({
-    MDCTopAppBar: () => <></>,
-}));
-
 jest.mock("@material/icon-button/index", () => ({
     MDCIconButtonToggle: () => <></>,
 }));

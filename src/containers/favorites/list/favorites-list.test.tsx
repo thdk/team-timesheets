@@ -13,10 +13,6 @@ import { UserStore } from "../../../stores/user-store";
 import { ConfigStore } from "../../../stores/config-store";
 import { ProjectStore } from "../../../stores/project-store";
 
-jest.mock("@material/top-app-bar/index", () => ({
-    MDCTopAppBar: () => React.Fragment,
-}));
-
 jest.mock("@material/icon-button/index", () => ({
     MDCIconButtonToggle: () => React.Fragment,
 }));

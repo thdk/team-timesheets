@@ -1,6 +1,5 @@
 import { observable, action, computed, transaction, ObservableMap } from "mobx";
 import moment from 'moment';
-import { IRootStore } from "../root-store";
 import { IIconData } from "../../mdc/buttons/icon-buttons";
 
 export interface IShortKey {
@@ -42,7 +41,7 @@ export class ViewStore implements IViewStore {
   readonly selection = observable(new Map<string, true>());
   readonly fabs = observable<IFab>([]);
 
-  @observable navigationAction?: INavigationViewAction;
+  @observable navigationAction: INavigationViewAction = {} as INavigationViewAction;
   @observable title = "";
   @observable isDrawerOpen = true;
   @observable day?: number;
@@ -51,11 +50,7 @@ export class ViewStore implements IViewStore {
 
   public track?: boolean;
 
-  private readonly rootStore: IRootStore;
-
-  constructor(rootStore: IRootStore, testDate?: Date) {
-    this.rootStore = rootStore;
-
+  constructor(testDate?: Date) {
     const date = testDate || new Date();
     this.setViewDate({
       day: date.getDate(),
@@ -131,7 +126,7 @@ export class ViewStore implements IViewStore {
     this.navigationAction = action === "default"
       ? {
         action: () => {
-          this.rootStore.view.isDrawerOpen = !this.rootStore.view.isDrawerOpen;
+          this.isDrawerOpen = !this.isDrawerOpen;
         },
         icon: { content: "menu", label: "Menu" },
       }

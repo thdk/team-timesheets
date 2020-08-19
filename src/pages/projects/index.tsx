@@ -4,8 +4,7 @@ import * as React from 'react'
 
 import { Tab, TabBar } from "@rmwc/tabs";
 import { ProjectsTab, goToProjects, ProjectRouteQueryParams } from '../../routes/projects/list';
-import { ActiveProjectList } from '../../containers/projects/list-active';
-import { ArchivedProjectList } from '../../containers/projects/list-archived';
+import { ActiveProjectList, ArchivedProjectList } from '../../containers/projects/list';
 import { withAuthentication } from '../../containers/users/with-authentication';
 import { RedirectToLogin } from '../../routes/login';
 import { StoreContext } from '../../contexts/store-context';

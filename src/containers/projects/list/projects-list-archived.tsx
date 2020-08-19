@@ -2,7 +2,7 @@ import * as React from 'react';
 import { observer } from 'mobx-react-lite';
 
 import { SettingsList } from '../../../components/settings-list';
-import { canManageProjects } from '../../../rules/rules';
+import { canManageProjects } from '../../../rules';
 import { useStore } from '../../../contexts/store-context';
 
 

@@ -36,6 +36,7 @@ export class ProjectStore implements IProjectStore {
                 query: ref => ref.orderBy("name_insensitive"),
                 serialize: serializer.convertProject,
                 deserialize: deserializer.convertProject,
+
             },
             {
                 // logger: console.log,

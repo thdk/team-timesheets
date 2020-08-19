@@ -8,7 +8,7 @@ import { ObservableMap } from "mobx";
 const {
     firestore,
     clearFirestoreDataAsync,
-} = initTestFirestore("report-download-link-test", []);
+} = initTestFirestore("top-bar-actions-test", []);
 
 const store = new Store({
     firestore,

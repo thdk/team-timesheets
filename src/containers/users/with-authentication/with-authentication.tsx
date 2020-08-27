@@ -2,7 +2,7 @@ import * as React from 'react';
 import { observer } from 'mobx-react-lite';
 
 import { IAuthenticatedUser } from '../../../../common/dist';
-import { useUserStore } from '../../../stores/user-store';
+import { useUserStore } from "../../../contexts/user-context";
 
 export interface IWithAuthenticationOptions {
     placeholder?: JSX.Element,

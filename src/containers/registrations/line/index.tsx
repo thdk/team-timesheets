@@ -5,6 +5,8 @@ import EditableTextField from '../../../components/editable-text';
 import classNames from 'classnames';
 import { StoreContext } from '../../../contexts/store-context';
 
+import "./registration-line.scss";
+
 export interface IRegistrationLineProps extends React.HTMLProps<HTMLDivElement> {
     readonly line1: string;
     readonly line2?: string;

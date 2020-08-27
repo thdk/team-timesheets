@@ -1,32 +1,39 @@
 import * as React from 'react';
-import { Chip, ChipSet } from '@material/react-chips';
 
 import { Box } from '../../../components/layout/box';
 import ClientSelect from '../../../containers/clients/select';
-import { UserTasks } from '../../../containers/users/user-tasks';
 import { FormField } from '../../../components/layout/form';
 
 import { useStore } from '../../../contexts/store-context';
-import { useUserStore } from '../../../stores/user-store';
+import { useUserStore } from "../../../contexts/user-context";
 import { useCallback } from 'react';
 import { observer } from 'mobx-react-lite';
+import { useTasks } from '../../../contexts/task-context';
+import { TasksChips } from '../../../containers/tasks/chips';
 
 
 export const Preferences = observer(() => {
     const { config } = useStore();
+    const { tasks } = useTasks();
     const userStore = useUserStore();
 
-    const handleTaskSelect = useCallback((id: string, selected: boolean) => {
-        const { tasks } = user;
-        if (selected === !!tasks.get(id)) return;
+    const {
+        tasks: userTasksIds = new Map<string, true>(),
+        defaultTask = undefined,
+        defaultClient = undefined,
+    } = userStore.authenticatedUser || {};
 
-        if (selected) tasks.set(id, true);
-        else tasks.delete(id);
+    const handleTaskSelect = useCallback((id: string, selected: boolean) => {
+
+        if (selected === !!userTasksIds.get(id)) return;
+
+        if (selected) userTasksIds.set(id, true);
+        else userTasksIds.delete(id);
 
         userStore.updateAuthenticatedUser({
-            tasks,
+            tasks: userTasksIds,
         });
-    }, [userStore]);
+    }, [userTasksIds]);
 
     const defaultTaskChanged = useCallback((defaultTask: string) => {
         userStore.updateAuthenticatedUser({
@@ -43,36 +50,8 @@ export const Preferences = observer(() => {
     if (!userStore.authenticatedUser) {
         return <></>;
     }
-    const user = userStore.authenticatedUser;
 
     if (config.tasks.length === 0) return null;
-
-    const { tasks: userTasks = new Map<string, true>(),
-        defaultTask = undefined,
-        defaultClient = undefined,
-    } = user || {};
-
-    const tasks = config.tasks
-        .reduce((p, c) => {
-            const { id: taskId,
-                name: taskName,
-                icon: taskIcon = undefined,
-            } = c;
-
-            const leadingIcon = taskIcon
-                ? <i className="material-icons mdc-chip__icon mdc-chip__icon--leading">{taskIcon}</i>
-                : undefined;
-
-            p.push(
-                <Chip leadingIcon={leadingIcon} handleSelect={handleTaskSelect} id={taskId} label={taskName!} key={taskId}></Chip>
-            );
-            return p;
-        }, new Array());
-
-    // TODO: create computed value on user store containing the data of the user tasks
-    const userTasksChips = user.tasks.size > 1
-        ? <UserTasks value={defaultTask} onChange={defaultTaskChanged}></UserTasks>
-        : undefined;
 
     return (
         <>
@@ -81,14 +60,21 @@ export const Preferences = observer(() => {
                     Pick your tasks
                 </h3>
                 <p>Only selected tasks will be available for you when adding a new regisration.</p>
-                <ChipSet
-                    selectedChipIds={Array.from(userTasks.keys())}
-                    filter={true}
-                >
-                    {tasks}
-                </ChipSet>
+                <TasksChips
+                    tasks={tasks}
+                    onTaskInteraction={(id, selected) => handleTaskSelect(id, !selected)}
+                    selectedTaskIds={Array.from(userTasksIds.keys())}
+                    filter
+                />
 
-                {userTasksChips}
+                <h3 className="mdc-typography--subtitle1">Pick your default task</h3>
+                <p>This task will be selected by default when you create a new registration.</p>
+                <TasksChips
+                    tasks={tasks.filter((t => userTasksIds.get(t.id)))}
+                    onTaskInteraction={defaultTaskChanged}
+                    selectedTaskIds={defaultTask ? [defaultTask] : undefined}
+                    choice
+                />
 
                 <h3 className="mdc-typography--subtitle1">
                     Pick default client

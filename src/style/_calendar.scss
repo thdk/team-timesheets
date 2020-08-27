@@ -13,10 +13,10 @@
 
     .react-calendar__tile {
         &.react-calendar__tile--active {
-            @include mdc-theme-prop("background-color", "primary");
+            color: var(--mdc-theme-primary, #6200ee);
 
             &.react-calendar__tile--now {
-                @include mdc-theme-prop("color", "on-primary");
+                color: var(--mdc-theme-on-primary, #6200ee);
             }
         }
 
@@ -25,7 +25,7 @@
         }
 
         &.react-calendar__tile--now {
-            @include mdc-theme-prop("color", "secondary");
+            color: var(--mdc-theme-secondary, #6200ee);
         }
     }
 }

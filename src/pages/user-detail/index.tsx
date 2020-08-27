@@ -3,7 +3,7 @@ import { Box } from "../../components/layout/box";
 import { FlexGroup } from "../../components/layout/flex";
 import { FormField } from "../../components/layout/form";
 import { observer } from "mobx-react";
-import Switch from "../../mdc/switch";
+import { Switch } from "@rmwc/switch";
 import { IRoles } from "../../../common";
 import { TeamSelect } from "../../containers/teams/select";
 import { withAuthentication } from "../../containers/users/with-authentication";

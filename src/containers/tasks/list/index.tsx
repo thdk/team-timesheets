@@ -3,8 +3,8 @@ import { observer } from 'mobx-react-lite';
 
 import { canEditTask, canDeleteTask, canManageTasks } from '../../../rules/rules';
 import { SettingsList, IListItemData } from '../../../components/settings-list';
-import { useTasks } from '../../../stores/config-store';
-import { useUserStore } from '../../../stores/user-store';
+import { useTasks } from '../../../contexts/task-context';
+import { useUserStore } from "../../../contexts/user-context";
 import { useViewStore } from '../../../stores/view-store';
 
 export const TaskList = observer((props: React.HTMLProps<HTMLDivElement>) => {

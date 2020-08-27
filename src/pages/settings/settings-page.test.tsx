@@ -2,7 +2,7 @@ import React from "react";
 import { SettingsPage } from "./settings-page";
 import { render } from "@testing-library/react";
 
-jest.mock("../../stores/user-store", () => ({
+jest.mock("../../contexts/user-context", () => ({
     useUserStore: () => ({
         authenticatedUser: {
             id: "user-1",
@@ -40,18 +40,6 @@ jest.mock('../../containers/clients/list', () => ({
 }));
 jest.mock('../../containers/teams/list', () => ({
     TeamList: () => <>Teams-Content</>,
-}));
-
-jest.mock("@material/icon-button/index", () => ({
-    MDCIconButtonToggle: () => <></>,
-}));
-
-jest.mock("@material/ripple/index", () => ({
-    MDCRipple: () => <></>,
-}));
-
-jest.mock("@material/switch/index", () => ({
-    MDCSwitch: () => <></>,
 }));
 
 describe("SettingsPage", () => {

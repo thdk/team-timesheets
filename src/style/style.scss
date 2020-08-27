@@ -1,40 +1,15 @@
 @import '_vars';
 @import '_form';
-@import '_chip';
 @import '_layout';
-
-@import "@material/fab/mdc-fab";
-@import "@material/top-app-bar/mdc-top-app-bar";
-@import "@material/drawer/mdc-drawer";
-@import "@material/list/mdc-list";
-@import "@material/button/mdc-button";
-@import "@material/textfield/mdc-text-field";
-@import "@material/typography/mdc-typography";
-@import "@material/select/mdc-select";
-@import "@material/tab-bar/mdc-tab-bar";
-@import "@material/tab-scroller/mdc-tab-scroller";
-@import "@material/tab-indicator/mdc-tab-indicator";
-@import "@material/tab/mdc-tab";
-@import "@material/form-field/mdc-form-field";
-@import "@material/checkbox/mdc-checkbox";
-@import "@material/icon-button/mdc-icon-button";
-
-@import '@material/menu/mdc-menu';
-@import '@material/menu-surface/mdc-menu-surface';
-@import '@material/list/mdc-list';
-
-
-@import '../mdc/styles/list';
-@import '../mdc/styles/app-bar';
-@import '../mdc/styles/switch';
+@import '_chip';
+@import '_app-bar';
+@import '_list';
 
 @import '../containers/timesheet-calendar/timesheet-calendar';
 @import './chart';
 
 body {
     font: 100% $font-stack;
-    color: $primary-color;
-    background: $secondary-color;
 
     padding: 0;
     margin: 0;
@@ -42,12 +17,12 @@ body {
 
   a:visited, a:link {
     text-decoration: none;
-    @include mdc-theme-prop("color", "secondary");
+    color: var(--mdc-theme-secondary, #6200ee);
   }
 
   a:hover, a:active {
     text-decoration: none;
-    @include mdc-theme-prop("color", "primary");
+    color: var(--mdc-theme-primary, #6200ee);
   }
 
   .body-wrapper {

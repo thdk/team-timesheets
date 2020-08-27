@@ -1,6 +1,3 @@
-@import '@material/react-chips/index.scss';
-
-.mdc-chip {
-    @include mdc-chip-outline(2px, solid, currentColor);
-    @include mdc-chip-fill-color-accessible(#f6f6f6);
-  }
+.mdc-chip-set--choice .mdc-chip.mdc-chip--selected .mdc-chip__icon--leading {
+    color: var(--mdc-theme-primary, #6200ee);
+}

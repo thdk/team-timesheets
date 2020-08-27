@@ -5,18 +5,6 @@ import { IRootStore } from "../../../stores/root-store";
 import { render } from "@testing-library/react";
 import { IFavoriteRegistrationGroup } from "../../../../common";
 
-jest.mock("@material/icon-button/index", () => ({
-    MDCIconButtonToggle: () => React.Fragment,
-}));
-
-jest.mock("@material/ripple/index", () => ({
-    MDCRipple: () => React.Fragment,
-}));
-
-jest.mock("@material/switch/index", () => ({
-    MDCSwitch: () => React.Fragment,
-}));
-
 it("should not crash without favorite groups", () => {
     const Test = () => {
         const onSelect = jest.fn();

@@ -1,9 +1,7 @@
-@import '@material/dialog/mdc-dialog';
-
 .mdc-dialog {
-    @include mdc-dialog-min-width(400px);
-    @include mdc-dialog-max-height(600px, 100px);
-    @include mdc-dialog-container-fill-color("surface");
+    // @include mdc-dialog-min-width(400px);
+    // @include mdc-dialog-max-height(600px, 100px);
+    // @include mdc-dialog-container-fill-color("surface");
 
     .mdc-dialog__container {
         min-height: 70vh;

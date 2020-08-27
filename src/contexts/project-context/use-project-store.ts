@@ -1,4 +1,4 @@
-import { useStore } from "../../contexts/store-context"
+import { useStore } from "../store-context"
 
 export const useProjectStore = () => {
     const store = useStore();

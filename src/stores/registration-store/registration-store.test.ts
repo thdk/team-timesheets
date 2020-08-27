@@ -1,29 +1,11 @@
 import { initTestFirestore, deleteFirebaseAppsAsync } from "../../__tests__/utils/firebase";
 
-import React from "react";
 import { TestCollection } from "../../__tests__/utils/firestorable/collection";
 import { IRegistrationData } from "../../../common";
 import firebase from "firebase/app";
 import { waitFor } from "@testing-library/react";
 import { reaction, transaction } from "mobx";
 import { Store } from "../root-store";
-
-jest.mock("@material/top-app-bar/index", () => ({
-    MDCTopAppBar: () => React.Fragment,
-}));
-
-jest.mock("@material/icon-button/index", () => ({
-    MDCIconButtonToggle: () => React.Fragment,
-}));
-
-jest.mock("@material/ripple/index", () => ({
-    MDCRipple: () => React.Fragment,
-}));
-
-jest.mock("@material/switch/index", () => ({
-    MDCSwitch: () => React.Fragment,
-}));
-
 
 const {
     firestore,

@@ -10,18 +10,6 @@ import { Store } from "../../../stores/root-store";
 import { ITeamData } from "../../../../common";
 import { UserList } from ".";
 
-jest.mock("@material/icon-button/index", () => ({
-    MDCIconButtonToggle: () => <></>,
-}));
-
-jest.mock("@material/ripple/index", () => ({
-    MDCRipple: () => <></>,
-}));
-
-jest.mock("@material/switch/index", () => ({
-    MDCSwitch: () => <></>,
-}));
-
 const {
     firestore,
     refs: [

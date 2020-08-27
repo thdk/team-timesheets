@@ -43,18 +43,6 @@ jest.mock("../../contexts/store-context", () => ({
     useStore: () => store,
 }));
 
-jest.mock("@material/icon-button/index", () => ({
-    MDCIconButtonToggle: () => <></>,
-}));
-
-jest.mock("@material/ripple/index", () => ({
-    MDCRipple: () => <></>,
-}));
-
-jest.mock("@material/switch/index", () => ({
-    MDCSwitch: () => <></>,
-}));
-
 const userCollection = new TestCollection(firestore, userRef);
 const reportsCollection = new TestCollection<IReport>(firestore, reportRef);
 
@@ -73,8 +61,6 @@ const setupAsync = () => {
         ),
     ]);
 };
-
-
 
 beforeAll(clearFirestoreDataAsync);
 beforeAll(() => {

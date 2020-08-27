@@ -1,7 +1,7 @@
 import React from "react";
 import { observer } from "mobx-react-lite";
 import { ListItem, ListItemText, ListItemMeta, List, ListDivider } from "@rmwc/list";
-import { useRegistrationStore } from "../../stores/registration-store";
+import { useRegistrationStore } from '../../contexts/registration-context';
 import { useViewStore } from "../../stores/view-store";
 
 export const RegistrationsListTotal = observer(() => {

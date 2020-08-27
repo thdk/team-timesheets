@@ -3,9 +3,9 @@ import { observer } from 'mobx-react-lite';
 
 import { Select } from '@rmwc/select';
 import { IProject } from '../../../../common/dist';
-import { useUserStore } from '../../../stores/user-store';
-import { useProjectStore } from '../../../stores/project-store';
-import { useRegistrationStore } from '../../../stores/registration-store';
+import { useUserStore } from "../../../contexts/user-context";
+import { useProjectStore } from "../../../contexts/project-context";
+import { useRegistrationStore } from '../../../contexts/registration-context';
 
 
 export const ProjectSelect = observer(() => {

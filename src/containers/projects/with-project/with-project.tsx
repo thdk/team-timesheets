@@ -2,7 +2,7 @@ import * as React from 'react'
 import { IProject } from "../../../../common/dist";
 import { observer } from "mobx-react-lite";
 
-import { useProjectStore } from '../../../stores/project-store';
+import { useProjectStore } from "../../../contexts/project-context";
 
 export interface IWithProjectInjectedProps {
     project: Partial<IProject>;

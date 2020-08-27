@@ -8,6 +8,7 @@ import { withAuthentication } from '../../containers/users/with-authentication';
 import { StoreContext } from '../../contexts/store-context';
 import { ListDivider } from '@rmwc/list';
 
+import "./registrations.scss";
 
 @observer
 class Timesheet extends React.Component {

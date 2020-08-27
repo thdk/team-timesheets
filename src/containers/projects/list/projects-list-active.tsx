@@ -2,9 +2,9 @@ import React, { useState } from 'react';
 import { canEditProject, canManageProjects } from '../../../rules';
 import { SettingsList } from '../../../components/settings-list';
 import { GoToProject } from '../../../internal';
-import { useUserStore } from '../../../stores/user-store';
+import { useUserStore } from "../../../contexts/user-context";
 import { useViewStore } from '../../../stores/view-store';
-import { useProjectStore } from '../../../stores/project-store';
+import { useProjectStore } from "../../../contexts/project-context";
 import { observer } from 'mobx-react-lite';
 
 export const ActiveProjectList = observer((props: React.HTMLProps<HTMLDivElement>) => {

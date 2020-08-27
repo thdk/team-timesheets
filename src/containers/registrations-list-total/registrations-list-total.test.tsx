@@ -8,18 +8,6 @@ import { RegistrationsListTotal } from "./registrations-list-total";
 import { StoreProvider } from "../../contexts/store-context";
 import { transaction } from "mobx";
 
-jest.mock("@material/icon-button/index", () => ({
-    MDCIconButtonToggle: () => <></>,
-}));
-
-jest.mock("@material/ripple/index", () => ({
-    MDCRipple: () => <></>,
-}));
-
-jest.mock("@material/switch/index", () => ({
-    MDCSwitch: () => <></>,
-}));
-
 const {
     firestore,
     clearFirestoreDataAsync,

@@ -18,14 +18,6 @@ jest.mock("../../../contexts/store-context", () => ({
     useStore: () => store,
 }));
 
-jest.mock("@material/ripple/index", () => ({
-    MDCRipple: () => <></>,
-}));
-
-jest.mock("@material/switch/index", () => ({
-    MDCSwitch: () => <></>,
-}));
-
 beforeAll(clearFirestoreDataAsync);
 
 afterAll(() => {

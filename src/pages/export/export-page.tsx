@@ -3,16 +3,16 @@ import { observer } from "mobx-react-lite";
 import { goToRegistration } from '../../internal';
 import { Days, SortOrder } from '../../containers/registrations/days';
 import { DateSelect } from '../../components/date-select';
-import { ButtonType, Button } from '../../mdc/buttons/button';
 import { FlexGroup } from '../../components/layout/flex';
 import { withAuthentication } from '../../containers/users/with-authentication';
 import { RedirectToLogin } from '../../routes/login';
 import { RegistrationsListTotal } from '../../containers/registrations-list-total';
 import { ReportDownloadLink } from '../../containers/report-download-link';
 import { useViewStore } from '../../stores/view-store';
-import { useUserStore } from '../../stores/user-store';
+import { useUserStore } from "../../contexts/user-context";
 import { useReportStore } from '../../stores/report-store';
 import { useRouterStore } from '../../stores/router-store';
+import { Button } from '@rmwc/button';
 
 export const Reports = withAuthentication(
     observer(() => {
@@ -63,10 +63,10 @@ export const Reports = withAuthentication(
                         <Button
                             onClick={onExportClick}
                             style={{ margin: "1em" }}
-                            type={ButtonType.Outlined}
+                            outlined
                         >
                             Export
-                    </Button>
+                        </Button>
                     </FlexGroup>
 
                     <FlexGroup

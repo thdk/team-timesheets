@@ -13,9 +13,7 @@ import { useMemo } from 'react';
 import { useCallback } from 'react';
 import { Tab, TabBar } from "@rmwc/tabs";
 import { observer } from 'mobx-react-lite';
-import { useUserStore } from '../../stores/user-store';
-
-// import '@rmwc/tabs/styles';
+import { useUserStore } from "../../contexts/user-context";
 
 interface ITabData {
     id: SettingsTab;

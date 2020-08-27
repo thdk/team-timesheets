@@ -6,6 +6,8 @@ import FavoriteGroupsMenu from "../../favorite-groups/menu";
 import { IRootStore } from "../../../stores/root-store";
 import { useStore } from "../../../contexts/store-context";
 
+import "./day-header.scss";
+
 export type GroupedRegistrationHeaderProps = {
     readonly groupKey: string;
     readonly totalTime: number;

@@ -32,18 +32,6 @@ jest.mock("../../../internal", () => ({
 
 jest.mock("../../../rules");
 
-jest.mock("@material/icon-button/index", () => ({
-    MDCIconButtonToggle: () => <></>,
-}));
-
-jest.mock("@material/ripple/index", () => ({
-    MDCRipple: () => <></>,
-}));
-
-jest.mock("@material/switch/index", () => ({
-    MDCSwitch: () => <></>,
-}));
-
 const projectsCollection = new TestCollection<IProjectData>(firestore, projectRef);
 
 beforeAll(clearFirestoreDataAsync);

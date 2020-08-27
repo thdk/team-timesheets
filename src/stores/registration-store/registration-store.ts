@@ -215,9 +215,10 @@ export class RegistrationStore implements IRegistrationsStore {
 
     @action
     public setSelectedRegistrationDefault(moment?: moment.Moment) {
-        return this.getNewRegistrationDataAsync(moment).then(data => {
-            this.setSelectedRegistrationObservable(data);
-        });
+        return this.getNewRegistrationDataAsync(moment)
+            .then(data => {
+                this.setSelectedRegistrationObservable(data);
+            });
     }
 
     @action.bound
@@ -283,7 +284,7 @@ export class RegistrationStore implements IRegistrationsStore {
                     ,
                     task,
                     client,
-                    userId: this.rootStore.user.authenticatedUserId,
+                    userId: this.rootStore.user.authenticatedUser.id,
                     project: recentActiveProjects.length ? recentActiveProjects[0] : undefined,
                     isPersisted: false,
                 };

@@ -1,8 +1,7 @@
-@import '@material/theme/mixins';
 @import '../../../style/vars';
 
 .grouped-registration-header {
-        @include mdc-theme-prop("color", $mdc-theme-on-surface);
+        color: var(--mdc-theme-text-secondary-on-surface, rgba(0, 0, 0, 0.54));
         display: flex;
         align-items: center;
         height: 41px;

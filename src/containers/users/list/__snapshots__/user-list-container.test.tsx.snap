@@ -2,7 +2,7 @@
 
 exports[`UserListContainer should render without users 1`] = `
 <DocumentFragment>
-  <div
+  <ul
     class="mdc-list mdc-list--two-line"
   />
 </DocumentFragment>
@@ -10,15 +10,16 @@ exports[`UserListContainer should render without users 1`] = `
 
 exports[`UserListContainer when logged in user is admin should render users 1`] = `
 <DocumentFragment>
-  <div
+  <ul
     class="mdc-list mdc-list--two-line"
   >
-    <div
+    <li
       class="mdc-list-item"
       tabindex="0"
     >
       <i
-        class="rmwc-icon material-icons mdc-list-item__graphic"
+        aria-hidden="true"
+        class="rmwc-icon rmwc-icon--ligature material-icons mdc-list-item__graphic"
       >
         person_outline
       </i>
@@ -36,13 +37,14 @@ exports[`UserListContainer when logged in user is admin should render users 1`] 
           team 1 - Admin, user
         </span>
       </span>
-    </div>
-    <div
+    </li>
+    <li
       class="mdc-list-item"
       tabindex="0"
     >
       <i
-        class="rmwc-icon material-icons mdc-list-item__graphic"
+        aria-hidden="true"
+        class="rmwc-icon rmwc-icon--ligature material-icons mdc-list-item__graphic"
       >
         person_outline
       </i>
@@ -60,13 +62,14 @@ exports[`UserListContainer when logged in user is admin should render users 1`] 
           team 1 - User
         </span>
       </span>
-    </div>
-    <div
+    </li>
+    <li
       class="mdc-list-item"
       tabindex="0"
     >
       <i
-        class="rmwc-icon material-icons mdc-list-item__graphic"
+        aria-hidden="true"
+        class="rmwc-icon rmwc-icon--ligature material-icons mdc-list-item__graphic"
       >
         person_outline
       </i>
@@ -84,13 +87,14 @@ exports[`UserListContainer when logged in user is admin should render users 1`] 
           User
         </span>
       </span>
-    </div>
-    <div
+    </li>
+    <li
       class="mdc-list-item"
       tabindex="0"
     >
       <i
-        class="rmwc-icon material-icons mdc-list-item__graphic"
+        aria-hidden="true"
+        class="rmwc-icon rmwc-icon--ligature material-icons mdc-list-item__graphic"
       >
         person_outline
       </i>
@@ -108,7 +112,7 @@ exports[`UserListContainer when logged in user is admin should render users 1`] 
           User
         </span>
       </span>
-    </div>
-  </div>
+    </li>
+  </ul>
 </DocumentFragment>
 `;

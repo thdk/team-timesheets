@@ -1,2 +1,2 @@
 export * from "./project-store";
-export * from "./use-project-store";
+export * from "../../contexts/project-context/use-project-store";

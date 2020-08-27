@@ -5,6 +5,8 @@ import { TextField, TextFieldProps } from '@rmwc/textfield';
 import { IconDialog } from './dialog';
 import icons from './icons';
 
+import "./icon-picker.scss";
+
 export interface IIconPickerProps {
     editIcon?: string;
     onChange: (icon: string) => void;
@@ -31,7 +33,7 @@ const IconPicker = (props: Props) => {
         setIcon(e.target.value);
     }, []);
 
-    const handleTrailingIconKeyDown = useCallback((e: React.KeyboardEvent<TextField>) => {
+    const handleTrailingIconKeyDown = useCallback((e: React.KeyboardEvent<typeof TextField>) => {
         if (e.key === "Enter") {
             setIsOpen(true);
         };

@@ -13,19 +13,6 @@ import { UserStore } from "../../../stores/user-store";
 import { ConfigStore } from "../../../stores/config-store";
 import { ProjectStore } from "../../../stores/project-store";
 
-jest.mock("@material/icon-button/index", () => ({
-    MDCIconButtonToggle: () => React.Fragment,
-}));
-
-jest.mock("@material/ripple/index", () => ({
-    MDCRipple: () => React.Fragment,
-}));
-
-jest.mock("@material/switch/index", () => ({
-    MDCSwitch: () => React.Fragment,
-}));
-
-
 const {
     firestore,
     refs: [

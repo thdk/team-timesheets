@@ -1,6 +1,5 @@
 import { observable, action, computed, transaction, ObservableMap } from "mobx";
 import moment from 'moment';
-import { IIconData } from "../../mdc/buttons/icon-buttons";
 
 export interface IShortKey {
   ctrlKey?: boolean;
@@ -22,6 +21,11 @@ export interface IViewAction<T = any> {
   readonly shortKey?: IShortKey;
   readonly contextual?: boolean;
   readonly selection?: ObservableMap<string, any>;
+}
+
+interface IIconData {
+  label: string;
+  content: string;
 }
 
 export interface IFab {

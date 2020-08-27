@@ -102,7 +102,7 @@ export class ConfigStore implements IConfigStore {
     @computed
     public get tasks() {
         return Array.from(this.tasksCollection.docs.values())
-            .map(doc => ({ ...doc.data!, id: doc.id, isSelected: doc.id === this.taskIdField }));
+            .map(doc => ({ ...doc.data!, id: doc.id }));
     }
 
     @computed

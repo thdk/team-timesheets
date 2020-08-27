@@ -7,14 +7,14 @@ exports[`should display favorite groups 1`] = `
   >
     <div
       aria-hidden="true"
-      class="mdc-menu  mdc-menu-surface"
+      class="mdc-menu mdc-menu-surface"
       style="width: 178px;"
     >
-      <div
+      <ul
         class="mdc-list mdc-menu__items mdc-list"
         role="menu"
       >
-        <div
+        <li
           class="mdc-list-item"
           data-id="1"
           role="menuitem"
@@ -23,8 +23,8 @@ exports[`should display favorite groups 1`] = `
           <div>
             group 1
           </div>
-        </div>
-        <div
+        </li>
+        <li
           class="mdc-list-item"
           data-id="2"
           role="menuitem"
@@ -33,22 +33,26 @@ exports[`should display favorite groups 1`] = `
           <div>
             group 2
           </div>
-        </div>
-        <div
+        </li>
+        <li
           class="mdc-list-divider"
+          role="separator"
         />
-        <div
+        <li
           class="mdc-list-item"
           role="menuitem"
           tabindex="0"
         >
           New
-        </div>
-      </div>
+        </li>
+      </ul>
     </div>
     <button
-      class="grouped-registration-header-add-button prevent-propagation grouped-registration-header-add-button prevent-propagation mdc-button mdc-button--dense"
+      class="grouped-registration-header-add-button prevent-propagation mdc-button mdc-button--dense"
     >
+      <div
+        class="mdc-button__ripple"
+      />
       <span
         class="mdc-button__label"
       >
@@ -66,28 +70,32 @@ exports[`should not crash without favorite groups 1`] = `
   >
     <div
       aria-hidden="true"
-      class="mdc-menu  mdc-menu-surface"
+      class="mdc-menu mdc-menu-surface"
       style="width: 178px;"
     >
-      <div
+      <ul
         class="mdc-list mdc-menu__items mdc-list"
         role="menu"
       >
-        <div
+        <li
           class="mdc-list-divider"
+          role="separator"
         />
-        <div
+        <li
           class="mdc-list-item"
           role="menuitem"
           tabindex="0"
         >
           New
-        </div>
-      </div>
+        </li>
+      </ul>
     </div>
     <button
-      class="grouped-registration-header-add-button prevent-propagation grouped-registration-header-add-button prevent-propagation mdc-button mdc-button--dense"
+      class="grouped-registration-header-add-button prevent-propagation mdc-button mdc-button--dense"
     >
+      <div
+        class="mdc-button__ripple"
+      />
       <span
         class="mdc-button__label"
       >

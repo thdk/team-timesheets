@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { observer } from 'mobx-react-lite';
-import { useUserStore } from '../../stores/user-store';
+import { useUserStore } from "../../contexts/user-context";
 import { useViewStore } from '../../stores/view-store';
 import { useFirebase } from '../../contexts/firebase-context';
 import { reaction } from 'mobx';

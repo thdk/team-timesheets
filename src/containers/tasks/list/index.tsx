@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { observer } from 'mobx-react-lite';
 
-import { canEditTask, canDeleteTask, canManageTasks } from '../../../rules/rules';
+import { canEditTask, canDeleteTask, canManageTasks } from '../../../rules';
 import { SettingsList, IListItemData } from '../../../components/settings-list';
 import { useTasks } from '../../../contexts/task-context';
 import { useUserStore } from "../../../contexts/user-context";

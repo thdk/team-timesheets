@@ -12,7 +12,7 @@ import { FlexGroup } from '../../components/layout/flex';
 import { CollectionSelect } from '../../components/collection-select';
 import { Box } from '../../components/layout/box';
 import { FormField } from '../../components/layout/form';
-import { canReadUsers } from '../../rules/rules';
+import { canReadUsers } from '../../rules';
 import { TimePeriodSelect, TimePeriod } from '../../components/time-period-select';
 import { IProject, ITask } from '../../../common/dist';
 import { withAuthentication } from '../../containers/users/with-authentication';

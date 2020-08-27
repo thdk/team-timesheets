@@ -360,16 +360,16 @@ describe("RegistrationStore", () => {
 
             await store.timesheets.saveSelectedRegistration();
 
-            await waitFor(async () => {
+            await waitFor<void>(async () => {
                 const reg = await registrationCollection.getAsync("reg-1")
                     .then(doc => doc.data);
 
-                expect(reg).toEqual(
+                return expect(reg).toEqual(
                     expect.objectContaining({
                         description: "desc 3 a",
                         project: "project-1",
                     })
-                )
+                );
             });
 
             store.timesheets.setSelectedRegistration(undefined);

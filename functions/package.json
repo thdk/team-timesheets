@@ -30,7 +30,7 @@
     "@types/json2csv": "^4.2.0",
     "@types/moment-timezone": "^0.5.13",
     "tslint": "~5.12.1",
-    "typescript": "^3.5.3"
+    "typescript": "^3.8.2"
   },
   "private": true,
   "engines": {

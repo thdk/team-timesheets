@@ -1,7 +1,7 @@
 import { useStore } from "../store-context";
 
 export const useUserStore = () => {
-    const { user } = useStore();
+    const store = useStore();
 
-    return user;
+    return store.user;
 };

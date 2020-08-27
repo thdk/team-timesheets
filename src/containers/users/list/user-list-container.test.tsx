@@ -111,14 +111,14 @@ describe("UserListContainer", () => {
         });
 
         it("should render users", async () => {
-            const { findByText, asFragment } = render(
+            const { getByText, asFragment } = render(
                 <StoreContext.Provider value={store}>
                     <UserList />
                 </StoreContext.Provider>
             );
 
             await waitFor(
-                () => findByText("user 1"),
+                () => expect(getByText("user 1")),
             );
 
             expect(asFragment()).toMatchSnapshot();

@@ -16,7 +16,6 @@ exports[`should display favorite groups 1`] = `
       >
         <li
           class="mdc-list-item"
-          data-id="1"
           role="menuitem"
           tabindex="0"
         >
@@ -26,7 +25,6 @@ exports[`should display favorite groups 1`] = `
         </li>
         <li
           class="mdc-list-item"
-          data-id="2"
           role="menuitem"
           tabindex="0"
         >

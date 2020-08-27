@@ -6,7 +6,7 @@ import { SettingsTab, SettingsRouteQueryParams } from '../../routes/settings';
 import { goToSettings } from '../../internal';
 import { ClientList } from '../../containers/clients/list';
 import { UserList } from '../../containers/users/list';
-import { canReadUsers, canManageTeams } from '../../rules/rules';
+import { canReadUsers, canManageTeams } from '../../rules';
 import { TeamList } from '../../containers/teams/list';
 import { useRouterStore } from '../../stores/router-store';
 import { useMemo } from 'react';

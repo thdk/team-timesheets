@@ -2,7 +2,7 @@ import * as React from 'react';
 import { observer } from 'mobx-react-lite';
 
 
-import { canWriteClient } from '../../../rules/rules';
+import { canWriteClient } from '../../../rules';
 import { SettingsList, IListItemData } from '../../../components/settings-list';
 import { useStore } from '../../../contexts/store-context';
 

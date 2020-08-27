@@ -2,7 +2,7 @@ import * as React from 'react';
 import { observer } from 'mobx-react';
 import { goToOverview, goToSettings, goToReports, goToProjects, goToDashboard, goToLogin, goToFavorites } from "../../../internal";
 
-import { canManageProjects } from '../../../rules/rules';
+import { canManageProjects } from '../../../rules';
 import { IWithAuthenticatedUserProps } from '../../users/with-authenticated-user';
 import TimesheetCalendar from '../../timesheet-calendar/timesheet-calendar';
 import { withAuthentication } from '../../users/with-authentication';

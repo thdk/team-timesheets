@@ -1,7 +1,7 @@
 import * as React from "react";
 import { observer } from "mobx-react-lite";
 
-import { canManageTeams } from "../../../rules/rules";
+import { canManageTeams } from "../../../rules";
 import { SettingsList, IListItemData } from "../../../components/settings-list";
 import { useStore } from "../../../contexts/store-context";
 

@@ -7,7 +7,7 @@ import { IRootStore } from "../../stores/root-store";
 import { IViewAction } from "../../stores/view-store";
 import Projects from "../../pages/projects";
 import detailRoutes from "./detail";
-import { canManageProjects } from "../../rules/rules";
+import { canManageProjects } from "../../rules";
 
 export const goToProjects = (store: IRootStore, tab: ProjectsTab = "active") => {
     store.router.goTo(routes.projects, {}, { tab });

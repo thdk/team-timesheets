@@ -4,7 +4,7 @@ import { IRootStore } from "../root-store";
 import * as deserializer from "../../../common/serialization/deserializer";
 import * as serializer from "../../../common/serialization/serializer";
 import { IUser, IUserData } from "../../../common/dist";
-import { canReadUsers } from "../../rules/rules";
+import { canReadUsers } from "../../rules";
 import { getLoggedInUserAsync } from "../../firebase/firebase-utils";
 
 export interface IUserStore extends UserStore { }
@@ -94,7 +94,10 @@ export class UserStore implements IUserStore {
         if (id && !user) {
             // fetch the user manually
             this.usersCollection.getAsync(id, { watch: true })
-                .then(this.setSelectedUserObservable.bind(this));
+                .then(user => {
+                    this.setSelectedUserObservable(user);
+                })
+                .catch(console.error);
         } else {
             this.setSelectedUserObservable(user);
         }

@@ -3,7 +3,7 @@ import * as React from 'react';
 import { transaction, when } from "mobx";
 import { IRootStore } from "../../stores/root-store";
 import { IViewAction } from "../../stores/view-store";
-import { canDeleteTask, canDeleteClient, canManageTeams } from "../../rules/rules";
+import { canDeleteTask, canDeleteClient, canManageTeams } from "../../rules";
 import { App } from "../../internal";
 import SettingsPage from "../../pages/settings/settings-page-container";
 import { setNavigationContent } from "../actions";

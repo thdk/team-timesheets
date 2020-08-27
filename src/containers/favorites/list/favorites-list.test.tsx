@@ -7,7 +7,7 @@ import { TestCollection } from "../../../__tests__/utils/firestorable/collection
 import { IClientData, IFavoriteRegistrationGroup, IProjectData, ITaskData } from "../../../../common";
 import { StoreContext } from "../../../contexts/store-context";
 import { IRootStore } from "../../../stores/root-store";
-import { render, act, waitFor, findByText } from "@testing-library/react";
+import { render, waitFor } from "@testing-library/react";
 import { FavoriteStore } from "../../../stores/favorite-store";
 import { UserStore } from "../../../stores/user-store";
 import { ConfigStore } from "../../../stores/config-store";
@@ -147,35 +147,29 @@ describe("FavoritesList", () => {
         await setupAsync();
 
         let store: IRootStore;
-        await act(async () => {
-            store = new TestStore() as unknown as IRootStore;
-            store.user.setUser({
-                uid: "user-1",
-                displayName: "user 1",
-            } as firebase.User);
 
-            store.favorites.setActiveFavoriteGroupId("group-1");
-        });
+        store = new TestStore() as unknown as IRootStore;
+        store.user.setUser({
+            uid: "user-1",
+            displayName: "user 1",
+        } as firebase.User);
 
-        let asFragment: () => DocumentFragment = () => new DocumentFragment();
+        store.favorites.setActiveFavoriteGroupId("group-1");
 
-        await act(async () => {
-            const renderResult = render(
-                // <FirebaseProvider>
-                <StoreContext.Provider value={store}>
-                    <FavoritesList />
-                </StoreContext.Provider>
-                //</FirebaseProvider>
-            );
 
-            // FavoritesList will fetch favorites by groupId once it get's rendered
-            // so we have to wait here for those favorites to be fetched and rendered
-            await waitFor(
-                () => findByText(renderResult.container, "Favorite desc 2"),
-            );
+        const { getByText, asFragment } = render(
+            // <FirebaseProvider>
+            <StoreContext.Provider value={store}>
+                <FavoritesList />
+            </StoreContext.Provider>
+            //</FirebaseProvider>
+        );
 
-            asFragment = renderResult.asFragment;
-        });
+        // FavoritesList will fetch favorites by groupId once it get's rendered
+        // so we have to wait here for those favorites to be fetched and rendered
+        await waitFor(
+            () => expect(getByText("Favorite desc 2")),
+        );
 
         expect(asFragment()).toMatchSnapshot();
     });

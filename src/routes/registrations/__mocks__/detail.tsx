@@ -1,0 +1,1 @@
+export const goToNewRegistration = jest.fn();

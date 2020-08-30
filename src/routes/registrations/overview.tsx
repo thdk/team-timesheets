@@ -20,7 +20,7 @@ export const path = "/timesheets";
 
 type RegistrationsOverviewRoute = Route<IRootStore, DateObject, { last: string }>;
 
-export const goToOverview = (s: IRootStore, date?: DateObject, trackOptions?: { track?: boolean, currentDate?: number }) => {
+export const goToOverview = (s: Pick<IRootStore, "router" | "view"> , date?: DateObject, trackOptions?: { track?: boolean, currentDate?: number }) => {
     let route = routes.monthOverview;
     if ((date && date.day) || (!date && s.view.day)) {
         route = routes.overview;
@@ -116,7 +116,7 @@ const setActions = (s: IRootStore, alowInserts = false) => {
                 if (!selection) return;
 
                 console.log(s.view.moment.toDate());
-                s.timesheets.addRegistrations(
+                s.timesheets.addRegistrationsAsync(
                     Array.from(selection.values())
                         .map(reg =>
                             s.timesheets.copyRegistrationToDate(reg, s.view.moment.toDate())

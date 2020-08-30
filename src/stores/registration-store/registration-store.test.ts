@@ -114,6 +114,8 @@ describe("RegistrationStore", () => {
                 day: 1,
             });
         });
+
+        // We need to observe something otherwise registrations aren't fetched :)
         unsubscribe = reaction(() => store.timesheets.registrationsGroupedByDay, () => { })
     });
 

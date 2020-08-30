@@ -7,7 +7,7 @@ import {
     ChartType,
     IRegistrationsChartProps,
     RegistrationsChart
-} from '../../containers/registrations/chart';
+} from '../../containers/timesheet/chart';
 import { FlexGroup } from '../../components/layout/flex';
 import { CollectionSelect } from '../../components/collection-select';
 import { Box } from '../../components/layout/box';

@@ -1,51 +1,51 @@
 import * as React from 'react';
 import { observer } from 'mobx-react-lite';
 import { Day as Day } from '../day';
-import { useStore } from '../../../contexts/store-context';
+import { useRegistrationStore } from '../../../contexts/registration-context';
+import { ComponentProps } from 'react';
 
 export enum SortOrder {
     Ascending = 1,
     Descending = -1
 }
 
-export interface IDaysProps {
-    registrationClick: (id: string) => void;
-    registrationToggleSelect?: (id: string) => void;
-    totalOnTop?: boolean;
+export interface IDaysProps
+    extends Pick<ComponentProps<typeof Day>,
+    "registrationClick" |
+    "registrationToggleSelect" |
+    "isMonthView"
+    > {
     sortOrder?: SortOrder
-    activeDate?: number;
-    isCollapsable?: boolean;
-    isMonthView: boolean;
     showHeaderAddButton?: boolean;
 }
 
-export const Days = observer((props: IDaysProps) => {
-    const store = useStore();
+export const TimesheetDays = observer((props: IDaysProps) => {
+    const timesheets = useRegistrationStore();
 
     const {
         sortOrder = SortOrder.Ascending,
-        isMonthView,
         showHeaderAddButton = true,
+        ...dayProps
     } = props;
 
     return <>{(sortOrder > 0
-        ? store.timesheets.registrationsGroupedByDay
-        : store.timesheets.registrationsGroupedByDayReversed)
+        ? timesheets.registrationsGroupedByDay
+        : timesheets.registrationsGroupedByDayReversed)
         .map((g, i) => {
-            const isCollapsed = !store.timesheets.selectedRegistrationDays
+            const isCollapsed = !timesheets.selectedRegistrationDays
                 .some(d => d === g.groupKey);
 
             return <Day
                 key={`group-${i}`}
                 group={g}
-                {...{ ...props, isCollapsed }}
+                isCollapsed={isCollapsed}
+                {...dayProps}
                 headerClick={e => {
                     if ((e.target as HTMLElement).closest(".prevent-propagation"))
                         return;
 
-                    store.timesheets.toggleSelectedRegistrationDay(g.groupKey);
+                    timesheets.toggleSelectedRegistrationDay(g.groupKey);
                 }}
-                isMonthView={isMonthView}
                 showHeaderAddButton={showHeaderAddButton}
             />
         })}</>;

@@ -7,6 +7,8 @@ import { IRootStore } from "../../../stores/root-store";
 import { useStore } from "../../../contexts/store-context";
 
 import "./day-header.scss";
+import { useRegistrationStore } from '../../../contexts/registration-context';
+import { useRouterStore } from '../../../stores/router-store';
 
 export type GroupedRegistrationHeaderProps = {
     readonly groupKey: string;
@@ -18,8 +20,11 @@ export type GroupedRegistrationHeaderProps = {
     readonly showAddButton?: boolean;
 }
 
-const GroupedRegistrationHeader = (props: GroupedRegistrationHeaderProps) => {
+export const GroupedRegistrationHeader = (props: GroupedRegistrationHeaderProps) => {
     const store = useStore();
+
+    const timesheets = useRegistrationStore();
+    const router = useRouterStore();
 
     const {
         groupKey,
@@ -76,14 +81,14 @@ const GroupedRegistrationHeader = (props: GroupedRegistrationHeaderProps) => {
                     onSelect={
                         id => {
                             if (!id) {
-                                store.timesheets.toggleSelectedRegistrationDay(date.toDateString(), true);
-                                goToNewRegistration(store, dateMoment);
+                                timesheets.toggleSelectedRegistrationDay(date.toDateString(), true);
+                                goToNewRegistration(router, dateMoment);
                             } else {
                                 store.favorites.getFavoritesByGroupIdAsync(id)
                                     .then(favoriteDocs => {
-                                        store.timesheets.addRegistrations(
+                                        timesheets.addRegistrationsAsync(
                                             favoriteDocs.map(reg =>
-                                                store.timesheets.copyRegistrationToDate(reg.data!, date)
+                                                timesheets.copyRegistrationToDate(reg.data!, date)
                                             )
                                         );
                                     })
@@ -121,5 +126,3 @@ const GroupedRegistrationHeader = (props: GroupedRegistrationHeaderProps) => {
         {titleJSX}
     </div>;
 };
-
-export default GroupedRegistrationHeader;

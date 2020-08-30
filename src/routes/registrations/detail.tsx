@@ -19,8 +19,8 @@ export const goToRegistration = (router: RouterStore<IRootStore>, id?: string) =
     router.goTo(id ? routes.registrationDetail : routes.newRegistration, { id });
 };
 
-export const goToNewRegistration = (store: IRootStore, date: moment.Moment) => {
-    store.router.goTo(routes.newRegistration, undefined, { date: moment(date).format("YYYY-MM-DD") });
+export const goToNewRegistration = (router: RouterStore<IRootStore>, date: moment.Moment) => {
+    router.goTo(routes.newRegistration, undefined, { date: moment(date).format("YYYY-MM-DD") });
 };
 
 export const setBackToOverview = (store: IRootStore, action?: () => void, currentDate?: number, targetDate?: DateObject) => {

@@ -3,7 +3,7 @@ import { Route } from 'mobx-router';
 import { setNavigationContent, goToRouteWithDate, routeWithDateChanged } from '../actions';
 import { App, DateObject } from '../../internal';
 import { IRootStore } from '../../stores/root-store';
-import { Reports } from '../../pages/export';
+import { ExportPage } from '../../pages/export';
 
 const path = "/reports";
 
@@ -21,7 +21,7 @@ const routeChanged = (route: ReportRoute, params: DateObject, s: IRootStore) => 
 const routes = {
     report: new Route({
         path: path + '/:year/:month',
-        component: <App><Reports></Reports></App>,
+        component: <App><ExportPage></ExportPage></App>,
         onEnter: (route: ReportRoute, params: DateObject, s: IRootStore) => {
             routeChanged(route, params, s);
         },

@@ -2,7 +2,7 @@ import * as React from "react";
 import { observer } from 'mobx-react-lite';
 import { Doc } from "firestorable";
 import { IRegistration, IRegistrationData } from '../../../../common';
-import RegistrationLine from "../line";
+import { RegistrationLine } from "../line";
 import { useStore } from "../../../contexts/store-context";
 
 export interface IRegistrationLinesProps extends React.HTMLProps<HTMLElement> {
@@ -25,7 +25,7 @@ export const RegistrationLines = observer((props: IRegistrationLinesProps) => {
         const { data: { name: projectName = "" } = {} } = projectData || {};
 
         const taskData = task ? store.config.tasksCollection.get(task) : null;
-        const { data: { icon = undefined, name: taskName = ""} = {} } = taskData || {};
+        const { data: { icon = undefined, name: taskName = "" } = {} } = taskData || {};
 
         const clientData = client ? store.config.clientsCollection.get(client) : null;
         const { data: { name: clientName = undefined } = {} } = clientData || {};

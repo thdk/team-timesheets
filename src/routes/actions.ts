@@ -2,13 +2,13 @@ import { Route } from "mobx-router";
 import { DateObject } from './registrations/overview';
 import { IRootStore } from "../stores/root-store";
 import { setBackToOverview } from "../internal";
-import * as React from 'react'
+import React from 'react';
 import { StoreContext } from "../contexts/store-context";
 
 export const goToRouteWithDate = (route: Route<
     IRootStore,
     DateObject,
-    any>, s: IRootStore, date?: DateObject, trackOptions?: { track?: boolean, currentDate?: number }) => {
+    any>, s: Pick<IRootStore, "view" | "router">, date?: DateObject, trackOptions?: { track?: boolean, currentDate?: number }) => {
     const { track = undefined, currentDate = undefined } = trackOptions || {};
 
     s.view.track = track;

@@ -5,7 +5,7 @@ import moment from 'moment';
 import { IRootStore } from '../root-store';
 import * as deserializer from '../../../common/serialization/deserializer';
 import * as serializer from '../../../common/serialization/serializer';
-import { SortOrder } from '../../containers/registrations/days';
+import { SortOrder } from '../../containers/timesheet/days';
 import { IRegistration, IRegistrationData } from '../../../common/dist';
 
 export interface IGroupedRegistrations<T> {
@@ -26,7 +26,7 @@ export interface IRegistrationsStore {
     readonly updateSelectedRegistration: (data: Partial<IRegistration>) => void;
     readonly setSelectedRegistrationDefault: (moment?: moment.Moment) => void;
     readonly deleteRegistrationsAsync: (...ids: string[]) => Promise<void[]>;
-    readonly addRegistrations: (data: IRegistration[]) => void;
+    readonly addRegistrationsAsync: (data: IRegistration[]) => Promise<string[]>;
 
     readonly registrationsTotalTime: number;
     readonly registrationsGroupedByDay: IGroupedRegistrations<string>[];
@@ -160,11 +160,13 @@ export class RegistrationStore implements IRegistrationsStore {
 
                     // Always make sure that the order within a group is stable
                     // Oldest on top
-                    currentDayGroup.registrations = currentDayGroup.registrations.sort((a, b) => {
-                        const aTime = a.data!.created!.getTime();
-                        const bTime = b.data!.created!.getTime();
-                        return aTime > bTime ? 1 : aTime < bTime ? -1 : 0;
-                    })
+                    currentDayGroup.registrations = currentDayGroup.registrations.sort(
+                        (a, b) => {
+                            const aTime = a.data!.created!.getTime();
+                            const bTime = b.data!.created!.getTime();
+                            return aTime > bTime ? 1 : aTime < bTime ? -1 : 0;
+                        }
+                    );
                     currentDayGroup.totalTime = (currentDayGroup.totalTime || 0) + (c.data!.time || 0);
                 } else {
                     p.push({
@@ -231,8 +233,8 @@ export class RegistrationStore implements IRegistrationsStore {
         return this.registrations.updateAsync(null, ...ids);
     }
 
-    public addRegistrations(data: IRegistration[]) {
-        this.registrations.addAsync(data);
+    public addRegistrationsAsync(data: IRegistration[]) {
+        return this.registrations.addAsync(data);
     }
 
     public copyRegistrationToDate(source: Omit<IRegistration, "date" | "isPersisted">, newDate: Date) {

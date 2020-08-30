@@ -1,7 +1,7 @@
 import React, { useCallback } from 'react';
 import { observer } from "mobx-react-lite";
 import { goToRegistration } from '../../internal';
-import { Days, SortOrder } from '../../containers/registrations/days';
+import { TimesheetDays, SortOrder } from '../../containers/timesheet/days';
 import { DateSelect } from '../../components/date-select';
 import { FlexGroup } from '../../components/layout/flex';
 import { withAuthentication } from '../../containers/users/with-authentication';
@@ -14,7 +14,7 @@ import { useReportStore } from '../../stores/report-store';
 import { useRouterStore } from '../../stores/router-store';
 import { Button } from '@rmwc/button';
 
-export const Reports = withAuthentication(
+export const ExportPage = withAuthentication(
     observer(() => {
         const user = useUserStore();
         const view = useViewStore();
@@ -76,9 +76,8 @@ export const Reports = withAuthentication(
                         <ReportDownloadLink />
                     </FlexGroup>
 
-                    <Days
+                    <TimesheetDays
                         sortOrder={SortOrder.Ascending}
-                        totalOnTop={true}
                         registrationClick={onRegistrationClick}
                         isMonthView={true}
                         showHeaderAddButton={false}

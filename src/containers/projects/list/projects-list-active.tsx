@@ -8,8 +8,8 @@ import { useProjectStore } from "../../../contexts/project-context";
 import { observer } from 'mobx-react-lite';
 
 export const ActiveProjectList = observer((props: React.HTMLProps<HTMLDivElement>) => {
-    const { authenticatedUser, authenticatedUserId } = useUserStore();
-    const { selection, toggleSelection } = useViewStore();
+    const user = useUserStore();
+    const view = useViewStore();
     const projects = useProjectStore();
 
     const [goToProject, setGoToProject] = useState<string | undefined>(undefined);
@@ -18,11 +18,11 @@ export const ActiveProjectList = observer((props: React.HTMLProps<HTMLDivElement
         // User has started to select items using the checkboxes,
         // While in select mode, simply select the items checkbox instead of
         // opening the clicked row.
-        if (selection.size) {
-            toggleSelection(id);
+        if (view.selection.size) {
+            view.toggleSelection(id);
         } else {
             const project = projects.projectsCollection.get(id);
-            if (project && canEditProject(project.data!, authenticatedUser, authenticatedUserId)
+            if (project && canEditProject(project.data!, user.authenticatedUser, user.authenticatedUserId)
             ) {
                 setGoToProject(id);
             }
@@ -30,18 +30,18 @@ export const ActiveProjectList = observer((props: React.HTMLProps<HTMLDivElement
     };
 
     const onSelectItem = (id: string) => {
-        toggleSelection(id);
+        view.toggleSelection(id);
     };
 
     return goToProject
         ? <GoToProject id={goToProject} />
         : (
             <SettingsList {...props}
-                readonly={!canManageProjects(authenticatedUser)}
+                readonly={!canManageProjects(user.authenticatedUser)}
                 items={projects.activeProjects}
                 onToggleSelection={onSelectItem}
                 onItemClick={handleItemClicked}
-                selection={selection}
+                selection={view.selection}
                 activeItemId={projects.projectId}
             ></SettingsList>
         );

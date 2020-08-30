@@ -73,7 +73,6 @@ export const Timesheet = observer(() => {
         regs = <>
             {totalList}
             <TimesheetDays
-                totalOnTop={true}
                 registrationClick={registrationClick}
                 registrationToggleSelect={registrationSelect}
                 sortOrder={sortOrder}

@@ -14,6 +14,7 @@ import { useCallback } from 'react';
 import { Tab, TabBar } from "@rmwc/tabs";
 import { observer } from 'mobx-react-lite';
 import { useUserStore } from "../../contexts/user-context";
+import { Connections } from './connections';
 
 interface ITabData {
     id: SettingsTab;
@@ -31,6 +32,7 @@ export const SettingsPage = observer(() => {
     const validTabs = useMemo(() => {
         const tabData: ITabData[] = [
             { id: "preferences", text: "Preferences", canOpen: () => !!user, tabContent: <Preferences /> },
+            { id: "connections", text: "Connections", tabContent: <Connections /> },
             { id: "tasks", text: "Tasks", tabContent: <TaskList /> },
             { id: "clients", text: "Clients", tabContent: <ClientList /> },
             { id: "teams", text: "Teams", canOpen: () => canManageTeams(user), tabContent: <TeamList /> },

@@ -10,7 +10,13 @@ import { useFirebase } from '../../contexts/firebase-context/firebase-context';
 const getFirebaseAuthProvider = (provider: LoginProvider) => {
     switch (provider) {
         case LoginProvider.Google:
-            return firebase.auth.GoogleAuthProvider.PROVIDER_ID;
+            return {
+                provider: firebase.auth.GoogleAuthProvider.PROVIDER_ID,
+                scopes: [
+                    "email",
+                    "https://www.googleapis.com/auth/calendar",
+                ],
+            };
         case LoginProvider.Facebook:
             return firebase.auth.FacebookAuthProvider.PROVIDER_ID;
         case LoginProvider.Email:
@@ -31,7 +37,9 @@ export const Login = ({ configs }: Props) => {
 
         const loginUiConfig = {
             callbacks: {
-                signInSuccessWithAuthResult: (_authResult: firebase.auth.UserCredential, _redirectUrl: string) => {
+                signInSuccessWithAuthResult: (authResult: firebase.auth.UserCredential, _redirectUrl: string) => {
+                    // authResult.user?.getIdToken()
+                    console.log({authResult});
                     return false;
                 }
             },

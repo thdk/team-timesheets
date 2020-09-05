@@ -5,12 +5,6 @@ import { IProject, ITask, IClient, IClientData, ITeam, ITeamData, ITaskData, ICo
 
 import * as serializer from '../../../common/serialization/serializer';
 import * as deserializer from '../../../common/serialization/deserializer';
-import { LoginProvider } from '../../firebase/types';
-
-export type Configs = {
-    // authClientId: string;
-    loginProviders: LoginProvider[];
-}
 
 export interface IConfigStore extends ConfigStore { };
 
@@ -116,9 +110,9 @@ export class ConfigStore implements IConfigStore {
     }
 
     // To investigate: does getConfigValue needs mobx @computed attribute?
-    public getConfigValue<T>(key: string): T;
-    public getConfigValue<T>(key: string, isRequired: true): T;
-    public getConfigValue<T>(key: string, isRequired: boolean): T | undefined;
+    public getConfigValue<T = string>(key: string): T;
+    public getConfigValue<T = string>(key: string, isRequired: true): T;
+    public getConfigValue<T = string>(key: string, isRequired: boolean): T | undefined;
     public getConfigValue<T extends ConfigValue>(key: string, isRequired = true): T | undefined {
         const doc = this.configsCollection.docs.find(c => c.data!.key === key);
 

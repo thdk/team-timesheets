@@ -17,11 +17,6 @@ class MyEnvironment extends JSDOMENV {
       }),
     );
   }
-
-  async setup() {}
-
-  async teardown() {}
-
 }
 
 module.exports = MyEnvironment;

@@ -31,8 +31,12 @@ function execAsync(args) {
     });
 }
 
+process.on("unhandledRejection", () => {
+    process.exit(1);
+});
+
 (async () => {
-    await execAsync(["npm", "i"]);
+    await execAsync(["npm", "ci"]);
     await execAsync(["npm", "run", "build:refs"]);
     await execAsync(["npm", "i"], path.join(__dirname, "../functions"));
     await execAsync(["npm", "run", "build"], path.join(__dirname, "../functions"));

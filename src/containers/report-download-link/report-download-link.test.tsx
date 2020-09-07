@@ -102,10 +102,7 @@ describe("ReportDownloadLink", () => {
         store.reports.requestReport("user-1", 2020, 4);
 
         // Report status should be updated to 'waiting'
-        await findByText("waiting", undefined, {
-            interval: 100,
-            timeout: 1000,
-        });
+        await findByText("waiting");
 
         // Set report status as completed in collection
         // TODO: Setup firebase functions emulator so we don't have to fake this here

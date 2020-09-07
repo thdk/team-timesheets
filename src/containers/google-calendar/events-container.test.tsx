@@ -128,6 +128,7 @@ describe("GoogleCalendarEventsContainer", () => {
         const { findByText } = render(
             <IntlProvider
                 locale={"en-US"}
+                timeZone={"Europe/Brussels"}
             ><GoogleCalendarEvents />
             </IntlProvider>
         );

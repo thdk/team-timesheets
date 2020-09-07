@@ -1,16 +1,10 @@
 steps:
   - name: node:10.18.0
     entrypoint: npm
-    args: ["ci"]
-  - name: node:10.18.0
-    entrypoint: npm
-    args: ["run", "build:refs"]
+    args: ["run", "ci"]
   - name: "gcr.io/$PROJECT_ID/firebase"
     entrypoint: npm
     args: ["run", "test:cloudbuild"]
-  - name: node:10.18.0
-    entrypoint: npm
-    args: ["run", "build:production"]
   - name: "gcr.io/$PROJECT_ID/builder"
     entrypoint: bash
     args: ['-c', 'bash <(curl -s https://codecov.io/bash) -X gcov -X coveragepy -X fix']
@@ -20,11 +14,3 @@ steps:
     - 'VCS_PULL_REQUEST=$_PR_NUMBER'
     - 'CI_BUILD_ID=$BUILD_ID'
     - 'CODECOV_TOKEN=$_CODECOV_TOKEN'
-  - name: node:10.18.0
-    entrypoint: npm
-    dir: "functions"
-    args: ["install"]
-  - name: node:10.18.0
-    entrypoint: npm
-    dir: "functions"
-    args: ["run", "build"]

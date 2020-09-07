@@ -1,7 +1,7 @@
 import React from "react";
 import { render, waitFor, fireEvent } from "@testing-library/react";
 import { GoogleCalendarEvents } from "./";
-import { initTestFirestore } from "../../__tests__/utils/firebase";
+import { initTestFirestore, deleteFirebaseAppsAsync } from "../../__tests__/utils/firebase";
 import { Store } from "../../stores/root-store";
 import { events } from "./events.test";
 import { IntlProvider } from "react-intl";
@@ -49,7 +49,14 @@ beforeAll(() => {
         name: "Meeting",
         icon: "people",
     });
-})
+});
+
+afterAll(() => {
+    store.dispose();
+    return Promise.all([
+        deleteFirebaseAppsAsync(),
+    ])
+});
 
 describe("GoogleCalendarEventsContainer", () => {
     it("should render without google calendar events", async () => {

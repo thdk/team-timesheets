@@ -109,6 +109,7 @@ describe("GoogleCalendarEventsContainer", () => {
         const { asFragment } = render(
             <IntlProvider
                 locale={"en-US"}
+                timeZone={"Europe/Brussels"}
             ><GoogleCalendarEvents />
             </IntlProvider>
         );

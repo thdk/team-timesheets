@@ -29,6 +29,7 @@ import { IntlProvider } from 'react-intl';
 render(
     <IntlProvider
         locale={"en-US"}
+        timeZone={"Europe/Brussels"}
     >
         <ThemeProvider
             options={{

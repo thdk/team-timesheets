@@ -54,6 +54,7 @@ describe("GoogleCalendarEvents", () => {
         const { getByText } = render(
             <IntlProvider
                 locale={"en-US"}
+                timeZone={"Europe/Brussels"}
             ><GoogleCalendarEvents
                     events={events}
                     onClick={onClick}

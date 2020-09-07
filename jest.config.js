@@ -9,6 +9,6 @@ module.exports = {
     moduleNameMapper: {
         "\\.(css|less|scss)$": "<rootDir>/src/__mocks__/style-mock.js"
     },
-    testEnvironment: "<rootDir>/src/__test-utils__/custom-jest-environment.js",
+    // testEnvironment: "<rootDir>/src/__test-utils__/custom-jest-environment.js",
     setupFiles: ['<rootDir>/src/__test-utils__/setup.js'],
 }

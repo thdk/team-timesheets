@@ -105,6 +105,9 @@ exports[`TimesheetDays should display registrations for the specified day 1`] = 
       />
     </div>
   </div>
+  <div
+    class="flex  vertical"
+  />
 </DocumentFragment>
 `;
 

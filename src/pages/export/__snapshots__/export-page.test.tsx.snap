@@ -363,7 +363,7 @@ exports[`Export Page should render without registrations 1`] = `
                 role="button"
                 tabindex="-1"
               >
-                August
+                September
               </div>
               <div
                 class="mdc-notched-outline mdc-notched-outline--upgraded"
@@ -489,7 +489,7 @@ exports[`Export Page should render without registrations 1`] = `
         <span
           class="mdc-list-item__text"
         >
-          Total in August
+          Total in September
         </span>
         <div
           class="mdc-list-item__meta"

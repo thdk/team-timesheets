@@ -1,6 +1,6 @@
 import { apps, initializeAdminApp, clearFirestoreData } from "@firebase/testing";
 
-export const initTestFirestore = (projectId: string, collectionNames: string[]) => {
+export const initTestFirestore = (projectId: string, collectionNames?: string[]) => {
     const app = initializeAdminApp({
         projectId,
     });
@@ -8,7 +8,9 @@ export const initTestFirestore = (projectId: string, collectionNames: string[]) 
     const firestore = app.firestore();
 
     return {
-        refs: collectionNames.map(collectionName => firestore.collection(collectionName)),
+        refs: collectionNames
+            ? collectionNames.map(collectionName => firestore.collection(collectionName))
+            : [],
         firestore,
         clearFirestoreDataAsync: () => clearFirestoreDataAsync(projectId),
     };

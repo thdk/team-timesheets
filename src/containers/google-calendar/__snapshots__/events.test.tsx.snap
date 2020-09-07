@@ -1,0 +1,77 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`GoogleCalendarEvents should display events 1`] = `
+<DocumentFragment>
+  <div>
+    <li
+      class="mdc-list-divider"
+      role="separator"
+    />
+    <div
+      class="data-row"
+    >
+      <div
+        class="data-row__header"
+      >
+        <i
+          class="rmwc-icon rmwc-icon--ligature material-icons"
+        >
+          event
+        </i>
+      </div>
+      <div
+        class="data-row__column"
+        style="flex-grow: 1;"
+      >
+        <span
+          class="data-row__line1 mdc-typography--subtitle1"
+        >
+          Summary 1
+        </span>
+        <span
+          class="data-row__line2 mdc-typography--subtitle2"
+        >
+          All day event 1
+        </span>
+      </div>
+      <div
+        class="data-row__column events__time"
+      />
+    </div>
+    <div
+      class="data-row"
+    >
+      <div
+        class="data-row__header"
+      >
+        <i
+          class="rmwc-icon rmwc-icon--ligature material-icons"
+        >
+          event
+        </i>
+      </div>
+      <div
+        class="data-row__column"
+        style="flex-grow: 1;"
+      >
+        <span
+          class="data-row__line1 mdc-typography--subtitle1"
+        >
+          Summary 2
+        </span>
+      </div>
+      <div
+        class="data-row__column events__time"
+      >
+        1:00 PM - 3:00 PM
+      </div>
+    </div>
+    <li
+      class="mdc-list-divider"
+      role="separator"
+    />
+  </div>
+</DocumentFragment>
+`;
+
+exports[`GoogleCalendarEvents should render without events 1`] = `<DocumentFragment />`;

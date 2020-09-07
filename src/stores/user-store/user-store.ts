@@ -168,6 +168,10 @@ export class UserStore implements IUserStore {
                 this._userId = undefined;
                 this._authUser.set(undefined);
             });
+
+            if (typeof gapi !== "undefined") {
+                gapi.auth2.getAuthInstance().signOut();
+            }
         } else {
             this.state = StoreState.Pending;
             this.usersCollection.getAsync(fbUser.uid).then(user => {

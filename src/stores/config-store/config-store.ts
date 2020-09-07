@@ -1,7 +1,7 @@
 import { observable, computed, action } from 'mobx';
 import { Collection, ICollection, RealtimeMode, FetchMode } from "firestorable";
 import { IRootStore } from '../root-store';
-import { IProject, ITask, IClient, IClientData, ITeam, ITeamData, ITaskData, IConfig, ConfigValue } from '../../../common/dist';
+import { IClient, IClientData, ITeam, ITeamData, ITaskData, IConfig, ConfigValue, ITask } from '../../../common/dist';
 
 import * as serializer from '../../../common/serialization/serializer';
 import * as deserializer from '../../../common/serialization/deserializer';
@@ -9,8 +9,7 @@ import * as deserializer from '../../../common/serialization/deserializer';
 export interface IConfigStore extends ConfigStore { };
 
 export class ConfigStore implements IConfigStore {
-    //private readonly _rootStore: IRootStore;
-    readonly tasksCollection: ICollection<IProject, ITaskData>;
+    readonly tasksCollection: ICollection<ITask, ITaskData>;
     readonly clientsCollection: ICollection<IClient>;
     readonly teamsCollection: ICollection<ITeam, ITeamData>;
     readonly configsCollection: Collection<IConfig>;

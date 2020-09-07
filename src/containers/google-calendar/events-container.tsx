@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useMemo } from "react";
+import React, { useEffect, useState } from "react";
 import { observer } from "mobx-react-lite";
 
 import { useGapi } from "../../hooks/use-gapi";
@@ -7,16 +7,15 @@ import { useGoogleConfig } from "../configs/use-google-config";
 
 import { GoogleCalendarEvents as PureGoogleCalendarEvents } from "./events";
 import { useRegistrationStore } from "../../contexts/registration-context";
-import { useCallback } from "react";
 import { goToNewRegistration } from "../../routes/registrations/detail";
 import { useRouterStore } from "../../stores/router-store";
 import { useTasks } from "../../contexts/task-context";
 
 export const GoogleCalendarEvents =
     observer(({
-        excludedIds,
+        excludedIds = [],
     }: {
-        excludedIds: string[];
+        excludedIds?: string[];
     }) => {
         const [events, setEvents] = useState<gapi.client.calendar.Event[] | undefined>();
 
@@ -30,7 +29,7 @@ export const GoogleCalendarEvents =
 
         const router = useRouterStore();
 
-        const handleEventClick = useCallback((event: gapi.client.calendar.Event) => {
+        const handleEventClick = (event: gapi.client.calendar.Event) => {
             const start = new Date((event.start?.date || event.start?.dateTime) as string);
             const end = event.start?.date ? undefined : new Date(event.end?.dateTime!);
             timesheet.setSelectedRegistrationDefault({
@@ -42,21 +41,15 @@ export const GoogleCalendarEvents =
                 sourceId: event.id!,
             });
             goToNewRegistration(router);
-        }, []);
+        };
+
         const {
             user,
             isGapiLoaded,
         } = useGapi(config);
 
-        const hasScopes = useMemo(() => {
-            const isGranted = isGapiLoaded &&
-                user;
-
-            return isGranted;
-        }, [user, isGapiLoaded]);
-
         useEffect(() => {
-            if (hasScopes) {
+            if (isGapiLoaded && user) {
                 gapi.client.calendar.events.list({
                     'calendarId': 'primary',
                     'timeMin': view.moment.clone().startOf("day").toISOString(),
@@ -69,14 +62,14 @@ export const GoogleCalendarEvents =
                     setEvents(response.result.items);
                 });
             }
-        }, [hasScopes, view.moment]);
+        }, [user, isGapiLoaded, view.moment]);
 
         const filteredEvents = (events || []).filter(
             event => excludedIds.indexOf(event.id!) === -1
         );
 
         const EventsHeader = () => {
-            return filteredEvents?.length
+            return filteredEvents.length
                 ? (
                     <div style={{
                         paddingLeft: "1em",
@@ -95,7 +88,7 @@ export const GoogleCalendarEvents =
 
         return isGapiLoaded
             ? (
-                hasScopes
+                user
                     ? (
                         <>
                             <EventsHeader />

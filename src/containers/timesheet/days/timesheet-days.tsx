@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { observer } from 'mobx-react-lite';
-import { Day as Day } from '../day';
+import { Day } from '../day';
 import { useRegistrationStore } from '../../../contexts/registration-context';
 import { ComponentProps } from 'react';
 

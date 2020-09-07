@@ -1,61 +1,71 @@
-import React, { ReactNode } from "react";
+import React, { HTMLProps, PropsWithChildren } from "react";
 import classNames from "classnames";
+import { Icon } from "@rmwc/icon";
 
 import "./data-row.scss";
 
+export const DataRowLine1 = ({
+    children,
+}: PropsWithChildren<unknown>) => {
+    return (
+        children
+            ? (
+                <span className="data-row__line1 mdc-typography--subtitle1">
+                    {children}
+                </span>
+            )
+            : null
+    );
+}
+
+export const DataRowLine2 = ({
+    children,
+}: PropsWithChildren<unknown>) => {
+    return (
+        children
+            ? (
+                <span className="data-row__line2 mdc-typography--subtitle2">
+                    {children}
+                </span>
+            )
+            : null
+    );
+}
+
 export const DataRow = ({
-    line1,
-    line2,
     icon,
-    extraHeader,
-}: {
-    line1: ReactNode,
-    line2: ReactNode,
-    icon: string,
-    extraHeader?: ReactNode,
+    children,
+    className,
+    allowEmptyHeader,
+    ...divProps
+}: HTMLProps<HTMLDivElement> & {
+    icon?: string,
+    allowEmptyHeader?: boolean
 }) => {
 
-    const Header = () => icon
+    const Header = () => icon || allowEmptyHeader
         ? (
             <div className="data-row__header">
-                <span className="icon material-icons" aria-hidden="true" >{icon}</span>
+                {icon
+                    ? <Icon icon={icon} />
+                    : null
+                }
             </div>
         )
         : null;
 
-    const ExtraHeader = () => extraHeader
-        ? (
-            <div className="data-row__extra-header">
-                {extraHeader}
-            </div>
-        )
-        : null;
-
-    const Line1 = () => line1
-        ? <span className="data-row__line1 mdc-typography--subtitle1">
-            {line1}
-        </span>
-        : null;
-
-    const Line2 = () => line2 ?
-        <span className="data-row__line2 mdc-typography--subtitle2">
-            {line2}
-        </span>
-        : null;
-
-
-    const styles = classNames("data-row");
+    const styles = classNames([
+        "data-row",
+        className,
+    ]);
 
     return (
-        <div className={styles}>
+        <div
+            className={styles}
+            {...divProps}
+        >
             <Header />
-
-            <ExtraHeader />
-
-            <div className="data-row__column">
-                <Line1 />
-                <Line2 />
-            </div>
+            {children}
         </div>
     );
 };

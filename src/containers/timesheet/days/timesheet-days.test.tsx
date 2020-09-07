@@ -24,6 +24,8 @@ jest.mock("../../../contexts/store-context", () => ({
     useStore: () => store,
 }));
 
+jest.mock("../../google-calendar");
+
 jest.mock("../../../rules");
 jest.mock("../../../routes/registrations/detail");
 
@@ -110,13 +112,17 @@ describe("TimesheetDays", () => {
 
         store.user.setUser({ uid: "user-1" } as firebase.User);
 
-        const regIds = await store.timesheets.addRegistrationsAsync(registrations);
 
         const {
             asFragment,
             getByText,
             container,
+            queryByText
         } = render(<Timesheet />);
+
+        expect(queryByText("Foobar 5")).toBeFalsy();
+
+        const regIds = await store.timesheets.addRegistrationsAsync(registrations);
 
         await waitFor(() => expect(getByText("Foobar 5")));
 
@@ -159,13 +165,16 @@ describe("TimesheetDays", () => {
 
         store.user.setUser({ uid: "user-1" } as firebase.User);
 
-        const regIds = await store.timesheets.addRegistrationsAsync(registrations);
-
         const {
             asFragment,
             getByText,
+            queryByText,
             container,
         } = render(<Timesheet />);
+
+        expect(queryByText("Foobar 5")).toBeFalsy();
+
+        const regIds = await store.timesheets.addRegistrationsAsync(registrations);
 
         await waitFor(() => expect(getByText("Foobar 5")));
 
@@ -191,13 +200,16 @@ describe("TimesheetDays", () => {
 
         store.user.setUser({ uid: "user-1" } as firebase.User);
 
-        const regIds = await store.timesheets.addRegistrationsAsync(registrations);
-
         const {
             asFragment,
             getByText,
+            queryByText,
             container,
         } = render(<Timesheet />);
+
+        expect(queryByText("Foobar 5")).toBeFalsy();
+
+        const regIds = await store.timesheets.addRegistrationsAsync(registrations);
 
         await waitFor(() => expect(getByText("Foobar 5")));
 
@@ -223,13 +235,16 @@ describe("TimesheetDays", () => {
 
         store.user.setUser({ uid: "user-1" } as firebase.User);
 
-        const regIds = await store.timesheets.addRegistrationsAsync(registrations);
-
         const {
             asFragment,
             getByText,
+            queryByText,
             container,
         } = render(<Timesheet />);
+
+        expect(queryByText("Foobar 5")).toBeFalsy();
+
+        const regIds = await store.timesheets.addRegistrationsAsync(registrations);
 
         await waitFor(() => expect(getByText("Foobar 5")));
 

@@ -14,6 +14,8 @@ export const convertRegistration = (firestoreData: IRegistrationData) => {
         isPersisted: true,
         created: firestoreData.created ? firestoreData.created.toDate() : undefined,
         deleted: firestoreData.deleted || false,
+        source: firestoreData.source,
+        sourceId: firestoreData.sourceId,
     };
 
     return registration;

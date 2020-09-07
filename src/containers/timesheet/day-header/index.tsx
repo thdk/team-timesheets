@@ -82,7 +82,8 @@ export const GroupedRegistrationHeader = (props: GroupedRegistrationHeaderProps)
                         id => {
                             if (!id) {
                                 timesheets.toggleSelectedRegistrationDay(date.toDateString(), true);
-                                goToNewRegistration(router, dateMoment);
+                                timesheets.setSelectedRegistrationDefault(date ? { date: moment(date).toDate() } : undefined);
+                                goToNewRegistration(router);
                             } else {
                                 store.favorites.getFavoritesByGroupIdAsync(id)
                                     .then(favoriteDocs => {

@@ -27,7 +27,13 @@ export const TimesheetDayView = observer(({
         }, { track: false, currentDate: view.track ? view.day! : undefined });
     }
 
-    const group = timesheets.registrationsGroupedByDay.filter(g => g.groupKey === view.moment.toDate().toDateString());
+    const groups = timesheets.registrationsGroupedByDay.filter(g => g.groupKey === view.moment.toDate().toDateString());
+    const group = groups[0] ||
+    {
+        groupKey: view.moment.toDate().toDateString(),
+        totalTime: 0,
+        registrations: [],
+    };
 
     return (
         <>
@@ -40,7 +46,7 @@ export const TimesheetDayView = observer(({
 
 
                 <Day
-                    group={group[0] || { groupKey: view.moment.toDate().toDateString(), totalTime: 0, registrations: [] }}
+                    group={group}
                     registrationClick={registrationClick}
                     registrationToggleSelect={registrationToggleSelect}
                     isCollapsed={false}
@@ -48,16 +54,16 @@ export const TimesheetDayView = observer(({
                 />
             </FlexGroup>
             <FlexGroup direction="vertical">
-                <div style={{ paddingLeft: "1em" }}>
-                    <h3
-                        className="mdc-typography--subtitle2"
-                        style={{ fontWeight: 400 }}
-                    >
-                        Google calendar events for {view.moment.format('MMMM D, YYYY')}
-                    </h3>
-                </div>
-
-                <GoogleCalendarEvents />
+                <GoogleCalendarEvents
+                    excludedIds={group.registrations
+                        .reduce((p, c) => {
+                            if (c.data!.source === "google-calendar") {
+                                p.push(c.data!.sourceId!)
+                            }
+                            return p;
+                        }, [] as string[])
+                    }
+                />
             </FlexGroup>
         </>
     );

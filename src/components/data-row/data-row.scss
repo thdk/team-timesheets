@@ -23,8 +23,6 @@
     .data-row__column {
         display: flex;
         flex-direction: column;
-        flex-grow: 1;
-        flex-shrink: 2;
         white-space: nowrap;
         overflow: hidden;
 
@@ -48,5 +46,11 @@
         justify-content: center;
         height: 100%;
         align-items: center;
+    }
+
+    .data-row__select {
+        display: flex;
+        flex-shrink: 0;
+        justify-content: center;
     }
 }

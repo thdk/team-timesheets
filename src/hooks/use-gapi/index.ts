@@ -70,30 +70,26 @@ export const useGapi = ({
                 };
 
                 gapi.load('client:auth2', () => {
-                    let auth = gapi.auth2.getAuthInstance();
-                    const setCurrentUser = () => {
-                        setIsGapiLoaded(true);
-
-                        setUser({...auth.currentUser.get()});
-
-                        auth.isSignedIn.listen(isSignedIn => {
-                            setUser(isSignedIn ? auth.currentUser.get() : undefined);
-                        });
-                    }
-                    if (!auth) {
-                        gapi.client.init(params).then(
-                            () => {
-                                auth = gapi.auth2.getAuthInstance();
-                                setCurrentUser();
-                            },
-                            err => {
-                                onFailure && onFailure(err);
+                    gapi.client.init(params).then(
+                        () => {
+                            const auth = gapi.auth2.getAuthInstance();
+                            const isSignedIn = auth.isSignedIn.get();
+                            if (isSignedIn) {
+                                setUser({ ...auth.currentUser.get() });
+                                setIsGapiLoaded(true);
+                            } else {
                                 setIsGapiLoaded(true);
                             }
-                        )
-                    } else {
-                        setCurrentUser();
-                    }
+
+                            auth.isSignedIn.listen(isSignedIn => {
+                                setUser(isSignedIn ? auth.currentUser.get() : undefined);
+                            });
+                        },
+                        err => {
+                            onFailure && onFailure(err);
+                            setIsGapiLoaded(true);
+                        }
+                    );
                 });
             });
 
@@ -102,9 +98,15 @@ export const useGapi = ({
         };
     }, [loadScript, removeScript]);
 
+    const signOut = () => {
+        console.log({ signout: true });
+        gapi.auth2.getAuthInstance().signOut();
+    };
+
     return {
         user,
         signIn,
+        signOut,
         isGapiLoaded,
     };
 };

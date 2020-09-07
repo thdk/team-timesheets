@@ -115,7 +115,6 @@ const setActions = (s: IRootStore, alowInserts = false) => {
             action: selection => {
                 if (!selection) return;
 
-                console.log(s.view.moment.toDate());
                 s.timesheets.addRegistrationsAsync(
                     Array.from(selection.values())
                         .map(reg =>

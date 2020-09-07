@@ -1,8 +1,7 @@
 import React from "react";
 import { initTestFirestore, deleteFirebaseAppsAsync } from "../../__tests__/utils/firebase";
 import { Store } from "../../stores/root-store";
-import { render } from "@testing-library/react";
-import { waitFor } from "@testing-library/react";
+import { render, waitFor } from "@testing-library/react";
 import { ExportPage } from ".";
 
 const {
@@ -111,13 +110,15 @@ describe("Export Page", () => {
 
         store.user.setUser({ uid: "user-1" } as firebase.User);
 
-        const regIds = await store.timesheets.addRegistrationsAsync(registrations);
-
         const {
             asFragment,
             getByText,
             container,
         } = render(<ExportPage />);
+
+        await waitFor(() => expect(getByText("April")));
+
+        const regIds = await store.timesheets.addRegistrationsAsync(registrations);
 
         await waitFor(() => expect(getByText("Foobar 5")));
 

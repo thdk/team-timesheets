@@ -7,6 +7,8 @@ import EditableTextField from '../../../components/editable-text';
 import { useRegistrationStore } from '../../../contexts/registration-context';
 import { useViewStore } from '../../../stores/view-store';
 
+import { DataRow, DataRowColumn, DataRowLine1, DataRowLine2 } from '../../../components/data-row';
+
 import "./registration-line.scss";
 
 export interface IRegistrationLineProps extends React.HTMLProps<HTMLDivElement> {
@@ -46,41 +48,37 @@ export const RegistrationLine = observer(({
         timesheets.setSelectedRegistration(undefined);
     };
 
-    const iconJSX = icon
-        ? <span className="icon material-icons" aria-hidden="true" title={taskName}>{icon}</span>
-        : undefined;
-
-    const line1JSX =
-        <span className="line1 mdc-typography--subtitle1">
-            {line1}
-        </span>;
-
-    const line2JSX = line2 ?
-        <span className="line2 mdc-typography--subtitle2">
-            {line2}
-        </span>
-        : undefined;
-
     const isEditing = timesheets.registration && timesheets.registrationId === id;
-    const timeJSX2 = <EditableTextField
-        editMode={!!isEditing}
-        edit={{
-            onChange: onTimeChange,
-            onCancel,
-            value: (time || 0).toFixed(2),
-            type: "number",
-        }}
-    />;
+    const timeJSX2 = (
+        <DataRowColumn
+            className="registration-line__time"
+            onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                timesheets.setSelectedRegistration(id);
+            }}
+        >
+            <EditableTextField
+                editMode={!!isEditing}
+                edit={{
+                    onChange: onTimeChange,
+                    onCancel,
+                    value: (time || 0).toFixed(2),
+                    type: "number",
+                }}
+            />
+        </DataRowColumn>
+    );
 
     const selectJSX = onSelect
-        ? <div className="registration-line-select">
+        ? <DataRowColumn className="data-row__select">
             <Checkbox onClick={(e: React.MouseEvent) => {
                 e.stopPropagation();
             }}
                 checked={view.selection.has(id)}
                 onChange={onSelect}
-            ></Checkbox>
-        </div>
+            />
+        </DataRowColumn>
         : null;
 
     const styles = classNames("registration-line",
@@ -88,24 +86,24 @@ export const RegistrationLine = observer(({
             "registration-line--readonly": readOnly
         });
 
-    return <div className={styles} {...restProps}>
-        <div className="registration-line-header">
-            {iconJSX}
-        </div>
-
-        <div className="registration-line-time" onClick={(e) => {
-            e.preventDefault();
-            e.stopPropagation();
-            timesheets.setSelectedRegistration(id);
-        }}>
+    return (
+        <DataRow
+            className={styles}
+            icon={icon}
+            {...restProps}
+        >
             {timeJSX2}
-        </div>
-
-        <div className="registration-line-content">
-            {line1JSX}
-            {line2JSX}
-        </div>
-
-        {selectJSX}
-    </div>
+            <DataRowColumn
+                className="registration-line__content"
+            >
+                <DataRowLine1>
+                    {line1}
+                </DataRowLine1>
+                <DataRowLine2>
+                    {line2}
+                </DataRowLine2>
+            </DataRowColumn>
+            {selectJSX}
+        </DataRow>
+    );
 });

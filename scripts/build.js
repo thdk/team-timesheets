@@ -1,28 +1,40 @@
 const path = require("path");
-const util = require("util");
-const spawn = util.promisify(require("child_process").spawn);
+const { spawn } = require("child_process");
 
 const root = path.join(__dirname, "..");
 
-function npm(args, cwd = root) {
-    let command = "npm";
-    if (process.platform === "win32") {
-        command = "npm.cmd";
+function getShell() {
+    if (process.platform === 'win32') {
+        return { cmd: 'cmd', arg: '/C' }
+    } else {
+        return { cmd: 'sh', arg: '-c' }
     }
-    return spawn(
-        command,
-        args,
-        {
-            cwd,
+}
+
+const { cmd, arg } = getShell();
+
+function execAsync(args) {
+    return new Promise((resolve, reject) => {
+        const childProcess = spawn(cmd, [arg, ...args], {
+            cwd: root,
             stdio: "inherit",
-        }
-    );
+        });
+
+        childProcess.on('close', (code) => {
+            if (code) {
+                reject();
+            }
+            else {
+                resolve();
+            }
+        });
+    });
 }
 
 (async () => {
-    await npm(["ci"]);
-    await npm(["run", "build:refs"]);
-    await npm(["ci"], path.join(__dirname, "../functions"));
-    await npm(["run", "build"], path.join(__dirname, "../functions"));
-    await npm(["run", "build:production"]);
+    await execAsync(["npm", "i"]);
+    await execAsync(["npm", "run", "build:refs"]);
+    await execAsync(["npm", "i"], path.join(__dirname, "../functions"));
+    await execAsync(["npm", "run", "build"], path.join(__dirname, "../functions"));
+    await execAsync(["npm", "run", "build:production"]);
 })();

@@ -4,12 +4,12 @@ const spawn = util.promisify(require("child_process").spawn);
 
 const root = path.join(__dirname, "..");
 
-async function npm(args, cwd = root) {
+function npm(args, cwd = root) {
     let command = "npm";
     if (process.platform === "win32") {
         command = "npm.cmd";
     }
-    await spawn(
+    return spawn(
         command,
         args,
         {

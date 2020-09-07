@@ -11,12 +11,11 @@ function getShell() {
     }
 }
 
-const { cmd, arg } = getShell();
-
-function execAsync(args) {
+function execAsync(as, cwd = root) {
+    const { cmd, arg } = getShell();
     return new Promise((resolve, reject) => {
-        const childProcess = spawn(cmd, [arg, ...args], {
-            cwd: root,
+        const childProcess = spawn(cmd, [arg, as.join(" ")], {
+            cwd,
             stdio: "inherit",
         });
 

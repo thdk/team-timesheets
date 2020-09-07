@@ -37,6 +37,7 @@ describe("GoogleCalendarEvents", () => {
     it("should display events", () => {
         const { asFragment } = render(
             <IntlProvider
+                timeZone={"Europe/Brussels"}
                 locale={"en-US"}
             ><GoogleCalendarEvents
                     events={events}

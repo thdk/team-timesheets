@@ -15,6 +15,7 @@ exports[`GoogleCalendarEvents should display events 1`] = `
       >
         <i
           class="rmwc-icon rmwc-icon--ligature material-icons"
+          title="Google Calendar"
         >
           event
         </i>
@@ -46,6 +47,7 @@ exports[`GoogleCalendarEvents should display events 1`] = `
       >
         <i
           class="rmwc-icon rmwc-icon--ligature material-icons"
+          title="Google Calendar"
         >
           event
         </i>
@@ -107,6 +109,7 @@ exports[`GoogleCalendarEventsContainer should render with google calendar events
       >
         <i
           class="rmwc-icon rmwc-icon--ligature material-icons"
+          title="Google Calendar"
         >
           event
         </i>
@@ -138,6 +141,7 @@ exports[`GoogleCalendarEventsContainer should render with google calendar events
       >
         <i
           class="rmwc-icon rmwc-icon--ligature material-icons"
+          title="Google Calendar"
         >
           event
         </i>

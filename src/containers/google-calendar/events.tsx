@@ -5,6 +5,7 @@ import { ListDivider } from "@rmwc/list";
 import { DataRow, DataRowColumn, DataRowLine1, DataRowLine2 } from "../../components/data-row";
 
 import "./events.scss";
+import { Icon } from "@rmwc/icon";
 
 export const GoogleCalendarEvents = ({
     events,
@@ -24,7 +25,7 @@ export const GoogleCalendarEvents = ({
                 return (
                     <DataRow
                         key={event.id}
-                        icon={"event"}
+                        icon={<Icon title="Google Calendar" icon={"event"} />}
                         onClick={() => onClick(event)}
                     >
                         <DataRowColumn

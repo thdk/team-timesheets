@@ -6,6 +6,9 @@ exports[`FavoritesList should render favorites 1`] = `
     class="data-row registration-line registration-line--readonly"
   >
     <div
+      class="data-row__header"
+    />
+    <div
       class="data-row__column registration-line__time"
     >
       3.00
@@ -24,6 +27,9 @@ exports[`FavoritesList should render favorites 1`] = `
     class="data-row registration-line registration-line--readonly"
   >
     <div
+      class="data-row__header"
+    />
+    <div
       class="data-row__column registration-line__time"
     >
       2.00
@@ -41,6 +47,9 @@ exports[`FavoritesList should render favorites 1`] = `
   <div
     class="data-row registration-line registration-line--readonly"
   >
+    <div
+      class="data-row__header"
+    />
     <div
       class="data-row__column registration-line__time"
     >

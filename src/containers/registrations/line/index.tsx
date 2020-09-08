@@ -88,6 +88,7 @@ export const RegistrationLine = observer(({
 
     return (
         <DataRow
+            allowEmptyHeader
             className={styles}
             icon={icon}
             {...restProps}

@@ -89,3 +89,37 @@ it("should call onSelect with id of selected group", () => {
 
     expect(onSelect).toBeCalledWith("group-1");
 });
+
+it("should call onSelect with 'null' when 'New' is clicked", () => {
+    const onSelect = jest.fn();
+    const Test = () => {
+        return (
+            <StoreContext.Provider value={{
+                favorites: {
+                    groups: [
+                        {
+                            name: "group 1",
+                            id: "group-1",
+                            userId: "1"
+                        },
+                        {
+                            name: "group 2",
+                            id: "2",
+                            userId: "1"
+                        } as IFavoriteRegistrationGroup
+                    ]
+                }
+            } as unknown as IRootStore}>
+                <FavoriteGroupsMenu
+                    onSelect={onSelect}
+                />
+            </StoreContext.Provider>
+        );
+    };
+
+    const { getByText } = render(<Test />);
+
+    fireEvent.click(getByText("New"));
+
+    expect(onSelect).toBeCalledWith(null);
+});

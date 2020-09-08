@@ -5,6 +5,7 @@
   "main": "src/js/app.ts",
   "scripts": {
     "ci": "node scripts/build.js",
+    "release": "node scripts/release.js",
     "build:refs": "tsc -p common",
     "build": "webpack --env=dev",
     "build:development": "webpack --env=dev",

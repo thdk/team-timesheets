@@ -2,10 +2,9 @@
 import { observer } from 'mobx-react';
 import * as React from 'react'
 
-import { TapBar, Tab, TabIcon } from '../../mdc/tabbar';
+import { Tab, TabBar } from "@rmwc/tabs";
 import { ProjectsTab, goToProjects, ProjectRouteQueryParams } from '../../routes/projects/list';
-import { ActiveProjectList } from '../../containers/projects/list-active';
-import { ArchivedProjectList } from '../../containers/projects/list-archived';
+import { ActiveProjectList, ArchivedProjectList } from '../../containers/projects/list';
 import { withAuthentication } from '../../containers/users/with-authentication';
 import { RedirectToLogin } from '../../routes/login';
 import { StoreContext } from '../../contexts/store-context';
@@ -44,19 +43,26 @@ class Projects extends React.Component {
         const query: { tab: ProjectsTab } = this.context.router.queryParams as ProjectRouteQueryParams;
         const { tab: activeTabId = validTabs[0].id } = query || {};
 
-        let activeTab = validTabs.filter(t => t.id === activeTabId)[0];
-        if (!activeTab) activeTab = validTabs[0];
+        const activeTabIndex = validTabs.findIndex(t => t.id === activeTabId) || 0;
 
-
-        const tabs = validTabs.map(t => {
-            const icon = t.icon ? <TabIcon icon={t.icon}></TabIcon> : undefined;
-            return <Tab onClick={goToProjects.bind(this, this.context, t.id)} isActive={activeTab.id === t.id} key={t.id} {...t} icon={icon}></Tab>;
+        const tabs = validTabs.map(({id, icon, text})=> {
+            return <Tab
+            onClick={goToProjects.bind(this, this.context, id)}
+            iconIndicator={icon}
+            key={id}
+            >
+                {text}
+            </Tab>;
         });
 
         return (
             <>
-                <TapBar>{tabs}</TapBar>
-                {activeTab.tabContent}
+                <TabBar
+                    activeTabIndex={activeTabIndex}
+                >
+                    {tabs}
+                </TabBar>
+                {validTabs[activeTabIndex].tabContent}
             </>
         );
     }

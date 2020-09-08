@@ -1,6 +1,6 @@
 import * as React from "react";
 import FavoriteGroupsMenu from "./favorite-groups-menu-mobx";
-import { StoreProvider } from "../../../contexts/store-context";
+import { StoreContext } from "../../../contexts/store-context";
 import { IRootStore } from "../../../stores/root-store";
 import { render } from "@testing-library/react";
 import { IFavoriteRegistrationGroup } from "../../../../common";
@@ -9,7 +9,7 @@ it("should not crash without favorite groups", () => {
     const Test = () => {
         const onSelect = jest.fn();
         return (
-            <StoreProvider value={{
+            <StoreContext.Provider value={{
                 favorites: {
                     groups: []
                 }
@@ -17,7 +17,7 @@ it("should not crash without favorite groups", () => {
                 <FavoriteGroupsMenu
                     onSelect={onSelect}
                 />
-            </StoreProvider>
+            </StoreContext.Provider>
         );
     };
 
@@ -29,7 +29,7 @@ it("should display favorite groups", () => {
     const Test = () => {
         const onSelect = jest.fn();
         return (
-            <StoreProvider value={{
+            <StoreContext.Provider value={{
                 favorites: {
                     groups: [
                         {
@@ -48,7 +48,7 @@ it("should display favorite groups", () => {
                 <FavoriteGroupsMenu
                     onSelect={onSelect}
                 />
-            </StoreProvider>
+            </StoreContext.Provider>
         );
     };
 

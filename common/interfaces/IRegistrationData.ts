@@ -10,4 +10,6 @@ export interface IRegistrationData extends IPersistedEntity {
     date: Timestamp;
     userId: string;
     deleted: boolean;
+    source: string;
+    sourceId: string;
 }

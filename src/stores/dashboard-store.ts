@@ -53,7 +53,7 @@ export class DashboardStore implements IDashboardStore {
                 name: "Dashboard registrations",
             },
             {
-                logger: console.log
+                // logger: console.log
             },
         );
 

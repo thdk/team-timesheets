@@ -6,6 +6,8 @@ import Menu from '../ui/menu';
 import { useStore } from '../../contexts/store-context';
 import { ErrorBoundary } from '../../components/error-boundary/error-boundary';
 
+import "./drawer.scss";
+
 const Drawer = () => {
     const store = useStore();
 

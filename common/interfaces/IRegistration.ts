@@ -9,4 +9,6 @@ export interface IRegistration {
     isPersisted: boolean;
     created?: Date;
     deleted?: boolean;
+    source?: string;
+    sourceId?: string;
 }

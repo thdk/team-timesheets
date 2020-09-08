@@ -7,6 +7,8 @@ import classNames from 'classnames';
 import { ObservableMap } from 'mobx';
 import { AddItem } from './AddItem';
 
+import './settingslist.scss';
+
 export interface IListItemData { icon?: string, name?: string };
 
 export interface ISettingsListProps extends React.HTMLProps<HTMLDivElement> {

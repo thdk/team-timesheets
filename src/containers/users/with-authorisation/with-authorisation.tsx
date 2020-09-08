@@ -2,7 +2,7 @@ import { observer } from 'mobx-react-lite';
 import * as React from 'react';
 
 import { IAuthenticatedUser } from '../../../../common/dist';
-import { useStore } from '../../../contexts/store-context';
+import { useUserStore } from "../../../contexts/user-context";
 
 export const withAuthorisation = (
     WrappedComponent: React.ComponentType,
@@ -10,13 +10,13 @@ export const withAuthorisation = (
     placeholder?: React.ReactNode,
 ) => {
     const WithAuthorisationComponent = () => {
-        const store = useStore();
+        const user = useUserStore();
 
-        if (!store.user.authenticatedUser) {
+        if (!user.authenticatedUser) {
             throw new Error("Can't check authorisation if no user is authenticated. (Wrap in withAuthentication?)");
         }
 
-        return condition(store.user.authenticatedUser)
+        return condition(user.authenticatedUser)
             ? <WrappedComponent />
             : <>{placeholder}</>;
     };

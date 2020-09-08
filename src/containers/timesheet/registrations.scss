@@ -1,0 +1,10 @@
+@import '../../style/vars';
+
+.timesheets-header-label {
+    color: var(--mdc-theme-text-secondary-on-surface, rgba(0, 0, 0, 0.54));
+
+    height: 41px;
+    padding-left: 1em;
+    display: flex;
+    align-items: center;
+}

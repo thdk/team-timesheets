@@ -1,7 +1,6 @@
 import * as React from 'react';
-import { Route } from 'mobx-router';
+import { Route, RouterStore } from 'mobx-router';
 import { transaction } from 'mobx';
-import moment from 'moment';
 
 import { App, goToOverview, DateObject } from '../../internal';
 import Registration from '../../pages/registration-detail';
@@ -15,12 +14,13 @@ type RouteParams = { id?: string };
 type QueryParams = { date: string; };
 type RegistrationsDetailRoute = Route<IRootStore, RouteParams, QueryParams>;
 
-export const goToRegistration = (store: IRootStore, id?: string) => {
-    store.router.goTo(id ? routes.registrationDetail : routes.newRegistration, { id });
+export const goToRegistration = (router: RouterStore<IRootStore>, id?: string) => {
+    router.goTo(id ? routes.registrationDetail : routes.newRegistration, { id });
 };
 
-export const goToNewRegistration = (store: IRootStore, date: moment.Moment) => {
-    store.router.goTo(routes.newRegistration, undefined, { date: moment(date).format("YYYY-MM-DD") });
+export const goToNewRegistration = (router: RouterStore<IRootStore>) => {
+
+    router.goTo(routes.newRegistration, undefined, );
 };
 
 export const setBackToOverview = (store: IRootStore, action?: () => void, currentDate?: number, targetDate?: DateObject) => {
@@ -79,10 +79,6 @@ const routes = {
         title: "New registration",
         onEnter,
         beforeExit,
-        beforeEnter: (_route: RegistrationsDetailRoute, _params: RouteParams, s: IRootStore, queryParams?: { date?: string }) => {
-            const { date = undefined } = queryParams || {};
-            s.timesheets.setSelectedRegistrationDefault(date ? moment(date) : undefined);
-        },
     }),
     registrationDetail: new Route({
         path: path + '/:id',

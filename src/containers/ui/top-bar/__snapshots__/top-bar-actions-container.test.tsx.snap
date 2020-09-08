@@ -1,0 +1,41 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`TopBarActionsContainer should not show contextual actions when there is no selection 1`] = `
+<DocumentFragment>
+  <button
+    aria-hidden="true"
+    aria-pressed="true"
+    class="mdc-top-app-bar__action-item mdc-icon-button--on mdc-ripple-upgraded--unbounded mdc-top-app-bar__action-item mdc-icon-button--on mdc-icon-button mdc-icon-button--on"
+    data-mdc-ripple-is-unbounded="true"
+    role="button"
+    tabindex="0"
+  >
+    <i
+      class="rmwc-icon material-icons mdc-icon-button__icon"
+    >
+      people
+    </i>
+    <i
+      class="rmwc-icon material-icons mdc-icon-button__icon mdc-icon-button__icon--on"
+    >
+      people_border
+    </i>
+  </button>
+</DocumentFragment>
+`;
+
+exports[`TopBarActionsContainer should only show contextual actions when there is a selection 1`] = `
+<DocumentFragment>
+  <i
+    aria-hidden="true"
+    class="rmwc-icon material-icons mdc-top-app-bar__action-item mdc-top-app-bar__action-item mdc-icon-button"
+    data-mdc-ripple-is-unbounded="true"
+    role="button"
+    tabindex="0"
+  >
+    favorite
+  </i>
+</DocumentFragment>
+`;
+
+exports[`TopBarActionsContainer should render when there are no actions 1`] = `<DocumentFragment />`;

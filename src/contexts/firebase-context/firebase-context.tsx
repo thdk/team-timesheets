@@ -1,7 +1,7 @@
 import React, { createContext } from 'react';
 import * as firebase from "firebase/app";
 
-export const FirebaseContext = createContext<firebase.app.App | undefined>({} as firebase.app.App);
+export const FirebaseContext = createContext<firebase.app.App>({} as firebase.app.App);
 export const FirebaseProvider = ({ children, projectId }: React.PropsWithChildren<{
     projectId?: string
 }>) => {

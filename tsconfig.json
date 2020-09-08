@@ -12,7 +12,7 @@
     // "checkJs": true,                       /* Report errors in .js files. */
     "jsx": "react", /* Specify JSX code generation: 'preserve', 'react-native', or 'react'. */
     // "declaration": true,                   /* Generates corresponding '.d.ts' file. */
-    // "sourceMap": true,                     /* Generates corresponding '.map' file. */
+    "sourceMap": true, /* Generates corresponding '.map' file. */
     // "outFile": "app.js",                   /* Concatenate and emit output to single file. */
     "outDir": "./tmp/js", /* Redirect output structure to the directory. */
     // "rootDir": "./",                       /* Specify the root directory of input files. Use to control the output directory structure with --outDir. */
@@ -44,8 +44,8 @@
     //   "../node_modules"
     // ], /* List of folders to include type definitions from. */
     //"types": ["material.d.ts"],                           /* Type declaration files to be included in compilation. */
-    "allowSyntheticDefaultImports": true,  /* Allow default imports from modules with no default export. This does not affect code emit, just typechecking. */
-    "esModuleInterop": true,                  /* Enables emit interoperability between CommonJS and ES Modules via creation of namespace objects for all imports. Implies 'allowSyntheticDefaultImports'. */
+    "allowSyntheticDefaultImports": true, /* Allow default imports from modules with no default export. This does not affect code emit, just typechecking. */
+    "esModuleInterop": true, /* Enables emit interoperability between CommonJS and ES Modules via creation of namespace objects for all imports. Implies 'allowSyntheticDefaultImports'. */
     // "preserveSymlinks": true,              /* Do not resolve the real path of symlinks. */
     /* Source Map Options */
     // "sourceRoot": "./",                    /* Specify the location where debugger should locate TypeScript files instead of source locations. */
@@ -59,6 +59,9 @@
   },
   "include": [
     "src"
+  ],
+  "exclude": [
+    "**/__mocks__/*"
   ],
   "references": [
     {

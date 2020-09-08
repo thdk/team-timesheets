@@ -43,7 +43,11 @@ export const FavoriteGroupsMenu = (props: FavoriteGroupsMenuProps) => {
             onClose={handleClose}
             style={{ width: "178px" }}
         >
-            {groups.map(group => <ListItem role="menuitem" tabIndex={0} key={group.id} data-id={group.id}>
+            {groups.map(group => <ListItem
+                role="menuitem"
+                tabIndex={0}
+                key={group.id}
+            >
                 <div>{group.name}</div>
             </ListItem>)}
             <ListDivider></ListDivider>

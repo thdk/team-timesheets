@@ -1,7 +1,5 @@
-import { observable, IObservableArray, action, computed, transaction, ObservableMap } from "mobx";
+import { observable, action, computed, transaction, ObservableMap } from "mobx";
 import moment from 'moment';
-import { IRootStore } from "../root-store";
-import { IIconData } from "../../mdc/buttons/icon-buttons";
 
 export interface IShortKey {
   ctrlKey?: boolean;
@@ -25,6 +23,11 @@ export interface IViewAction<T = any> {
   readonly selection?: ObservableMap<string, any>;
 }
 
+interface IIconData {
+  label: string;
+  content: string;
+}
+
 export interface IFab {
   readonly icon: IIconData;
   readonly action: () => void;
@@ -35,36 +38,14 @@ export interface INavigationViewAction extends IViewAction {
   icon: { label: "Menu", content: "menu" } | { label: "Back", content: "arrow_back" } | { label: "Up", content: "arrow_upward" };
 }
 
-export interface IViewStore {
-  title: string;
-  isDrawerOpen: boolean;
-
-  // todo: day, month and year should be set with an action setDate(year, month, day)
-  day?: number;
-  month?: number;
-  year?: number;
-
-  track?: boolean;
-
-  readonly moment: moment.Moment;
-  readonly monthMoment: moment.Moment;
-  readonly actions: IObservableArray<IViewAction>;
-  readonly fabs: IObservableArray<IFab>;
-  readonly selection: ObservableMap<string, true>;
-  readonly toggleSelection: (id: string, data: any) => void;
-  navigationAction?: INavigationViewAction;
-  setActions: (actions: IViewAction[]) => void;
-  setFabs: (fabs: IFab[]) => void;
-  setNavigation: (action: INavigationViewAction | "default") => void;
-  removeAction: (action: IViewAction) => void;
-}
+export interface IViewStore extends ViewStore { };
 
 export class ViewStore implements IViewStore {
   readonly actions = observable<IViewAction>([]);
   readonly selection = observable(new Map<string, true>());
   readonly fabs = observable<IFab>([]);
 
-  @observable navigationAction?: INavigationViewAction;
+  @observable navigationAction: INavigationViewAction = {} as INavigationViewAction;
   @observable title = "";
   @observable isDrawerOpen = true;
   @observable day?: number;
@@ -73,18 +54,13 @@ export class ViewStore implements IViewStore {
 
   public track?: boolean;
 
-  private readonly rootStore: IRootStore;
-
-  constructor(rootStore: IRootStore, testDate?: Date) {
-    this.rootStore = rootStore;
-
+  constructor(testDate?: Date) {
     const date = testDate || new Date();
-
-    transaction(() => {
-      this.day = date.getDate();
-      this.month = date.getMonth() + 1;
-      this.year = date.getFullYear();
-    })
+    this.setViewDate({
+      day: date.getDate(),
+      month: date.getMonth() + 1,
+      year: date.getFullYear(),
+    });
 
     this.setNavigation("default");
 
@@ -133,11 +109,28 @@ export class ViewStore implements IViewStore {
   }
 
   @action
+  public setViewDate({
+    year,
+    month,
+    day,
+  }: {
+    year: number,
+    month: number,
+    day?: number | undefined,
+  }) {
+    transaction(() => {
+      this.day = day;
+      this.month = month;
+      this.year = year;
+    })
+  }
+
+  @action
   public setNavigation(action: INavigationViewAction | "default") {
     this.navigationAction = action === "default"
       ? {
         action: () => {
-          this.rootStore.view.isDrawerOpen = !this.rootStore.view.isDrawerOpen;
+          this.isDrawerOpen = !this.isDrawerOpen;
         },
         icon: { content: "menu", label: "Menu" },
       }

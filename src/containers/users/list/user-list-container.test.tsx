@@ -5,34 +5,10 @@ import { initTestFirestore, deleteFirebaseAppsAsync } from "../../../__tests__/u
 
 import { TestCollection } from "../../../__tests__/utils/firestorable/collection";
 
-import { StoreProvider } from "../../../contexts/store-context";
-import { IRootStore } from "../../../stores/root-store";
-import { UserStore } from "../../../stores/user-store";
-import { ConfigStore } from "../../../stores/config-store";
+import { StoreContext } from "../../../contexts/store-context";
+import { Store } from "../../../stores/root-store";
 import { ITeamData } from "../../../../common";
-import { RouterStore } from "mobx-router";
-import { ViewStore } from "../../../stores/view-store";
 import { UserList } from ".";
-
-jest.mock("@material/top-app-bar/index", () => ({
-    MDCTopAppBar: () => <></>,
-}));
-
-jest.mock("@material/icon-button/index", () => ({
-    MDCIconButtonToggle: () => <></>,
-}));
-
-jest.mock("@material/tab-bar/index", () => ({
-    MDCTabBar: () => <></>,
-}));
-
-jest.mock("@material/ripple/index", () => ({
-    MDCRipple: () => <></>,
-}));
-
-jest.mock("@material/switch/index", () => ({
-    MDCSwitch: () => <></>,
-}));
 
 const {
     firestore,
@@ -49,21 +25,6 @@ const {
 
 beforeAll(clearFirestoreDataAsync);
 afterAll(() => deleteFirebaseAppsAsync());
-
-class TestStore {
-    rootStore = this as unknown as IRootStore;
-    public user = new UserStore(this.rootStore, {
-        firestore,
-    });
-
-    public config = new ConfigStore(this.rootStore, {
-        firestore,
-    });
-
-    public view = new ViewStore(this.rootStore);
-
-    public router = new RouterStore(this.rootStore);
-}
 
 const userCollection = new TestCollection(firestore, userRef);
 const teamCollection = new TestCollection<ITeamData>(firestore, teamRef);
@@ -125,14 +86,14 @@ beforeAll(() => setupAsync());
 
 describe("UserListContainer", () => {
 
-    const store = new TestStore() as unknown as IRootStore;
+    const store = new Store({ firestore });
 
     it("should render without users", () => {
 
         const { asFragment } = render(
-            <StoreProvider value={store}>
+            <StoreContext.Provider value={store}>
                 <UserList />
-            </StoreProvider>
+            </StoreContext.Provider>
         );
 
         expect(asFragment()).toMatchSnapshot();
@@ -150,14 +111,14 @@ describe("UserListContainer", () => {
         });
 
         it("should render users", async () => {
-            const { findByText, asFragment } = render(
-                <StoreProvider value={store}>
+            const { getByText, asFragment } = render(
+                <StoreContext.Provider value={store}>
                     <UserList />
-                </StoreProvider>
+                </StoreContext.Provider>
             );
 
             await waitFor(
-                () => findByText("user 1"),
+                () => expect(getByText("user 1")),
             );
 
             expect(asFragment()).toMatchSnapshot();
@@ -168,9 +129,9 @@ describe("UserListContainer", () => {
             store.router.goTo = goTo;
 
             const { findByText } = render(
-                <StoreProvider value={store}>
+                <StoreContext.Provider value={store}>
                     <UserList />
-                </StoreProvider>
+                </StoreContext.Provider>
             );
 
             const userListItemEl = await findByText("user 1");
@@ -192,9 +153,9 @@ describe("UserListContainer", () => {
         describe("when user is added in the collection", () => {
             it("should rerender to add the user to the list", async () => {
                 const { queryByText, getByText } = render(
-                    <StoreProvider value={store}>
+                    <StoreContext.Provider value={store}>
                         <UserList />
-                    </StoreProvider>
+                    </StoreContext.Provider>
                 );
 
                 // user should originally not be in the list
@@ -227,9 +188,9 @@ describe("UserListContainer", () => {
 
             it("should rerender to removed the user from the list", async () => {
                 const { getByText, queryByText } = render(
-                    <StoreProvider value={store}>
+                    <StoreContext.Provider value={store}>
                         <UserList />
-                    </StoreProvider>
+                    </StoreContext.Provider>
                 );
 
                 // user should originally be in the list
@@ -246,9 +207,9 @@ describe("UserListContainer", () => {
         describe("when user is updated in the collection", () => {
             it("should rerender to show the updated user in the list", async () => {
                 const { getByText } = render(
-                    <StoreProvider value={store}>
+                    <StoreContext.Provider value={store}>
                         <UserList />
-                    </StoreProvider>
+                    </StoreContext.Provider>
                 );
 
                 // user should originally be in the list

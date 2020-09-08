@@ -1,7 +1,7 @@
 import * as React from "react";
 import { observer } from "mobx-react-lite";
 
-import { canManageTeams } from "../../../rules/rules";
+import { canManageTeams } from "../../../rules";
 import { SettingsList, IListItemData } from "../../../components/settings-list";
 import { useStore } from "../../../contexts/store-context";
 
@@ -23,7 +23,7 @@ export const TeamList = observer(() => {
             icon: team.data!.icon
         }))}
         onAddItem={saveListItem}
-        onToggleSelection={id => id && store.view.toggleSelection(id, true)}
+        onToggleSelection={id => id && store.view.toggleSelection(id)}
         onItemClick={id => store.config.teamId = id}
         activeItemId={store.config.teamId}
         selection={store.view.selection}

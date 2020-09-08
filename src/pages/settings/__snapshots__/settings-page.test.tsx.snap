@@ -1,0 +1,120 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`SettingsPage should render 1`] = `
+<DocumentFragment>
+  <nav
+    class="mdc-tab-bar"
+  >
+    <div
+      class="mdc-tab-scroller"
+    >
+      <div
+        class="mdc-tab-scroller__scroll-area mdc-tab-scroller__scroll-area--scroll"
+        style="margin-bottom: 0px;"
+      >
+        <div
+          class="mdc-tab-scroller__scroll-content"
+        >
+          <button
+            class="mdc-tab"
+          >
+            <div
+              class="mdc-tab__content"
+            >
+              <span
+                class="mdc-tab__text-label"
+              >
+                Preferences
+              </span>
+            </div>
+            <span
+              class="mdc-tab-indicator"
+            >
+              <span
+                aria-hidden="true"
+                class="mdc-tab-indicator__content mdc-tab-indicator__content--underline"
+              />
+            </span>
+            <div
+              class="mdc-tab__ripple "
+            />
+          </button>
+          <button
+            class="mdc-tab"
+          >
+            <div
+              class="mdc-tab__content"
+            >
+              <span
+                class="mdc-tab__text-label"
+              >
+                Connections
+              </span>
+            </div>
+            <span
+              class="mdc-tab-indicator"
+            >
+              <span
+                aria-hidden="true"
+                class="mdc-tab-indicator__content mdc-tab-indicator__content--underline"
+              />
+            </span>
+            <div
+              class="mdc-tab__ripple "
+            />
+          </button>
+          <button
+            class="mdc-tab"
+          >
+            <div
+              class="mdc-tab__content"
+            >
+              <span
+                class="mdc-tab__text-label"
+              >
+                Tasks
+              </span>
+            </div>
+            <span
+              class="mdc-tab-indicator"
+            >
+              <span
+                aria-hidden="true"
+                class="mdc-tab-indicator__content mdc-tab-indicator__content--underline"
+              />
+            </span>
+            <div
+              class="mdc-tab__ripple "
+            />
+          </button>
+          <button
+            class="mdc-tab"
+          >
+            <div
+              class="mdc-tab__content"
+            >
+              <span
+                class="mdc-tab__text-label"
+              >
+                Clients
+              </span>
+            </div>
+            <span
+              class="mdc-tab-indicator"
+            >
+              <span
+                aria-hidden="true"
+                class="mdc-tab-indicator__content mdc-tab-indicator__content--underline"
+              />
+            </span>
+            <div
+              class="mdc-tab__ripple "
+            />
+          </button>
+        </div>
+      </div>
+    </div>
+  </nav>
+  Preferences-Content
+</DocumentFragment>
+`;

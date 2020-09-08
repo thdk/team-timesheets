@@ -5,12 +5,18 @@ import * as firebaseui from 'firebaseui';
 
 import { LoginProvider } from '../../firebase/types';
 import { withConfigValues } from '../configs/with-config-values';
-import { useStore } from '../../contexts/store-context';
+import { useFirebase } from '../../contexts/firebase-context/firebase-context';
 
 const getFirebaseAuthProvider = (provider: LoginProvider) => {
     switch (provider) {
         case LoginProvider.Google:
-            return firebase.auth.GoogleAuthProvider.PROVIDER_ID;
+            return {
+                provider: firebase.auth.GoogleAuthProvider.PROVIDER_ID,
+                scopes: [
+                    "email",
+                    "https://www.googleapis.com/auth/calendar",
+                ],
+            };
         case LoginProvider.Facebook:
             return firebase.auth.FacebookAuthProvider.PROVIDER_ID;
         case LoginProvider.Email:
@@ -24,14 +30,16 @@ type Props = { configs: { loginProviders: LoginProvider[] } };
 
 export const Login = ({ configs }: Props) => {
 
-    const store = useStore();
+    const firebase = useFirebase();
 
     React.useEffect(() => {
         const { loginProviders } = configs;
 
         const loginUiConfig = {
             callbacks: {
-                signInSuccessWithAuthResult: (_authResult: firebase.auth.UserCredential, _redirectUrl: string) => {
+                signInSuccessWithAuthResult: (authResult: firebase.auth.UserCredential, _redirectUrl: string) => {
+                    // authResult.user?.getIdToken()
+                    console.log({authResult});
                     return false;
                 }
             },
@@ -50,7 +58,7 @@ export const Login = ({ configs }: Props) => {
         };
 
         // Initialize the FirebaseUI Widget using Firebase.
-        const loginUi = new firebaseui.auth.AuthUI(store.user.firebaseAuth);
+        const loginUi = new firebaseui.auth.AuthUI(firebase.auth());
         // The start method will wait until the DOM is loaded.
         loginUi.start('#firebaseui-auth-container', loginUiConfig);
 

@@ -4,7 +4,7 @@ import { IRootStore } from "../root-store";
 import * as deserializer from "../../../common/serialization/deserializer";
 import * as serializer from "../../../common/serialization/serializer";
 import { IUser, IUserData } from "../../../common/dist";
-import { canReadUsers } from "../../rules/rules";
+import { canReadUsers } from "../../rules";
 import { getLoggedInUserAsync } from "../../firebase/firebase-utils";
 
 export interface IUserStore extends UserStore { }
@@ -62,7 +62,7 @@ export class UserStore implements IUserStore {
                 query: null,
             },
             {
-                logger: console.log,
+                // logger: console.log,
             },
         );
 
@@ -94,7 +94,10 @@ export class UserStore implements IUserStore {
         if (id && !user) {
             // fetch the user manually
             this.usersCollection.getAsync(id, { watch: true })
-                .then(this.setSelectedUserObservable.bind(this));
+                .then(user => {
+                    this.setSelectedUserObservable(user);
+                })
+                .catch(console.error);
         } else {
             this.setSelectedUserObservable(user);
         }
@@ -165,6 +168,10 @@ export class UserStore implements IUserStore {
                 this._userId = undefined;
                 this._authUser.set(undefined);
             });
+
+            if (typeof gapi !== "undefined") {
+                gapi.auth2.getAuthInstance().signOut();
+            }
         } else {
             this.state = StoreState.Pending;
             this.usersCollection.getAsync(fbUser.uid).then(user => {
@@ -209,11 +216,6 @@ export class UserStore implements IUserStore {
         return this.auth
             ? getLoggedInUserAsync(this.auth)
             : Promise.reject(new Error("Firebase auth not initialized"));
-    }
-
-    // TODO: should be taken from context using FirebaseProvider component
-    public get firebaseAuth() {
-        return this.auth;
     }
 
     public dispose() {

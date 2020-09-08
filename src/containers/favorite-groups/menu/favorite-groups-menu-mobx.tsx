@@ -8,8 +8,11 @@ const FavoriteGroupsMenuMobx = (props: Omit<FavoriteGroupsMenuProps, "groups">) 
 
     const groups = store.favorites.groups;
 
-    return <FavoriteGroupsMenu
-        groups={groups} {...props}></FavoriteGroupsMenu>
+    return (
+        <FavoriteGroupsMenu
+            groups={groups} {...props}
+        />
+    );
 }
 
 export default observer(FavoriteGroupsMenuMobx);

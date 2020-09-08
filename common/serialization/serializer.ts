@@ -28,6 +28,8 @@ export const convertRegistration = (appData: Partial<IRegistration> | null) => {
             deleted: false,
             modified: firebase.firestore.Timestamp.fromDate(now),
             created: firebase.firestore.Timestamp.fromDate(appData.created || now),
+            source: appData.source,
+            sourceId: appData.sourceId,
         };
     }
 
@@ -38,6 +40,8 @@ export const convertRegistration = (appData: Partial<IRegistration> | null) => {
     if (undefined === registration.client) delete registration.client;
     if (undefined === registration.created) delete registration.created;
     if (undefined === registration.modified) delete registration.modified;
+    if (undefined === registration.source) delete registration.source;
+    if (undefined === registration.sourceId) delete registration.sourceId;
 
     return registration;
 }
@@ -138,10 +142,13 @@ export function convertNameWithIcon(appData: Partial<INameWithIcon> | null): Par
         data = {
             name,
             name_insensitive: name.toUpperCase(),
-            icon: appData.icon,
             created: firebase.firestore.Timestamp.fromDate(appData.created || now),
             modified: firebase.firestore.Timestamp.fromDate(now)
         };
+
+        if (appData.icon) {
+            data.icon = appData.icon;
+        }
     }
 
     return data;

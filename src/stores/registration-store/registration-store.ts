@@ -5,7 +5,7 @@ import moment from 'moment';
 import { IRootStore } from '../root-store';
 import * as deserializer from '../../../common/serialization/deserializer';
 import * as serializer from '../../../common/serialization/serializer';
-import { SortOrder } from '../../containers/registrations/days';
+import { SortOrder } from '../../containers/timesheet/days';
 import { IRegistration, IRegistrationData } from '../../../common/dist';
 
 export interface IGroupedRegistrations<T> {
@@ -24,9 +24,9 @@ export interface IRegistrationsStore {
     readonly setSelectedRegistration: (id: string | undefined) => void;
     readonly saveSelectedRegistration: () => Promise<any>;
     readonly updateSelectedRegistration: (data: Partial<IRegistration>) => void;
-    readonly setSelectedRegistrationDefault: (moment?: moment.Moment) => void;
+    readonly setSelectedRegistrationDefault: (defaultData?: Partial<IRegistration>) => void;
     readonly deleteRegistrationsAsync: (...ids: string[]) => Promise<void[]>;
-    readonly addRegistrations: (data: IRegistration[]) => void;
+    readonly addRegistrationsAsync: (data: IRegistration[]) => Promise<string[]>;
 
     readonly registrationsTotalTime: number;
     readonly registrationsGroupedByDay: IGroupedRegistrations<string>[];
@@ -92,7 +92,7 @@ export class RegistrationStore implements IRegistrationsStore {
                 query: createQuery(rootStore.user.authenticatedUserId),
             },
             {
-                logger: console.log,
+                // logger: console.log,
             },
         );
 
@@ -160,11 +160,13 @@ export class RegistrationStore implements IRegistrationsStore {
 
                     // Always make sure that the order within a group is stable
                     // Oldest on top
-                    currentDayGroup.registrations = currentDayGroup.registrations.sort((a, b) => {
-                        const aTime = a.data!.created!.getTime();
-                        const bTime = b.data!.created!.getTime();
-                        return aTime > bTime ? 1 : aTime < bTime ? -1 : 0;
-                    })
+                    currentDayGroup.registrations = currentDayGroup.registrations.sort(
+                        (a, b) => {
+                            const aTime = a.data!.created!.getTime();
+                            const bTime = b.data!.created!.getTime();
+                            return aTime > bTime ? 1 : aTime < bTime ? -1 : 0;
+                        }
+                    );
                     currentDayGroup.totalTime = (currentDayGroup.totalTime || 0) + (c.data!.time || 0);
                 } else {
                     p.push({
@@ -214,10 +216,11 @@ export class RegistrationStore implements IRegistrationsStore {
     }
 
     @action
-    public setSelectedRegistrationDefault(moment?: moment.Moment) {
-        return this.getNewRegistrationDataAsync(moment).then(data => {
-            this.setSelectedRegistrationObservable(data);
-        });
+    public setSelectedRegistrationDefault(defaultData?: Partial<IRegistration>) {
+        return this.getNewRegistrationDataAsync(defaultData)
+            .then(data => {
+                this.setSelectedRegistrationObservable(data);
+            });
     }
 
     @action.bound
@@ -230,8 +233,8 @@ export class RegistrationStore implements IRegistrationsStore {
         return this.registrations.updateAsync(null, ...ids);
     }
 
-    public addRegistrations(data: IRegistration[]) {
-        this.registrations.addAsync(data);
+    public addRegistrationsAsync(data: IRegistration[]) {
+        return this.registrations.addAsync(data);
     }
 
     public copyRegistrationToDate(source: Omit<IRegistration, "date" | "isPersisted">, newDate: Date) {
@@ -258,13 +261,9 @@ export class RegistrationStore implements IRegistrationsStore {
         return doc && doc.data ? doc.data : null;
     }
 
-    private getNewRegistrationDataAsync(registrationMoment?: moment.Moment): Promise<IRegistration> {
+    private getNewRegistrationDataAsync(defaultData?: Partial<IRegistration>): Promise<IRegistration> {
         return when(() => !!this.rootStore.user.authenticatedUser)
             .then(() => {
-                const regMoment = registrationMoment
-                    ? registrationMoment
-                    : this.rootStore.view.day === undefined ? moment().startOf("day") : undefined;
-
                 if (!this.rootStore.user.authenticatedUser || !this.rootStore.user.authenticatedUserId) throw new Error("User must be set");
 
                 const {
@@ -278,14 +277,15 @@ export class RegistrationStore implements IRegistrationsStore {
                         .some(p => p.id === projectId));
 
                 return {
-                    date:
-                        regMoment ? regMoment.toDate() : this.rootStore.view.moment.toDate()
-                    ,
+                    date: this.rootStore.view.day === undefined
+                        ? moment().startOf("day").toDate()
+                        : this.rootStore.view.moment.toDate(),
                     task,
                     client,
-                    userId: this.rootStore.user.authenticatedUserId,
+                    userId: this.rootStore.user.authenticatedUser.id,
                     project: recentActiveProjects.length ? recentActiveProjects[0] : undefined,
                     isPersisted: false,
+                    ...defaultData
                 };
             });
     }

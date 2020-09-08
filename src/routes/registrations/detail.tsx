@@ -19,8 +19,10 @@ export const goToRegistration = (router: RouterStore<IRootStore>, id?: string) =
 };
 
 export const goToNewRegistration = (router: RouterStore<IRootStore>) => {
-
-    router.goTo(routes.newRegistration, undefined, );
+    router.goTo(
+        routes.newRegistration,
+        undefined,
+    );
 };
 
 export const setBackToOverview = (store: IRootStore, action?: () => void, currentDate?: number, targetDate?: DateObject) => {

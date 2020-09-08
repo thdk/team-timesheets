@@ -153,6 +153,7 @@ const setActions = (s: IRootStore, alowInserts = false) => {
         s.view.setActions(actions);
         s.view.setFabs([{
             action: () => {
+                s.timesheets.setSelectedRegistrationDefault();
                 s.router.goTo(detailRoutes.newRegistration);
             },
             icon: {

@@ -14,7 +14,6 @@ const getFirebaseAuthProvider = (provider: LoginProvider) => {
                 provider: firebase.auth.GoogleAuthProvider.PROVIDER_ID,
                 scopes: [
                     "email",
-                    "https://www.googleapis.com/auth/calendar",
                 ],
             };
         case LoginProvider.Facebook:

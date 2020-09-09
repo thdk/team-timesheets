@@ -100,9 +100,10 @@ beforeAll(() => Promise.all([
     setupAsync(),
 ]));
 
+afterAll(() => store.dispose());
 afterAll(deleteFirebaseAppsAsync);
 
-describe("RegistrationStore", () => {
+fdescribe("RegistrationStore", () => {
     let unsubscribe: () => void;
 
     beforeAll(() => {
@@ -240,6 +241,12 @@ describe("RegistrationStore", () => {
                 );
 
                 store.timesheets.areGroupedRegistrationsCollapsed = false;
+
+                await waitFor(() =>
+                    expect(store.timesheets.registrationsGroupedByDay
+                        .some(g => g.isCollapsed)
+                    ).toBe(false)
+                );
             });
 
             it("should clear selectedRegistrationDays", async () => {
@@ -257,6 +264,12 @@ describe("RegistrationStore", () => {
                 );
 
                 store.timesheets.areGroupedRegistrationsCollapsed = false;
+
+                await waitFor(() =>
+                    expect(store.timesheets.registrationsGroupedByDay
+                        .some(g => g.isCollapsed)
+                    ).toBe(false)
+                );
             });
         });
 
@@ -307,9 +320,10 @@ describe("RegistrationStore", () => {
 
     describe("registrationsTotalTime", () => {
         it("should return the total amount of time for the current filtered registrations", async () => {
-            await waitFor(() => expect(
-                store.timesheets.registrationsTotalTime
-            ).toBe(13.5)
+            await waitFor(
+                () => expect(
+                    store.timesheets.registrationsTotalTime
+                ).toBe(13.5)
             );
         });
     });

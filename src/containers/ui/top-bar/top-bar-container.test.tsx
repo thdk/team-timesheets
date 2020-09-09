@@ -1,6 +1,6 @@
 import React from "react";
 import { ViewStore } from "../../../stores/view-store";
-import { render, fireEvent } from "@testing-library/react";
+import { render, fireEvent, act } from "@testing-library/react";
 import { TopBar } from "./";
 
 const viewStore = new ViewStore();
@@ -30,7 +30,9 @@ describe("TopBarContainer", () => {
 
         expect(getByText("4 selected"));
 
-        viewStore.selection.clear();
+        act(() => {
+            viewStore.selection.clear();
+        });
     });
 
     it("clears selection when close button is clicked in contextual mode", () => {

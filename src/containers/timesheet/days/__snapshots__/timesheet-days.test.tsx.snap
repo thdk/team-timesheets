@@ -1,36 +1,5 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`TimesheetDays should NOT unfold registration when header add button is clicked 1`] = `
-<DocumentFragment>
-  <div
-    class="flex  vertical"
-  >
-    <div
-      style="padding-left: 1em;"
-    >
-      <h3
-        class="mdc-typography--subtitle1"
-      >
-        Timesheet March 2020
-      </h3>
-    </div>
-    <div
-      class="timesheets-header"
-    >
-      <div
-        class="timesheets-header-label"
-      >
-        Total time: 0 hours
-      </div>
-      <li
-        class="mdc-list-divider"
-        role="separator"
-      />
-    </div>
-  </div>
-</DocumentFragment>
-`;
-
 exports[`TimesheetDays should display registrations for the specified day 1`] = `
 <DocumentFragment>
   <div

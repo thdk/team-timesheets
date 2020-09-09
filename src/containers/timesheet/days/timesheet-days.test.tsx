@@ -236,7 +236,6 @@ describe("TimesheetDays", () => {
         store.user.setUser({ uid: "user-1" } as firebase.User);
 
         const {
-            asFragment,
             getByText,
             queryByText,
             container,
@@ -259,6 +258,6 @@ describe("TimesheetDays", () => {
 
         await store.timesheets.deleteRegistrationsAsync(...regIds);
 
-        await waitFor(() => expect(asFragment()).toMatchSnapshot());
+        await waitFor(() => expect(queryByText("Foobar 5")).toBeFalsy());
     });
 });

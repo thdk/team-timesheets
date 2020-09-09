@@ -1,7 +1,7 @@
 import React, { useState, HTMLProps, useEffect, useMemo } from 'react';
 import { useCallback } from 'react';
 import { TextField, TextFieldProps } from '@rmwc/textfield';
-import { MergeInterfacesT } from '@rmwc/types';
+import { ComponentProps } from '@rmwc/types';
 import { debounce } from 'throttle-debounce';
 
 type DebouncedTextfieldProps = {
@@ -9,7 +9,7 @@ type DebouncedTextfieldProps = {
     debounceDelay?: number,
 };
 
-type Props = Omit<MergeInterfacesT<TextFieldProps, HTMLProps<HTMLInputElement>>, "onChange">
+type Props = Omit<ComponentProps<TextFieldProps, HTMLProps<HTMLInputElement>, "input">, "onChange">
     & DebouncedTextfieldProps;
 
 const DebouncedTextfield = (props: Props) => {

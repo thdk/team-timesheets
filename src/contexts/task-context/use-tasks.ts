@@ -9,5 +9,6 @@ export const useTasks = () => {
         addAsync: configStore.tasksCollection.addAsync.bind(configStore.tasksCollection),
         taskId: configStore.taskId,
         setTaskId: configStore.setTaskId.bind(configStore),
+        get: configStore.tasksCollection.get.bind(configStore.tasksCollection),
     }));
 }

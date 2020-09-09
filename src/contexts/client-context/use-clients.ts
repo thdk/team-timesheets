@@ -8,5 +8,6 @@ export const useClients = () => {
         clients: configStore.clients,
         addAsync: configStore.clientsCollection.addAsync.bind(configStore),
         clientId: configStore.clientId,
+        get: configStore.clientsCollection.get.bind(configStore.clientsCollection),
     }));
 }

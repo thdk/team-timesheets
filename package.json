@@ -1,10 +1,11 @@
 {
   "name": "thdk-timesheets-app",
-  "version": "0.10.2",
+  "version": "0.10.3",
   "description": "A replacement web app for old school timesheets",
   "main": "src/js/app.ts",
   "scripts": {
     "ci": "node scripts/build.js",
+    "release": "node scripts/release.js",
     "build:refs": "tsc -p common",
     "build": "webpack --env=dev",
     "build:development": "webpack --env=dev",

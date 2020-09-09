@@ -1,6 +1,5 @@
-import React, { HTMLProps, PropsWithChildren } from "react";
+import React, { HTMLProps, PropsWithChildren, ReactNode } from "react";
 import classNames from "classnames";
-import { Icon } from "@rmwc/icon";
 
 import "./data-row.scss";
 
@@ -39,17 +38,14 @@ export const DataRow = ({
     allowEmptyHeader,
     ...divProps
 }: HTMLProps<HTMLDivElement> & {
-    icon?: string,
+    icon?: ReactNode,
     allowEmptyHeader?: boolean
 }) => {
 
     const Header = () => icon || allowEmptyHeader
         ? (
             <div className="data-row__header">
-                {icon
-                    ? <Icon icon={icon} />
-                    : null
-                }
+                {icon}
             </div>
         )
         : null;

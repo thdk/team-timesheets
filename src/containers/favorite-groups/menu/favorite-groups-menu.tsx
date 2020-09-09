@@ -20,7 +20,8 @@ export const FavoriteGroupsMenu = (props: FavoriteGroupsMenuProps) => {
         index: number;
         item: HTMLElement;
     }>) => {
-        onSelect(evt.detail.item.getAttribute("data-id"));
+        const group = groups[evt.detail.index];
+        onSelect(group ? group.id : null);
     }, [onSelect]);
 
     const handleClose = React.useCallback(() => {

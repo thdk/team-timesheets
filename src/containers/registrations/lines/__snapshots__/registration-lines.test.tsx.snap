@@ -1,25 +1,37 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`FavoritesList should render favorites 1`] = `
+exports[`RegistrationLines should render registrations 1`] = `
 <DocumentFragment>
   <div
     class="data-row registration-line registration-line--readonly"
   >
     <div
       class="data-row__header"
-    />
+    >
+      <i
+        class="rmwc-icon rmwc-icon--ligature material-icons"
+        title="Task 1"
+      >
+        people
+      </i>
+    </div>
     <div
       class="data-row__column registration-line__time"
     >
-      3.00
+      0.00
     </div>
     <div
       class="data-row__column registration-line__content"
     >
       <span
+        class="data-row__line1 mdc-typography--subtitle1"
+      >
+        Project 1
+      </span>
+      <span
         class="data-row__line2 mdc-typography--subtitle2"
       >
-        client 1 - Favorite desc 1
+        Client 1 - Registration 1
       </span>
     </div>
   </div>
@@ -32,15 +44,20 @@ exports[`FavoritesList should render favorites 1`] = `
     <div
       class="data-row__column registration-line__time"
     >
-      2.00
+      7.50
     </div>
     <div
       class="data-row__column registration-line__content"
     >
       <span
+        class="data-row__line1 mdc-typography--subtitle1"
+      >
+        Project 1
+      </span>
+      <span
         class="data-row__line2 mdc-typography--subtitle2"
       >
-        Favorite desc 2
+        Client 1 - Registration 2
       </span>
     </div>
   </div>
@@ -53,7 +70,7 @@ exports[`FavoritesList should render favorites 1`] = `
     <div
       class="data-row__column registration-line__time"
     >
-      2.00
+      0.00
     </div>
     <div
       class="data-row__column registration-line__content"
@@ -61,11 +78,11 @@ exports[`FavoritesList should render favorites 1`] = `
       <span
         class="data-row__line2 mdc-typography--subtitle2"
       >
-        Favorite desc 3
+        ...
       </span>
     </div>
   </div>
 </DocumentFragment>
 `;
 
-exports[`FavoritesList should render without favorites 1`] = `<DocumentFragment />`;
+exports[`RegistrationLines should render without registrations 1`] = `<DocumentFragment />`;

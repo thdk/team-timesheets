@@ -162,8 +162,6 @@ export class UserStore implements IUserStore {
             return undefined;
         }
 
-        console.log("user not set to null");
-
         const selectedOrganisationId = selectOrganisation(this.rootStore);
 
         const user = selectedOrganisationId

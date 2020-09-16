@@ -192,17 +192,14 @@ fdescribe("RegistrationStore", () => {
             });
 
             it("should return no registrations when user logs out", async () => {
-                console.log("1");
                 await waitFor(() => {
                     expect(
                         store.timesheets.registrationsGroupedByDay.length
                     ).toBe(4);
                 });
-                console.log("2");
 
                 store.user.setUser(null);
 
-                console.log("user set to null");
                 await waitFor(() => {
                     expect(store.user.authenticatedUser).toBeFalsy();
                     expect(

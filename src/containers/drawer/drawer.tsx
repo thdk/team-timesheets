@@ -23,7 +23,7 @@ export const Drawer = observer(() => {
 
     return (
         <ErrorBoundary>
-            <RMWCDrawer dismissible open={view.isDrawerOpen}>
+            <RMWCDrawer dismissible open={user.authenticatedUser && view.isDrawerOpen}>
                 <DrawerHeader>
                     <AccountBadge
                         email={email}

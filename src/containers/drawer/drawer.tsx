@@ -21,8 +21,6 @@ export const Drawer = observer(() => {
         ? user.authenticatedUser.email || "unknown@timesheets.com"
         : "";
 
-    console.warn({ isOpen: view.isDrawerOpen });
-
     return (
         <ErrorBoundary>
             <RMWCDrawer dismissible open={view.isDrawerOpen}>

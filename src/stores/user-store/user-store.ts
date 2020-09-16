@@ -20,6 +20,8 @@ export class UserStore implements IUserStore {
     @observable state = StoreState.Done;
 
     @observable.ref isAuthInitialised = false;
+    @observable.ref
+    private _fbUser: firebase.User | null = null;
 
     private readonly _selectedUser = observable.box<IUser | undefined>();
 
@@ -156,7 +158,7 @@ export class UserStore implements IUserStore {
 
     @computed
     public get authenticatedUser(): IUser | undefined {
-        if (!this.isAuthInitialised) {
+        if (!this._fbUser) {
             return undefined;
         }
 
@@ -187,7 +189,8 @@ export class UserStore implements IUserStore {
     public setUser(fbUser: firebase.User | null): void {
         if (!fbUser) {
             transaction(() => {
-                this.isAuthInitialised = false;
+                this.isAuthInitialised = true;
+                this._fbUser = fbUser;
             });
 
             if (typeof gapi !== "undefined") {
@@ -201,7 +204,7 @@ export class UserStore implements IUserStore {
                     async () => {
                         const user = await this.getAuthenticatedUserAsync(fbUser);
                         if (user) {
-                            this.getAuthUserSuccess();
+                            this.getAuthUserSuccess(fbUser);
                         } else {
                             const newUserData = {
                                 roles: { user: true },
@@ -220,7 +223,7 @@ export class UserStore implements IUserStore {
                                     // get the newly registered user
                                     return this.usersCollection.getAsync(userId)
                                         .then(() => {
-                                            this.getAuthUserSuccess();
+                                            this.getAuthUserSuccess(fbUser);
                                         }, this.getUserError);
                                 },
                                 error => console.log(`${error}\nCoudn't save newly registered user. `),
@@ -257,10 +260,11 @@ export class UserStore implements IUserStore {
     }
 
     @action.bound
-    getAuthUserSuccess = () => {
+    getAuthUserSuccess = (fbUser: firebase.User | null) => {
         transaction(() => {
             this.state = StoreState.Done;
             this.isAuthInitialised = true;
+            this._fbUser = fbUser;
         });
     }
 

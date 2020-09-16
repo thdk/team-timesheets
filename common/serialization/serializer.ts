@@ -94,6 +94,9 @@ export const convertUser = (appData: Partial<IUser> | null) => {
         team: appData.team,
         modified: firebase.firestore.Timestamp.fromDate(now),
         created: firebase.firestore.Timestamp.fromDate(appData.created || now),
+        uid: appData.uid,
+        email: appData.email,
+        organisationId: appData.organisationId,
     }
 
     // Todo: automatically remove undefined values for all keys
@@ -104,6 +107,8 @@ export const convertUser = (appData: Partial<IUser> | null) => {
     if (!user.recentProjects) delete user.recentProjects;
     if (user.defaultClient === undefined) delete user.defaultClient;
     if (user.team === undefined) delete user.team;
+    if (!user.email) delete user.email;
+    if (!user.organisationId) delete user.organisationId;
 
     return user;
 }
@@ -120,11 +125,17 @@ export function convertProject(appData: Partial<IProject> | null): Partial<IProj
         data = { deleted: true, modified: firebase.firestore.Timestamp.fromDate(now) };
     }
     else {
-        data = { ...convertNameWithIcon(appData), createdBy: appData.createdBy, isArchived: appData.isArchived };
+        data = {
+            ...convertNameWithIcon(appData),
+            createdBy: appData.createdBy,
+            isArchived: appData.isArchived,
+            organisationId: appData.organisationId,
+        };
     }
 
     if (data.createdBy === undefined) delete (data.createdBy);
     if (data.isArchived === undefined) delete (data.isArchived);
+    if (data.organisationId === undefined) delete (data.organisationId);
     return data;
 }
 

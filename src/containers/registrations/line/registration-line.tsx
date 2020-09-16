@@ -6,7 +6,7 @@ import { Icon } from '@rmwc/icon';
 
 import EditableTextField from '../../../components/editable-text';
 import { useRegistrationStore } from '../../../contexts/registration-context';
-import { useViewStore } from '../../../stores/view-store';
+import { useViewStore } from '../../../contexts/view-context';
 
 import { DataRow, DataRowColumn, DataRowLine1, DataRowLine2 } from '../../../components/data-row';
 

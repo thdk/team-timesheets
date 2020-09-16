@@ -3,7 +3,7 @@ import { canEditProject, canManageProjects } from '../../../rules';
 import { SettingsList } from '../../../components/settings-list';
 import { GoToProject } from '../../../internal';
 import { useUserStore } from "../../../contexts/user-context";
-import { useViewStore } from '../../../stores/view-store';
+import { useViewStore } from '../../../contexts/view-context';
 import { useProjectStore } from "../../../contexts/project-context";
 import { observer } from 'mobx-react-lite';
 

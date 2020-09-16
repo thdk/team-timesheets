@@ -15,8 +15,7 @@ export interface IUser {
     defaultClient?: string;
     team?: string;
     created?: Date;
-}
-
-export interface IAuthenticatedUser extends IUser {
-    id: string;
+    email?: string;
+    uid: string;
+    organisationId?: string;
 }

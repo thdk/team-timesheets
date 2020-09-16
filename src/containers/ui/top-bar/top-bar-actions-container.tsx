@@ -2,7 +2,7 @@ import React from "react";
 import { observer } from "mobx-react-lite";
 
 import { TopBarActions as PureTopBarActions } from "./top-bar-actions";
-import { useViewStore } from "../../../stores/view-store";
+import { useViewStore } from "../../../contexts/view-context";
 
 export const TopBarActions = observer(() => {
     const view = useViewStore();

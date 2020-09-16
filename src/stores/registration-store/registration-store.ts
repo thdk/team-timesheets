@@ -7,6 +7,7 @@ import * as deserializer from '../../../common/serialization/deserializer';
 import * as serializer from '../../../common/serialization/serializer';
 import { SortOrder } from '../../containers/timesheet/days';
 import { IRegistration, IRegistrationData } from '../../../common/dist';
+import { selectOrganisation } from "../../selectors/select-organisation";
 
 export interface IGroupedRegistrations<T> {
     registrations: Doc<IRegistration, IRegistrationData>[];
@@ -66,15 +67,28 @@ export class RegistrationStore implements IRegistrationsStore {
     ) {
         this.rootStore = rootStore;
 
-        const createQuery = (userId: string | undefined) => {
+        const createQuery = (
+            userId: string | undefined,
+            organisationId: string | undefined,
+        ) => {
             if (userId) {
                 const moment = rootStore.view.moment;
                 const endDate = moment.clone().endOf("month").toDate();
                 const startDate = moment.clone().startOf("month").toDate();
-                return (ref: firebase.firestore.CollectionReference) => ref
-                    .where("date", ">=", startDate)
-                    .where("date", "<=", endDate)
-                    .where("userId", "==", rootStore.user.authenticatedUserId);
+                const queryFn = (ref: firebase.firestore.CollectionReference) => {
+                    let query = ref
+                        .where("date", ">=", startDate)
+                        .where("date", "<=", endDate)
+                        .where("userId", "==", rootStore.user.authenticatedUserId);
+
+                    if (organisationId) {
+                        query = query.where("organisationId", "==", organisationId);
+                    }
+
+                    return query;
+                }
+
+                return queryFn;
             }
             else {
                 return null;
@@ -89,7 +103,10 @@ export class RegistrationStore implements IRegistrationsStore {
                 fetchMode: FetchMode.auto,
                 deserialize: deserializer.convertRegistration,
                 serialize: serializer.convertRegistration,
-                query: createQuery(rootStore.user.authenticatedUserId),
+                query: createQuery(
+                    rootStore.user.authenticatedUserId,
+                    selectOrganisation(rootStore),
+                ),
             },
             {
                 // logger: console.log,
@@ -97,16 +114,23 @@ export class RegistrationStore implements IRegistrationsStore {
         );
 
         const updateRegistrationQuery = (userId: string | undefined) => {
-            this.registrations.query = createQuery(userId);
+            this.registrations.query = createQuery(
+                userId,
+                selectOrganisation(rootStore),
+            );
         };
 
         // update the query of the registration collection each time...
         // -- the view moment changes
         // -- the logged in user changes
-        reaction(() => rootStore.view.monthMoment, () => updateRegistrationQuery(rootStore.user.authenticatedUserId));
-        reaction(() => rootStore.user.authenticatedUserId, userId => {
+        // -- the organisation changes
+        reaction(() => rootStore.view.monthMoment, () => (
+            updateRegistrationQuery(rootStore.user.authenticatedUserId)
+        ));
+
+        reaction(() => rootStore.user.authenticatedUserId, userId => (
             updateRegistrationQuery(userId)
-        });
+        ));
 
         reaction(() => this.areGroupedRegistrationsCollapsed, collapsed => {
             if (collapsed) {
@@ -282,7 +306,7 @@ export class RegistrationStore implements IRegistrationsStore {
                         : this.rootStore.view.moment.toDate(),
                     task,
                     client,
-                    userId: this.rootStore.user.authenticatedUser.id,
+                    userId: this.rootStore.user.authenticatedUser.uid,
                     project: recentActiveProjects.length ? recentActiveProjects[0] : undefined,
                     isPersisted: false,
                     ...defaultData

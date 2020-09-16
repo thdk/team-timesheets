@@ -1,16 +1,16 @@
-import { Route } from "mobx-router";
+import { Route, RouterStore } from "mobx-router";
 import * as React from 'react';
 import { transaction, when } from "mobx";
 
 import { App, setNavigationContent } from "../../internal";
 import { IRootStore } from "../../stores/root-store";
-import { IViewAction } from "../../stores/view-store";
+import { IViewAction } from '../../stores/view-store';
 import Projects from "../../pages/projects";
 import detailRoutes from "./detail";
 import { canManageProjects } from "../../rules";
 
-export const goToProjects = (store: IRootStore, tab: ProjectsTab = "active") => {
-    store.router.goTo(routes.projects, {}, { tab });
+export const goToProjects = (router: RouterStore<IRootStore>, tab: ProjectsTab = "active") => {
+    router.goTo(routes.projects, {}, { tab });
 }
 
 export type ProjectsTab = "active" | "archived";

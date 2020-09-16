@@ -1,16 +1,16 @@
-import { Route } from "mobx-router";
+import { Route, RouterStore } from "mobx-router";
 import * as React from 'react';
 import { transaction, when } from "mobx";
 
 import { App, setNavigationContent } from "../../internal";
 import { IRootStore } from "../../stores/root-store";
-import { IViewAction } from "../../stores/view-store";
+import { IViewAction } from '../../stores/view-store';
 import Favorites from "../../pages/favorites";
 
 type FavoritesListRoute = Route<IRootStore>;
 
-export const goToFavorites = (store: IRootStore) => {
-    store.router.goTo(routes.favorites, undefined);
+export const goToFavorites = (router: RouterStore<IRootStore>) => {
+    router.goTo(routes.favorites, undefined);
 }
 
 const setActions = (s: IRootStore) => {

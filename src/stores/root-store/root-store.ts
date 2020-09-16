@@ -8,18 +8,9 @@ import { IReportStore, ReportStore } from "../report-store/report-store";
 import { DashboardStore, IDashboardStore } from "../dashboard-store";
 import { IProjectStore, ProjectStore } from "../project-store";
 import { FavoriteStore } from "../favorite-store";
+import { observable } from "mobx";
 
-export interface IRootStore {
-    readonly user: IUserStore;
-    readonly view: IViewStore;
-    readonly router: RouterStore<IRootStore>;
-    readonly timesheets: IRegistrationsStore;
-    readonly reports: IReportStore;
-    readonly config: IConfigStore;
-    readonly projects: IProjectStore;
-    readonly favorites: FavoriteStore;
-    readonly dashboard: IDashboardStore;
-}
+export interface IRootStore extends Store { };
 
 export class Store implements IRootStore {
     public readonly timesheets: IRegistrationsStore;
@@ -31,6 +22,9 @@ export class Store implements IRootStore {
     public readonly dashboard: IDashboardStore;
     public readonly projects: IProjectStore;
     public readonly favorites: FavoriteStore;
+
+    @observable.ref
+    private organisationId: string | undefined = undefined;
 
     constructor({
         auth,
@@ -85,6 +79,14 @@ export class Store implements IRootStore {
             },
         );
         this.router = new RouterStore<IRootStore>(this);
+    }
+
+    public setOrganisationId(id: string | undefined) {
+        this.organisationId = id;
+    }
+
+    public getOrganisationId() {
+        return this.organisationId;
     }
 
     public dispose() {

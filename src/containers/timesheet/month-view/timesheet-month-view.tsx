@@ -5,7 +5,7 @@ import { Day } from "../day";
 import { ListDivider } from "@rmwc/list";
 import { FlexGroup } from "../../../components/layout/flex";
 import { TimesheetDays } from "../days";
-import { useViewStore } from "../../../stores/view-store";
+import { useViewStore } from "../../../contexts/view-context";
 
 export const TimesheetMonthView = observer(({
     registrationClick,

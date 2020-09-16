@@ -1,7 +1,7 @@
 import React, { ComponentProps } from "react";
 import { goToOverview } from '../../../internal';
 import { useRouterStore } from "../../../stores/router-store";
-import { useViewStore } from "../../../stores/view-store";
+import { useViewStore } from "../../../contexts/view-context";
 import { FlexGroup } from "../../../components/layout/flex";
 import { Day } from "../day";
 import { useRegistrationStore } from "../../../contexts/registration-context";

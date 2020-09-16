@@ -42,7 +42,7 @@ export class TimePeriodSelect extends React.Component<ITimePeriodSelectProps> {
 
         const selectProps = {
             onChange: this.onChange.bind(this),
-            label: "Time period 2"
+            label: "Time period"
         };
 
         return (

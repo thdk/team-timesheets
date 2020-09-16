@@ -1,23 +1,36 @@
 import * as React from 'react';
-import { Drawer as RMWCDrawer, DrawerHeader, DrawerTitle, DrawerSubtitle, DrawerContent } from '@rmwc/drawer';
-
+import { Drawer as RMWCDrawer, DrawerHeader, DrawerContent } from '@rmwc/drawer';
 import { observer } from 'mobx-react-lite';
-import Menu from '../ui/menu';
-import { useStore } from '../../contexts/store-context';
+
+import { Menu } from '../ui/menu';
 import { ErrorBoundary } from '../../components/error-boundary/error-boundary';
+import { AccountBadge } from '../../components/account-badge/account-badge';
+import { useUserStore } from '../../contexts/user-context';
+import { useViewStore } from '../../contexts/view-context';
 
 import "./drawer.scss";
 
-const Drawer = () => {
-    const store = useStore();
+export const Drawer = observer(() => {
+    const user = useUserStore();
+    const view = useViewStore();
 
-    const displayName = store.user.authenticatedUser ? store.user.authenticatedUser.name || "Guest" : "";
+    const displayName = user.authenticatedUser
+        ? user.authenticatedUser.name || "Guest"
+        : "";
+    const email = user.authenticatedUser
+        ? user.authenticatedUser.email || "unknown@timesheets.com"
+        : "";
+
+    console.warn({ isOpen: view.isDrawerOpen });
+
     return (
         <ErrorBoundary>
-            <RMWCDrawer dismissible open={store.view.isDrawerOpen}>
+            <RMWCDrawer dismissible open={view.isDrawerOpen}>
                 <DrawerHeader>
-                    <DrawerTitle>Timesheets</DrawerTitle>
-                    <DrawerSubtitle>{displayName}</DrawerSubtitle>
+                    <AccountBadge
+                        email={email}
+                        name={displayName}
+                    />
                 </DrawerHeader>
                 <DrawerContent>
                     <Menu />
@@ -25,6 +38,5 @@ const Drawer = () => {
             </RMWCDrawer>
         </ErrorBoundary>
     );
-};
-
-export default observer(Drawer);
+});
+Drawer.displayName = "Drawer";

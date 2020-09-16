@@ -43,6 +43,9 @@ export const convertUser = (firestoreData: IUserData) => {
         defaultTask: firestoreData.defaultTask,
         recentProjects: firestoreData.recentProjects || [],
         defaultClient: firestoreData.defaultClient || undefined,
+        email: firestoreData.email || undefined,
+        uid: firestoreData.uid || "undefined",
+        organisationId: firestoreData.organisationId || undefined,
         team: firestoreData.team || undefined,
         created: firestoreData.created ? firestoreData.created.toDate() : undefined,
     };
@@ -58,7 +61,8 @@ export const convertProject = (firestoreData: IProjectData) => {
     return {
         ...convertNameWithIcon(firestoreData),
         createdBy: firestoreData.createdBy,
-        isArchived: firestoreData.isArchived
+        isArchived: firestoreData.isArchived,
+        organisationId: firestoreData.organisationId,
     } as IProject;
 }
 

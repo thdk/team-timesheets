@@ -61,7 +61,7 @@ const onEnter = (route: ProjectDetailRoute, params: Params, s: IRootStore) => {
     const deleteAction: IViewAction = {
         action: () => {
             s.projects.projectId && s.projects.deleteProjects(s.projects.projectId);
-            goToProjects(s);
+            goToProjects(s.router);
         },
         icon: { label: "Delete", content: "delete" },
         shortKey: { key: "Delete", ctrlKey: true }
@@ -70,7 +70,7 @@ const onEnter = (route: ProjectDetailRoute, params: Params, s: IRootStore) => {
     const saveAction: IViewAction = {
         action: () => {
             save();
-            goToProjects(s);
+            goToProjects(s.router);
         },
         icon: { label: "Save", content: "save" },
         shortKey: { key: "s", ctrlKey: true }
@@ -85,7 +85,7 @@ const onEnter = (route: ProjectDetailRoute, params: Params, s: IRootStore) => {
         s.view.setNavigation({
             action: () => {
                 save();
-                goToProjects(s);
+                goToProjects(s.router);
             },
             icon: { label: "Back", content: "arrow_back" }
         });

@@ -7,7 +7,7 @@ import { IRootStore } from "../../stores/root-store";
 import { setTitleForRoute } from "../actions";
 import { goToSettings } from "../settings";
 import { transaction } from "mobx";
-import { IViewAction } from "../../stores/view-store";
+import { IViewAction } from '../../stores/view-store';
 
 type RouteParams = { id?: string };
 type UserDetailsRoute = Route<IRootStore, RouteParams>;

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { observer } from 'mobx-react-lite';
 import { useUserStore } from "../../contexts/user-context";
-import { useViewStore } from '../../stores/view-store';
+import { useViewStore } from '../../contexts/view-context';
 import { useFirebase } from '../../contexts/firebase-context';
 import { reaction } from 'mobx';
 import { useReportStore } from '../../stores/report-store';

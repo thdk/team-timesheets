@@ -4,7 +4,7 @@ import { observer } from "mobx-react-lite";
 import { goToRegistration } from '../../internal';
 
 import { useRouterStore } from "../../stores/router-store";
-import { useViewStore } from "../../stores/view-store";
+import { useViewStore } from "../../contexts/view-context";
 import { useRegistrationStore } from "../../contexts/registration-context";
 
 import { TimesheetDayView } from "./day-view/timesheet-day-view";

@@ -34,7 +34,7 @@ const onEnter = (route: FavoriteDetailRoute, _params: RouteParams, s: IRootStore
     const deleteAction: IViewAction = {
         action: () => {
             s.favorites.deleteActiveFavoriteGroup();
-            goToFavorites(s);
+            goToFavorites(s.router);
         },
         icon: { label: "Delete", content: "delete" },
         shortKey: { key: "Delete", ctrlKey: true }
@@ -43,7 +43,7 @@ const onEnter = (route: FavoriteDetailRoute, _params: RouteParams, s: IRootStore
     const saveAction: IViewAction = {
         action: () => {
             save();
-            goToFavorites(s);
+            goToFavorites(s.router);
         },
         icon: { label: "Save", content: "save" },
         shortKey: { key: "s", ctrlKey: true }
@@ -58,7 +58,7 @@ const onEnter = (route: FavoriteDetailRoute, _params: RouteParams, s: IRootStore
         s.view.setNavigation({
             action: () => {
                 save();
-                goToFavorites(s);
+                goToFavorites(s.router);
             },
             icon: { label: "Back", content: "arrow_back" }
         });

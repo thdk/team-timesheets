@@ -47,7 +47,7 @@ class Projects extends React.Component {
 
         const tabs = validTabs.map(({id, icon, text})=> {
             return <Tab
-            onClick={goToProjects.bind(this, this.context, id)}
+            onClick={goToProjects.bind(this, this.context.router, id)}
             iconIndicator={icon}
             key={id}
             >

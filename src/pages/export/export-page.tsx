@@ -8,7 +8,7 @@ import { withAuthentication } from '../../containers/users/with-authentication';
 import { RedirectToLogin } from '../../routes/login';
 import { RegistrationsListTotal } from '../../containers/registrations-list-total';
 import { ReportDownloadLink } from '../../containers/report-download-link';
-import { useViewStore } from '../../stores/view-store';
+import { useViewStore } from '../../contexts/view-context';
 import { useUserStore } from "../../contexts/user-context";
 import { useReportStore } from '../../stores/report-store';
 import { useRouterStore } from '../../stores/router-store';

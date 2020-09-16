@@ -9,7 +9,7 @@ const path = "/reports";
 
 type ReportRoute = Route<IRootStore, DateObject>;
 
-export const goToReports = (s: IRootStore, date?: DateObject) => {
+export const goToReports = (s: Pick<IRootStore, "view" | "router">, date?: DateObject) => {
     goToRouteWithDate(routes.report, s, date, { track: false });
 }
 

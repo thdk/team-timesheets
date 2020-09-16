@@ -1,11 +1,11 @@
 import { observer } from 'mobx-react-lite';
 import * as React from 'react';
 
-import { IAuthenticatedUser } from '../../../../common/dist';
 import { useUserStore } from "../../../contexts/user-context";
+import { IUser } from '../../../../common';
 
 export interface IWithAuthenticatedUserProps {
-    authenticatedUser: IAuthenticatedUser;
+    authenticatedUser: IUser;
 }
 
 export const withAuthenticatedUser = (

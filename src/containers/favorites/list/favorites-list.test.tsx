@@ -58,6 +58,8 @@ class TestStore {
     public projects = new ProjectStore(this.rootStore, {
         firestore,
     });
+
+    public getOrganisationId = () => undefined;
 }
 
 describe("FavoritesList", () => {
@@ -112,6 +114,7 @@ describe("FavoritesList", () => {
                 userCollection.addAsync(
                     {
                         name: "user 1",
+                        uid: "user-1",
                     },
                     "user-1",
                 ),

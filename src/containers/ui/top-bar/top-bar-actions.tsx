@@ -1,5 +1,5 @@
 import React from "react";
-import { IViewAction } from "../../../stores/view-store";
+import { IViewAction } from '../../../stores/view-store';
 import { TopAppBarActionItem } from "@rmwc/top-app-bar";
 
 export const TopBarActions = ({

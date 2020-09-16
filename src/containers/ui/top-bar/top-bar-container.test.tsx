@@ -2,16 +2,18 @@ import React from "react";
 import { ViewStore } from "../../../stores/view-store";
 import { render, fireEvent, act } from "@testing-library/react";
 import { TopBar } from "./";
+import { useViewStore } from "../../../contexts/view-context";
 
 const viewStore = new ViewStore();
-jest.mock("../../../stores/view-store/use-view-store", () => ({
-    useViewStore: () => viewStore,
-}));
-
+jest.mock("../../../contexts/view-context");
 
 describe("TopBarContainer", () => {
     beforeAll(() => {
         viewStore.title = "Title";
+
+        (useViewStore as jest.Mock<ReturnType<typeof useViewStore>>)
+            .mockReturnValue(viewStore);
+
     });
 
     it("displays the view title", () => {

@@ -8,8 +8,8 @@ export const useGoogleConfig = () => {
     const scope = "https://www.googleapis.com/auth/calendar.readonly";
 
     const config = useMemo(() => ({
-        apiKey: configs.getConfigValue("googleAppId"),
-        clientId: configs.getConfigValue("googleClientId"),
+        apiKey: configs.getConfigValue("googleAppId", false) || "",
+        clientId: configs.getConfigValue("googleClientId", false) || "",
         discoveryDocs: ["https://www.googleapis.com/discovery/v1/apis/calendar/v3/rest"],
         scope,
     }), [configs]);

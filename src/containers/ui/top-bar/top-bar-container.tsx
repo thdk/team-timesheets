@@ -4,7 +4,7 @@ import { observer } from 'mobx-react-lite';
 
 import { TopAppBar, TopAppBarRow, TopAppBarSection, TopAppBarNavigationIcon, TopAppBarTitle } from '@rmwc/top-app-bar';
 import { TopBarActions } from './top-bar-actions-container';
-import { useViewStore } from '../../../stores/view-store/use-view-store';
+import { useViewStore } from '../../../contexts/view-context';
 
 export const TopBar = observer(() => {
     const view = useViewStore();

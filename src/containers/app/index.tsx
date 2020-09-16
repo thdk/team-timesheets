@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Fabs } from '../ui/fabs';
-import Drawer from '../drawer';
+import { Drawer } from '../drawer';
 import { DrawerAppContent } from '@rmwc/drawer';
 import { observer } from 'mobx-react-lite';
 import { IRootStore } from '../../stores/root-store';
@@ -23,7 +23,7 @@ export const App = observer(
                 <Drawer />
 
                 <DrawerAppContent>
-                    <TopBar/>
+                    <TopBar />
 
                     <main className="main-content" id="main-content">
                         <div style={{ paddingBottom: "100px" }} className="mdc-top-app-bar--fixed-adjust">

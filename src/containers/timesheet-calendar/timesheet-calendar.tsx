@@ -4,20 +4,24 @@ import Calendar, { CalendarTileProperties } from 'react-calendar/dist/entry.nost
 
 import { goToOverview } from '../../internal';
 import { withAuthentication } from '../users/with-authentication';
-import { useStore } from '../../contexts/store-context';
+import { useRegistrationStore } from '../../contexts/registration-context';
+import { useViewStore } from '../../contexts/view-context';
+import { useRouterStore } from '../../stores/router-store';
 
 const TimesheetCalendar = observer(() => {
-    const store = useStore();
+    const timesheets = useRegistrationStore();
+    const router = useRouterStore();
+    const view = useViewStore();
 
     const dateChanged = React.useCallback((dates: Date | Date[]) => {
         const date = dates instanceof (Date) ? dates : dates[0];
-        goToOverview(store, { year: date.getFullYear(), day: date.getDate(), month: date.getMonth() + 1 }, { track: false });
+        goToOverview({ router, view }, { year: date.getFullYear(), day: date.getDate(), month: date.getMonth() + 1 }, { track: false });
     }, []);
 
     const getTileClassName = (tile: CalendarTileProperties) => {
         const classNames = [];
         if (tile.view === "month") {
-            const tileHasData = store.timesheets.registrationsGroupedByDay
+            const tileHasData = timesheets.registrationsGroupedByDay
                 .some(g => g.groupKey === tile.date.toDateString());
             if (tileHasData) classNames.push("has-data");
         }
@@ -26,9 +30,9 @@ const TimesheetCalendar = observer(() => {
     }
 
     return <Calendar
-        key={store.timesheets.registrationsGroupedByDay.toString()}
+        key={timesheets.registrationsGroupedByDay.toString()}
         tileClassName={getTileClassName}
-        value={store.view.moment.toDate()}
+        value={view.moment.toDate()}
         onChange={dateChanged} />;
 });
 

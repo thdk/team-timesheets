@@ -1,4 +1,4 @@
-import { observable, action, transaction, computed, observe, intercept, IObservableValue, reaction } from "mobx";
+import { observable, action, transaction, computed, observe, reaction } from "mobx";
 import { ICollection, Collection, Doc, RealtimeMode, FetchMode, CollectionReference } from "firestorable";
 import { IRootStore } from "../root-store";
 import * as deserializer from "../../../common/serialization/deserializer";
@@ -6,6 +6,7 @@ import * as serializer from "../../../common/serialization/serializer";
 import { IUser, IUserData } from "../../../common/dist";
 import { canReadUsers } from "../../rules";
 import { getLoggedInUserAsync } from "../../firebase/firebase-utils";
+import { selectOrganisation } from "../../selectors/select-organisation";
 
 export interface IUserStore extends UserStore { }
 
@@ -16,13 +17,7 @@ export enum StoreState {
 }
 
 export class UserStore implements IUserStore {
-    @observable.ref
-    private _userId?: string;
-
     @observable state = StoreState.Done;
-
-    @observable
-    private _authUser: IObservableValue<Doc<IUser, IUserData> | undefined> = observable.box(undefined);
 
     @observable.ref isAuthInitialised = false;
 
@@ -33,8 +28,11 @@ export class UserStore implements IUserStore {
     private auth?: firebase.auth.Auth;
 
     public readonly usersCollection: ICollection<IUser, IUserData>;
+    public readonly organisationUsersCollection: ICollection<IUser, IUserData>;
+
+    private rootStore: IRootStore;
     constructor(
-        _rootStore: IRootStore,
+        rootStore: IRootStore,
         {
             firestore,
             auth,
@@ -44,9 +42,10 @@ export class UserStore implements IUserStore {
         }
     ) {
         this.auth = auth;
+        this.rootStore = rootStore;
 
-        const query = (ref: CollectionReference) => ref.orderBy("name", "asc");
         const createQuery = (user?: IUser) => {
+            const query = (ref: CollectionReference) => ref.orderBy("name", "asc");
             return canReadUsers(user)
                 ? query
                 : null;
@@ -66,22 +65,34 @@ export class UserStore implements IUserStore {
             },
         );
 
+        this.organisationUsersCollection = new Collection(
+            firestore,
+            "users",
+            {
+                realtimeMode: RealtimeMode.on,
+                fetchMode: FetchMode.manual,
+                serialize: serializer.convertUser,
+                deserialize: deserializer.convertUser,
+            }, {
+            // logger: console.log
+        })
+
         reaction(() => this.authenticatedUser, user => {
             this.usersCollection.query = createQuery(user);
         });
 
         this.auth && this.auth.onAuthStateChanged(this.setUser.bind(this));
 
-        // tODO: move to Firestorable/Document?
-        intercept(this._authUser, change => {
-            if (change.type === "update") {
-                if (!change.newValue && change.object.value) {
-                    change.object.value.unwatch();
-                }
-            }
+        // // TODO: move to Firestorable/Document?
+        // intercept(this._authUser, change => {
+        //     if (change.type === "update") {
+        //         if (!change.newValue && change.object.value) {
+        //             change.object.value.unwatch();
+        //         }
+        //     }
 
-            return change;
-        });
+        //     return change;
+        // });
 
         observe(this._selectedUserId, change => this.setSelectedUser(change.newValue));
     }
@@ -144,29 +155,39 @@ export class UserStore implements IUserStore {
     }
 
     @computed
-    public get authenticatedUser(): (IUser & { id: string }) | undefined {
-        const user = this._authUser.get();
-        return user ? { ...user.data!, id: user.id } : user;
+    public get authenticatedUser(): IUser | undefined {
+        if (!this.isAuthInitialised) {
+            return undefined;
+        }
+
+        console.log("user not set to null");
+
+        const selectedOrganisationId = selectOrganisation(this.rootStore);
+
+        const user = selectedOrganisationId
+            ? this.organisationUsersCollection.docs
+                .filter(d => d.data!.organisationId === selectedOrganisationId)[0]
+            : this.organisationUsersCollection.docs[0];
+
+        return user ? { ...user.data!} : user;
     }
 
     @computed
     get authenticatedUserId(): string | undefined {
-        return this._userId;
+        return this.authenticatedUser?.uid;
     }
 
     @action
     public updateAuthenticatedUser(userData: Partial<IUser>): void {
-        const user = this._authUser.get();
-        if (user) { this.usersCollection.updateAsync(userData, user.id); }
+        const user = this.authenticatedUser;
+        if (user) { this.usersCollection.updateAsync(userData, user.uid); }
     }
 
     @action
     public setUser(fbUser: firebase.User | null): void {
         if (!fbUser) {
             transaction(() => {
-                this.isAuthInitialised = true;
-                this._userId = undefined;
-                this._authUser.set(undefined);
+                this.isAuthInitialised = false;
             });
 
             if (typeof gapi !== "undefined") {
@@ -174,30 +195,71 @@ export class UserStore implements IUserStore {
             }
         } else {
             this.state = StoreState.Pending;
-            this.usersCollection.getAsync(fbUser.uid).then(user => {
-                this.getAuthUserSuccess(user);
-            }, () => this.usersCollection.addAsync(
-                {
-                    roles: { user: true },
-                    name: fbUser.displayName || "",
-                    tasks: new Map(),
-                    recentProjects: [],
-                }
-                , fbUser.uid).then(() => {
-                    // get the newly registered user
-                    return this.usersCollection.getAsync(fbUser.uid).then(user => {
-                        this.getAuthUserSuccess(user);
-                    }, this.getUserError);
-                }, error => console.log(`${error}\nCoudn't save newly registered user. `)));
+            this.organisationUsersCollection.query = (ref) => ref.where("uid", "==", fbUser.uid);
+            this.organisationUsersCollection.fetchAsync()
+                .then(
+                    async () => {
+                        const user = await this.getAuthenticatedUserAsync(fbUser);
+                        if (user) {
+                            this.getAuthUserSuccess();
+                        } else {
+                            const newUserData = {
+                                roles: { user: true },
+                                name: fbUser.displayName || "",
+                                tasks: new Map(),
+                                recentProjects: [],
+                                email: fbUser.email || undefined,
+                                uid: fbUser.uid,
+                            };
+
+                            this.usersCollection.addAsync(
+                                newUserData,
+                                fbUser.uid,
+                            ).then(
+                                (userId) => {
+                                    // get the newly registered user
+                                    return this.usersCollection.getAsync(userId)
+                                        .then(() => {
+                                            this.getAuthUserSuccess();
+                                        }, this.getUserError);
+                                },
+                                error => console.log(`${error}\nCoudn't save newly registered user. `),
+                            );
+                        }
+                    },
+                );
+        }
+    }
+
+    private getAuthenticatedUserAsync(fbUser: firebase.User) {
+        const organisationUsers = this.organisationUsersCollection.docs;
+        if (organisationUsers.length) {
+            return Promise.resolve(organisationUsers[0]);
+        } else {
+            // backwords compatibility, get single user by id and patch user data
+            return this.usersCollection.getAsync(fbUser.uid)
+                .then(async (userDoc) => {
+                    await this.usersCollection.updateAsync(
+                        {
+                            email: fbUser.email || "",
+                            uid: fbUser.uid,
+                        },
+                        fbUser.uid,
+                    );
+                    userDoc.data!.email = fbUser.email || undefined;
+                    userDoc.data!.uid = fbUser.uid;
+                    return userDoc;
+                })
+                .catch(() => {
+                    return undefined;
+                });
         }
     }
 
     @action.bound
-    getAuthUserSuccess = (user: Doc<IUser, IUserData>) => {
+    getAuthUserSuccess = () => {
         transaction(() => {
             this.state = StoreState.Done;
-            this._userId = user.id;
-            this._authUser.set(user);
             this.isAuthInitialised = true;
         });
     }

@@ -38,7 +38,8 @@ const setupAsync = () => {
                 team: "team-1",
                 roles: {
                     user: true,
-                }
+                },
+                uid: "user-1",
             },
             "user-1",
         ),
@@ -48,7 +49,8 @@ const setupAsync = () => {
                 team: "team-0",
                 roles: {
                     user: true,
-                }
+                },
+                uid: "user-2",
             },
             "user-2",
         ),
@@ -57,7 +59,8 @@ const setupAsync = () => {
                 name: "user 3",
                 roles: {
                     user: true,
-                }
+                },
+                uid: "user-3",
             },
             "user-3",
         ),
@@ -68,7 +71,8 @@ const setupAsync = () => {
                 roles: {
                     admin: true,
                     user: true,
-                }
+                },
+                uid: "admin-1",
             },
             "admin-1",
         ),
@@ -178,13 +182,14 @@ describe("UserListContainer", () => {
         });
 
         describe("when user is removed from the collection", () => {
-            let userId: string;
+            const userId = "user-b";
             beforeEach(() => userCollection.addAsync({
                 name: "user b",
                 roles: {
                     user: true,
                 },
-            }).then((id) => userId = id));
+                uid: userId,
+            }, userId));
 
             it("should rerender to removed the user from the list", async () => {
                 const { getByText, queryByText } = render(

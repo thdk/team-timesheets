@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { observer } from "mobx-react-lite";
 
 import { useGapi } from "../../hooks/use-gapi";
-import { useViewStore } from "../../stores/view-store";
+import { useViewStore } from "../../contexts/view-context";
 import { useGoogleConfig } from "../configs/use-google-config";
 
 import { GoogleCalendarEvents as PureGoogleCalendarEvents } from "./events";

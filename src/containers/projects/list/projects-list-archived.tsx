@@ -5,7 +5,6 @@ import { SettingsList } from '../../../components/settings-list';
 import { canManageProjects } from '../../../rules';
 import { useStore } from '../../../contexts/store-context';
 
-
 export const ArchivedProjectList = observer((props: React.HTMLProps<HTMLDivElement>) => {
     const store = useStore();
 

@@ -25,10 +25,9 @@ jest.mock('../../stores/router-store', () => ({
     }),
 }));
 
-jest.mock('./preferences', () => ({
-    Preferences: () => <>Preferences-Content</>,
+jest.mock('./connections', () => ({
+    Connections: () => <>Connections</>,
 }));
-
 jest.mock('../../containers/tasks/list', () => ({
     TaskList: () => <>Tasks-Content</>,
 }));

@@ -17,5 +17,5 @@ export interface IUser {
     created?: Date;
     email?: string;
     uid: string;
-    organisationId?: string;
+    divisionId?: string;
 }

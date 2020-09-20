@@ -10,22 +10,36 @@ import {
 const {
     refs: [
         usersRef,
+        divisonUsersRef,
     ],
     refsTest: [
         usersRefTest,
+        divisonUsersRefTest,
     ]
 } = initTestFirestore(
     "rules-test",
-    ["users"],
+    [
+        "users",
+        "division-users",
+    ],
     { uid: "alice", email: "alice@example.com" },
     "../../../firestore.rules",
 );
 
 beforeAll(async () => {
-    await usersRef.doc("alice").set({ uid: "alice", roles: { user: true }, organisationId: "o-1" });
+    await usersRef.doc("alice").set({ uid: "alice", roles: { user: true }, divisionUserId: "alice-div" });
+    await divisonUsersRef.doc("alice-div").set({ uid: "alice", divisionId: "o-1", roles: { user: true }});
+
     await usersRef.doc("john").set({ uid: "john", roles: { user: true } });
-    await usersRef.doc("peter").set({ uid: "peter", roles: { user: true }, organisationId: "o-1" });
-    await usersRef.doc("jack").set({ uid: "jack", roles: { user: true }, organisationId: "o-2" });
+
+    await usersRef.doc("peter").set({ uid: "peter", divisionUserId: "peter-div"});
+    await divisonUsersRef.doc("peter-div").set({ uid: "peter", divisionId: "o-1", roles: { user: true } });
+
+    await usersRef.doc("jack").set({ uid: "jack", divisionUserId: "jack-div" });
+    await divisonUsersRef.doc("jack-div").set({ uid: "jack", divisionId: "o-2", roles: { user: true } });
+
+    await usersRef.doc("martin").set({ uid: "martin", divisionUserId: "martin-div" });
+    await divisonUsersRef.doc("martin-div").set({ uid: "martin", divisionId: "o-1", roles: { user: true } });
 });
 
 afterAll(deleteFirebaseAppsAsync);
@@ -90,10 +104,18 @@ describe("Firestore rules", () => {
                 await usersRef.doc("alice").update({
                     roles: { admin: true },
                 });
+
+                await divisonUsersRef.doc("alice-div").update({
+                    roles: { admin: true },
+                });
             });
 
             afterAll(async () => {
                 await usersRef.doc("alice").update({
+                    roles: { admin: false },
+                });
+
+                await divisonUsersRef.doc("alice-div").update({
                     roles: { admin: false },
                 });
             });
@@ -103,12 +125,12 @@ describe("Firestore rules", () => {
                 await assertSucceeds(usersRefTest.doc("john").get());
 
                 // peter has organisation set
-                await assertSucceeds(usersRefTest.doc("peter").get());
+                await assertSucceeds(divisonUsersRefTest.doc("peter-div").get());
             });
 
             test("if admin cannot read other users doc from another organisation", async () => {
                 // jack is in another organisation
-                await assertFails(usersRefTest.doc("jack").get());
+                await assertFails(divisonUsersRefTest.doc("jack-div").get());
             });
 
             test("if admin can update its own roles", async () => {
@@ -116,7 +138,7 @@ describe("Firestore rules", () => {
                     roles: {
                         editor: true,
                         admin: true,
-                     },
+                    },
                 }));
             });
 
@@ -125,13 +147,13 @@ describe("Firestore rules", () => {
                 const peter = await usersRef.doc("peter").get();
 
                 // john has no organisation set (backwards compatibility)
-                await assertSucceeds(usersRefTest.doc("john").delete());
+                // await assertSucceeds(usersRefTest.doc("john").delete());
 
                 // peter has organisation set
-                await assertSucceeds(usersRefTest.doc("peter").delete());
+                await assertSucceeds(divisonUsersRefTest.doc("peter-div").delete());
 
-                await usersRef.doc("john").set({...john.data()});
-                await usersRef.doc("peter").set({...peter.data()});
+                await usersRef.doc("john").set({ ...john.data() });
+                await divisonUsersRefTest.doc("peter-div").set({ ...peter.data() });
             });
         });
     });

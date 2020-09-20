@@ -7,7 +7,7 @@ import * as deserializer from '../../../common/serialization/deserializer';
 import * as serializer from '../../../common/serialization/serializer';
 import { SortOrder } from '../../containers/timesheet/days';
 import { IRegistration, IRegistrationData } from '../../../common/dist';
-import { selectOrganisation } from "../../selectors/select-organisation";
+import { selectDivision } from "../../selectors/select-organisation";
 
 export interface IGroupedRegistrations<T> {
     registrations: Doc<IRegistration, IRegistrationData>[];
@@ -69,7 +69,7 @@ export class RegistrationStore implements IRegistrationsStore {
 
         const createQuery = (
             userId: string | undefined,
-            organisationId: string | undefined,
+            divisionId: string | undefined,
         ) => {
             if (userId) {
                 const moment = rootStore.view.moment;
@@ -81,8 +81,8 @@ export class RegistrationStore implements IRegistrationsStore {
                         .where("date", "<=", endDate)
                         .where("userId", "==", rootStore.user.authenticatedUserId);
 
-                    if (organisationId) {
-                        query = query.where("organisationId", "==", organisationId);
+                    if (divisionId) {
+                        query = query.where("divisionId", "==", divisionId);
                     }
 
                     return query;
@@ -105,7 +105,7 @@ export class RegistrationStore implements IRegistrationsStore {
                 serialize: serializer.convertRegistration,
                 query: createQuery(
                     rootStore.user.authenticatedUserId,
-                    selectOrganisation(rootStore),
+                    selectDivision(rootStore),
                 ),
             },
             {
@@ -116,7 +116,7 @@ export class RegistrationStore implements IRegistrationsStore {
         const updateRegistrationQuery = (userId: string | undefined) => {
             this.registrations.query = createQuery(
                 userId,
-                selectOrganisation(rootStore),
+                selectDivision(rootStore),
             );
         };
 
@@ -348,7 +348,7 @@ export class RegistrationStore implements IRegistrationsStore {
                                 recentProjects.unshift(project);
                             }
 
-                            this.rootStore.user.updateAuthenticatedUser({ recentProjects });
+                            this.rootStore.user.updateDivisionUser({ recentProjects });
                         }
                     }
                 });

@@ -30,19 +30,19 @@ export const Preferences = observer(() => {
         if (selected) userTasksIds.set(id, true);
         else userTasksIds.delete(id);
 
-        userStore.updateAuthenticatedUser({
+        userStore.updateDivisionUser({
             tasks: userTasksIds,
         });
     }, [userTasksIds]);
 
     const defaultTaskChanged = useCallback((defaultTask: string) => {
-        userStore.updateAuthenticatedUser({
+        userStore.updateDivisionUser({
             defaultTask
         });
     }, [userStore]);
 
     const defaultClientChanged = useCallback((defaultClient: string) => {
-        userStore.updateAuthenticatedUser({
+        userStore.updateDivisionUser({
             defaultClient
         });
     }, [userStore]);

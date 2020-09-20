@@ -1,15 +1,31 @@
+rules_version = '2';
 service cloud.firestore {
     match /databases/{database}/documents {
-        function getAuthUser() {
-            return get(/databases/$(database)/documents/users/$(request.auth.uid));
+        function getAuthUser(data) {
+            let user = get(/databases/$(database)/documents/users/$(request.auth.uid));
+            let authUser = data.keys().hasAny(["divisionId"])
+                    ? get(/databases/$(database)/documents/division-users/$(user.data.divisionUserId))
+                    : user;
+
+            return data.keys().hasAny(["divisionId"])
+                ? (
+                    data.divisionId == authUser.data.divisionId
+                    ? authUser
+                    : null
+                )
+                : authUser;
+        }
+
+        function isPowerUser(data) {
+            return data.keys().hasAny(["divisionId"]) &&
+                    get(/databases/$(database)/documents/divisions/$(data.divisionId)).data.createdBy == request.auth.uid;
         }
 
         function isAuthorised(authUser, role) {
             return (
-                !resource.data.keys().hasAny(["organisationId"]) ||
-                authUser.data.organisationId == resource.data.organisationId
-             ) && authUser.data.roles.keys().hasAny([role])
-             && authUser.data.roles[role];
+                    authUser.data.roles.keys().hasAny([role])
+                    && authUser.data.roles[role]
+                )
         }
 
         function isUpdateToField(field) {
@@ -28,33 +44,55 @@ service cloud.firestore {
 
         match /projects/{documentId} {
             allow read;
-            allow create: if isAuthorised(getAuthUser(), 'editor') == true || isAuthorised(getAuthUser(), 'admin') == true;
-            allow update, delete: if (isAuthorised(getAuthUser(), 'editor') == true && resource.data.createdBy == request.auth.uid) || isAuthorised(getAuthUser(), 'admin') == true;
+            allow create: if isAuthorised(getAuthUser(request.resource.data), 'editor') == true || isAuthorised(getAuthUser(request.resource.data), 'admin') == true;
+            allow update, delete: if (isAuthorised(getAuthUser(request.resource.data), 'editor') == true && resource.data.createdBy == request.auth.uid) || isAuthorised(getAuthUser(request.resource.data), 'admin') == true;
         }
 
         match /clients/{document} {
             allow read;
-            allow create, update, delete: if isAuthorised(getAuthUser(), 'admin') == true;
+            allow create, update, delete: if isAuthorised(getAuthUser(request.resource.data), 'admin') == true;
         }
 
         match /teams/{document} {
             allow read;
-            allow create, update, delete: if isAuthorised(getAuthUser(), 'admin') == true;
+            allow create, update, delete: if isAuthorised(getAuthUser(request.resource.data), 'admin') == true;
         }
 
         match /tasks/{document} {
             allow read;
-            allow create, update, delete: if isAuthorised(getAuthUser(), 'admin') == true;
+            allow create, update, delete: if isAuthorised(getAuthUser(request.resource.data), 'admin') == true;
         }
 
         match /users/{userId} {
-            allow read: if isAuthorised(getAuthUser(), 'admin') == true || (request.auth != null && (userId == request.auth.uid || resource.data.uid == request.auth.uid));
-            allow update: if isAuthorised(getAuthUser(), 'admin') == true || (
-                (userId == request.auth.uid || resource.data.uid == request.auth.uid) &&
-                !isUpdateToField('roles')
-            );
-            allow create: if request.auth != null && request.resource.data.uid == request.auth.uid && request.resource.data.roles.keys().hasOnly(["user"]);
-            allow delete: if isAuthorised(getAuthUser(), 'admin') == true;
+            allow read: if
+                request.auth != null
+                && (
+                    request.auth.uid == userId
+                    || isAuthorised(getAuthUser(resource.data), 'admin')
+                );
+            allow update: if
+                isAuthorised(getAuthUser(request.resource.data), 'admin') == true
+                || (
+                    (
+                        userId == request.auth.uid
+                        || resource.data.uid == request.auth.uid
+                    )
+                    && !isUpdateToField('roles')
+                );
+            allow create: if (
+                request.auth != null && request.resource.data.uid == request.auth.uid && request.resource.data.roles.keys().hasOnly(["user"])
+            ) || isPowerUser(request.resource.data);
+            allow delete: if isAuthorised(getAuthUser(request.resource.data), 'admin') == true;
+        }
+
+        match /division-users/{divisionUserId} {
+            allow read: if
+                request.auth != null
+                && (
+                    request.auth.uid == divisionUserId
+                    || isAuthorised(getAuthUser(resource.data), 'admin')
+                );
+            allow create, update, delete;
         }
 
         match /favorite-groups/{groupId} {
@@ -71,6 +109,11 @@ service cloud.firestore {
 
         match /configs/{configId} {
             allow read;
+        }
+
+        match /divisions/{divisionId} {
+            allow read;
+            allow create: if request.auth != null;
         }
     }
 }

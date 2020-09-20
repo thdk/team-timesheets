@@ -1,6 +1,8 @@
 import * as firebase from 'firebase/app';
 import { IRegistration, IRegistrationData, IUser, IUserData, ITeam, ITeamData, IProject, IProjectData, IFavoriteRegistration } from '../interfaces';
 import { INameWithIconData, INameWithIcon } from '../interfaces/base';
+import { IOrganisation } from '../interfaces/IOrganisation';
+import { IOrganisationData } from '../interfaces/IOrganisationData';
 
 export const convertRegistration = (appData: Partial<IRegistration> | null) => {
     let registration: Partial<IRegistrationData>;
@@ -96,7 +98,7 @@ export const convertUser = (appData: Partial<IUser> | null) => {
         created: firebase.firestore.Timestamp.fromDate(appData.created || now),
         uid: appData.uid,
         email: appData.email,
-        organisationId: appData.organisationId,
+        divisionId: appData.divisionId,
     }
 
     // Todo: automatically remove undefined values for all keys
@@ -108,7 +110,7 @@ export const convertUser = (appData: Partial<IUser> | null) => {
     if (user.defaultClient === undefined) delete user.defaultClient;
     if (user.team === undefined) delete user.team;
     if (!user.email) delete user.email;
-    if (!user.organisationId) delete user.organisationId;
+    if (!user.divisionId) delete user.divisionId;
 
     return user;
 }
@@ -117,6 +119,24 @@ export function convertTeam(appData: Partial<ITeam>): Partial<ITeamData> {
     return convertNameWithIcon(appData);
 }
 
+export function convertOrganisation(appData: Partial<IOrganisation> | null): Partial<IOrganisationData> {
+    let data: Partial<IOrganisationData>;
+
+    if (appData === null) {
+        const now = new Date();
+        data = { deleted: true, modified: firebase.firestore.Timestamp.fromDate(now) };
+    }
+    else {
+        data = {
+            ...convertNameWithIcon(appData),
+            createdBy: appData.createdBy,
+            id: appData.id,
+        };
+    }
+
+    if (data.createdBy === undefined) delete (data.createdBy);
+    return data;
+}
 export function convertProject(appData: Partial<IProject> | null): Partial<IProjectData> {
     let data: Partial<IProjectData>;
 
@@ -129,13 +149,13 @@ export function convertProject(appData: Partial<IProject> | null): Partial<IProj
             ...convertNameWithIcon(appData),
             createdBy: appData.createdBy,
             isArchived: appData.isArchived,
-            organisationId: appData.organisationId,
+            divisionId: appData.divisionId,
         };
     }
 
     if (data.createdBy === undefined) delete (data.createdBy);
     if (data.isArchived === undefined) delete (data.isArchived);
-    if (data.organisationId === undefined) delete (data.organisationId);
+    if (data.divisionId === undefined) delete (data.divisionId);
     return data;
 }
 
@@ -154,12 +174,15 @@ export function convertNameWithIcon(appData: Partial<INameWithIcon> | null): Par
             name,
             name_insensitive: name.toUpperCase(),
             created: firebase.firestore.Timestamp.fromDate(appData.created || now),
-            modified: firebase.firestore.Timestamp.fromDate(now)
+            modified: firebase.firestore.Timestamp.fromDate(now),
+            divisionId: appData.divisionId,
         };
 
         if (appData.icon) {
             data.icon = appData.icon;
         }
+
+        if (!data.divisionId) delete data.divisionId;
     }
 
     return data;

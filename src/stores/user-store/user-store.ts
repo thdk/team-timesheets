@@ -6,7 +6,7 @@ import * as serializer from "../../../common/serialization/serializer";
 import { IUser, IUserData } from "../../../common/dist";
 import { canReadUsers } from "../../rules";
 import { getLoggedInUserAsync } from "../../firebase/firebase-utils";
-import { selectOrganisation } from "../../selectors/select-organisation";
+import { selectDivision } from "../../selectors/select-organisation";
 
 export interface IUserStore extends UserStore { }
 
@@ -20,8 +20,9 @@ export class UserStore implements IUserStore {
     @observable state = StoreState.Done;
 
     @observable.ref isAuthInitialised = false;
+
     @observable.ref
-    private _fbUser: firebase.User | null = null;
+    private _authUser: IUser | undefined;
 
     private readonly _selectedUser = observable.box<IUser | undefined>();
 
@@ -30,7 +31,7 @@ export class UserStore implements IUserStore {
     private auth?: firebase.auth.Auth;
 
     public readonly usersCollection: ICollection<IUser, IUserData>;
-    public readonly organisationUsersCollection: ICollection<IUser, IUserData>;
+    public readonly divisionUsersCollection: ICollection<IUser, IUserData>;
 
     private rootStore: IRootStore;
     constructor(
@@ -67,9 +68,9 @@ export class UserStore implements IUserStore {
             },
         );
 
-        this.organisationUsersCollection = new Collection(
+        this.divisionUsersCollection = new Collection(
             firestore,
-            "users",
+            "division-users",
             {
                 realtimeMode: RealtimeMode.on,
                 fetchMode: FetchMode.manual,
@@ -77,13 +78,18 @@ export class UserStore implements IUserStore {
                 deserialize: deserializer.convertUser,
             }, {
             // logger: console.log
-        })
+        });
 
         reaction(() => this.authenticatedUser, user => {
             this.usersCollection.query = createQuery(user);
+
+            this.divisionUsersCollection.query = user
+                ? (ref) => ref.where("uid", "==", user.uid)
+                : null;
         });
 
         this.auth && this.auth.onAuthStateChanged(this.setUser.bind(this));
+
 
         // // TODO: move to Firestorable/Document?
         // intercept(this._authUser, change => {
@@ -158,18 +164,21 @@ export class UserStore implements IUserStore {
 
     @computed
     public get authenticatedUser(): IUser | undefined {
-        if (!this._fbUser) {
-            return undefined;
-        }
+        return this._authUser;
+    }
 
-        const selectedOrganisationId = selectOrganisation(this.rootStore);
+    @computed
+    public get divisionUser(): IUser | undefined {
+        const selectedDivisionId = selectDivision(this.rootStore);
 
-        const user = selectedOrganisationId
-            ? this.organisationUsersCollection.docs
-                .filter(d => d.data!.organisationId === selectedOrganisationId)[0]
-            : this.organisationUsersCollection.docs[0];
+        const user = selectedDivisionId
+            ? this.divisionUsersCollection.docs
+                .filter(d => d.data!.divisionId === selectedDivisionId)[0]
+            : undefined;
 
-        return user ? { ...user.data!} : user;
+        return user
+            ? { ...user.data! }
+            : this.authenticatedUser;
     }
 
     @computed
@@ -177,7 +186,11 @@ export class UserStore implements IUserStore {
         return this.authenticatedUser?.uid;
     }
 
-    @action
+    public updateDivisionUser(userData: Partial<IUser>): void {
+        const user = this.divisionUser;
+        if (user) { this.divisionUsersCollection.updateAsync(userData, user.uid); }
+    }
+
     public updateAuthenticatedUser(userData: Partial<IUser>): void {
         const user = this.authenticatedUser;
         if (user) { this.usersCollection.updateAsync(userData, user.uid); }
@@ -188,7 +201,7 @@ export class UserStore implements IUserStore {
         if (!fbUser) {
             transaction(() => {
                 this.isAuthInitialised = true;
-                this._fbUser = fbUser;
+                this._authUser = undefined;
             });
 
             if (typeof gapi !== "undefined") {
@@ -196,50 +209,42 @@ export class UserStore implements IUserStore {
             }
         } else {
             this.state = StoreState.Pending;
-            this.organisationUsersCollection.query = (ref) => ref.where("uid", "==", fbUser.uid);
-            this.organisationUsersCollection.fetchAsync()
-                .then(
-                    async () => {
-                        const user = await this.getAuthenticatedUserAsync(fbUser);
-                        if (user) {
-                            this.getAuthUserSuccess(fbUser);
-                        } else {
-                            const newUserData = {
-                                roles: { user: true },
-                                name: fbUser.displayName || "",
-                                tasks: new Map(),
-                                recentProjects: [],
-                                email: fbUser.email || undefined,
-                                uid: fbUser.uid,
-                            };
 
-                            this.usersCollection.addAsync(
-                                newUserData,
-                                fbUser.uid,
-                            ).then(
-                                (userId) => {
-                                    // get the newly registered user
-                                    return this.usersCollection.getAsync(userId)
-                                        .then(() => {
-                                            this.getAuthUserSuccess(fbUser);
-                                        }, this.getUserError);
-                                },
-                                error => console.log(`${error}\nCoudn't save newly registered user. `),
-                            );
-                        }
-                    },
-                );
+            this.getAuthenticatedUserAsync(fbUser)
+                .then((user) => {
+                    this.getAuthUserSuccess(user);
+                }, () => {
+                    const newUserData = {
+                        roles: { user: true },
+                        name: fbUser.displayName || "",
+                        tasks: new Map(),
+                        recentProjects: [],
+                        email: fbUser.email || undefined,
+                        uid: fbUser.uid,
+                    };
+
+                    this.usersCollection.addAsync(
+                        newUserData,
+                        fbUser.uid,
+                    ).then(
+                        (userId) => {
+                            // get the newly registered user
+                            return this.usersCollection.getAsync(userId)
+                                .then((user) => {
+                                    this.getAuthUserSuccess(user.data!);
+                                }, this.getUserError);
+                        },
+                        error => console.log(`${error}\nCoudn't save newly registered user. `),
+                    );
+                });
         }
     }
 
-    private getAuthenticatedUserAsync(fbUser: firebase.User) {
-        const organisationUsers = this.organisationUsersCollection.docs;
-        if (organisationUsers.length) {
-            return Promise.resolve(organisationUsers[0]);
-        } else {
-            // backwords compatibility, get single user by id and patch user data
-            return this.usersCollection.getAsync(fbUser.uid)
-                .then(async (userDoc) => {
+    private getAuthenticatedUserAsync(fbUser: firebase.User): Promise<IUser | undefined> {
+        return this.usersCollection.getAsync(fbUser.uid)
+            .then(async (userDoc) => {
+                if (!userDoc.data!.uid || !userDoc.data!.email) {
+                    // backwords compatibility, get single user by id and patch user data
                     await this.usersCollection.updateAsync(
                         {
                             email: fbUser.email || "",
@@ -247,22 +252,22 @@ export class UserStore implements IUserStore {
                         },
                         fbUser.uid,
                     );
-                    userDoc.data!.email = fbUser.email || undefined;
-                    userDoc.data!.uid = fbUser.uid;
-                    return userDoc;
-                })
-                .catch(() => {
-                    return undefined;
-                });
-        }
+                    return {
+                        ...userDoc.data!,
+                        email: fbUser.email || "",
+                        uid: fbUser.uid,
+                    };
+                }
+                return userDoc.data!;
+            });
     }
 
     @action.bound
-    getAuthUserSuccess = (fbUser: firebase.User | null) => {
+    getAuthUserSuccess = (authUser: IUser | undefined) => {
         transaction(() => {
             this.state = StoreState.Done;
             this.isAuthInitialised = true;
-            this._fbUser = fbUser;
+            this._authUser = authUser;
         });
     }
 

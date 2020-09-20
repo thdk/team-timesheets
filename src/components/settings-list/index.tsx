@@ -19,6 +19,7 @@ export interface ISettingsListProps extends React.HTMLProps<HTMLDivElement> {
     readonly readonly?: boolean;
     readonly activeItemId?: string;
     readonly selection: ObservableMap<string, any>;
+    readonly addLabel?: string;
 }
 
 export const SettingsList = observer(({
@@ -29,6 +30,7 @@ export const SettingsList = observer(({
     items,
     readonly,
     onItemClick,
+    addLabel,
     ...restProps
 }: ISettingsListProps) => {
 
@@ -38,13 +40,18 @@ export const SettingsList = observer(({
             onChangeItem={onAddItem ? data => onAddItem(data, i.id) : undefined}
             onClick={readonly || !onItemClick ? undefined : onItemClick.bind(null, i.id)}
             isChecked={selection.has(i.id)}
-            edit={activeItemId === i.id}
+            edit={activeItemId !== undefined && activeItemId === i.id}
             itemData={i}
             onSelectItem={readonly ? undefined : toggleSelection}>
         </SettingsListItem>
     ));
 
-    const addItemsJSX = readonly || !onAddItem ? undefined : <AddItem addListItem={onAddItem} />
+    const addItemsJSX = readonly || !onAddItem
+        ? undefined
+        : <AddItem
+            onAddItem={onAddItem}
+            label={addLabel}
+        />
 
     const { className, ...otherProps } = restProps;
     const cssClasses = classNames("settings-list", className);

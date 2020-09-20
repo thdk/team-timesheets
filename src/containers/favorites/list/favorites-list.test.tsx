@@ -59,7 +59,7 @@ class TestStore {
         firestore,
     });
 
-    public getOrganisationId = () => undefined;
+    public getDivisionId = () => undefined;
 }
 
 describe("FavoritesList", () => {

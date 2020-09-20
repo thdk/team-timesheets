@@ -11,5 +11,5 @@ export interface IUserData extends IPersistedEntity {
     team?: string;
     email?: string;
     uid?: string;
-    organisationId?: string;
+    divisionId?: string;
 }

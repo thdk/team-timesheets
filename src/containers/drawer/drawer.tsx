@@ -7,12 +7,15 @@ import { ErrorBoundary } from '../../components/error-boundary/error-boundary';
 import { AccountBadge } from '../../components/account-badge/account-badge';
 import { useUserStore } from '../../contexts/user-context';
 import { useViewStore } from '../../contexts/view-context';
+import { useRouterStore } from '../../stores/router-store';
 
 import "./drawer.scss";
+import { goToUserProfile } from '../../internal';
 
 export const Drawer = observer(() => {
     const user = useUserStore();
     const view = useViewStore();
+    const router = useRouterStore();
 
     const displayName = user.authenticatedUser
         ? user.authenticatedUser.name || "Guest"
@@ -28,6 +31,7 @@ export const Drawer = observer(() => {
                     <AccountBadge
                         email={email}
                         name={displayName}
+                        onClick={() => goToUserProfile(router)}
                     />
                 </DrawerHeader>
                 <DrawerContent>

@@ -3,7 +3,7 @@ import React from "react";
 import { Store } from "../../../stores/root-store";
 import { initTestFirestore, deleteFirebaseAppsAsync } from "../../../__tests__/utils/firebase";
 import { RegistrationLines } from "./registration-lines";
-import { render } from "@testing-library/react";
+import { render, waitFor } from "@testing-library/react";
 import { Doc } from "firestorable";
 import { IRegistration } from "../../../../common";
 import userEvent from "@testing-library/user-event";
@@ -129,7 +129,7 @@ describe("RegistrationLines", () => {
         ).toBe(3);
     });
 
-    it("should call callbacks for registration click and select", () => {
+    it("should call callbacks for registration click and select", async () => {
         const registrationToggleSelect = jest.fn();
         const registrationClick = jest.fn();
 
@@ -141,11 +141,14 @@ describe("RegistrationLines", () => {
             />
         );
 
+        await waitFor(() => getByText("Client 1 - Registration 2"));
+
         const checkboxEl = container.querySelectorAll("input[type=checkbox]")[0];
 
         userEvent.click(checkboxEl);
 
         expect(registrationToggleSelect).toBeCalledWith("reg-1");
+
 
         userEvent.click(getByText("Client 1 - Registration 2"));
 

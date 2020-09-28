@@ -1,8 +1,8 @@
 import * as firebase from 'firebase/app';
 import { IRegistration, IRegistrationData, IUser, IUserData, ITeam, ITeamData, IProject, IProjectData, IFavoriteRegistration } from '../interfaces';
 import { INameWithIconData, INameWithIcon } from '../interfaces/base';
-import { IOrganisation } from '../interfaces/IOrganisation';
-import { IOrganisationData } from '../interfaces/IOrganisationData';
+import { IDivision } from '../interfaces/IOrganisation';
+import { IDivisionData } from '../interfaces/IOrganisationData';
 
 export const convertRegistration = (appData: Partial<IRegistration> | null) => {
     let registration: Partial<IRegistrationData>;
@@ -99,6 +99,7 @@ export const convertUser = (appData: Partial<IUser> | null) => {
         uid: appData.uid,
         email: appData.email,
         divisionId: appData.divisionId,
+        divisionUserId: appData.divisionUserId,
     }
 
     // Todo: automatically remove undefined values for all keys
@@ -111,6 +112,7 @@ export const convertUser = (appData: Partial<IUser> | null) => {
     if (user.team === undefined) delete user.team;
     if (!user.email) delete user.email;
     if (!user.divisionId) delete user.divisionId;
+    if (!user.divisionUserId) delete user.divisionUserId;
 
     return user;
 }
@@ -119,8 +121,8 @@ export function convertTeam(appData: Partial<ITeam>): Partial<ITeamData> {
     return convertNameWithIcon(appData);
 }
 
-export function convertOrganisation(appData: Partial<IOrganisation> | null): Partial<IOrganisationData> {
-    let data: Partial<IOrganisationData>;
+export function convertOrganisation(appData: Partial<IDivision> | null): Partial<IDivisionData> {
+    let data: Partial<IDivisionData>;
 
     if (appData === null) {
         const now = new Date();

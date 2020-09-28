@@ -16,7 +16,7 @@ import { Tabs, ITabData } from '../../components/tabs';
 export const SettingsPage = observer(() => {
     const router = useRouterStore();
 
-    const { authenticatedUser: user } = useUserStore();
+    const { divisionUser: user } = useUserStore();
 
           const tabData: ITabData<SettingsTab>[] = [
               { id: "tasks", text: "Tasks", tabContent: <TaskList /> },

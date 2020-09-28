@@ -1,4 +1,4 @@
-import { observable, computed, action } from 'mobx';
+import { observable, computed, action, reaction } from 'mobx';
 import { Collection, ICollection, RealtimeMode, FetchMode } from "firestorable";
 import { IRootStore } from '../root-store';
 import { IClient, IClientData, ITeam, ITeamData, ITaskData, IConfig, ConfigValue, ITask } from '../../../common/dist';
@@ -19,7 +19,7 @@ export class ConfigStore implements IConfigStore {
     @observable.ref teamId?: string;
 
     constructor(
-        _rootStore: IRootStore,
+        rootStore: IRootStore,
         {
             firestore,
         }: {
@@ -37,7 +37,6 @@ export class ConfigStore implements IConfigStore {
             {
                 realtimeMode: RealtimeMode.on,
                 fetchMode: FetchMode.once,
-                query: ref => ref.orderBy("name_insensitive"),
                 serialize: serializer.convertNameWithIcon,
                 deserialize: deserializer.convertNameWithIcon,
             },
@@ -51,7 +50,6 @@ export class ConfigStore implements IConfigStore {
                 {
                     realtimeMode: RealtimeMode.on,
                     fetchMode: FetchMode.once,
-                    query: ref => ref.orderBy("name_insensitive"),
                     serialize: serializer.convertNameWithIcon,
                     deserialize: deserializer.convertNameWithIcon,
                 },
@@ -64,7 +62,6 @@ export class ConfigStore implements IConfigStore {
             {
                 realtimeMode: RealtimeMode.on,
                 fetchMode: FetchMode.once,
-                query: ref => ref.orderBy("name_insensitive"),
                 serialize: serializer.convertNameWithIcon,
                 deserialize: deserializer.convertNameWithIcon,
             },
@@ -78,6 +75,21 @@ export class ConfigStore implements IConfigStore {
                 fetchMode: FetchMode.once,
             }
         )
+
+        reaction(() => rootStore.user.divisionUser, (user) => {
+            if (user?.divisionId) {
+                this.teamsCollection.query = ref => ref.where("divisionId", "==", user.divisionId);
+                this.tasksCollection.query = ref => ref.where("divisionId", "==", user.divisionId);
+                this.configsCollection.query = ref => ref.where("divisionId", "==", user.divisionId);
+                this.clientsCollection.query = ref => ref.where("divisionId", "==", user.divisionId);
+            } else {
+                const query = (ref: firebase.firestore.CollectionReference) => ref.orderBy("name_insensitive");
+                this.teamsCollection.query = query;
+                this.tasksCollection.query = query;
+                this.configsCollection.query = undefined;
+                this.clientsCollection.query = undefined;
+            }
+        });
     }
 
     @computed

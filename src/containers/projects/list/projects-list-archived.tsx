@@ -9,7 +9,7 @@ export const ArchivedProjectList = observer((props: React.HTMLProps<HTMLDivEleme
     const store = useStore();
 
     return <SettingsList {...props}
-        readonly={!canManageProjects(store.user.authenticatedUser)}
+        readonly={!canManageProjects(store.user.divisionUser)}
         items={store.projects.archivedProjects}
         onToggleSelection={id => store.view.toggleSelection(id)}
         onItemClick={id => store.view.toggleSelection(id)}

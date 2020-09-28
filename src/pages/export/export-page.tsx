@@ -26,11 +26,11 @@ export const ExportPage = withAuthentication(
         }, [goToRegistration, router]);
 
         const onExportClick = () => {
-            user.authenticatedUserId
+            user.divisionUser
                 && view.year
                 && view.month
                 && reports.requestReport(
-                    user.authenticatedUserId,
+                    user.divisionUser.id,
                     view.year,
                     view.month,
                 );

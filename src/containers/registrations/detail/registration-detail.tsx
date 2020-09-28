@@ -35,13 +35,13 @@ export const RegistrationDetail = observer(() => {
             timesheets.registration.client = value;
     }, [timesheets.registration]);
 
-    if (!user.authenticatedUser) {
+    if (!user.divisionUser) {
         return <></>;
     }
 
-    if (!timesheets.registration || !user.authenticatedUser) return <></>;
+    if (!timesheets.registration || !user.divisionUser) return <></>;
 
-    const userTasks = Array.from(user.authenticatedUser.tasks.keys());
+    const userTasks = Array.from(user.divisionUser.tasks.keys());
     const tasks = tasksStore.tasks
         .filter(t => userTasks.length ? userTasks.some(userTaskId => userTaskId === t.id) : true)
 

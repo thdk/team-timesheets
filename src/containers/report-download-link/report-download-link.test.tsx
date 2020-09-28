@@ -68,7 +68,11 @@ afterAll(() => {
 describe("ReportDownloadLink", () => {
     beforeEach(() => {
         transaction(() => {
-            store.user.setUser({ uid: "user-1", displayName: "user 1" } as firebase.User);
+            store.user.setUser({
+                uid: "user-1",
+                displayName: "user 1",
+                email: "email@email.com",
+            } as firebase.User);
             store.view.setViewDate({
                 year: 2020,
                 month: 4,

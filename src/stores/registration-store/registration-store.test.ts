@@ -18,6 +18,7 @@ const {
     [
         "registrations",
         "users",
+        "division-users",
     ]);
 
 const userCollection = new TestCollection(firestore, userRef);
@@ -34,6 +35,7 @@ const setupAsync = () => {
                 roles: {
                     user: true,
                 },
+                email: "email@email.com",
                 uid: "user-1",
             },
             "user-1",
@@ -109,7 +111,11 @@ fdescribe("RegistrationStore", () => {
 
     beforeAll(() => {
         transaction(() => {
-            store.user.setUser({ uid: "user-1", displayName: "user 1" } as firebase.User);
+            store.user.setUser({
+                uid: "user-1",
+                displayName: "user 1",
+                email: "email@email.com",
+            } as firebase.User);
             store.view.setViewDate({
                 year: 2020,
                 month: 4,
@@ -201,15 +207,19 @@ fdescribe("RegistrationStore", () => {
                 store.user.setUser(null);
 
                 await waitFor(() => {
-                    expect(store.user.authenticatedUser).toBeFalsy();
+                    expect(store.user.divisionUser).toBeFalsy();
                     expect(
                         store.timesheets.registrationsGroupedByDay.length
                     ).toBe(0);
                 });
 
-                store.user.setUser({ uid: "user-1", displayName: "user 1" } as firebase.User);
+                store.user.setUser({
+                    uid: "user-1",
+                    displayName: "user 1",
+                    email: "email@email.com",
+                } as firebase.User);
 
-                await waitFor(() => expect(store.user.authenticatedUserId).toBe("user-1"));
+                await waitFor(() => expect(store.user.divisionUser?.id).toBe("user-1"));
             });
         });
 
@@ -224,7 +234,7 @@ fdescribe("RegistrationStore", () => {
 
                 store.user.setUser({ uid: "user-1", displayName: "user 1" } as firebase.User);
 
-                await waitFor(() => expect(store.user.authenticatedUserId).toBe("user-1"));
+                await waitFor(() => expect(store.user.divisionUser?.id).toBe("user-1"));
             });
         });
     });

@@ -41,9 +41,9 @@ class Dashboard extends React.Component {
         super(props);
 
         if (!context.dashboard.timePeriodFilterValue) {
-            when(() => !!context.user.authenticatedUserId, () => {
+            when(() => !!context.user.divisionUser, () => {
                 transaction(() => {
-                    context.dashboard.setUserFilter(context.user.authenticatedUserId);
+                    context.dashboard.setUserFilter(context.user.divisionUser?.id);
                     context.dashboard.setTimePeriodFilter(TimePeriod.ThisMonth);
                 });
             });
@@ -77,7 +77,7 @@ class Dashboard extends React.Component {
             chart: ChartType.Doughnut
         };
 
-        const userFilter = canReadUsers(this.context.user.authenticatedUser)
+        const userFilter = canReadUsers(this.context.user.divisionUser)
             ? <>
                 <FlexGroup>
                     <FormField first={false}>

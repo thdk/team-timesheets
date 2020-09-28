@@ -4,7 +4,7 @@ import { render } from "@testing-library/react";
 
 jest.mock("../../contexts/user-context", () => ({
     useUserStore: () => ({
-        authenticatedUser: {
+        divisionUser: {
             id: "user-1",
             roles: {},
         },

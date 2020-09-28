@@ -13,7 +13,7 @@ import { RedirectToLogin } from "../../internal";
 export const ProfilePage = withAuthentication(() => {
     const view = useViewStore();
 
-    const { authenticatedUser: user } = useUserStore();
+    const { divisionUser: user } = useUserStore();
 
     const [tab, setTab] = useState("preferences");
 

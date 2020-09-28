@@ -22,7 +22,7 @@ export const ActiveProjectList = observer((props: React.HTMLProps<HTMLDivElement
             view.toggleSelection(id);
         } else {
             const project = projects.projectsCollection.get(id);
-            if (project && canEditProject(project.data!, user.authenticatedUser, user.authenticatedUserId)
+            if (project && canEditProject(project.data!, user.divisionUser, user.divisionUser?.id)
             ) {
                 setGoToProject(id);
             }
@@ -37,7 +37,7 @@ export const ActiveProjectList = observer((props: React.HTMLProps<HTMLDivElement
         ? <GoToProject id={goToProject} />
         : (
             <SettingsList {...props}
-                readonly={!canManageProjects(user.authenticatedUser)}
+                readonly={!canManageProjects(user.divisionUser)}
                 items={projects.activeProjects}
                 onToggleSelection={onSelectItem}
                 onItemClick={handleItemClicked}

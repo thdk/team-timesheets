@@ -58,7 +58,7 @@ export class DashboardStore implements IDashboardStore {
         );
 
         const updateRegistrationQuery = () => {
-            if (!rootStore.user.authenticatedUser || !this.timePeriodFilterField) {
+            if (!rootStore.user.divisionUser || !this.timePeriodFilterField) {
                 this.registrationsField.query = null;
             } else {
                 this.registrationsField.query = ref =>
@@ -80,7 +80,7 @@ export class DashboardStore implements IDashboardStore {
         reaction(() => this.timePeriodFilterField, updateRegistrationQuery);
         reaction(() => this.userFilterValue, updateRegistrationQuery);
         reaction(() => this.projectFilterValue, updateRegistrationQuery);
-        reaction(() => rootStore.user.authenticatedUser, updateRegistrationQuery);
+        reaction(() => rootStore.user.divisionUser, updateRegistrationQuery);
     }
 
     @computed

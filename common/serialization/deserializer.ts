@@ -1,7 +1,7 @@
 import { IRegistrationData, IRegistration, IUserData, IUser, ITeamData, ITeam, IProjectData, IProject, ITaskData, ITask, IFavoriteRegistration } from "../interfaces";
 import { INameWithIconData } from "../interfaces/base";
-import { IOrganisationData } from "../interfaces/IOrganisationData";
-import { IOrganisation } from "../interfaces/IOrganisation";
+import { IDivisionData } from "../interfaces/IOrganisationData";
+import { IDivision } from "../interfaces/IOrganisation";
 
 
 export const convertRegistration = (firestoreData: IRegistrationData) => {
@@ -48,6 +48,7 @@ export const convertUser = (firestoreData: IUserData) => {
         email: firestoreData.email || undefined,
         uid: firestoreData.uid || "undefined",
         divisionId: firestoreData.divisionId || undefined,
+        divisionUserId: firestoreData.divisionUserId || undefined,
         team: firestoreData.team || undefined,
         created: firestoreData.created ? firestoreData.created.toDate() : undefined,
     };
@@ -68,12 +69,12 @@ export const convertProject = (firestoreData: IProjectData) => {
     } as IProject;
 }
 
-export const convertOrganisation = (firestoreData: IOrganisationData) => {
+export const convertOrganisation = (firestoreData: IDivisionData) => {
     return {
         ...convertNameWithIcon(firestoreData),
         createdBy: firestoreData.createdBy,
         id: firestoreData.id,
-    } as IOrganisation;
+    } as IDivision;
 }
 
 export const convertTask = (firestoreData: ITaskData) => {

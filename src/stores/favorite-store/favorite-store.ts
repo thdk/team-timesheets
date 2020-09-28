@@ -27,8 +27,8 @@ export class FavoriteStore {
         this.db = firestore;
         this.favoriteGroupCollectionRef = this.db.collection("favorite-groups");
         const createQuery = () =>
-            rootStore.user.authenticatedUser
-                ? (ref: CollectionReference) => ref.where("userId", "==", rootStore.user.authenticatedUserId).orderBy("name")
+            rootStore.user.divisionUser
+                ? (ref: CollectionReference) => ref.where("userId", "==", rootStore.user.divisionUser?.id).orderBy("name")
                 : null;
 
         this.favoriteGroupCollection = new Collection(
@@ -58,7 +58,7 @@ export class FavoriteStore {
             },
         )
 
-        reaction(() => rootStore.user.authenticatedUserId, () => {
+        reaction(() => rootStore.user.divisionUser, () => {
             this.favoriteGroupCollection.query = createQuery();
         });
     }
@@ -123,7 +123,7 @@ export class FavoriteStore {
             : this.favoriteGroupCollectionRef.doc().id;
 
         this.db.runTransaction(() => {
-            if (!this.rootStore.user.authenticatedUserId)
+            if (!this.rootStore.user.divisionUser)
                 return Promise.reject("Unauthenticated");
 
             return Promise.all<string[] | string | undefined>([
@@ -131,7 +131,7 @@ export class FavoriteStore {
                     ? undefined
                     : this.favoriteGroupCollection.addAsync({
                         name: group.name,
-                        userId: this.rootStore.user.authenticatedUserId
+                        userId: this.rootStore.user.divisionUser.id
                     }, groupId),
                 this.favoriteCollection.addAsync(
                     favorites

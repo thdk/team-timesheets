@@ -18,10 +18,10 @@ export const goToSettings = (router: RouterStore<IRootStore>, tab: SettingsTab =
 export type SettingsTab = "connections" | "tasks" | "clients" | "users" | "teams";
 
 const setActions = (tab: SettingsTab, store: IRootStore) => {
-    when(() => store.user.authenticatedUser !== undefined, () => {
+    when(() => store.user.divisionUser !== undefined, () => {
         switch (tab) {
             case "tasks": {
-                const deleteAction: IViewAction | undefined = canDeleteTask(store.user.authenticatedUser)
+                const deleteAction: IViewAction | undefined = canDeleteTask(store.user.divisionUser)
                     ? {
                         action: () => {
                             store.view.selection.size && store.config.tasksCollection.deleteAsync(...store.view.selection.keys());
@@ -39,7 +39,7 @@ const setActions = (tab: SettingsTab, store: IRootStore) => {
                 break;
             }
             case "clients": {
-                const deleteAction: IViewAction | undefined = canDeleteClient(store.user.authenticatedUser) ?
+                const deleteAction: IViewAction | undefined = canDeleteClient(store.user.divisionUser) ?
                     {
                         action: () => {
                             store.view.selection.size && store.config.clientsCollection.deleteAsync(...store.view.selection.keys());
@@ -56,7 +56,7 @@ const setActions = (tab: SettingsTab, store: IRootStore) => {
                 break;
             }
             case "teams": {
-                const deleteAction: IViewAction | undefined = canManageTeams(store.user.authenticatedUser) ?
+                const deleteAction: IViewAction | undefined = canManageTeams(store.user.divisionUser) ?
                     {
                         action: () => {
                             store.view.selection.size && store.config.teamsCollection.deleteAsync(...store.view.selection.keys());

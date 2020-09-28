@@ -5,12 +5,12 @@ import { IRootStore } from '../root-store';
 
 import * as serializer from '../../../common/serialization/serializer';
 import * as deserializer from '../../../common/serialization/deserializer';
-import { IOrganisation } from "../../../common/interfaces/IOrganisation";
-import { IOrganisationData } from "../../../common/interfaces/IOrganisationData";
+import { IDivision } from "../../../common/interfaces/IOrganisation";
+import { IDivisionData } from "../../../common/interfaces/IOrganisationData";
 import { firestore } from "firebase";
 
 export class DivisionStore {
-    readonly organisationsCollection: ICollection<IOrganisation, IOrganisationData>;
+    readonly divisionCollection: ICollection<IDivision, IDivisionData>;
 
     @observable.ref projectId?: string;
 
@@ -39,7 +39,7 @@ export class DivisionStore {
             return ref;
         };
 
-        this.organisationsCollection = new Collection<IOrganisation, IOrganisationData>(
+        this.divisionCollection = new Collection<IDivision, IDivisionData>(
             firestore,
             "divisions",
             {
@@ -54,8 +54,19 @@ export class DivisionStore {
         );
 
         reaction(() => this.rootStore.user.divisionUsersCollection.docs, () => {
-            this.organisationsCollection.query = (ref) => createQuery(ref);
+            this.divisionCollection.query = (ref) => createQuery(ref);
         });
+    }
+
+    @computed
+    public get division() {
+        return this.divisionId
+            ? this.divisionCollection.get(this.divisionId)
+            : undefined;
+    }
+
+    @computed get divisionId() {
+        return this.rootStore.user.divisionUser?.divisionId;
     }
 
     @computed
@@ -64,12 +75,12 @@ export class DivisionStore {
         return this.rootStore.user.divisionUsersCollection.docs.reduce((p, c) => {
             const orgId = c.data!.divisionId;
             if (orgId) {
-                const org = this.organisationsCollection.get(orgId);
+                const org = this.divisionCollection.get(orgId);
                 if (org) {
-                    p.push({ ...org.data!, id: org.id });
+                    p.push({ ...org.data!, id: c.id });
                 }
             }
             return p;
-        }, [] as (IOrganisation & { id: string })[]);
+        }, [] as (IDivision & { id: string })[]);
     }
 }

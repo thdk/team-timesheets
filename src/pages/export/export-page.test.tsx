@@ -20,11 +20,7 @@ jest.mock("../../contexts/store-context", () => ({
     useStore: () => store,
 }));
 
-jest.mock("../../contexts/user-context", () => ({
-    useUserStore: jest.fn().mockReturnValue({
-        authenticatedUser: {},
-    }),
-}));
+jest.mock("../../contexts/user-context");
 
 jest.mock("../../rules");
 jest.mock("../../routes/registrations/detail");

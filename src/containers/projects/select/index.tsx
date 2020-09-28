@@ -9,7 +9,7 @@ import { useRegistrationStore } from '../../../contexts/registration-context';
 
 
 export const ProjectSelect = observer(() => {
-    const { authenticatedUser } = useUserStore();
+    const { divisionUser } = useUserStore();
     const { activeProjects, archivedProjects } = useProjectStore();
     const { registration } = useRegistrationStore();
 
@@ -22,7 +22,7 @@ export const ProjectSelect = observer(() => {
 
     let project = registration ? registration.project : "";
 
-    const userRecentProjects = authenticatedUser ? authenticatedUser.recentProjects : [];
+    const userRecentProjects = divisionUser ? divisionUser.recentProjects : [];
 
     const recentProjects = userRecentProjects.slice(0, 5).reduce((p, c) => {
         const projectData = activeProjects.find(p => p.id === c);

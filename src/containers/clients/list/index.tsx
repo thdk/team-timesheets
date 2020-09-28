@@ -4,29 +4,39 @@ import { observer } from 'mobx-react-lite';
 
 import { canWriteClient } from '../../../rules';
 import { SettingsList, IListItemData } from '../../../components/settings-list';
-import { useStore } from '../../../contexts/store-context';
+import { useConfigs } from '../../../stores/config-store';
+import { useUserStore } from '../../../contexts/user-context';
+import { useViewStore } from '../../../contexts/view-context';
 
 export const ClientList = observer(() => {
-    const store = useStore();
+    const user = useUserStore();
+    const config = useConfigs();
+    const view = useViewStore();
 
     const saveListItem = (data: IListItemData, id?: string) => {
-        store.config.clientId = undefined;
+        config.clientId = undefined;
         if (data.name) {
-                store.config.clientsCollection.addAsync({ name: data.name, icon: data.icon }, id);
+            config.clientsCollection.addAsync({
+                name: data.name,
+                icon: data.icon,
+                divisionId: user.divisionUser?.divisionId,
+            },
+                id,
+            );
         }
     };
 
     return <SettingsList
-        readonly={!canWriteClient(store.user.authenticatedUser)}
-        items={Array.from(store.config.clientsCollection.docs.values()).map(client => ({
+        readonly={!canWriteClient(user.divisionUser)}
+        items={Array.from(config.clientsCollection.docs.values()).map(client => ({
             id: client.id,
             name: client.data!.name,
-            icon: client.data!.icon
+            icon: client.data!.icon,
         }))}
         onAddItem={saveListItem}
-        onToggleSelection={id => id && store.view.toggleSelection(id)}
-        onItemClick={id => store.config.clientId = id}
-        activeItemId={store.config.clientId}
-        selection={store.view.selection}
+        onToggleSelection={id => id && view.toggleSelection(id)}
+        onItemClick={id => config.clientId = id}
+        activeItemId={config.clientId}
+        selection={view.selection}
     ></SettingsList>
 });

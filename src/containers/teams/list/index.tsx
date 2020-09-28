@@ -3,29 +3,39 @@ import { observer } from "mobx-react-lite";
 
 import { canManageTeams } from "../../../rules";
 import { SettingsList, IListItemData } from "../../../components/settings-list";
-import { useStore } from "../../../contexts/store-context";
+import { useUserStore } from "../../../contexts/user-context";
+import { useConfigs } from "../../../stores/config-store";
+import { useViewStore } from "../../../contexts/view-context";
 
 export const TeamList = observer(() => {
-    const store = useStore();
+    const config = useConfigs();
+    const view = useViewStore();
+    const user = useUserStore();
 
     const saveListItem = (data: IListItemData, id?: string) => {
-        store.config.teamId = undefined;
+        config.teamId = undefined;
         if (data.name) {
-            store.config.teamsCollection.addAsync({ name: data.name, icon: data.icon }, id);
+            config.teamsCollection.addAsync({
+                name: data.name,
+                icon: data.icon,
+                divisionId: user.divisionUser?.divisionId,
+            },
+                id,
+            );
         }
     };
 
     return <SettingsList
-        readonly={!canManageTeams(store.user.authenticatedUser)}
-        items={Array.from(store.config.teamsCollection.docs.values()).map(team => ({
+        readonly={!canManageTeams(user.divisionUser)}
+        items={Array.from(config.teamsCollection.docs.values()).map(team => ({
             id: team.id,
             name: team.data!.name,
             icon: team.data!.icon
         }))}
         onAddItem={saveListItem}
-        onToggleSelection={id => id && store.view.toggleSelection(id)}
-        onItemClick={id => store.config.teamId = id}
-        activeItemId={store.config.teamId}
-        selection={store.view.selection}
+        onToggleSelection={id => id && view.toggleSelection(id)}
+        onItemClick={id => config.teamId = id}
+        activeItemId={config.teamId}
+        selection={view.selection}
     ></SettingsList>;
 });

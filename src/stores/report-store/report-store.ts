@@ -40,9 +40,9 @@ export class ReportStore implements IReportStore {
 
         const updateReportsQuery = () => {
             const { month, year } = rootStore.view;
-            if (!!rootStore.user.authenticatedUserId && month && year) {
+            if (!!rootStore.user.divisionUser && month && year) {
                 this.reports.query = ref => ref
-                    .where("userId", "==", rootStore.user.authenticatedUserId)
+                    .where("userId", "==", rootStore.user.divisionUser?.id)
                     .where("month", "==", month)
                     .where("year", "==", year)
                     .limit(1)
@@ -51,7 +51,7 @@ export class ReportStore implements IReportStore {
         };
 
         reaction(() => rootStore.view.monthMoment, updateReportsQuery);
-        reaction(() => rootStore.user.authenticatedUserId, updateReportsQuery);
+        reaction(() => rootStore.user.divisionUser, updateReportsQuery);
     }
 
     @action

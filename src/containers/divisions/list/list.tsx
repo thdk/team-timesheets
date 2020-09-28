@@ -18,21 +18,30 @@ export const DivisionsList = observer(() => {
         name,
     }: INameWithIcon) => {
         const divisionId = uuidv4();
+        const divisionUserId = uuidv4();
 
-        await division.organisationsCollection.addAsync({
+        await division.divisionCollection.addAsync({
             name,
             icon,
             createdBy: user.authenticatedUserId!,
             id: divisionId,
         }, divisionId);
 
-        user.usersCollection.addAsync([{
-            ...user.authenticatedUser!,
+        await user.divisionUsersCollection.addAsync(
+            {
+                ...user.authenticatedUser!,
+                divisionId,
+                roles: {
+                    admin: true
+                },
+            },
+            divisionUserId,
+        );
+
+        user.updateAuthenticatedUser({
+            divisionUserId,
             divisionId,
-            roles: {
-                admin: true
-            }
-        }]);
+        });
     }, [user, division]);
 
     return (
@@ -46,7 +55,7 @@ export const DivisionsList = observer(() => {
                 onToggleSelection={() => { }}
                 selection={view.selection}
                 onAddItem={handleOnAddClick}
-                onItemClick={(id) => { user.updateDivisionUser({ divisionId: id }); }}
+                onItemClick={(id) => { user.updateAuthenticatedUser({ divisionUserId: id,  }); }}
                 addLabel={"Start a new division"}
             />
         </>

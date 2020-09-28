@@ -20,7 +20,7 @@ export const Tabs = <T extends string>({
     activeTab?: T;
     onActivate: (id: T) => void;
 }) => {
-    const { authenticatedUser: user } = useUserStore();
+    const { divisionUser: user } = useUserStore();
 
     const validTabs = useMemo(() => {
         return tabData.filter(t => !t.canOpen || t.canOpen());

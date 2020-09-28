@@ -7,7 +7,6 @@ import * as deserializer from '../../../common/serialization/deserializer';
 import * as serializer from '../../../common/serialization/serializer';
 import { SortOrder } from '../../containers/timesheet/days';
 import { IRegistration, IRegistrationData } from '../../../common/dist';
-import { selectDivision } from "../../selectors/select-organisation";
 
 export interface IGroupedRegistrations<T> {
     registrations: Doc<IRegistration, IRegistrationData>[];
@@ -37,6 +36,8 @@ export interface IRegistrationsStore {
     readonly setRegistrationsGroupedByDaySortOrder: (sortOrder: SortOrder) => void;
     readonly copyRegistrationToDate: (source: Omit<IRegistration, "date" | "isPersisted">, newDate: Date) => IRegistration;
     readonly getRegistrationById: (id: string) => IRegistration | null;
+
+    readonly dispose: () => void;
 }
 
 export class RegistrationStore implements IRegistrationsStore {
@@ -69,7 +70,6 @@ export class RegistrationStore implements IRegistrationsStore {
 
         const createQuery = (
             userId: string | undefined,
-            divisionId: string | undefined,
         ) => {
             if (userId) {
                 const moment = rootStore.view.moment;
@@ -79,11 +79,7 @@ export class RegistrationStore implements IRegistrationsStore {
                     let query = ref
                         .where("date", ">=", startDate)
                         .where("date", "<=", endDate)
-                        .where("userId", "==", rootStore.user.authenticatedUserId);
-
-                    if (divisionId) {
-                        query = query.where("divisionId", "==", divisionId);
-                    }
+                        .where("userId", "==", userId);
 
                     return query;
                 }
@@ -104,8 +100,7 @@ export class RegistrationStore implements IRegistrationsStore {
                 deserialize: deserializer.convertRegistration,
                 serialize: serializer.convertRegistration,
                 query: createQuery(
-                    rootStore.user.authenticatedUserId,
-                    selectDivision(rootStore),
+                    rootStore.user.divisionUser?.id,
                 ),
             },
             {
@@ -116,7 +111,6 @@ export class RegistrationStore implements IRegistrationsStore {
         const updateRegistrationQuery = (userId: string | undefined) => {
             this.registrations.query = createQuery(
                 userId,
-                selectDivision(rootStore),
             );
         };
 
@@ -125,12 +119,12 @@ export class RegistrationStore implements IRegistrationsStore {
         // -- the logged in user changes
         // -- the organisation changes
         reaction(() => rootStore.view.monthMoment, () => (
-            updateRegistrationQuery(rootStore.user.authenticatedUserId)
+            updateRegistrationQuery(rootStore.user.divisionUser?.id)
         ));
 
-        reaction(() => rootStore.user.authenticatedUserId, userId => (
-            updateRegistrationQuery(userId)
-        ));
+        reaction(() => rootStore.user.divisionUser, user => {
+            updateRegistrationQuery(user?.id)
+        });
 
         reaction(() => this.areGroupedRegistrationsCollapsed, collapsed => {
             if (collapsed) {
@@ -253,8 +247,11 @@ export class RegistrationStore implements IRegistrationsStore {
     }
 
     public deleteRegistrationsAsync(...ids: string[]) {
-        // Todo: make updateAsync with data === "delete" use a batch in firestorable package.
-        return this.registrations.updateAsync(null, ...ids);
+        return this.registrations.updateAsync(null, ...ids)
+            .catch(e => {
+                console.error(e);
+                return [];
+            })
     }
 
     public addRegistrationsAsync(data: IRegistration[]) {
@@ -286,15 +283,15 @@ export class RegistrationStore implements IRegistrationsStore {
     }
 
     private getNewRegistrationDataAsync(defaultData?: Partial<IRegistration>): Promise<IRegistration> {
-        return when(() => !!this.rootStore.user.authenticatedUser)
+        return when(() => !!this.rootStore.user.divisionUser)
             .then(() => {
-                if (!this.rootStore.user.authenticatedUser || !this.rootStore.user.authenticatedUserId) throw new Error("User must be set");
+                if (!this.rootStore.user.divisionUser || !this.rootStore.user.divisionUser.id) throw new Error("User must be set");
 
                 const {
                     recentProjects = [],
                     defaultTask: task = this.rootStore.config.tasks.length ? this.rootStore.config.tasks[0].id : undefined,
                     defaultClient: client = undefined
-                } = this.rootStore.user.authenticatedUser || {};
+                } = this.rootStore.user.divisionUser || {};
 
                 const recentActiveProjects = recentProjects
                     .filter(projectId => this.rootStore.projects.activeProjects
@@ -306,7 +303,7 @@ export class RegistrationStore implements IRegistrationsStore {
                         : this.rootStore.view.moment.toDate(),
                     task,
                     client,
-                    userId: this.rootStore.user.authenticatedUser.uid,
+                    userId: this.rootStore.user.divisionUser.id,
                     project: recentActiveProjects.length ? recentActiveProjects[0] : undefined,
                     isPersisted: false,
                     ...defaultData
@@ -330,8 +327,8 @@ export class RegistrationStore implements IRegistrationsStore {
                     const { project = undefined } = registration || {};
                     // TODO: move set recent project to firebase function
                     // triggering for every update/insert of a registration?
-                    if (this.rootStore.user.authenticatedUserId && this.rootStore.user.authenticatedUser && project) {
-                        const recentProjects = toJS(this.rootStore.user.authenticatedUser.recentProjects);
+                    if (this.rootStore.user.divisionUser?.id && project) {
+                        const recentProjects = toJS(this.rootStore.user.divisionUser.recentProjects);
                         const oldProjectIndex = recentProjects.indexOf(project);
 
                         // don't update the user document if the current project was already most recent

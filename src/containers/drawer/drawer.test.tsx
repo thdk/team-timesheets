@@ -18,6 +18,12 @@ jest.mock("../../contexts/registration-context", () => ({
     }),
 }));
 
+jest.mock("../../contexts/division-context", () => ({
+    useDivisionStore: () => ({
+        division: undefined,
+    }),
+}));
+
 describe("Drawer", () => {
     it("should render", () => {
         const { asFragment } = render(

@@ -11,22 +11,31 @@ import { useRouterStore } from '../../stores/router-store';
 
 import "./drawer.scss";
 import { goToUserProfile } from '../../internal';
+import { useDivisionStore } from '../../contexts/division-context';
 
 export const Drawer = observer(() => {
     const user = useUserStore();
     const view = useViewStore();
     const router = useRouterStore();
+    const division = useDivisionStore();
 
-    const displayName = user.authenticatedUser
-        ? user.authenticatedUser.name || "Guest"
-        : "";
-    const email = user.authenticatedUser
-        ? user.authenticatedUser.email || "unknown@timesheets.com"
+    const displayName = division.division
+        ? (
+            division.division.data!.name
+        )
+        : (
+            user.divisionUser
+                ? user.divisionUser.name || "Guest"
+                : ""
+        );
+
+    const email = user.divisionUser
+        ? user.divisionUser.email || "unknown@timesheets.com"
         : "";
 
     return (
         <ErrorBoundary>
-            <RMWCDrawer dismissible open={user.authenticatedUser && view.isDrawerOpen}>
+            <RMWCDrawer dismissible open={user.divisionUser && view.isDrawerOpen}>
                 <DrawerHeader>
                     <AccountBadge
                         email={email}

@@ -21,7 +21,7 @@ export const Preferences = observer(() => {
         tasks: userTasksIds = new Map<string, true>(),
         defaultTask = undefined,
         defaultClient = undefined,
-    } = userStore.authenticatedUser || {};
+    } = userStore.divisionUser || {};
 
     const handleTaskSelect = useCallback((id: string, selected: boolean) => {
 
@@ -47,7 +47,7 @@ export const Preferences = observer(() => {
         });
     }, [userStore]);
 
-    if (!userStore.authenticatedUser) {
+    if (!userStore.divisionUser) {
         return <></>;
     }
 

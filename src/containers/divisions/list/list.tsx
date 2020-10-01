@@ -38,10 +38,12 @@ export const DivisionsList = observer(() => {
             divisionUserId,
         );
 
-        user.updateAuthenticatedUser({
-            divisionUserId,
-            divisionId,
-        });
+        if (!user.authenticatedUser?.divisionUserId) {
+            user.updateAuthenticatedUser({
+                divisionUserId,
+                divisionId,
+            });
+        }
     }, [user, division]);
 
     return (
@@ -55,7 +57,13 @@ export const DivisionsList = observer(() => {
                 onToggleSelection={() => { }}
                 selection={view.selection}
                 onAddItem={handleOnAddClick}
-                onItemClick={(id) => { user.updateAuthenticatedUser({ divisionUserId: id,  }); }}
+                onItemClick={(id) => {
+                    const divisionId = user.divisionUsersCollection.get(id)?.data!.divisionId;
+                    user.updateAuthenticatedUser({
+                        divisionUserId: id,
+                        divisionId,
+                    });
+                }}
                 addLabel={"Start a new division"}
             />
         </>

@@ -86,7 +86,7 @@ export class Store implements IRootStore {
     }
 
     public dispose() {
-        // this.config.dispose();
+        this.config.dispose();
         // this.dashboard.dispose();
         // this.favorites.dispose();
         // this.projects.dispose();

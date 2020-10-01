@@ -87,7 +87,7 @@ describe("Firestore rules", () => {
             });
 
             test("if admin can delete from teams collection", async () => {
-                await assertFails(
+                await assertSucceeds(
                     teamsRefTest.doc("team-1").delete()
                 );
             });

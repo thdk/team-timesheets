@@ -89,15 +89,15 @@ export class UserStore implements IUserStore {
             this.setDivisionUser(user?.divisionUserId);
         });
 
-        reaction(() => this.divisionUser, (user) => {
-            if (user?.divisionId) {
+        reaction(() => this.authenticatedUserId, id => {
+            if (id) {
                 this.divisionUsersCollection.query = ref => ref
-                    .where("uid", "==", this.authenticatedUserId)
+                    .where("uid", "==", id)
                     .orderBy("created");
             } else {
                 this.divisionUsersCollection.query = null;
             }
-        });
+        })
 
         this.auth && this.auth.onAuthStateChanged(this.setUser.bind(this));
 

@@ -61,7 +61,9 @@ export class DivisionStore {
 
         reaction(() => this.rootStore.user.divisionUsersCollection.docs, (docs) => {
             this.divisionCollection.query = (ref) => createQuery(ref, docs);
-            this.divisionCollection.fetchAsync();
+            if (!this.divisionCollection.isFetched) {
+                this.divisionCollection.fetchAsync();
+            }
         });
     }
 

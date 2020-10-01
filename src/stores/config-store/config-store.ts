@@ -134,4 +134,11 @@ export class ConfigStore implements IConfigStore {
 
         return doc.data!.value as unknown as T;
     }
+
+    public dispose() {
+        this.clientsCollection.dispose();
+        this.teamsCollection.dispose();
+        this.tasksCollection.dispose();
+        this.configsCollection.dispose();
+    }
 }

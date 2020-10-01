@@ -76,6 +76,7 @@ export class UserStore implements IUserStore {
                 fetchMode: FetchMode.auto,
                 serialize: serializer.convertUser,
                 deserialize: deserializer.convertUser,
+                query: null,
             }, {
             // logger: console.log
         });
@@ -90,9 +91,11 @@ export class UserStore implements IUserStore {
 
         reaction(() => this.divisionUser, (user) => {
             if (user?.divisionId) {
-                this.divisionUsersCollection.query = ref => ref.where("divisionId", "==", user.divisionId);
+                this.divisionUsersCollection.query = ref => ref
+                    .where("uid", "==", this.authenticatedUserId)
+                    .orderBy("created");
             } else {
-                this.divisionUsersCollection.query = undefined;
+                this.divisionUsersCollection.query = null;
             }
         });
 
@@ -220,7 +223,7 @@ export class UserStore implements IUserStore {
 
     public updateDivisionUser(userData: Partial<IUser>): void {
         const user = this.divisionUser;
-        if (user) { this.divisionUsersCollection.updateAsync(userData, user.uid); }
+        if (user) { this.divisionUsersCollection.updateAsync(userData, user.id); }
     }
 
     public updateAuthenticatedUser(userData: Partial<IUser>): void {

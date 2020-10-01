@@ -1,4 +1,4 @@
-import { Collection, ICollection, RealtimeMode, FetchMode } from "firestorable";
+import { Collection, ICollection, RealtimeMode, FetchMode, Doc } from "firestorable";
 import { observable, reaction, computed } from "mobx";
 
 import { IRootStore } from '../root-store';
@@ -8,6 +8,7 @@ import * as deserializer from '../../../common/serialization/deserializer';
 import { IDivision } from "../../../common/interfaces/IOrganisation";
 import { IDivisionData } from "../../../common/interfaces/IOrganisationData";
 import { firestore } from "firebase";
+import { IUserData, IUser } from "../../../common";
 
 export class DivisionStore {
     readonly divisionCollection: ICollection<IDivision, IDivisionData>;
@@ -26,15 +27,19 @@ export class DivisionStore {
 
         this.rootStore = rootStore;
 
-        const createQuery = (ref: firestore.CollectionReference) => {
-            if (this.rootStore.user.divisionUsersCollection.docs.length) {
-                return ref.where("id", "in", this.rootStore.user.divisionUsersCollection.docs
-                    .reduce((p, c) => {
-                        if (c.data!.divisionId) {
-                            p.push(c.data!.divisionId);
-                        }
-                        return p;
-                    }, [] as string[]));
+        const createQuery = (ref: firestore.CollectionReference, docs: Doc<IUser, IUserData>[]) => {
+            if (docs.length) {
+                return ref.where(
+                    "id",
+                    "in",
+                    docs
+                        .reduce((p, c) => {
+                            if (c.data!.divisionId) {
+                                p.push(c.data!.divisionId);
+                            }
+                            return p;
+                        }, [] as string[])
+                );
             }
             return ref;
         };
@@ -44,17 +49,19 @@ export class DivisionStore {
             "divisions",
             {
                 realtimeMode: RealtimeMode.on,
-                fetchMode: FetchMode.auto,
+                fetchMode: FetchMode.manual,
                 serialize: serializer.convertOrganisation,
                 deserialize: deserializer.convertOrganisation,
+                query: null,
             },
             {
                 // logger: console.log,
             },
         );
 
-        reaction(() => this.rootStore.user.divisionUsersCollection.docs, () => {
-            this.divisionCollection.query = (ref) => createQuery(ref);
+        reaction(() => this.rootStore.user.divisionUsersCollection.docs, (docs) => {
+            this.divisionCollection.query = (ref) => createQuery(ref, docs);
+            this.divisionCollection.fetchAsync();
         });
     }
 

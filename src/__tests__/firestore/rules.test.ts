@@ -125,7 +125,7 @@ describe("Firestore rules", () => {
                 await assertSucceeds(usersRefTest.doc("john").get());
 
                 // peter has organisation set
-                await assertSucceeds(divisonUsersRefTest.doc("peter-div").get());
+                await assertSucceeds(divisonUsersRefTest.where("divisionId", "==", "o-1").get());
             });
 
             test("if admin cannot read other users doc from another organisation", async () => {

@@ -1,6 +1,13 @@
 rules_version = '2';
 service cloud.firestore {
     match /databases/{database}/documents {
+        function getAuthUser2() {
+            let user = get(/databases/$(database)/documents/users/$(request.auth.uid));
+            let authUser = user.data.keys().hasAny(["divisionUserId"])
+                    ? get(/databases/$(database)/documents/division-users/$(user.data.divisionUserId))
+                    : user;
+            return authUser;
+        }
         function getAuthUser(data) {
             let user = get(/databases/$(database)/documents/users/$(request.auth.uid));
             let authUser = data.keys().hasAny(["divisionId"])
@@ -23,7 +30,7 @@ service cloud.firestore {
 
         function isAuthorised(authUser, role) {
             return (
-                    authUser.data.roles.keys().hasAny([role])
+                    authUser != null && authUser.data.roles.keys().hasAny([role])
                     && authUser.data.roles[role]
                 )
         }
@@ -34,7 +41,7 @@ service cloud.firestore {
 
         match /registrations/{registrationId} {
             allow read, create: if request.auth != null;
-            allow update: if request.resource.data.userId == request.auth.uid;
+            allow update: if request.resource.data.userId == getAuthUser2().id;
             allow delete: if get(/databases/$(database)/documents/registrations/$(registrationId)).data.userId == request.auth.uid;
         }
 
@@ -50,17 +57,20 @@ service cloud.firestore {
 
         match /clients/{document} {
             allow read;
-            allow create, update, delete: if isAuthorised(getAuthUser(request.resource.data), 'admin') == true;
+            allow create: if isAuthorised(getAuthUser(request.resource.data), 'admin') == true;
+            allow update, delete: if isAuthorised(getAuthUser(resource.data), 'admin') == true;
         }
 
         match /teams/{document} {
             allow read;
-            allow create, update, delete: if isAuthorised(getAuthUser(request.resource.data), 'admin') == true;
+            allow create: if isAuthorised(getAuthUser(request.resource.data), 'admin') == true;
+            allow update, delete: if isAuthorised(getAuthUser(resource.data), 'admin') == true;
         }
 
         match /tasks/{document} {
             allow read;
-            allow create, update, delete: if isAuthorised(getAuthUser(request.resource.data), 'admin') == true;
+            allow create: if isAuthorised(getAuthUser(request.resource.data), 'admin') == true;
+            allow update, delete: if isAuthorised(getAuthUser(resource.data), 'admin') == true;
         }
 
         match /users/{userId} {
@@ -70,6 +80,9 @@ service cloud.firestore {
                     request.auth.uid == userId
                     || isAuthorised(getAuthUser(resource.data), 'admin')
                 );
+            allow list: if
+                request.auth != null
+                && isAuthorised(getAuthUser2(), 'admin');
             allow update: if
                 isAuthorised(getAuthUser(request.resource.data), 'admin') == true
                 || (
@@ -86,12 +99,13 @@ service cloud.firestore {
         }
 
         match /division-users/{divisionUserId} {
-            allow read: if
+            allow get: if
                 request.auth != null
                 && (
-                    request.auth.uid == divisionUserId
-                    || isAuthorised(getAuthUser(resource.data), 'admin')
+                    request.auth.uid == resource.data.uid
                 );
+            allow list: if isAuthorised(getAuthUser2(), 'admin')
+                || resource.data.uid==request.auth.uid;
             allow create, update, delete;
         }
 

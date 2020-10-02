@@ -1,9 +1,9 @@
-import * as React from 'react';
+import React from 'react';
 
 export const Box = (props: React.HTMLProps<HTMLDivElement>) => {
-    const { children, ...rest } = props;
+    const { className, children, ...rest } = props;
     return (
-        <div {...rest} className={`box`}>
+        <div {...rest} className={`${className} box`}>
             {children}
         </div>
     );

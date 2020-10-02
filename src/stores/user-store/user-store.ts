@@ -34,6 +34,7 @@ export class UserStore implements IUserStore {
 
     public readonly usersCollection: ICollection<IUser, IUserData>;
     public readonly divisionUsersCollection: ICollection<IUser, IUserData>;
+    public readonly divisionUsersAllCollection: ICollection<IUser, IUserData>;
 
     constructor(
         _rootStore: IRootStore,
@@ -58,7 +59,7 @@ export class UserStore implements IUserStore {
             "users"
             , {
                 realtimeMode: RealtimeMode.on,
-                fetchMode: FetchMode.once,
+                fetchMode: FetchMode.manual,
                 serialize: serializer.convertUser,
                 deserialize: deserializer.convertUser,
                 query: null,
@@ -81,8 +82,24 @@ export class UserStore implements IUserStore {
             // logger: console.log
         });
 
+        this.divisionUsersAllCollection = new Collection(
+            firestore,
+            "division-users",
+            {
+                realtimeMode: RealtimeMode.on,
+                fetchMode: FetchMode.auto,
+                serialize: serializer.convertUser,
+                deserialize: deserializer.convertUser,
+                query: (ref) => ref
+                    .where("divisionId", "==", this.divisionUser?.divisionId)
+                    .where("deleted", "==", false),
+            }, {
+            // logger: console.log
+        });
+
         reaction(() => this.divisionUser, user => {
             this.usersCollection.query = createQuery(user);
+            this.usersCollection.fetchAsync();
         });
 
         reaction(() => this.authenticatedUser, user => {
@@ -93,6 +110,7 @@ export class UserStore implements IUserStore {
             if (id) {
                 this.divisionUsersCollection.query = ref => ref
                     .where("uid", "==", id)
+                    .where("deleted", "==", false)
                     .orderBy("created");
             } else {
                 this.divisionUsersCollection.query = null;
@@ -150,7 +168,7 @@ export class UserStore implements IUserStore {
     @computed
     public get users() {
         const collection = this.divisionUser?.divisionId
-            ? this.divisionUsersCollection
+            ? this.divisionUsersAllCollection
             : this.usersCollection;
 
         return collection.docs
@@ -197,6 +215,11 @@ export class UserStore implements IUserStore {
     @computed
     public get divisionUser(): (IUser & { id: string }) | undefined {
         const divisionUser = this._divisionUser.get();
+
+        if (!divisionUser && this.authenticatedUser?.divisionUserId) {
+            // wait for division user to be loaded
+            return undefined;
+        }
 
         return divisionUser
             ? { ...divisionUser.data!, id: divisionUser.id }

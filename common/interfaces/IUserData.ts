@@ -14,3 +14,7 @@ export interface IUserData extends IPersistedEntity {
     divisionId?: string;
     divisionUserId?: string;
 }
+
+export interface IDivisionUserData extends IUserData {
+    deleted: boolean;
+}

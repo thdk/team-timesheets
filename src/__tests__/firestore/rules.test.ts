@@ -142,18 +142,12 @@ describe("Firestore rules", () => {
                 }));
             });
 
-            test("if admin can delete other user docs from same organisation", async () => {
-                const john = await usersRef.doc("john").get();
-                const peter = await usersRef.doc("peter").get();
-
+            test("if admin can update other user docs from same organisation", async () => {
                 // john has no organisation set (backwards compatibility)
-                // await assertSucceeds(usersRefTest.doc("john").delete());
+                await assertSucceeds(usersRefTest.doc("john").update({foo: "bar"}));
 
                 // peter has organisation set
-                await assertSucceeds(divisonUsersRefTest.doc("peter-div").delete());
-
-                await usersRef.doc("john").set({ ...john.data() });
-                await divisonUsersRefTest.doc("peter-div").set({ ...peter.data() });
+                await assertSucceeds(divisonUsersRefTest.doc("peter-div").update({foo: "bar"}));
             });
         });
     });

@@ -5,27 +5,38 @@ import { initTestFirestore, deleteFirebaseAppsAsync } from "../../../__tests__/u
 import { RegistrationLines } from "./registration-lines";
 import { render, waitFor } from "@testing-library/react";
 import { Doc } from "firestorable";
-import { IRegistration } from "../../../../common";
+import { IRegistration, IUserData } from "../../../../common";
 import userEvent from "@testing-library/user-event";
+import { useStore } from "../../../contexts/store-context";
 
 const {
     firestore,
     clearFirestoreDataAsync,
-} = initTestFirestore("registrations-line-test");
+    refs: [
+        usersRef
+    ]
+} = initTestFirestore(
+    "registrations-line-test",
+    [
+        "users",
+    ]
+);
 
 const store = new Store({
     firestore,
 });
 
-jest.mock("../../../contexts/store-context", () => ({
-    useStore: () => store,
-}));
+jest.mock("../../../contexts/store-context");
 
 let clientIds: string[];
 let taskIds: string[];
 let projectIds: string[];
-
+const userId = "user-1";
 const setupAsync = async () => {
+    await usersRef.doc(userId).set({
+        name: "User 1",
+    } as Partial<IUserData>
+    );
     taskIds = await store.config.tasksCollection.addAsync([
         {
             name: "Task 1",
@@ -47,9 +58,16 @@ const setupAsync = async () => {
             icon: "people",
         },
     ]);
+
+    store.user.setUser({
+        uid: userId,
+        displayName: "user 1",
+        email: "email@email.com",
+    } as firebase.User);
 };
 
 beforeAll(async () => {
+    (useStore as jest.Mock<ReturnType<typeof useStore>>).mockReturnValue(store);
     await clearFirestoreDataAsync();
     await setupAsync();
 });
@@ -57,7 +75,7 @@ afterAll(() => {
     store.dispose();
     return Promise.all([
         deleteFirebaseAppsAsync(),
-    ])
+    ]);
 });
 
 describe("RegistrationLines", () => {
@@ -105,7 +123,9 @@ describe("RegistrationLines", () => {
         expect(asFragment()).toMatchSnapshot();
     });
 
-    it("should render registrations", () => {
+    it("should render registrations", async () => {
+        await waitFor(() => expect(store.user.authenticatedUser).toBeDefined());
+
         const { asFragment } = render(
             <RegistrationLines
                 registrations={getRegistrations()}
@@ -115,7 +135,9 @@ describe("RegistrationLines", () => {
         expect(asFragment()).toMatchSnapshot();
     });
 
-    it("should show checkbox for each registration when registrationToggleSelect is provided", () => {
+    it("should show checkbox for each registration when registrationToggleSelect is provided", async () => {
+        await waitFor(() => expect(store.user.authenticatedUser).toBeDefined());
+
         const registrationToggleSelect = jest.fn();
         const { container } = render(
             <RegistrationLines
@@ -132,6 +154,8 @@ describe("RegistrationLines", () => {
     it("should call callbacks for registration click and select", async () => {
         const registrationToggleSelect = jest.fn();
         const registrationClick = jest.fn();
+
+        await waitFor(() => expect(store.user.authenticatedUser).toBeDefined());
 
         const { container, getByText } = render(
             <RegistrationLines

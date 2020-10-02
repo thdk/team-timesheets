@@ -1,12 +1,13 @@
 import React, { useCallback } from "react";
+import { observer } from "mobx-react-lite";
+import { v4 as uuidv4 } from 'uuid';
+import cryptoRandomString from 'crypto-random-string';
+
 import { useUserStore } from "../../../contexts/user-context";
 import { SettingsList } from "../../../components/settings-list";
 import { useViewStore } from "../../../contexts/view-context";
-import { observer } from "mobx-react-lite";
-import { DivisionJoinform } from "../join-form";
 import { INameWithIcon } from "../../../../common";
 import { useDivisionStore } from "../../../contexts/division-context";
-import { v4 as uuidv4 } from 'uuid';
 
 export const DivisionsList = observer(() => {
     const user = useUserStore();
@@ -20,23 +21,28 @@ export const DivisionsList = observer(() => {
         const divisionId = uuidv4();
         const divisionUserId = uuidv4();
 
-        await division.divisionCollection.addAsync({
-            name,
-            icon,
-            createdBy: user.authenticatedUserId!,
-            id: divisionId,
-        }, divisionId);
-
-        await user.divisionUsersCollection.addAsync(
-            {
-                ...user.authenticatedUser!,
+        await Promise.all([
+            division.divisionCollection.addAsync({
+                name,
+                icon,
+                createdBy: user.authenticatedUserId!,
+                id: divisionId,
+            }, divisionId),
+            division.divisionCodesCollection.addAsync({
+                code: cryptoRandomString({ length: 6, type: 'distinguishable' }),
                 divisionId,
-                roles: {
-                    admin: true
+            }),
+            user.divisionUsersCollection.addAsync(
+                {
+                    ...user.authenticatedUser!,
+                    divisionId,
+                    roles: {
+                        admin: true
+                    },
                 },
-            },
-            divisionUserId,
-        );
+                divisionUserId,
+            ),
+        ]);
 
         if (!user.authenticatedUser?.divisionUserId) {
             user.updateAuthenticatedUser({
@@ -48,13 +54,12 @@ export const DivisionsList = observer(() => {
 
     return (
         <>
-            <DivisionJoinform />
             <p>
                 or create your own division and start recruiting or go solo!
             </p>
             <SettingsList
                 items={division.userDivisions}
-                onToggleSelection={() => { }}
+                onToggleSelection={view.toggleSelection.bind(view)}
                 selection={view.selection}
                 onAddItem={handleOnAddClick}
                 onItemClick={(id) => {

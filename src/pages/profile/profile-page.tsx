@@ -1,19 +1,17 @@
-import React, { useMemo } from "react";
-import { useEffect } from "react";
+import React, { useMemo, useEffect, useState } from "react";
+import { observer } from "mobx-react-lite";
 import { useViewStore } from "../../contexts/view-context";
 import { ITabData, Tabs } from "../../components/tabs";
-import { useState } from "react";
 import { useUserStore } from "../../contexts/user-context";
 import { Preferences } from "../settings/preferences";
-import { Box } from "../../components/layout/box";
-import { DivisionsList } from "../../containers/divisions/list";
 import { withAuthentication } from "../../containers/users/with-authentication";
 import { RedirectToLogin } from "../../internal";
+import { DivisionsTabContent } from "./division-tab-content";
 
-export const ProfilePage = withAuthentication(() => {
+export const ProfilePage = withAuthentication(observer(() => {
     const view = useViewStore();
 
-    const { divisionUser: user } = useUserStore();
+    const { divisionUser } = useUserStore();
 
     const [tab, setTab] = useState("preferences");
 
@@ -25,17 +23,18 @@ export const ProfilePage = withAuthentication(() => {
         {
             id: "preferences",
             text: "Preferences",
-            canOpen: () => !!user,
+            canOpen: () => !!divisionUser,
             tabContent: <Preferences />,
             icon: "list_alt",
         },
         {
             id: "division",
-            tabContent: <Box><DivisionsList /></Box>,
+            tabContent: <DivisionsTabContent />,
             text: "My divisions",
             icon: "groups",
+            canOpen: () => !!divisionUser,
         },
-    ], [user]);
+    ], [divisionUser]);
 
     return (
         <Tabs
@@ -44,5 +43,5 @@ export const ProfilePage = withAuthentication(() => {
             onActivate={setTab}
         />
     );
-}, <RedirectToLogin />);
+}), <RedirectToLogin />);
 ProfilePage.displayName = "ProfilePage";

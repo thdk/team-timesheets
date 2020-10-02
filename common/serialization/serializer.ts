@@ -1,5 +1,5 @@
 import * as firebase from 'firebase/app';
-import { IRegistration, IRegistrationData, IUser, IUserData, ITeam, ITeamData, IProject, IProjectData, IFavoriteRegistration } from '../interfaces';
+import { IRegistration, IRegistrationData, IUser, IUserData, ITeam, ITeamData, IProject, IProjectData, IFavoriteRegistration, IDivisionUserData } from '../interfaces';
 import { INameWithIconData, INameWithIcon } from '../interfaces/base';
 import { IDivision } from '../interfaces/IOrganisation';
 import { IDivisionData } from '../interfaces/IOrganisationData';
@@ -80,39 +80,40 @@ export const convertFavoriteRegistration = (appData: Partial<IFavoriteRegistrati
 }
 
 export const convertUser = (appData: Partial<IUser> | null) => {
-    if (appData === null) {
-        throw new Error("Deleting user is not supported");
-    }
-
+    let user: Partial<IDivisionUserData>;
     const now = new Date();
+    if (appData === null) {
+        user = { deleted: true, modified: firebase.firestore.Timestamp.fromDate(now) };
+    } else {
+        user = {
+            tasks: appData.tasks ? Array.from(appData.tasks.keys()) : undefined,
+            name: appData.name,
+            roles: appData.roles,
+            defaultTask: appData.defaultTask || "",
+            recentProjects: appData.recentProjects,
+            defaultClient: appData.defaultClient,
+            team: appData.team,
+            modified: firebase.firestore.Timestamp.fromDate(now),
+            created: firebase.firestore.Timestamp.fromDate(appData.created || now),
+            uid: appData.uid,
+            email: appData.email,
+            divisionId: appData.divisionId,
+            divisionUserId: appData.divisionUserId,
+            deleted: false,
+        }
 
-    const user: Partial<IUserData> = {
-        tasks: appData.tasks ? Array.from(appData.tasks.keys()) : undefined,
-        name: appData.name,
-        roles: appData.roles,
-        defaultTask: appData.defaultTask || "",
-        recentProjects: appData.recentProjects,
-        defaultClient: appData.defaultClient,
-        team: appData.team,
-        modified: firebase.firestore.Timestamp.fromDate(now),
-        created: firebase.firestore.Timestamp.fromDate(appData.created || now),
-        uid: appData.uid,
-        email: appData.email,
-        divisionId: appData.divisionId,
-        divisionUserId: appData.divisionUserId,
+        // Todo: automatically remove undefined values for all keys
+        if (!user.roles) delete user.roles;
+        if (!user.name) delete user.name;
+        if (!user.defaultTask) delete user.defaultTask;
+        if (!user.tasks) delete user.tasks;
+        if (!user.recentProjects) delete user.recentProjects;
+        if (user.defaultClient === undefined) delete user.defaultClient;
+        if (user.team === undefined) delete user.team;
+        if (!user.email) delete user.email;
+        if (!user.divisionId) delete user.divisionId;
+        if (!user.divisionUserId) delete user.divisionUserId;
     }
-
-    // Todo: automatically remove undefined values for all keys
-    if (!user.roles) delete user.roles;
-    if (!user.name) delete user.name;
-    if (!user.defaultTask) delete user.defaultTask;
-    if (!user.tasks) delete user.tasks;
-    if (!user.recentProjects) delete user.recentProjects;
-    if (user.defaultClient === undefined) delete user.defaultClient;
-    if (user.team === undefined) delete user.team;
-    if (!user.email) delete user.email;
-    if (!user.divisionId) delete user.divisionId;
-    if (!user.divisionUserId) delete user.divisionUserId;
 
     return user;
 }

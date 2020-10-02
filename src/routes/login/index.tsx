@@ -11,7 +11,7 @@ type LoginRoute = Route<IRootStore>;
 
 const login = new Route({
     path,
-    component: <App><Login></Login></App>,
+    component: <App><Login /></App>,
     onEnter: (route: LoginRoute, _params: any, s: IRootStore) => {
         when(() => !!s.user.authenticatedUser, () => goToOverview(s));
         setNavigationContent(s, route, false);

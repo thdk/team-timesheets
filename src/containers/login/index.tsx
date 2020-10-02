@@ -32,6 +32,7 @@ export const Login = ({ configs }: Props) => {
     const firebase = useFirebase();
 
     React.useEffect(() => {
+        firebase.auth().signOut();
         const { loginProviders } = configs;
 
         const loginUiConfig = {

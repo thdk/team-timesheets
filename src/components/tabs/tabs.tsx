@@ -40,18 +40,24 @@ export const Tabs = <T extends string>({
         </Tab>;
     });
 
-    const activeTabIndex = activeTab
+    let activeTabIndex = activeTab
         ? validTabs.findIndex(t => t.id === activeTab)
         : 0;
 
-    return (
-        <>
-            <TabBar
-                activeTabIndex={activeTabIndex === -1 ? 0 : activeTabIndex}
-            >
-                {tabs}
-            </TabBar>
-            {validTabs[activeTabIndex].tabContent}
-        </>
-    );
+    activeTabIndex = activeTabIndex === -1
+        ? 0
+        : activeTabIndex;
+
+    return validTabs.length ?
+        (
+            <>
+                <TabBar
+                    activeTabIndex={activeTabIndex}
+                >
+                    {tabs}
+                </TabBar>
+                {validTabs[activeTabIndex].tabContent}
+            </>
+        )
+        : null;
 };

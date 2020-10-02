@@ -16,7 +16,7 @@
     "test": "jest",
     "test:cloudbuild": "firebase emulators:exec --only firestore \"jest --coverage\"",
     "test:watch": "jest --watch",
-    "emulators": "firebase emulators:start --only \"hosting,firestore\"",
+    "emulators": "firebase emulators:start --only \"hosting,firestore,functions\"",
     "emulator:exec": "firebase emulators:exec --only firestore",
     "test:emulator": "firebase emulators:exec --only firestore jest",
     "test:emulator:coverage": "firebase emulators:exec --only firestore \"jest --coverage\""
@@ -95,6 +95,7 @@
     "@types/throttle-debounce": "^2.1.0",
     "chart.js": "^2.7.3",
     "classnames": "^2.2.6",
+    "crypto-random-string": "^3.3.0",
     "firebase": "^7.13.2",
     "firebaseui": "^3.4.1",
     "firestorable": "^0.2.2",

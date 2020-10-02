@@ -5,13 +5,14 @@ import { IRootStore } from '../root-store';
 
 import * as serializer from '../../../common/serialization/serializer';
 import * as deserializer from '../../../common/serialization/deserializer';
-import { IDivision } from "../../../common/interfaces/IOrganisation";
+import { IDivision, IDivisionCode } from "../../../common/interfaces/IOrganisation";
 import { IDivisionData } from "../../../common/interfaces/IOrganisationData";
 import { firestore } from "firebase";
 import { IUserData, IUser } from "../../../common";
 
 export class DivisionStore {
     readonly divisionCollection: ICollection<IDivision, IDivisionData>;
+    readonly divisionCodesCollection: ICollection<IDivisionCode>;
 
     @observable.ref projectId?: string;
 
@@ -52,7 +53,18 @@ export class DivisionStore {
                 fetchMode: FetchMode.manual,
                 serialize: serializer.convertOrganisation,
                 deserialize: deserializer.convertOrganisation,
-                query: null,
+            },
+            {
+                // logger: console.log,
+            },
+        );
+
+        this.divisionCodesCollection = new Collection<IDivisionCode>(
+            firestore,
+            "division-codes",
+            {
+                realtimeMode: RealtimeMode.on,
+                fetchMode: FetchMode.manual,
             },
             {
                 // logger: console.log,

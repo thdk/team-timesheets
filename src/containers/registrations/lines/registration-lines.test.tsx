@@ -126,6 +126,7 @@ describe("RegistrationLines", () => {
     it("should render registrations", async () => {
         await waitFor(() => expect(store.user.authenticatedUser).toBeDefined());
 
+        await waitFor(() => expect(store.config.clientsCollection.isFetched).toBeTruthy());
         const { asFragment } = render(
             <RegistrationLines
                 registrations={getRegistrations()}

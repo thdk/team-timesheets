@@ -1,5 +1,14 @@
 import * as firebase from 'firebase/app';
-import { IRegistration, IRegistrationData, IUser, IUserData, ITeam, ITeamData, IProject, IProjectData, IFavoriteRegistration, IDivisionUserData } from '../interfaces';
+import { IRegistration,
+    IRegistrationData,
+    IUser,
+    ITeam,
+    ITeamData,
+    IProject,
+    IProjectData,
+    IFavoriteRegistration,
+    IDivisionUserData,
+} from '../interfaces';
 import { INameWithIconData, INameWithIcon } from '../interfaces/base';
 import { IDivision } from '../interfaces/IOrganisation';
 import { IDivisionData } from '../interfaces/IOrganisationData';

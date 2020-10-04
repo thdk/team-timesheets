@@ -1,0 +1,37 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Preferences should display a message when no clients or tasks has been added 1`] = `
+<DocumentFragment>
+  <div
+    class="box"
+  >
+    <h3
+      class="mdc-typography--subtitle1"
+    >
+      Your division has not been fully configured yet. Add some tasks from the settings page or ask you division manager to set this up.
+    </h3>
+  </div>
+</DocumentFragment>
+`;
+
+exports[`Preferences should display client preferences 1`] = `
+<DocumentFragment>
+  <div
+    class="box"
+  >
+    TaskPreferencesClientPreferences
+  </div>
+</DocumentFragment>
+`;
+
+exports[`Preferences should display task preferences 1`] = `
+<DocumentFragment>
+  <div
+    class="box"
+  >
+    TaskPreferencesClientPreferences
+  </div>
+</DocumentFragment>
+`;
+
+exports[`Preferences should not render when unauthenticated 1`] = `<DocumentFragment />`;

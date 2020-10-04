@@ -36,6 +36,7 @@ export class UserStore implements IUserStore {
     public readonly divisionUsersCollection: ICollection<IUser, IUserData>;
     public readonly divisionUsersAllCollection: ICollection<IUser, IUserData>;
 
+    private readonly reactionDisposeFns: (() => void)[];
     constructor(
         _rootStore: IRootStore,
         {
@@ -97,25 +98,27 @@ export class UserStore implements IUserStore {
             // logger: console.log
         });
 
-        reaction(() => this.divisionUser, user => {
-            this.usersCollection.query = createQuery(user);
-            this.usersCollection.fetchAsync();
-        });
+        this.reactionDisposeFns = [
+            reaction(() => this.divisionUser, user => {
+                this.usersCollection.query = createQuery(user);
+                this.usersCollection.fetchAsync();
+            }),
 
-        reaction(() => this.authenticatedUser, user => {
-            this.setDivisionUser(user?.divisionUserId);
-        });
+            reaction(() => this.authenticatedUser, user => {
+                this.setDivisionUser(user?.divisionUserId);
+            }),
 
-        reaction(() => this.authenticatedUserId, id => {
-            if (id) {
-                this.divisionUsersCollection.query = ref => ref
-                    .where("uid", "==", id)
-                    .where("deleted", "==", false)
-                    .orderBy("created");
-            } else {
-                this.divisionUsersCollection.query = null;
-            }
-        })
+            reaction(() => this.authenticatedUserId, id => {
+                if (id) {
+                    this.divisionUsersCollection.query = ref => ref
+                        .where("uid", "==", id)
+                        .where("deleted", "==", false)
+                        .orderBy("created");
+                } else {
+                    this.divisionUsersCollection.query = null;
+                }
+            }),
+        ];
 
         this.auth && this.auth.onAuthStateChanged(this.setUser.bind(this));
 
@@ -341,6 +344,7 @@ export class UserStore implements IUserStore {
     }
 
     public dispose() {
+        this.reactionDisposeFns.forEach(fn => fn());
         this.usersCollection.dispose();
         this.divisionUsersCollection.dispose();
     }

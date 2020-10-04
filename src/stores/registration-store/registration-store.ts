@@ -1,5 +1,5 @@
 import { Doc, ICollection, Collection, RealtimeMode, FetchMode } from "firestorable";
-import { observable, computed, reaction, when, action, toJS, ObservableMap, IObservableArray } from 'mobx';
+import { observable, computed, reaction, when, action, toJS } from 'mobx';
 import moment from 'moment';
 
 import { IRootStore } from '../root-store';
@@ -15,34 +15,11 @@ export interface IGroupedRegistrations<T> {
     isCollapsed: boolean;
 }
 
-export interface IRegistrationsStore {
-    readonly clipboard: ObservableMap<string, IRegistration>;
-    readonly selectedRegistrationDays: IObservableArray<string>;
-    readonly toggleSelectedRegistrationDay: (day: string, force?: boolean) => void;
-    readonly registration: IRegistration | undefined;
-    readonly registrationId?: string;
-    readonly setSelectedRegistration: (id: string | undefined) => void;
-    readonly saveSelectedRegistration: () => Promise<any>;
-    readonly updateSelectedRegistration: (data: Partial<IRegistration>) => void;
-    readonly setSelectedRegistrationDefault: (defaultData?: Partial<IRegistration>) => void;
-    readonly deleteRegistrationsAsync: (...ids: string[]) => Promise<void[]>;
-    readonly addRegistrationsAsync: (data: IRegistration[]) => Promise<string[]>;
-
-    readonly registrationsTotalTime: number;
-    readonly registrationsGroupedByDay: IGroupedRegistrations<string>[];
-    readonly registrationsGroupedByDayReversed: IGroupedRegistrations<string>[];
-    readonly registrationsGroupedByDaySortOrder: SortOrder;
-    areGroupedRegistrationsCollapsed: boolean;
-    readonly setRegistrationsGroupedByDaySortOrder: (sortOrder: SortOrder) => void;
-    readonly copyRegistrationToDate: (source: Omit<IRegistration, "date" | "isPersisted">, newDate: Date) => IRegistration;
-    readonly getRegistrationById: (id: string) => IRegistration | null;
-
-    readonly dispose: () => void;
-}
+export interface IRegistrationsStore extends RegistrationStore { };
 
 export class RegistrationStore implements IRegistrationsStore {
     private rootStore: IRootStore;
-    private readonly registrations: ICollection<IRegistration, IRegistrationData>;
+    public readonly registrations: ICollection<IRegistration, IRegistrationData>;
     readonly clipboard = observable(new Map<string, IRegistration>());
 
     private _selectedRegistration = observable.box<IRegistration | undefined>();
@@ -57,6 +34,7 @@ export class RegistrationStore implements IRegistrationsStore {
     @observable
     public areGroupedRegistrationsCollapsed = true;
 
+    private reactionDisposeFns: (() => void)[];
 
     constructor(
         rootStore: IRootStore,
@@ -118,23 +96,25 @@ export class RegistrationStore implements IRegistrationsStore {
         // -- the view moment changes
         // -- the logged in user changes
         // -- the organisation changes
-        reaction(() => rootStore.view.monthMoment, () => (
-            updateRegistrationQuery(rootStore.user.divisionUser?.id)
-        ));
-
-        reaction(() => rootStore.user.divisionUser, user => {
-            updateRegistrationQuery(user?.id)
-        });
-
-        reaction(() => this.areGroupedRegistrationsCollapsed, collapsed => {
-            if (collapsed) {
-                this.selectedRegistrationDays.clear();
-            } else {
-                this.selectedRegistrationDays.replace(
-                    this.registrationsGroupedByDay.map(g => g.groupKey)
-                );
-            }
-        });
+        this.reactionDisposeFns = [
+            reaction(() => rootStore.view.monthMoment, () => (
+                updateRegistrationQuery(rootStore.user.divisionUser?.id)
+            )),
+            reaction(() => rootStore.user.divisionUser, user => {
+                updateRegistrationQuery(user?.id)
+            }, {
+                fireImmediately: true,
+            }),
+            reaction(() => this.areGroupedRegistrationsCollapsed, collapsed => {
+                if (collapsed) {
+                    this.selectedRegistrationDays.clear();
+                } else {
+                    this.selectedRegistrationDays.replace(
+                        this.registrationsGroupedByDay.map(g => g.groupKey)
+                    );
+                }
+            }),
+        ];
     }
 
     @computed
@@ -215,7 +195,6 @@ export class RegistrationStore implements IRegistrationsStore {
 
     @action
     public setSelectedRegistration(id: string | undefined) {
-
         if ((!id && this._selectedRegistration) || (id !== this._selectedRegistrationId.get())) {
             this._selectedRegistrationId.set(id);
 
@@ -356,6 +335,7 @@ export class RegistrationStore implements IRegistrationsStore {
     }
 
     public dispose() {
+        this.reactionDisposeFns.forEach(fn => fn());
         this.registrations.dispose();
     }
 }

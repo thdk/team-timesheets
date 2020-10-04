@@ -1,0 +1,283 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`TaskPreferences should not render without authenticated user 1`] = `
+<DocumentFragment>
+  <h3
+    class="mdc-typography--subtitle1"
+  >
+    Pick your tasks
+  </h3>
+  <p>
+    Only selected tasks will be available for you when adding a new regisration.
+  </p>
+  <div
+    class="mdc-chip-set mdc-chip-set--filter"
+  />
+</DocumentFragment>
+`;
+
+exports[`TaskPreferences should not render without tasks 1`] = `
+<DocumentFragment>
+  <h3
+    class="mdc-typography--subtitle1"
+  >
+    Pick your tasks
+  </h3>
+  <p>
+    Only selected tasks will be available for you when adding a new regisration.
+  </p>
+  <div
+    class="mdc-chip-set mdc-chip-set--filter"
+  />
+</DocumentFragment>
+`;
+
+exports[`TaskPreferences should render tasks 1`] = `
+<DocumentFragment>
+  <h3
+    class="mdc-typography--subtitle1"
+  >
+    Pick your tasks
+  </h3>
+  <p>
+    Only selected tasks will be available for you when adding a new regisration.
+  </p>
+  <div
+    class="mdc-chip-set mdc-chip-set--filter"
+  >
+    <div
+      class="mdc-ripple-surface mdc-chip"
+      id="task-1"
+      role="row"
+    >
+      <div
+        class="mdc-chip__ripple"
+      />
+      <div
+        class="mdc-chip__checkmark"
+      >
+        <svg
+          class="mdc-chip__checkmark-svg"
+          viewBox="-2 -3 30 30"
+        >
+          <path
+            class="mdc-chip__checkmark-path"
+            d="M1.73,12.91 8.1,19.28 22.79,4.59"
+            fill="none"
+            stroke="black"
+          />
+        </svg>
+      </div>
+      <span
+        role="gridcell"
+      >
+        <span
+          class="mdc-chip__text__primary-action"
+          role="button"
+          tabindex="0"
+        >
+          <span
+            class="mdc-chip__text"
+          >
+            Task 1
+          </span>
+        </span>
+      </span>
+    </div>
+    <div
+      class="mdc-ripple-surface mdc-chip"
+      id="task-2"
+      role="row"
+    >
+      <div
+        class="mdc-chip__ripple"
+      />
+      <div
+        class="mdc-chip__checkmark"
+      >
+        <svg
+          class="mdc-chip__checkmark-svg"
+          viewBox="-2 -3 30 30"
+        >
+          <path
+            class="mdc-chip__checkmark-path"
+            d="M1.73,12.91 8.1,19.28 22.79,4.59"
+            fill="none"
+            stroke="black"
+          />
+        </svg>
+      </div>
+      <span
+        role="gridcell"
+      >
+        <span
+          class="mdc-chip__text__primary-action"
+          role="button"
+          tabindex="0"
+        >
+          <span
+            class="mdc-chip__text"
+          >
+            Task 2
+          </span>
+        </span>
+      </span>
+    </div>
+  </div>
+</DocumentFragment>
+`;
+
+exports[`TaskPreferences should show default task 1`] = `
+<DocumentFragment>
+  <h3
+    class="mdc-typography--subtitle1"
+  >
+    Pick your tasks
+  </h3>
+  <p>
+    Only selected tasks will be available for you when adding a new regisration.
+  </p>
+  <div
+    class="mdc-chip-set mdc-chip-set--filter"
+  >
+    <div
+      class="mdc-ripple-surface mdc-chip mdc-chip--selected"
+      id="task-1"
+      role="row"
+    >
+      <div
+        class="mdc-chip__ripple"
+      />
+      <div
+        class="mdc-chip__checkmark"
+      >
+        <svg
+          class="mdc-chip__checkmark-svg"
+          viewBox="-2 -3 30 30"
+        >
+          <path
+            class="mdc-chip__checkmark-path"
+            d="M1.73,12.91 8.1,19.28 22.79,4.59"
+            fill="none"
+            stroke="black"
+          />
+        </svg>
+      </div>
+      <span
+        role="gridcell"
+      >
+        <span
+          class="mdc-chip__text__primary-action"
+          role="button"
+          tabindex="0"
+        >
+          <span
+            class="mdc-chip__text"
+          >
+            Task 1
+          </span>
+        </span>
+      </span>
+    </div>
+    <div
+      class="mdc-ripple-surface mdc-chip mdc-chip--selected"
+      id="task-2"
+      role="row"
+    >
+      <div
+        class="mdc-chip__ripple"
+      />
+      <div
+        class="mdc-chip__checkmark"
+      >
+        <svg
+          class="mdc-chip__checkmark-svg"
+          viewBox="-2 -3 30 30"
+        >
+          <path
+            class="mdc-chip__checkmark-path"
+            d="M1.73,12.91 8.1,19.28 22.79,4.59"
+            fill="none"
+            stroke="black"
+          />
+        </svg>
+      </div>
+      <span
+        role="gridcell"
+      >
+        <span
+          class="mdc-chip__text__primary-action"
+          role="button"
+          tabindex="0"
+        >
+          <span
+            class="mdc-chip__text"
+          >
+            Task 2
+          </span>
+        </span>
+      </span>
+    </div>
+  </div>
+  <h3
+    class="mdc-typography--subtitle1"
+  >
+    Pick your default task
+  </h3>
+  <p>
+    This task will be selected by default when you create a new registration.
+  </p>
+  <div
+    class="mdc-chip-set mdc-chip-set--choice"
+  >
+    <div
+      class="mdc-ripple-surface mdc-chip mdc-chip--selected"
+      id="task-1"
+      role="row"
+    >
+      <div
+        class="mdc-chip__ripple"
+      />
+      <span
+        role="gridcell"
+      >
+        <span
+          class="mdc-chip__text__primary-action"
+          role="button"
+          tabindex="0"
+        >
+          <span
+            class="mdc-chip__text"
+          >
+            Task 1
+          </span>
+        </span>
+      </span>
+    </div>
+    <div
+      class="mdc-ripple-surface mdc-chip"
+      id="task-2"
+      role="row"
+    >
+      <div
+        class="mdc-chip__ripple"
+      />
+      <span
+        role="gridcell"
+      >
+        <span
+          class="mdc-chip__text__primary-action"
+          role="button"
+          tabindex="0"
+        >
+          <span
+            class="mdc-chip__text"
+          >
+            Task 2
+          </span>
+        </span>
+      </span>
+    </div>
+  </div>
+</DocumentFragment>
+`;

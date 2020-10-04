@@ -55,11 +55,12 @@ describe("ClientPreferences", () => {
 
     // it("should call updateDivision user when client is changed", async () => {
     //     const updateDivisionUser = jest.fn();
+    //     const originalMock = jest.requireMock('../../../contexts/user-context').useUserStore();
     //     (useUserStore as jest.Mock<ReturnType<typeof useUserStore>>).mockReturnValue(
     //         {
-    //             ...useUserStoreMock,
-    //             updateDivisionUser
-    //         },
+    //             ...originalMock,
+    //             updateDivisionUser,
+    //         }
     //     );
 
     //     (useClients as jest.Mock<ReturnType<typeof useClients>>).mockReturnValue({

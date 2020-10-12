@@ -1,11 +1,12 @@
 import * as React from 'react';
+import { observer } from 'mobx-react-lite';
+
 import { goToOverview, goToSettings, goToReports, goToProjects, goToDashboard, goToLogin, goToFavorites } from "../../../internal";
 
 import { canManageProjects } from '../../../rules';
 import TimesheetCalendar from '../../timesheet-calendar/timesheet-calendar';
 import { withAuthentication } from '../../users/with-authentication';
 import { withAuthorisation } from '../../users/with-authorisation';
-import { observer } from 'mobx-react-lite';
 import { useViewStore } from '../../../contexts/view-context';
 import { useRouterStore } from '../../../stores/router-store';
 import { useUserStore } from '../../../contexts/user-context';

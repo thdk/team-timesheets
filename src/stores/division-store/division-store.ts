@@ -1,5 +1,5 @@
 import { Collection, ICollection, RealtimeMode, FetchMode, Doc } from "firestorable";
-import { observable, reaction, computed } from "mobx";
+import { observable, reaction, computed, autorun } from "mobx";
 
 import { IRootStore } from '../root-store';
 
@@ -15,6 +15,7 @@ export class DivisionStore {
     readonly divisionCodesCollection: ICollection<IDivisionCode>;
 
     @observable.ref projectId?: string;
+    @observable.ref division: Doc<IDivision> | undefined;
 
     private rootStore: IRootStore;
     constructor(
@@ -30,16 +31,18 @@ export class DivisionStore {
 
         const createQuery = (ref: firestore.CollectionReference, docs: Doc<IUser, IUserData>[]) => {
             if (docs.length) {
+                const ids = docs
+                    .reduce((p, c) => {
+                        if (c.data!.divisionId) {
+                            p.push(c.data!.divisionId);
+                        }
+                        return p;
+                    }, [] as string[]);
+
                 return ref.where(
                     "id",
                     "in",
-                    docs
-                        .reduce((p, c) => {
-                            if (c.data!.divisionId) {
-                                p.push(c.data!.divisionId);
-                            }
-                            return p;
-                        }, [] as string[])
+                    ids,
                 );
             }
             return ref;
@@ -77,13 +80,12 @@ export class DivisionStore {
                 this.divisionCollection.fetchAsync();
             }
         });
-    }
 
-    @computed
-    public get division() {
-        return this.divisionId
-            ? this.divisionCollection.get(this.divisionId)
-            : undefined;
+        autorun(() => {
+            const division = this.divisionId ? this.divisionCollection.get(this.divisionId) : undefined;
+
+            this.division = division;
+        });
     }
 
     @computed get divisionId() {
@@ -93,15 +95,19 @@ export class DivisionStore {
     @computed
     public get userDivisions() {
 
-        return this.rootStore.user.divisionUsersCollection.docs.reduce((p, c) => {
-            const orgId = c.data!.divisionId;
-            if (orgId) {
-                const org = this.divisionCollection.get(orgId);
-                if (org) {
-                    p.push({ ...org.data!, id: c.id });
+        return this.rootStore.user.divisionUsersCollection.docs
+            .reduce((p, c) => {
+                const orgId = c.data!.divisionId;
+                if (orgId) {
+                    const org = this.divisionCollection.get(orgId);
+                    if (org) {
+                        p.push({
+                            ...org.data!,
+                            divisionUserId: c.id,
+                        });
+                    }
                 }
-            }
-            return p;
-        }, [] as (IDivision & { id: string })[]);
+                return p;
+            }, [] as (IDivision & { divisionUserId: string })[]);
     }
 }

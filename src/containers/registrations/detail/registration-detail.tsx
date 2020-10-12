@@ -10,10 +10,46 @@ import { TasksChips } from "../../tasks/chips";
 import { useUserStore } from "../../../contexts/user-context";
 import { useTasks } from "../../../contexts/task-context";
 
+const Tasks = observer(() => {
+    const timesheets = useRegistrationStore();
+    const tasksStore = useTasks();
+    const user = useUserStore();
+
+    const taskClicked = useCallback((taskId: string) => {
+        if (timesheets.registration && timesheets.registration.task !== taskId)
+            timesheets.registration.task = taskId;
+    }, [timesheets.registration]);
+
+    if (!user.divisionUser || !timesheets.registration) {
+        return null;
+    }
+
+    const userTasks = Array.from(user.divisionUser.tasks.keys());
+    const tasks = tasksStore.tasks
+        .filter(t => userTasks.length ? userTasks.some(userTaskId => userTaskId === t.id) : true)
+
+    const { task } = timesheets.registration;
+
+    return tasks.length
+        ? (
+            <FlexGroup direction="vertical">
+                <h3 className="mdc-typography--subtitle1">Task</h3>
+                <FormField>
+                    <TasksChips
+                        onTaskInteraction={taskClicked}
+                        selectedTaskIds={task ? [task] : undefined}
+                        choice
+                        tasks={tasks}
+                    />
+                </FormField>
+            </FlexGroup>
+        )
+        : null;
+});
+
 export const RegistrationDetail = observer(() => {
     const user = useUserStore();
     const timesheets = useRegistrationStore();
-    const tasksStore = useTasks();
 
     const onDescriptionChange = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
         if (timesheets.registration && timesheets.registration)
@@ -25,33 +61,18 @@ export const RegistrationDetail = observer(() => {
             timesheets.registration.time = +(event.currentTarget.value);
     }, [timesheets.registration]);
 
-    const taskClicked = useCallback((taskId: string) => {
-        if (timesheets.registration && timesheets.registration.task !== taskId)
-            timesheets.registration.task = taskId;
-    }, [timesheets.registration]);
-
     const onClientChange = useCallback((value: string) => {
         if (timesheets.registration)
             timesheets.registration.client = value;
     }, [timesheets.registration]);
 
-    if (!user.divisionUser) {
-        return <></>;
-    }
-
     if (!timesheets.registration || !user.divisionUser) return <></>;
-
-    const userTasks = Array.from(user.divisionUser.tasks.keys());
-    const tasks = tasksStore.tasks
-        .filter(t => userTasks.length ? userTasks.some(userTaskId => userTaskId === t.id) : true)
-
 
     const {
         description,
         time,
         date,
         client,
-        task,
     } = timesheets.registration;
 
     return (
@@ -109,17 +130,7 @@ export const RegistrationDetail = observer(() => {
                     </FormField>
                 </FlexGroup>
                 <FlexGroup extraCssClass="row">
-                    <FlexGroup direction="vertical">
-                        <h3 className="mdc-typography--subtitle1">Select one of your standard tasks</h3>
-                        <FormField>
-                            <TasksChips
-                                onTaskInteraction={taskClicked}
-                                selectedTaskIds={task ? [task] : undefined}
-                                choice
-                                tasks={tasks}
-                            />
-                        </FormField>
-                    </FlexGroup>
+                    <Tasks />
                 </FlexGroup>
             </Form>
         </>

@@ -1,6 +1,6 @@
 import React from "react";
 import { render } from "@testing-library/react";
-import { AccountBadge } from "./account-badge";
+import { AccountBadge } from "./";
 
 describe("AccountBadge", () => {
     it("should render", () => {

@@ -1,31 +1,41 @@
 import React, { useEffect } from "react";
+import { transaction } from "mobx";
+
 import { useViewStore } from "../../contexts/view-context";
 import { useUserStore } from "../../contexts/user-context";
 import { Box } from "../../components/layout/box";
 import { DivisionJoinform } from "../../containers/divisions/join-form";
 import { DivisionsList } from "../../containers/divisions/list";
+import { queue } from "../../components/snackbar";
 
 import "./division-tab-content.css";
-import { useDivisionStore } from "../../contexts/division-context";
-import { transaction } from "mobx";
 
 export const DivisionsTabContent = () => {
     const view = useViewStore();
     const user = useUserStore();
-    const division = useDivisionStore();
 
     useEffect(() => {
         view.setActions([
             {
                 action: (selection) => {
                     transaction(async () => {
-                        const ids = [...(selection?.keys() || [])];
-                        await user.divisionUsersCollection.updateAsync(null, ...ids);
-                        if (ids.some(id => id === user.authenticatedUser?.divisionUserId)) {
-                            await user.updateAuthenticatedUser({
-                                divisionUserId: undefined,
+                        let isLeavingActiveDivision = false;
+                        const ids = [...(selection?.keys() || [])]
+                            .filter(id => {
+                                if (id === user.authenticatedUser?.divisionUserId) {
+                                    isLeavingActiveDivision = true;
+                                    return false;
+                                }
+
+                                return true;
+                            });
+
+                        if (isLeavingActiveDivision) {
+                            queue.notify({
+                                title: "You can't leave your active division."
                             });
                         }
+                        await user.divisionUsersCollection.updateAsync(null, ...ids);
 
                     })
                     view.selection.clear();
@@ -37,25 +47,6 @@ export const DivisionsTabContent = () => {
                 contextual: true,
                 selection: view.selection,
             },
-            {
-                action: (selection) => {
-                    if (selection?.size === 1) {
-                        const divisionUserId = [...selection.keys()][0];
-                        const divisionId = user.divisionUsersCollection.get(divisionUserId)?.data!.divisionId;
-                        division.divisionCodesCollection.query = ref => ref.where("divisionId", "==", divisionId);
-                        division.divisionCodesCollection.fetchAsync()
-                            .then(() => {
-                                console.log(division.divisionCodesCollection.docs.map(d => d.data!.code))
-                            });
-                    }
-                },
-                icon: {
-                    content: "share",
-                    label: "Share entry code",
-                },
-                contextual: true,
-                selection: view.selection,
-            }
         ])
     }, [view]);
 

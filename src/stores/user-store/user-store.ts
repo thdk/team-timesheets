@@ -64,6 +64,9 @@ export class UserStore implements IUserStore {
                 serialize: serializer.convertUser,
                 deserialize: deserializer.convertUser,
                 query: null,
+                defaultSetOptions: {
+                    merge: true
+                },
             },
             {
                 // logger: console.log,
@@ -79,6 +82,9 @@ export class UserStore implements IUserStore {
                 serialize: serializer.convertUser,
                 deserialize: deserializer.convertUser,
                 query: null,
+                defaultSetOptions: {
+                    merge: true
+                },
             }, {
             // logger: console.log
         });
@@ -219,14 +225,9 @@ export class UserStore implements IUserStore {
     public get divisionUser(): (IUser & { id: string }) | undefined {
         const divisionUser = this._divisionUser.get();
 
-        if (!divisionUser && this.authenticatedUser?.divisionUserId) {
-            // wait for division user to be loaded
-            return undefined;
-        }
-
         return divisionUser
             ? { ...divisionUser.data!, id: divisionUser.id }
-            : this.authenticatedUser;
+            : this.authenticatedUser ? { ...this.authenticatedUser } : undefined;
     }
 
     @action

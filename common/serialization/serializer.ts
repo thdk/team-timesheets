@@ -89,7 +89,11 @@ export const convertFavoriteRegistration = (appData: Partial<IFavoriteRegistrati
 }
 
 export const convertUser = (appData: Partial<IUser> | null) => {
-    let user: Partial<IDivisionUserData>;
+    let user: Partial<Omit<IDivisionUserData, "divisionId" | "divisionUserId">>
+    & Partial<{
+        divisionId: string | firebase.firestore.FieldValue;
+        divisionUserId: string | firebase.firestore.FieldValue;
+    }>;
     const now = new Date();
     if (appData === null) {
         user = { deleted: true, modified: firebase.firestore.Timestamp.fromDate(now) };
@@ -106,8 +110,8 @@ export const convertUser = (appData: Partial<IUser> | null) => {
             created: firebase.firestore.Timestamp.fromDate(appData.created || now),
             uid: appData.uid,
             email: appData.email,
-            divisionId: appData.divisionId,
-            divisionUserId: appData.divisionUserId,
+            divisionId: appData.divisionId || firebase.firestore.FieldValue.delete(),
+            divisionUserId: appData.divisionUserId || firebase.firestore.FieldValue.delete(),
             deleted: false,
         }
 
@@ -120,8 +124,6 @@ export const convertUser = (appData: Partial<IUser> | null) => {
         if (user.defaultClient === undefined) delete user.defaultClient;
         if (user.team === undefined) delete user.team;
         if (!user.email) delete user.email;
-        if (!user.divisionId) delete user.divisionId;
-        if (!user.divisionUserId) delete user.divisionUserId;
     }
 
     return user;

@@ -21,6 +21,7 @@ jest.mock("../../contexts/registration-context", () => ({
 jest.mock("../../contexts/division-context", () => ({
     useDivisionStore: () => ({
         division: undefined,
+        userDivisions: [],
     }),
 }));
 

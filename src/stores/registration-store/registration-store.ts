@@ -57,7 +57,7 @@ export class RegistrationStore implements IRegistrationsStore {
                     let query = ref
                         .where("date", ">=", startDate)
                         .where("date", "<=", endDate)
-                        .where("userId", "==", userId);
+                        .where("userId", "==", userId.toString());
 
                     return query;
                 }
@@ -97,11 +97,14 @@ export class RegistrationStore implements IRegistrationsStore {
         // -- the logged in user changes
         // -- the organisation changes
         this.reactionDisposeFns = [
-            reaction(() => rootStore.view.monthMoment, () => (
-                updateRegistrationQuery(rootStore.user.divisionUser?.id)
-            )),
-            reaction(() => rootStore.user.divisionUser, user => {
-                updateRegistrationQuery(user?.id)
+            reaction(() => rootStore.view.monthMoment, () => {
+                updateRegistrationQuery(rootStore.user.divisionUser?.id);
+            }),
+            reaction(() => rootStore.user.authenticatedUser, user => {
+                if (!user)
+                    updateRegistrationQuery(undefined);
+                else
+                    updateRegistrationQuery(user.divisionUserId || user.id);
             }, {
                 fireImmediately: true,
             }),

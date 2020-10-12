@@ -97,7 +97,7 @@ export const GroupedRegistrationHeader = (props: GroupedRegistrationHeaderProps)
                             }
                         }
                     }
-                ></FavoriteGroupsMenu>
+                />
             </>
             : <>
                 {displayJSX}

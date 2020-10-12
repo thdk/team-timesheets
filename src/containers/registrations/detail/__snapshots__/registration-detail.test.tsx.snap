@@ -276,7 +276,7 @@ exports[`RegistrationDetail should only show user tasks instead of all tasks 1`]
         <h3
           class="mdc-typography--subtitle1"
         >
-          Select one of your standard tasks
+          Task
         </h3>
         <div
           class="first formField"
@@ -612,7 +612,7 @@ exports[`RegistrationDetail should render when there is a registration 1`] = `
         <h3
           class="mdc-typography--subtitle1"
         >
-          Select one of your standard tasks
+          Task
         </h3>
         <div
           class="first formField"

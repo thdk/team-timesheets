@@ -6,6 +6,8 @@ import { observer } from 'mobx-react-lite';
 import { IRootStore } from '../../stores/root-store';
 import { useStore } from '../../contexts/store-context';
 import { TopBar } from '../ui/top-bar';
+import { queue } from '../../components/snackbar';
+import { SnackbarQueue } from '@rmwc/snackbar';
 
 interface IProps extends React.HTMLProps<HTMLDivElement> {
     store?: IRootStore
@@ -32,7 +34,9 @@ export const App = observer(
                         </div>
                     </main>
                 </DrawerAppContent>
-
+                <SnackbarQueue
+                    messages={queue.messages}
+                />
             </div>
         );
     }

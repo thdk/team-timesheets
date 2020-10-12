@@ -9,22 +9,77 @@ exports[`Drawer should render 1`] = `
       class="mdc-drawer__header"
     >
       <div
-        class="account-badge"
+        class="mdc-menu-surface--anchor"
       >
         <div
-          class="account-badge--content"
+          class="division-users-menu mdc-menu-surface"
+          style="transform-origin: left top; left: 0px; top: 0px; max-height: 736px;"
+        >
+          <ul
+            class="mdc-list"
+          >
+            <li
+              class="mdc-list-divider"
+              role="separator"
+            />
+            <li
+              class="mdc-list-item"
+              tabindex="0"
+            >
+              <i
+                aria-hidden="true"
+                class="rmwc-icon rmwc-icon--ligature material-icons mdc-list-item__graphic"
+              >
+                all_inclusive
+              </i>
+              <span
+                class="mdc-list-item__text"
+              >
+                All
+              </span>
+            </li>
+          </ul>
+          <li
+            class="mdc-list-divider"
+            role="separator"
+          />
+          <ul
+            class="mdc-list"
+          >
+            <li
+              class="mdc-list-item"
+              role="menuitem"
+              tabindex="0"
+            >
+              Manage divisions
+            </li>
+            <li
+              class="mdc-list-item"
+              role="menuitem"
+              tabindex="0"
+            >
+              Preferences
+            </li>
+          </ul>
+        </div>
+        <div
+          class="account-badge"
         >
           <div
-            class="account-badge--image"
+            class="account-badge--content"
           >
-            <img
-              src="https://www.gravatar.com/avatar/db2ff1aecc3bb4c910ab7289c7f920a2?d=mp&s=40"
-            />
-          </div>
-          <div
-            class="account-badge--name"
-          >
-            Foobar
+            <div
+              class="account-badge--image"
+            >
+              <img
+                src="https://www.gravatar.com/avatar/db2ff1aecc3bb4c910ab7289c7f920a2?d=mp&s=40"
+              />
+            </div>
+            <div
+              class="account-badge--name"
+            >
+              Foobar
+            </div>
           </div>
         </div>
       </div>

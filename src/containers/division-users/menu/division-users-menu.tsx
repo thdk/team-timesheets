@@ -84,7 +84,7 @@ export const DivisionUsersMenu = observer(({
                             icon={"all_inclusive"}
                         />
                         <ListItemText>
-                            All
+                            Default
                         </ListItemText>
                     </ListItem>
                 </List>

@@ -1,4 +1,4 @@
-import React, { useMemo, useEffect, useState } from "react";
+import React, { useMemo, useEffect } from "react";
 import { observer } from "mobx-react-lite";
 import { useViewStore } from "../../contexts/view-context";
 import { ITabData, Tabs } from "../../components/tabs";
@@ -16,11 +16,7 @@ export const ProfilePage = withAuthentication(observer(() => {
 
     const areDivisionsEnabled = configs.getConfigValue<boolean>("enable-divisions", false) || false;
 
-    console.log("renders");
-    console.log({areDivisionsEnabled});
     const { divisionUser } = useUserStore();
-
-    const [tab, setTab] = useState("preferences");
 
     useEffect(() => {
         view.title = "User profile";
@@ -46,8 +42,6 @@ export const ProfilePage = withAuthentication(observer(() => {
     return (
         <Tabs
             tabData={tabData}
-            activeTab={tab}
-            onActivate={setTab}
         />
     );
 }), <RedirectToLogin />);

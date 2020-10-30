@@ -20,6 +20,9 @@ exports[`AccountBadge should render 1`] = `
       >
         Foobar
       </div>
+      <div
+        class="account-badge__meta"
+      />
     </div>
   </div>
 </DocumentFragment>

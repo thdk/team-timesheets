@@ -5,12 +5,12 @@ import { observer } from "mobx-react-lite";
 import routes from "../../../routes/users/detail";
 import { useUserStore } from "../../../contexts/user-context";
 import { useRouterStore } from "../../../stores/router-store";
-import { useConfigs } from "../../../stores/config-store";
+import { useConfigStore } from "../../../stores/config-store";
 
 export const UserList = observer(() => {
     const user = useUserStore();
     const router = useRouterStore();
-    const config = useConfigs();
+    const config = useConfigStore();
 
     const onUserClick = useCallback((id: string) => {
         router.goTo(routes.registrationDetail, { id });

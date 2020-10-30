@@ -1,0 +1,3 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Tabs should not render if tabs prop is empty array 1`] = `[Function]`;

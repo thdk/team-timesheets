@@ -26,7 +26,7 @@ export const SettingsPage = observer(() => {
               { id: "connections", text: "Connections", tabContent: <Connections /> },
         ];
 
-    const onTabClick = useCallback((tabId: SettingsTab) => {
+    const onTabChange = useCallback((tabId: SettingsTab) => {
         goToSettings(router, tabId);
     }, [goToSettings, router]);
 
@@ -37,7 +37,7 @@ export const SettingsPage = observer(() => {
         <Tabs
             tabData={tabData}
             activeTab={activeTabId}
-            onActivate={onTabClick}
+            onTabChange={onTabChange}
         />
     );
 });

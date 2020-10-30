@@ -60,6 +60,27 @@ exports[`Drawer should render 1`] = `
             >
               Preferences
             </li>
+            <li
+              class="mdc-list-divider"
+              role="separator"
+            />
+            <li
+              class="mdc-list-item"
+              role="menuitem"
+              tabindex="0"
+            >
+              <i
+                aria-hidden="true"
+                class="rmwc-icon rmwc-icon--ligature material-icons mdc-list-item__graphic"
+              >
+                perm_identity
+              </i>
+              <span
+                class="mdc-list-item__text"
+              >
+                Logout
+              </span>
+            </li>
           </ul>
         </div>
         <div
@@ -79,6 +100,15 @@ exports[`Drawer should render 1`] = `
               class="account-badge__name"
             >
               Foobar
+            </div>
+            <div
+              class="account-badge__meta"
+            >
+              <i
+                class="rmwc-icon rmwc-icon--ligature material-icons"
+              >
+                expand_more
+              </i>
             </div>
           </div>
         </div>
@@ -831,26 +861,6 @@ exports[`Drawer should render 1`] = `
         <hr
           class="mdc-list-divider"
         />
-      </div>
-      <div
-        class="mdc-list"
-      >
-        <a
-          class="mdc-list-item"
-          href="#"
-        >
-          <i
-            aria-hidden="true"
-            class="material-icons mdc-list-item__graphic"
-          >
-            perm_identity
-          </i>
-          <span
-            class="mdc-list-item__text"
-          >
-            Login
-          </span>
-        </a>
       </div>
     </div>
   </aside>

@@ -1,8 +1,8 @@
-import { useConfigs } from "../../stores/config-store/use-config-store";
+import { useConfigStore } from "../../stores/config-store/use-config-store";
 import { useObserver } from "mobx-react-lite";
 
 export const useClients = () => {
-    const configStore = useConfigs();
+    const configStore = useConfigStore();
 
     return useObserver(() => ({
         clients: configStore.clients,

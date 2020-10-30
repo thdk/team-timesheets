@@ -12,6 +12,8 @@ jest.mock('../../stores/router-store', () => ({
     }),
 }));
 
+jest.mock('../configs/use-configs');
+
 jest.mock("../../contexts/registration-context", () => ({
     useRegistrationStore: () => ({
         registrationsGroupedByDay: [],

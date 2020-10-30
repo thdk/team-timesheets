@@ -4,13 +4,13 @@ import { observer } from 'mobx-react-lite';
 
 import { canWriteClient } from '../../../rules';
 import { SettingsList, IListItemData } from '../../../components/settings-list';
-import { useConfigs } from '../../../stores/config-store';
+import { useConfigStore } from '../../../stores/config-store';
 import { useUserStore } from '../../../contexts/user-context';
 import { useViewStore } from '../../../contexts/view-context';
 
 export const ClientList = observer(() => {
     const user = useUserStore();
-    const config = useConfigs();
+    const config = useConfigStore();
     const view = useViewStore();
 
     const saveListItem = (data: IListItemData, id?: string) => {

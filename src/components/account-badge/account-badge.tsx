@@ -32,7 +32,9 @@ export const AccountBadge = ({
                 <div className="account-badge__name">
                     {name}
                 </div>
-                {meta}
+                <div className="account-badge__meta">
+                    {meta}
+                </div>
             </div>
         </div>
     )

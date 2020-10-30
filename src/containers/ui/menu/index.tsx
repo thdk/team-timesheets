@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { observer } from 'mobx-react-lite';
 
-import { goToOverview, goToSettings, goToReports, goToProjects, goToDashboard, goToLogin, goToFavorites } from "../../../internal";
+import { goToOverview, goToSettings, goToReports, goToProjects, goToDashboard, goToFavorites } from "../../../internal";
 
 import { canManageProjects } from '../../../rules';
 import TimesheetCalendar from '../../timesheet-calendar/timesheet-calendar';
@@ -9,12 +9,10 @@ import { withAuthentication } from '../../users/with-authentication';
 import { withAuthorisation } from '../../users/with-authorisation';
 import { useViewStore } from '../../../contexts/view-context';
 import { useRouterStore } from '../../../stores/router-store';
-import { useUserStore } from '../../../contexts/user-context';
 
 export const Menu = observer(() => {
     const view = useViewStore();
     const router = useRouterStore();
-    const user = useUserStore();
 
     const navigateToOverview = (e: React.MouseEvent, month = false) => {
         e.preventDefault();
@@ -23,11 +21,6 @@ export const Menu = observer(() => {
             router,
             view,
         }, { day: month ? undefined : date.getDate(), month: date.getMonth() + 1, year: date.getFullYear() }, { track: false });
-    }
-
-    const toggleLogin = (e: React.MouseEvent) => {
-        e.preventDefault();
-        user.authenticatedUser ? user.signout() : goToLogin(router);
     }
 
     const navigate = (e: React.MouseEvent, navigate: () => void) => {
@@ -93,13 +86,6 @@ export const Menu = observer(() => {
         <>
             <TimesheetCalendar />
             <AuthenticatedMenu />
-
-            <div className="mdc-list">
-                <a className="mdc-list-item" onClick={toggleLogin} href="#">
-                    <i className="material-icons mdc-list-item__graphic" aria-hidden="true">perm_identity</i>
-                    <span className="mdc-list-item__text">{user.authenticatedUserId ? "Logout" : "Login"}</span>
-                </a>
-            </div>
         </>
     );
 });

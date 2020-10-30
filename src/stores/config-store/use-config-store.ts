@@ -1,6 +1,6 @@
 import { useStore } from "../../contexts/store-context"
 
-export const useConfigs = () => {
+export const useConfigStore = () => {
     const { config } = useStore();
 
     return config;

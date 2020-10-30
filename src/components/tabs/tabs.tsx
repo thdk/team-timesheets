@@ -1,7 +1,6 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, useState } from 'react';
 import { Tab, TabBar } from "@rmwc/tabs";
-
-import { useUserStore } from "../../contexts/user-context";
+import { useCallback } from 'react';
 
 export interface ITabData<T extends string = string> {
     id: T;
@@ -11,53 +10,77 @@ export interface ITabData<T extends string = string> {
     tabContent: React.ReactNode;
 }
 
+const TabButtons = <T extends string>({
+    tabs,
+    onClick,
+}: {
+    tabs: ITabData<T>[];
+    onClick(id: T): void;
+}) => {
+    return (
+        <>
+            {tabs.map(({ icon, id, text }) => (
+                <Tab
+                    onClick={() => onClick(id)}
+                    key={id}
+                    icon={icon}
+                >
+                    {text}
+                </Tab>
+            ))}
+        </>
+    );
+};
+
 export const Tabs = <T extends string>({
     tabData,
     activeTab,
-    onActivate,
+    onTabChange,
 }: {
     tabData: ITabData<T>[];
     activeTab?: T;
-    onActivate: (id: T) => void;
+    onTabChange?: (id: T) => void;
 }) => {
-    const { divisionUser: user } = useUserStore();
-
     const validTabs = useMemo(() => {
         return tabData.filter(t => !t.canOpen || t.canOpen());
-    }, [user, tabData]);
+    }, [tabData]);
 
+    const [tab, setTab] = useState(activeTab);
+    const activeTabIndex = useMemo(
+        () => {
+            return tab
+                ? validTabs.findIndex(t => t.id === tab)
+                : 0;
+        },
+        [validTabs, tab],
+    );
 
-    if (!validTabs.length) return <></>
+    const handleOnTabClick = useCallback(
+        (id: T) => {
+            setTab(id);
+            if (onTabChange) {
+                onTabChange(id);
+            }
+        },
+        [onTabChange],
+    );
 
-    const tabs = validTabs.map(({ icon, id, text }) => {
-        return <Tab
-            onClick={onActivate.bind(null, id)}
-            key={id}
+    if (!validTabs.length) {
+        return null;
+    }
 
-            icon={icon}
-        >
-            {text}
-        </Tab>;
-    });
-
-    let activeTabIndex = activeTab
-        ? validTabs.findIndex(t => t.id === activeTab)
-        : 0;
-
-    activeTabIndex = activeTabIndex === -1
-        ? 0
-        : activeTabIndex;
-
-    return validTabs.length ?
-        (
-            <>
-                <TabBar
-                    activeTabIndex={activeTabIndex}
-                >
-                    {tabs}
-                </TabBar>
-                {validTabs[activeTabIndex].tabContent}
-            </>
-        )
-        : null;
+    return (
+        <>
+            <TabBar
+                activeTabIndex={activeTabIndex}
+            >
+                <TabButtons
+                    tabs={validTabs}
+                    onClick={handleOnTabClick}
+                />
+            </TabBar>
+            {validTabs[activeTabIndex].tabContent}
+        </>
+    );
 };
+Tabs.displayName = "Tabs";

@@ -4,11 +4,11 @@ import { observer } from "mobx-react-lite";
 import { canManageTeams } from "../../../rules";
 import { SettingsList, IListItemData } from "../../../components/settings-list";
 import { useUserStore } from "../../../contexts/user-context";
-import { useConfigs } from "../../../stores/config-store";
+import { useConfigStore } from "../../../stores/config-store";
 import { useViewStore } from "../../../contexts/view-context";
 
 export const TeamList = observer(() => {
-    const config = useConfigs();
+    const config = useConfigStore();
     const view = useViewStore();
     const user = useUserStore();
 

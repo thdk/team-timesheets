@@ -25,10 +25,8 @@ export const getDivisionByEntryCode = functions.https.onCall((code: string, cont
                 }
 
                 if (snapshot.size) {
-                    console.log("OK4");
                     return snapshot.docs[0].data().divisionId;
                 }
-                console.log("OK5");
 
                 return undefined;
             }

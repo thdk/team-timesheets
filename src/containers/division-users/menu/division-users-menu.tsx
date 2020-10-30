@@ -31,14 +31,22 @@ export const DivisionUsersMenu = observer(({
         });
     }, [goToUserProfile, user, division]);
 
-    const handleAccountOnClick = useCallback(() => {
+    const handleAccountOnClick = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
+        e.stopPropagation();
+
         if (division.userDivisions.length > 1) {
-            setIsMenuOpen(!isMenuOpen);
+            setIsMenuOpen(true);
         }
         else {
             goToUserProfile(router);
         }
-    }, [router, division, setIsMenuOpen, goToUserProfile]);
+    }, [router, division, goToUserProfile]);
+
+    const handleOnMenuClose = async () => {
+        await Promise.resolve();
+
+        setIsMenuOpen(false);
+    };
 
     const displayName = division.division || user.authenticatedUser?.divisionId
         ? (
@@ -61,7 +69,7 @@ export const DivisionUsersMenu = observer(({
             <MenuSurface
                 anchorCorner={"bottomStart"}
                 open={isMenuOpen}
-                onClose={() => setIsMenuOpen(false)}
+                onClose={handleOnMenuClose}
                 className={"division-users-menu"}
                 {...menuProps}
             >

@@ -15,21 +15,28 @@
     display: flex;
 }
 
-.account-badge--content {
+.account-badge__content {
     display: flex;
+    width: 100%;
+    align-items: center;
 }
 
-.account-badge--name {
+.account-badge__name {
     display: flex;
     align-items: center;
     padding-left: 6px;
     padding-right: 1em;
+    width: 100%;
 }
 
-.account-badge--image {
+.account-badge__icon {
+    margin: 5px;
+}
+
+.account-badge__image {
     display: flex;
 }
-.account-badge--image img {
+.account-badge__image img {
     border-radius: 25px;
     margin: 3px;
 }

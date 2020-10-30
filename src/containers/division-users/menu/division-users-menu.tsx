@@ -11,6 +11,7 @@ import { AccountBadge } from "../../../components/account-badge";
 import { IDivision } from "../../../../common/interfaces/IOrganisation";
 
 import "./division-users-menu.css";
+import { Icon } from "@rmwc/icon";
 
 export const DivisionUsersMenu = observer(({
     children,
@@ -34,7 +35,7 @@ export const DivisionUsersMenu = observer(({
     const handleAccountOnClick = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
         e.stopPropagation();
 
-        if (division.userDivisions.length > 1) {
+        if (division.userDivisions.length) {
             setIsMenuOpen(true);
         }
         else {
@@ -121,6 +122,9 @@ export const DivisionUsersMenu = observer(({
                 email={email}
                 name={displayName}
                 onClick={handleAccountOnClick}
+                meta={division.userDivisions.length
+                    ? <Icon icon="expand_more" />
+                    : null}
             />
         </MenuSurfaceAnchor>
     )

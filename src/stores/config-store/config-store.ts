@@ -73,6 +73,7 @@ export class ConfigStore implements IConfigStore {
             "configs",
             {
                 fetchMode: FetchMode.auto,
+                realtimeMode: RealtimeMode.off,
             }
         )
 

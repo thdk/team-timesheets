@@ -20,11 +20,6 @@ exports[`AccountBadge should render 1`] = `
       >
         Foobar
       </div>
-      <i
-        class="rmwc-icon rmwc-icon--ligature material-icons"
-      >
-        expand_more
-      </i>
     </div>
   </div>
 </DocumentFragment>

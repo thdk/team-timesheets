@@ -7,10 +7,17 @@ import { Preferences } from "../settings/preferences";
 import { withAuthentication } from "../../containers/users/with-authentication";
 import { RedirectToLogin } from "../../internal";
 import { DivisionsTabContent } from "./division-tab-content";
+import { useConfigs } from "../../containers/configs/use-configs";
+
 
 export const ProfilePage = withAuthentication(observer(() => {
     const view = useViewStore();
+    const configs = useConfigs();
 
+    const areDivisionsEnabled = configs.getConfigValue<boolean>("enable-divisions", false) || false;
+
+    console.log("renders");
+    console.log({areDivisionsEnabled});
     const { divisionUser } = useUserStore();
 
     const [tab, setTab] = useState("preferences");
@@ -32,9 +39,9 @@ export const ProfilePage = withAuthentication(observer(() => {
             tabContent: <DivisionsTabContent />,
             text: "My divisions",
             icon: "groups",
-            canOpen: () => !!divisionUser,
+            canOpen: () => !!divisionUser && areDivisionsEnabled,
         },
-    ], [divisionUser]);
+    ], [divisionUser, areDivisionsEnabled]);
 
     return (
         <Tabs

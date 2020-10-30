@@ -24,7 +24,7 @@ export const Tabs = <T extends string>({
 
     const validTabs = useMemo(() => {
         return tabData.filter(t => !t.canOpen || t.canOpen());
-    }, [user]);
+    }, [user, tabData]);
 
 
     if (!validTabs.length) return <></>

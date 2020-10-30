@@ -2,7 +2,7 @@ import React, { HTMLProps } from "react";
 import md5 from "md5";
 
 import "./account-badge.scss";
-import { Icon } from "@rmwc/icon";
+import { ReactNode } from "react";
 
 type Gravatar = "404" | "mp" | "identicon" | "monsterid" | "wavatar" | "retro" | "robohash" | "blank";
 
@@ -11,12 +11,14 @@ export const AccountBadge = ({
     email,
     defaultGravatar = "mp",
     size = 40,
+    meta,
     ...props
 }: {
     name: string;
     email: string;
     defaultGravatar?: Gravatar;
     size?: number;
+    meta?: ReactNode;
 } & HTMLProps<HTMLDivElement>) => {
     return (
         <div
@@ -30,9 +32,7 @@ export const AccountBadge = ({
                 <div className="account-badge__name">
                     {name}
                 </div>
-                <Icon
-                    icon="expand_more"
-                />
+                {meta}
             </div>
         </div>
     )

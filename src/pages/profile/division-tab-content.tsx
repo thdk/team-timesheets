@@ -4,8 +4,8 @@ import { transaction } from "mobx";
 import { useViewStore } from "../../contexts/view-context";
 import { useUserStore } from "../../contexts/user-context";
 import { Box } from "../../components/layout/box";
-import { DivisionJoinform } from "../../containers/divisions/join-form";
-import { DivisionsList } from "../../containers/divisions/list";
+import { DivisionJoinform } from "../../containers/division-users/join-form";
+import { DivisionsList } from "../../containers/division-users/list";
 import { queue } from "../../components/snackbar";
 
 import "./division-tab-content.css";

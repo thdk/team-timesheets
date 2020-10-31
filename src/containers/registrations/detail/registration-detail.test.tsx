@@ -20,8 +20,8 @@ jest.mock("../../../contexts/client-context");
 jest.mock("../../../contexts/project-context");
 
 beforeEach(() => {
-    // jest.resetAllMocks();
-    // jest.restoreAllMocks();
+    jest.resetAllMocks();
+    jest.restoreAllMocks();
 
     const tasks = new Map();
     tasks.set("task-1", true);

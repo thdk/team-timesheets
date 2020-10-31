@@ -1,5 +1,8 @@
-import React from "react";
+import React, { HTMLProps } from "react";
 import md5 from "md5";
+
+import "./account-badge.scss";
+import { ReactNode } from "react";
 
 type Gravatar = "404" | "mp" | "identicon" | "monsterid" | "wavatar" | "retro" | "robohash" | "blank";
 
@@ -8,23 +11,30 @@ export const AccountBadge = ({
     email,
     defaultGravatar = "mp",
     size = 40,
+    meta,
+    ...props
 }: {
     name: string;
     email: string;
     defaultGravatar?: Gravatar;
     size?: number;
-
-}) => {
+    meta?: ReactNode;
+} & HTMLProps<HTMLDivElement>) => {
     return (
-        <div className="account-badge">
-            <div className="account-badge--content">
-                <div className="account-badge--image">
+        <div
+            className="account-badge"
+            {...props}
+        >
+            <div className="account-badge__content">
+                <div className="account-badge__image">
                     <img src={`https://www.gravatar.com/avatar/${md5(email)}?d=${defaultGravatar}&s=${size}`} />
                 </div>
-                <div className="account-badge--name">
+                <div className="account-badge__name">
                     {name}
                 </div>
-
+                <div className="account-badge__meta">
+                    {meta}
+                </div>
             </div>
         </div>
     )

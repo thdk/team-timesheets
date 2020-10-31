@@ -82,7 +82,8 @@ export class ProjectStore implements IProjectStore {
     @action
     public setDefaultProject(project?: Partial<IProject>) {
         const defaultProject: Partial<IProject> = {
-            createdBy: this.rootStore.user.authenticatedUserId,
+            createdBy: this.rootStore.user.divisionUser?.id,
+            divisionId: this.rootStore.user.divisionUser?.divisionId,
         };
 
         transaction(() => {

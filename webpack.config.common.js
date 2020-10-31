@@ -67,11 +67,11 @@ module.exports = {
                 ]
             },
             // All output '.js' files will have any sourcemaps re-processed by 'source-map-loader'.
-            {
-                test: /\.js$/,
-                enforce: "pre",
-                loader: "source-map-loader"
-            },
+            // {
+            //     test: /\.js$/,
+            //     enforce: "pre",
+            //     loader: "source-map-loader"
+            // },
         ]
     },
 
@@ -81,9 +81,6 @@ module.exports = {
         new HtmlWebpackPlugin(
             {
                 template: 'src/index.html',
-                minify: {
-                    removeComments: false, // temporary needed because we still use gulp to inject css files in the template too
-                }
             }
         ),
         new CopyPlugin([

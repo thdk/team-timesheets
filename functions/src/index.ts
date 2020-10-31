@@ -72,3 +72,5 @@ exports.watchForFilesToImportFrom = watchForFilesToImportFrom;
 exports.watchImportSessions = watchImportSessions;
 
 export * from "./create-csv";
+
+export * from "./firestore/division";

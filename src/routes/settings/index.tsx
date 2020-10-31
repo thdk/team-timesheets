@@ -11,17 +11,17 @@ import { setNavigationContent } from "../actions";
 export type SettingsRouteQueryParams = { tab: SettingsTab };
 type SettingsRoute = Route<IRootStore, {}, SettingsRouteQueryParams>;
 
-export const goToSettings = (router: RouterStore<IRootStore>, tab: SettingsTab = "preferences") => {
+export const goToSettings = (router: RouterStore<IRootStore>, tab: SettingsTab = "tasks") => {
     router.goTo(routes.preferences, {}, { tab });
 }
 
-export type SettingsTab = "connections" | "tasks" | "preferences" | "clients" | "users" | "teams";
+export type SettingsTab = "connections" | "tasks" | "clients" | "users" | "teams";
 
 const setActions = (tab: SettingsTab, store: IRootStore) => {
-    when(() => store.user.authenticatedUser !== undefined, () => {
+    when(() => store.user.divisionUser !== undefined, () => {
         switch (tab) {
             case "tasks": {
-                const deleteAction: IViewAction | undefined = canDeleteTask(store.user.authenticatedUser)
+                const deleteAction: IViewAction | undefined = canDeleteTask(store.user.divisionUser)
                     ? {
                         action: () => {
                             store.view.selection.size && store.config.tasksCollection.deleteAsync(...store.view.selection.keys());
@@ -39,7 +39,7 @@ const setActions = (tab: SettingsTab, store: IRootStore) => {
                 break;
             }
             case "clients": {
-                const deleteAction: IViewAction | undefined = canDeleteClient(store.user.authenticatedUser) ?
+                const deleteAction: IViewAction | undefined = canDeleteClient(store.user.divisionUser) ?
                     {
                         action: () => {
                             store.view.selection.size && store.config.clientsCollection.deleteAsync(...store.view.selection.keys());
@@ -56,7 +56,7 @@ const setActions = (tab: SettingsTab, store: IRootStore) => {
                 break;
             }
             case "teams": {
-                const deleteAction: IViewAction | undefined = canManageTeams(store.user.authenticatedUser) ?
+                const deleteAction: IViewAction | undefined = canManageTeams(store.user.divisionUser) ?
                     {
                         action: () => {
                             store.view.selection.size && store.config.teamsCollection.deleteAsync(...store.view.selection.keys());

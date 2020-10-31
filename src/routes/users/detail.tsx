@@ -18,7 +18,7 @@ const routes = {
         component: <App><User></User></App>,
         title: "Edit user details",
         beforeEnter: (_route: UserDetailsRoute, params: RouteParams, s: IRootStore) => {
-            s.user.setSelectedUserId(params.id || s.user.authenticatedUserId);
+            s.user.setSelectedUserId(params.id || s.user.divisionUser?.id);
         },
         onEnter: (route: UserDetailsRoute, _params: RouteParams, s: IRootStore) => {
             const saveAction: IViewAction = {

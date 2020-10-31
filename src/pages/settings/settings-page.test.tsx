@@ -4,7 +4,7 @@ import { render } from "@testing-library/react";
 
 jest.mock("../../contexts/user-context", () => ({
     useUserStore: () => ({
-        authenticatedUser: {
+        divisionUser: {
             id: "user-1",
             roles: {},
         },
@@ -25,10 +25,9 @@ jest.mock('../../stores/router-store', () => ({
     }),
 }));
 
-jest.mock('./preferences', () => ({
-    Preferences: () => <>Preferences-Content</>,
+jest.mock('./connections', () => ({
+    Connections: () => <>Connections</>,
 }));
-
 jest.mock('../../containers/tasks/list', () => ({
     TaskList: () => <>Tasks-Content</>,
 }));

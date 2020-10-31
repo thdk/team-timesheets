@@ -5,7 +5,7 @@ import { IRegistrationData } from "../../../common";
 import firebase from "firebase/app";
 import { waitFor } from "@testing-library/react";
 import { reaction, transaction } from "mobx";
-import { Store } from "../root-store";
+import { Store, IRootStore } from "../root-store";
 
 const {
     firestore,
@@ -18,12 +18,13 @@ const {
     [
         "registrations",
         "users",
+        "division-users",
     ]);
 
 const userCollection = new TestCollection(firestore, userRef);
 const registrationCollection = new TestCollection<IRegistrationData>(firestore, registrationRef);
 
-const store = new Store({ firestore });
+let store: IRootStore;
 
 const setupAsync = () => {
     return Promise.all([
@@ -34,6 +35,7 @@ const setupAsync = () => {
                 roles: {
                     user: true,
                 },
+                email: "email@email.com",
                 uid: "user-1",
             },
             "user-1",
@@ -96,20 +98,28 @@ const setupAsync = () => {
     ]);
 };
 
-beforeAll(() => Promise.all([
-    clearFirestoreDataAsync(),
-    setupAsync(),
-]));
+let unsubscribe: () => void;
+beforeEach(() => {
+    store = new Store({ firestore });
+    return setupAsync();
+});
 
-afterAll(() => store.dispose());
+afterEach(() => {
+    unsubscribe();
+    store.dispose();
+    return clearFirestoreDataAsync();
+});
 afterAll(deleteFirebaseAppsAsync);
 
-fdescribe("RegistrationStore", () => {
-    let unsubscribe: () => void;
+describe("RegistrationStore", () => {
 
-    beforeAll(() => {
+    beforeEach(() => {
         transaction(() => {
-            store.user.setUser({ uid: "user-1", displayName: "user 1" } as firebase.User);
+            store.user.setUser({
+                uid: "user-1",
+                displayName: "user 1",
+                email: "email@email.com",
+            } as firebase.User);
             store.view.setViewDate({
                 year: 2020,
                 month: 4,
@@ -120,8 +130,6 @@ fdescribe("RegistrationStore", () => {
         // We need to observe something otherwise registrations aren't fetched :)
         unsubscribe = reaction(() => store.timesheets.registrationsGroupedByDay, () => { })
     });
-
-    afterAll(() => unsubscribe());
 
     describe("registrationsGroupedByDay / registrationsGroupedByDayReversed", () => {
 
@@ -201,30 +209,26 @@ fdescribe("RegistrationStore", () => {
                 store.user.setUser(null);
 
                 await waitFor(() => {
-                    expect(store.user.authenticatedUser).toBeFalsy();
+                    expect(store.user.divisionUser).toBeFalsy();
                     expect(
                         store.timesheets.registrationsGroupedByDay.length
                     ).toBe(0);
                 });
-
-                store.user.setUser({ uid: "user-1", displayName: "user 1" } as firebase.User);
-
-                await waitFor(() => expect(store.user.authenticatedUserId).toBe("user-1"));
             });
         });
 
         describe("when there are no registrations for the current user", () => {
             it("should return an empty list", async () => {
-                store.user.setUser({ uid: "user-2", displayName: "user 2" } as firebase.User)
+                store.user.setUser({
+                    uid: "user-2",
+                    displayName: "user 2",
+                    email: "email2@email.com",
+                } as firebase.User)
 
                 await waitFor(
                     () => expect(store.timesheets.registrationsGroupedByDay.length)
                         .toBe(0)
                 );
-
-                store.user.setUser({ uid: "user-1", displayName: "user 1" } as firebase.User);
-
-                await waitFor(() => expect(store.user.authenticatedUserId).toBe("user-1"));
             });
         });
     });
@@ -233,6 +237,9 @@ fdescribe("RegistrationStore", () => {
 
         describe("when set from false (default) to true", () => {
             it("should set isCollapsed property of all groups to 'true'", async () => {
+                await waitFor(() => expect(store.user.divisionUser).toBeDefined());
+                await waitFor(() => expect(store.timesheets.registrations.isFetched).toBeTruthy());
+
                 store.timesheets.areGroupedRegistrationsCollapsed = true;
 
                 await waitFor(() =>
@@ -296,6 +303,9 @@ fdescribe("RegistrationStore", () => {
             });
 
             it("should set selectedRegistrationDays", async () => {
+                await waitFor(() => expect(store.user.divisionUser).toBeDefined());
+                await waitFor(() => expect(store.timesheets.registrations.isFetched).toBeTruthy());
+
                 await waitFor(() =>
                     expect(store.timesheets.registrationsGroupedByDay
                         .some(g => !g.isCollapsed)
@@ -331,19 +341,23 @@ fdescribe("RegistrationStore", () => {
 
     describe("setSelectedRegistration", () => {
         describe("when the requested registration id exists in the current filter", () => {
-            it("should set selectedRegistration and selectedRegistrationId", () => {
+            it("should set selectedRegistration and selectedRegistrationId", async () => {
+                await waitFor(() => expect(store.user.divisionUser).toBeDefined());
+                await waitFor(() => expect(store.timesheets.registrations.isFetched).toBeTruthy());
+
                 store.timesheets.setSelectedRegistration("reg-1");
 
                 expect(store.timesheets.registrationId).toBe("reg-1");
                 expect(store.timesheets.registration).toBeDefined();
                 expect(store.timesheets.registration!.description).toBe("desc 3");
-
-                store.timesheets.setSelectedRegistration(undefined);
             });
         });
 
         describe("when the requested registration id does not exist in the current filter", () => {
             it("should fetch the registration and set selectedRegistration and selectedRegistrationId", async () => {
+                await waitFor(() => expect(store.user.divisionUser).toBeDefined());
+                await waitFor(() => expect(store.timesheets.registrations.isFetched).toBeTruthy());
+
                 store.timesheets.setSelectedRegistration("reg-2");
 
                 await waitFor(() => {
@@ -359,6 +373,9 @@ fdescribe("RegistrationStore", () => {
 
     describe("saveSelectedRegistration", () => {
         it("should save changes to the selected registration", async () => {
+            await waitFor(() => expect(store.user.divisionUser).toBeDefined());
+            await waitFor(() => expect(store.timesheets.registrations.isFetched).toBeTruthy());
+
             store.timesheets.setSelectedRegistration("reg-1");
 
             await waitFor(() => {
@@ -394,34 +411,39 @@ fdescribe("RegistrationStore", () => {
     });
 
     describe("toggleSelectedRegistrationDay", () => {
-        store.timesheets.toggleSelectedRegistrationDay(
-            "Sat Apr 04 2020"
-        );
+        it("should set selectedRegistrationDays property", async () => {
+            await waitFor(() => expect(store.user.divisionUser).toBeDefined());
+            await waitFor(() => expect(store.timesheets.registrations.isFetched).toBeTruthy());
 
-        expect(store.timesheets.selectedRegistrationDays)
-            .toEqual(
-                expect.arrayContaining([
-                    "Sat Apr 04 2020",
-                ])
+            store.timesheets.toggleSelectedRegistrationDay(
+                "Sat Apr 04 2020"
             );
 
-        store.timesheets.toggleSelectedRegistrationDay(
-            "Sat Apr 04 2020",
-            true,
-        );
+            expect(store.timesheets.selectedRegistrationDays)
+                .toEqual(
+                    expect.arrayContaining([
+                        "Sat Apr 04 2020",
+                    ])
+                );
 
-        expect(store.timesheets.selectedRegistrationDays)
-            .toEqual(
-                expect.arrayContaining([
-                    "Sat Apr 04 2020",
-                ])
+            store.timesheets.toggleSelectedRegistrationDay(
+                "Sat Apr 04 2020",
+                true,
             );
 
-        store.timesheets.toggleSelectedRegistrationDay(
-            "Sat Apr 04 2020"
-        );
+            expect(store.timesheets.selectedRegistrationDays)
+                .toEqual(
+                    expect.arrayContaining([
+                        "Sat Apr 04 2020",
+                    ])
+                );
 
-        expect(store.timesheets.selectedRegistrationDays)
-            .toEqual([]);
+            store.timesheets.toggleSelectedRegistrationDay(
+                "Sat Apr 04 2020"
+            );
+
+            expect(store.timesheets.selectedRegistrationDays)
+                .toEqual([]);
+        });
     });
 });

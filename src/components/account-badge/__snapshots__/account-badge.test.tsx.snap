@@ -6,20 +6,23 @@ exports[`AccountBadge should render 1`] = `
     class="account-badge"
   >
     <div
-      class="account-badge--content"
+      class="account-badge__content"
     >
       <div
-        class="account-badge--image"
+        class="account-badge__image"
       >
         <img
           src="https://www.gravatar.com/avatar/0d4907cea9d97688aa7a5e722d742f71?d=mp&s=40"
         />
       </div>
       <div
-        class="account-badge--name"
+        class="account-badge__name"
       >
         Foobar
       </div>
+      <div
+        class="account-badge__meta"
+      />
     </div>
   </div>
 </DocumentFragment>

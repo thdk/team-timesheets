@@ -8,7 +8,7 @@ import { IReportStore, ReportStore } from "../report-store/report-store";
 import { DashboardStore, IDashboardStore } from "../dashboard-store";
 import { IProjectStore, ProjectStore } from "../project-store";
 import { FavoriteStore } from "../favorite-store";
-import { observable } from "mobx";
+import { DivisionStore  } from "../division-store/division-store";
 
 export interface IRootStore extends Store { };
 
@@ -22,9 +22,7 @@ export class Store implements IRootStore {
     public readonly dashboard: IDashboardStore;
     public readonly projects: IProjectStore;
     public readonly favorites: FavoriteStore;
-
-    @observable.ref
-    private organisationId: string | undefined = undefined;
+    public readonly divisions: DivisionStore;
 
     constructor({
         auth,
@@ -78,24 +76,22 @@ export class Store implements IRootStore {
                 firestore,
             },
         );
+        this.divisions = new DivisionStore(
+            this,
+            {
+                firestore,
+            },
+        );
         this.router = new RouterStore<IRootStore>(this);
     }
 
-    public setOrganisationId(id: string | undefined) {
-        this.organisationId = id;
-    }
-
-    public getOrganisationId() {
-        return this.organisationId;
-    }
-
     public dispose() {
-        // this.config.dispose();
+        this.config.dispose();
         // this.dashboard.dispose();
         // this.favorites.dispose();
         // this.projects.dispose();
         // this.reports.dispose();
-        // this.timesheets.dispose();
+        this.timesheets.dispose();
         this.user.dispose();
         // this.view.dispose();
     }

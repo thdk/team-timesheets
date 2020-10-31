@@ -20,15 +20,10 @@ jest.mock("../../contexts/store-context", () => ({
     useStore: () => store,
 }));
 
-jest.mock("../../contexts/user-context", () => ({
-    useUserStore: jest.fn().mockReturnValue({
-        authenticatedUser: {},
-    }),
-}));
+jest.mock("../../contexts/user-context");
 
 jest.mock("../../rules");
 jest.mock("../../routes/registrations/detail");
-
 
 beforeAll(clearFirestoreDataAsync);
 afterAll(() => {
@@ -97,6 +92,11 @@ const registrations = [
 
 describe("Export Page", () => {
     it("should render without registrations", () => {
+        store.view.setViewDate({
+            year: 2020,
+            month: 9,
+        });
+
         const { asFragment } = render(<ExportPage />);
 
         expect(asFragment()).toMatchSnapshot();

@@ -51,8 +51,11 @@ describe("UserDetail", () => {
             firestore,
             userRef,
             {
-                serialize: convertUser
-            }
+                serialize: convertUser,
+                defaultSetOptions: {
+                    merge: true,
+                },
+            },
         );
         beforeAll(async () => {
             await Promise.all([

@@ -1,7 +1,7 @@
 import * as React from 'react';
+import { observer } from 'mobx-react-lite';
 
 import { CollectionSelect } from '../../../components/collection-select';
-import { observer } from 'mobx-react-lite';
 import { useClients } from '../../../contexts/client-context';
 
 export interface IClientSelectProps {

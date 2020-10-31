@@ -1,6 +1,17 @@
 import * as firebase from 'firebase/app';
-import { IRegistration, IRegistrationData, IUser, IUserData, ITeam, ITeamData, IProject, IProjectData, IFavoriteRegistration } from '../interfaces';
+import { IRegistration,
+    IRegistrationData,
+    IUser,
+    ITeam,
+    ITeamData,
+    IProject,
+    IProjectData,
+    IFavoriteRegistration,
+    IDivisionUserData,
+} from '../interfaces';
 import { INameWithIconData, INameWithIcon } from '../interfaces/base';
+import { IDivision } from '../interfaces/IOrganisation';
+import { IDivisionData } from '../interfaces/IOrganisationData';
 
 export const convertRegistration = (appData: Partial<IRegistration> | null) => {
     let registration: Partial<IRegistrationData>;
@@ -78,37 +89,42 @@ export const convertFavoriteRegistration = (appData: Partial<IFavoriteRegistrati
 }
 
 export const convertUser = (appData: Partial<IUser> | null) => {
-    if (appData === null) {
-        throw new Error("Deleting user is not supported");
-    }
-
+    let user: Partial<Omit<IDivisionUserData, "divisionId" | "divisionUserId">>
+    & Partial<{
+        divisionId: string | firebase.firestore.FieldValue;
+        divisionUserId: string | firebase.firestore.FieldValue;
+    }>;
     const now = new Date();
+    if (appData === null) {
+        user = { deleted: true, modified: firebase.firestore.Timestamp.fromDate(now) };
+    } else {
+        user = {
+            tasks: appData.tasks ? Array.from(appData.tasks.keys()) : undefined,
+            name: appData.name,
+            roles: appData.roles,
+            defaultTask: appData.defaultTask || "",
+            recentProjects: appData.recentProjects,
+            defaultClient: appData.defaultClient,
+            team: appData.team,
+            modified: firebase.firestore.Timestamp.fromDate(now),
+            created: firebase.firestore.Timestamp.fromDate(appData.created || now),
+            uid: appData.uid,
+            email: appData.email,
+            divisionId: appData.divisionId || firebase.firestore.FieldValue.delete(),
+            divisionUserId: appData.divisionUserId || firebase.firestore.FieldValue.delete(),
+            deleted: false,
+        }
 
-    const user: Partial<IUserData> = {
-        tasks: appData.tasks ? Array.from(appData.tasks.keys()) : undefined,
-        name: appData.name,
-        roles: appData.roles,
-        defaultTask: appData.defaultTask || "",
-        recentProjects: appData.recentProjects,
-        defaultClient: appData.defaultClient,
-        team: appData.team,
-        modified: firebase.firestore.Timestamp.fromDate(now),
-        created: firebase.firestore.Timestamp.fromDate(appData.created || now),
-        uid: appData.uid,
-        email: appData.email,
-        organisationId: appData.organisationId,
+        // Todo: automatically remove undefined values for all keys
+        if (!user.roles) delete user.roles;
+        if (!user.name) delete user.name;
+        if (!user.defaultTask) delete user.defaultTask;
+        if (!user.tasks) delete user.tasks;
+        if (!user.recentProjects) delete user.recentProjects;
+        if (user.defaultClient === undefined) delete user.defaultClient;
+        if (user.team === undefined) delete user.team;
+        if (!user.email) delete user.email;
     }
-
-    // Todo: automatically remove undefined values for all keys
-    if (!user.roles) delete user.roles;
-    if (!user.name) delete user.name;
-    if (!user.defaultTask) delete user.defaultTask;
-    if (!user.tasks) delete user.tasks;
-    if (!user.recentProjects) delete user.recentProjects;
-    if (user.defaultClient === undefined) delete user.defaultClient;
-    if (user.team === undefined) delete user.team;
-    if (!user.email) delete user.email;
-    if (!user.organisationId) delete user.organisationId;
 
     return user;
 }
@@ -117,6 +133,24 @@ export function convertTeam(appData: Partial<ITeam>): Partial<ITeamData> {
     return convertNameWithIcon(appData);
 }
 
+export function convertOrganisation(appData: Partial<IDivision> | null): Partial<IDivisionData> {
+    let data: Partial<IDivisionData>;
+
+    if (appData === null) {
+        const now = new Date();
+        data = { deleted: true, modified: firebase.firestore.Timestamp.fromDate(now) };
+    }
+    else {
+        data = {
+            ...convertNameWithIcon(appData),
+            createdBy: appData.createdBy,
+            id: appData.id,
+        };
+    }
+
+    if (data.createdBy === undefined) delete (data.createdBy);
+    return data;
+}
 export function convertProject(appData: Partial<IProject> | null): Partial<IProjectData> {
     let data: Partial<IProjectData>;
 
@@ -129,13 +163,13 @@ export function convertProject(appData: Partial<IProject> | null): Partial<IProj
             ...convertNameWithIcon(appData),
             createdBy: appData.createdBy,
             isArchived: appData.isArchived,
-            organisationId: appData.organisationId,
+            divisionId: appData.divisionId,
         };
     }
 
     if (data.createdBy === undefined) delete (data.createdBy);
     if (data.isArchived === undefined) delete (data.isArchived);
-    if (data.organisationId === undefined) delete (data.organisationId);
+    if (data.divisionId === undefined) delete (data.divisionId);
     return data;
 }
 
@@ -154,12 +188,15 @@ export function convertNameWithIcon(appData: Partial<INameWithIcon> | null): Par
             name,
             name_insensitive: name.toUpperCase(),
             created: firebase.firestore.Timestamp.fromDate(appData.created || now),
-            modified: firebase.firestore.Timestamp.fromDate(now)
+            modified: firebase.firestore.Timestamp.fromDate(now),
+            divisionId: appData.divisionId,
         };
 
         if (appData.icon) {
             data.icon = appData.icon;
         }
+
+        if (!data.divisionId) delete data.divisionId;
     }
 
     return data;

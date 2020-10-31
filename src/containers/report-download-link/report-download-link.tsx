@@ -38,10 +38,10 @@ export const ReportDownloadLink = observer(() => {
             () => reportDoc.data?.status, (status: "waiting" | "error" | "complete" | undefined) => {
                 if (status === "complete") {
                     const { month, year } = view;
-                    const { authenticatedUserId: userId } = userStore;
+                    const { divisionUser: user } = userStore;
 
                     resolveIfMounted(
-                        firebase.storage().ref(`reports/${year}/${month}/${userId}.csv`).getDownloadURL()
+                        firebase.storage().ref(`reports/${year}/${month}/${user?.id}.csv`).getDownloadURL()
                     ).then(url => setReportUrl(url));
                 }
             },

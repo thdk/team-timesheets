@@ -59,7 +59,7 @@ class TestStore {
         firestore,
     });
 
-    public getOrganisationId = () => undefined;
+    public getDivisionId = () => undefined;
 }
 
 describe("FavoritesList", () => {
@@ -115,6 +115,7 @@ describe("FavoritesList", () => {
                     {
                         name: "user 1",
                         uid: "user-1",
+                        email: "email@email.com",
                     },
                     "user-1",
                 ),
@@ -155,6 +156,7 @@ describe("FavoritesList", () => {
         store.user.setUser({
             uid: "user-1",
             displayName: "user 1",
+            email: "email@email.com",
         } as firebase.User);
 
         store.favorites.setActiveFavoriteGroupId("group-1");

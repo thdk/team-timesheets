@@ -43,6 +43,7 @@ beforeAll(() => {
     store.user.setUser({
         uid: "user-1",
         displayName: "user 1",
+        email: "email@email.com",
     } as firebase.User);
 
     return store.config.tasksCollection.addAsync({

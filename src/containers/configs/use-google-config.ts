@@ -1,8 +1,8 @@
-import { useConfigs } from "../../stores/config-store";
+import { useConfigStore } from "../../stores/config-store";
 import { useMemo } from "react";
 
 export const useGoogleConfig = () => {
-    const configs = useConfigs();
+    const configs = useConfigStore();
 
     // TODO: Create scope from user preferences settings
     const scope = "https://www.googleapis.com/auth/calendar.readonly";

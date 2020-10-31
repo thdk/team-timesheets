@@ -14,7 +14,7 @@ export const goToFavorites = (router: RouterStore<IRootStore>) => {
 }
 
 const setActions = (s: IRootStore) => {
-    when(() => s.user.authenticatedUser !== undefined, () => {
+    when(() => s.user.divisionUser !== undefined, () => {
 
         const deleteAction: IViewAction = {
             action: () => {

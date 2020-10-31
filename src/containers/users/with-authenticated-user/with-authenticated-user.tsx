@@ -14,11 +14,11 @@ export const withAuthenticatedUser = (
     const WithAuthenticatedUserProps = () => {
         const user = useUserStore();
 
-        if (!user.authenticatedUser) {
+        if (!user.divisionUser) {
             throw new Error("Authenticated user is undefined. (Wrap in withAuthenticatedUser?)");
         }
 
-        return <WrappedComponent authenticatedUser={user.authenticatedUser}/>;
+        return <WrappedComponent authenticatedUser={user.divisionUser}/>;
     };
 
     return observer(WithAuthenticatedUserProps);

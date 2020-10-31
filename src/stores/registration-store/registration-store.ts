@@ -1,5 +1,5 @@
 import { Doc, ICollection, Collection, RealtimeMode, FetchMode } from "firestorable";
-import { observable, computed, reaction, when, action, toJS, ObservableMap, IObservableArray } from 'mobx';
+import { observable, computed, reaction, when, action, toJS } from 'mobx';
 import moment from 'moment';
 
 import { IRootStore } from '../root-store';
@@ -7,7 +7,6 @@ import * as deserializer from '../../../common/serialization/deserializer';
 import * as serializer from '../../../common/serialization/serializer';
 import { SortOrder } from '../../containers/timesheet/days';
 import { IRegistration, IRegistrationData } from '../../../common/dist';
-import { selectOrganisation } from "../../selectors/select-organisation";
 
 export interface IGroupedRegistrations<T> {
     registrations: Doc<IRegistration, IRegistrationData>[];
@@ -16,32 +15,11 @@ export interface IGroupedRegistrations<T> {
     isCollapsed: boolean;
 }
 
-export interface IRegistrationsStore {
-    readonly clipboard: ObservableMap<string, IRegistration>;
-    readonly selectedRegistrationDays: IObservableArray<string>;
-    readonly toggleSelectedRegistrationDay: (day: string, force?: boolean) => void;
-    readonly registration: IRegistration | undefined;
-    readonly registrationId?: string;
-    readonly setSelectedRegistration: (id: string | undefined) => void;
-    readonly saveSelectedRegistration: () => Promise<any>;
-    readonly updateSelectedRegistration: (data: Partial<IRegistration>) => void;
-    readonly setSelectedRegistrationDefault: (defaultData?: Partial<IRegistration>) => void;
-    readonly deleteRegistrationsAsync: (...ids: string[]) => Promise<void[]>;
-    readonly addRegistrationsAsync: (data: IRegistration[]) => Promise<string[]>;
-
-    readonly registrationsTotalTime: number;
-    readonly registrationsGroupedByDay: IGroupedRegistrations<string>[];
-    readonly registrationsGroupedByDayReversed: IGroupedRegistrations<string>[];
-    readonly registrationsGroupedByDaySortOrder: SortOrder;
-    areGroupedRegistrationsCollapsed: boolean;
-    readonly setRegistrationsGroupedByDaySortOrder: (sortOrder: SortOrder) => void;
-    readonly copyRegistrationToDate: (source: Omit<IRegistration, "date" | "isPersisted">, newDate: Date) => IRegistration;
-    readonly getRegistrationById: (id: string) => IRegistration | null;
-}
+export interface IRegistrationsStore extends RegistrationStore { };
 
 export class RegistrationStore implements IRegistrationsStore {
     private rootStore: IRootStore;
-    private readonly registrations: ICollection<IRegistration, IRegistrationData>;
+    public readonly registrations: ICollection<IRegistration, IRegistrationData>;
     readonly clipboard = observable(new Map<string, IRegistration>());
 
     private _selectedRegistration = observable.box<IRegistration | undefined>();
@@ -56,6 +34,7 @@ export class RegistrationStore implements IRegistrationsStore {
     @observable
     public areGroupedRegistrationsCollapsed = true;
 
+    private reactionDisposeFns: (() => void)[];
 
     constructor(
         rootStore: IRootStore,
@@ -69,7 +48,6 @@ export class RegistrationStore implements IRegistrationsStore {
 
         const createQuery = (
             userId: string | undefined,
-            organisationId: string | undefined,
         ) => {
             if (userId) {
                 const moment = rootStore.view.moment;
@@ -79,11 +57,7 @@ export class RegistrationStore implements IRegistrationsStore {
                     let query = ref
                         .where("date", ">=", startDate)
                         .where("date", "<=", endDate)
-                        .where("userId", "==", rootStore.user.authenticatedUserId);
-
-                    if (organisationId) {
-                        query = query.where("organisationId", "==", organisationId);
-                    }
+                        .where("userId", "==", userId.toString());
 
                     return query;
                 }
@@ -104,8 +78,7 @@ export class RegistrationStore implements IRegistrationsStore {
                 deserialize: deserializer.convertRegistration,
                 serialize: serializer.convertRegistration,
                 query: createQuery(
-                    rootStore.user.authenticatedUserId,
-                    selectOrganisation(rootStore),
+                    rootStore.user.divisionUser?.id,
                 ),
             },
             {
@@ -116,7 +89,6 @@ export class RegistrationStore implements IRegistrationsStore {
         const updateRegistrationQuery = (userId: string | undefined) => {
             this.registrations.query = createQuery(
                 userId,
-                selectOrganisation(rootStore),
             );
         };
 
@@ -124,23 +96,28 @@ export class RegistrationStore implements IRegistrationsStore {
         // -- the view moment changes
         // -- the logged in user changes
         // -- the organisation changes
-        reaction(() => rootStore.view.monthMoment, () => (
-            updateRegistrationQuery(rootStore.user.authenticatedUserId)
-        ));
-
-        reaction(() => rootStore.user.authenticatedUserId, userId => (
-            updateRegistrationQuery(userId)
-        ));
-
-        reaction(() => this.areGroupedRegistrationsCollapsed, collapsed => {
-            if (collapsed) {
-                this.selectedRegistrationDays.clear();
-            } else {
-                this.selectedRegistrationDays.replace(
-                    this.registrationsGroupedByDay.map(g => g.groupKey)
-                );
-            }
-        });
+        this.reactionDisposeFns = [
+            reaction(() => rootStore.view.monthMoment, () => {
+                updateRegistrationQuery(rootStore.user.divisionUser?.id);
+            }),
+            reaction(() => rootStore.user.authenticatedUser, user => {
+                if (!user)
+                    updateRegistrationQuery(undefined);
+                else
+                    updateRegistrationQuery(user.divisionUserId || user.id);
+            }, {
+                fireImmediately: true,
+            }),
+            reaction(() => this.areGroupedRegistrationsCollapsed, collapsed => {
+                if (collapsed) {
+                    this.selectedRegistrationDays.clear();
+                } else {
+                    this.selectedRegistrationDays.replace(
+                        this.registrationsGroupedByDay.map(g => g.groupKey)
+                    );
+                }
+            }),
+        ];
     }
 
     @computed
@@ -221,7 +198,6 @@ export class RegistrationStore implements IRegistrationsStore {
 
     @action
     public setSelectedRegistration(id: string | undefined) {
-
         if ((!id && this._selectedRegistration) || (id !== this._selectedRegistrationId.get())) {
             this._selectedRegistrationId.set(id);
 
@@ -253,8 +229,11 @@ export class RegistrationStore implements IRegistrationsStore {
     }
 
     public deleteRegistrationsAsync(...ids: string[]) {
-        // Todo: make updateAsync with data === "delete" use a batch in firestorable package.
-        return this.registrations.updateAsync(null, ...ids);
+        return this.registrations.updateAsync(null, ...ids)
+            .catch(e => {
+                console.error(e);
+                return [];
+            })
     }
 
     public addRegistrationsAsync(data: IRegistration[]) {
@@ -286,15 +265,15 @@ export class RegistrationStore implements IRegistrationsStore {
     }
 
     private getNewRegistrationDataAsync(defaultData?: Partial<IRegistration>): Promise<IRegistration> {
-        return when(() => !!this.rootStore.user.authenticatedUser)
+        return when(() => !!this.rootStore.user.divisionUser)
             .then(() => {
-                if (!this.rootStore.user.authenticatedUser || !this.rootStore.user.authenticatedUserId) throw new Error("User must be set");
+                if (!this.rootStore.user.divisionUser || !this.rootStore.user.divisionUser.id) throw new Error("User must be set");
 
                 const {
                     recentProjects = [],
                     defaultTask: task = this.rootStore.config.tasks.length ? this.rootStore.config.tasks[0].id : undefined,
                     defaultClient: client = undefined
-                } = this.rootStore.user.authenticatedUser || {};
+                } = this.rootStore.user.divisionUser || {};
 
                 const recentActiveProjects = recentProjects
                     .filter(projectId => this.rootStore.projects.activeProjects
@@ -306,7 +285,7 @@ export class RegistrationStore implements IRegistrationsStore {
                         : this.rootStore.view.moment.toDate(),
                     task,
                     client,
-                    userId: this.rootStore.user.authenticatedUser.uid,
+                    userId: this.rootStore.user.divisionUser.id,
                     project: recentActiveProjects.length ? recentActiveProjects[0] : undefined,
                     isPersisted: false,
                     ...defaultData
@@ -330,8 +309,8 @@ export class RegistrationStore implements IRegistrationsStore {
                     const { project = undefined } = registration || {};
                     // TODO: move set recent project to firebase function
                     // triggering for every update/insert of a registration?
-                    if (this.rootStore.user.authenticatedUserId && this.rootStore.user.authenticatedUser && project) {
-                        const recentProjects = toJS(this.rootStore.user.authenticatedUser.recentProjects);
+                    if (this.rootStore.user.divisionUser?.id && project) {
+                        const recentProjects = toJS(this.rootStore.user.divisionUser.recentProjects);
                         const oldProjectIndex = recentProjects.indexOf(project);
 
                         // don't update the user document if the current project was already most recent
@@ -348,7 +327,7 @@ export class RegistrationStore implements IRegistrationsStore {
                                 recentProjects.unshift(project);
                             }
 
-                            this.rootStore.user.updateAuthenticatedUser({ recentProjects });
+                            this.rootStore.user.updateDivisionUser({ recentProjects });
                         }
                     }
                 });
@@ -359,6 +338,7 @@ export class RegistrationStore implements IRegistrationsStore {
     }
 
     public dispose() {
+        this.reactionDisposeFns.forEach(fn => fn());
         this.registrations.dispose();
     }
 }

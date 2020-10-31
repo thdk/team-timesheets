@@ -1,4 +1,4 @@
-import { observable, action, transaction, computed, observe, reaction } from "mobx";
+import { observable, action, transaction, computed, observe, reaction, IObservableValue, intercept } from "mobx";
 import { ICollection, Collection, Doc, RealtimeMode, FetchMode, CollectionReference } from "firestorable";
 import { IRootStore } from "../root-store";
 import * as deserializer from "../../../common/serialization/deserializer";
@@ -6,7 +6,6 @@ import * as serializer from "../../../common/serialization/serializer";
 import { IUser, IUserData } from "../../../common/dist";
 import { canReadUsers } from "../../rules";
 import { getLoggedInUserAsync } from "../../firebase/firebase-utils";
-import { selectOrganisation } from "../../selectors/select-organisation";
 
 export interface IUserStore extends UserStore { }
 
@@ -20,8 +19,12 @@ export class UserStore implements IUserStore {
     @observable state = StoreState.Done;
 
     @observable.ref isAuthInitialised = false;
-    @observable.ref
-    private _fbUser: firebase.User | null = null;
+
+    @observable
+    private _authUser: IObservableValue<Doc<IUser, IUserData> | undefined> = observable.box(undefined);
+
+    @observable
+    private _divisionUser: IObservableValue<Doc<IUser, IUserData> | undefined> = observable.box(undefined);
 
     private readonly _selectedUser = observable.box<IUser | undefined>();
 
@@ -30,11 +33,12 @@ export class UserStore implements IUserStore {
     private auth?: firebase.auth.Auth;
 
     public readonly usersCollection: ICollection<IUser, IUserData>;
-    public readonly organisationUsersCollection: ICollection<IUser, IUserData>;
+    public readonly divisionUsersCollection: ICollection<IUser, IUserData>;
+    public readonly divisionUsersAllCollection: ICollection<IUser, IUserData>;
 
-    private rootStore: IRootStore;
+    private readonly reactionDisposeFns: (() => void)[];
     constructor(
-        rootStore: IRootStore,
+        _rootStore: IRootStore,
         {
             firestore,
             auth,
@@ -44,7 +48,6 @@ export class UserStore implements IUserStore {
         }
     ) {
         this.auth = auth;
-        this.rootStore = rootStore;
 
         const createQuery = (user?: IUser) => {
             const query = (ref: CollectionReference) => ref.orderBy("name", "asc");
@@ -57,56 +60,99 @@ export class UserStore implements IUserStore {
             "users"
             , {
                 realtimeMode: RealtimeMode.on,
-                fetchMode: FetchMode.once,
+                fetchMode: FetchMode.manual,
                 serialize: serializer.convertUser,
                 deserialize: deserializer.convertUser,
                 query: null,
+                defaultSetOptions: {
+                    merge: true
+                },
             },
             {
                 // logger: console.log,
             },
         );
 
-        this.organisationUsersCollection = new Collection(
+        this.divisionUsersCollection = new Collection(
             firestore,
-            "users",
+            "division-users",
             {
                 realtimeMode: RealtimeMode.on,
-                fetchMode: FetchMode.manual,
+                fetchMode: FetchMode.auto,
                 serialize: serializer.convertUser,
                 deserialize: deserializer.convertUser,
+                query: null,
+                defaultSetOptions: {
+                    merge: true
+                },
             }, {
             // logger: console.log
-        })
-
-        reaction(() => this.authenticatedUser, user => {
-            this.usersCollection.query = createQuery(user);
         });
+
+        this.divisionUsersAllCollection = new Collection(
+            firestore,
+            "division-users",
+            {
+                realtimeMode: RealtimeMode.on,
+                fetchMode: FetchMode.auto,
+                serialize: serializer.convertUser,
+                deserialize: deserializer.convertUser,
+                query: (ref) => ref
+                    .where("divisionId", "==", this.divisionUser?.divisionId)
+                    .where("deleted", "==", false),
+            }, {
+            // logger: console.log
+        });
+
+        this.reactionDisposeFns = [
+            reaction(() => this.divisionUser, user => {
+                this.usersCollection.query = createQuery(user);
+                this.usersCollection.fetchAsync();
+            }),
+
+            reaction(() => this.authenticatedUser, user => {
+                this.setDivisionUser(user?.divisionUserId);
+            }),
+
+            reaction(() => this.authenticatedUserId, id => {
+                if (id) {
+                    this.divisionUsersCollection.query = ref => ref
+                        .where("uid", "==", id)
+                        .where("deleted", "==", false)
+                        .orderBy("created");
+                } else {
+                    this.divisionUsersCollection.query = null;
+                }
+            }),
+        ];
 
         this.auth && this.auth.onAuthStateChanged(this.setUser.bind(this));
 
-        // // TODO: move to Firestorable/Document?
-        // intercept(this._authUser, change => {
-        //     if (change.type === "update") {
-        //         if (!change.newValue && change.object.value) {
-        //             change.object.value.unwatch();
-        //         }
-        //     }
+        // TODO: move to Firestorable/Document?
+        intercept(this._authUser, change => {
+            if (change.type === "update") {
+                if (!change.newValue && change.object.value) {
+                    change.object.value.unwatch();
+                }
+            }
 
-        //     return change;
-        // });
+            return change;
+        });
 
         observe(this._selectedUserId, change => this.setSelectedUser(change.newValue));
     }
 
     @action
     private setSelectedUser(id: string | undefined): void {
+        const collection = this.divisionUser?.divisionId
+            ? this.divisionUsersCollection
+            : this.usersCollection;
 
-        const user: Doc<IUser, IUserData> | undefined = id ? this.usersCollection.get(id) : undefined;
+        const user: Doc<IUser, IUserData> | undefined = id ? collection.get(id) : undefined;
 
         if (id && !user) {
             // fetch the user manually
-            this.usersCollection.getAsync(id, { watch: true })
+            collection.getAsync(id, { watch: true })
                 .then(user => {
                     this.setSelectedUserObservable(user);
                 })
@@ -121,12 +167,20 @@ export class UserStore implements IUserStore {
     }
 
     public saveSelectedUser(): void {
-        if (this.selectedUserId && this.selectedUser) { this.usersCollection.updateAsync(this.selectedUser, this.selectedUserId || ""); }
+        const collection = this.divisionUser?.divisionId
+            ? this.divisionUsersCollection
+            : this.usersCollection;
+
+        if (this.selectedUserId && this.selectedUser) { collection.updateAsync(this.selectedUser, this.selectedUserId || ""); }
     }
 
     @computed
     public get users() {
-        return this.usersCollection.docs
+        const collection = this.divisionUser?.divisionId
+            ? this.divisionUsersAllCollection
+            : this.usersCollection;
+
+        return collection.docs
             .map(doc => ({ ...doc.data!, id: doc.id }))
             .sort((a, b) => {
                 // TODO: Use stable sort method
@@ -157,30 +211,51 @@ export class UserStore implements IUserStore {
     }
 
     @computed
-    public get authenticatedUser(): IUser | undefined {
-        if (!this._fbUser) {
-            return undefined;
-        }
-
-        const selectedOrganisationId = selectOrganisation(this.rootStore);
-
-        const user = selectedOrganisationId
-            ? this.organisationUsersCollection.docs
-                .filter(d => d.data!.organisationId === selectedOrganisationId)[0]
-            : this.organisationUsersCollection.docs[0];
-
-        return user ? { ...user.data!} : user;
+    public get authenticatedUser(): (IUser & { id: string }) | undefined {
+        const user = this._authUser.get();
+        return user ? { ...user.data!, id: user.id } : user;
     }
 
     @computed
     get authenticatedUserId(): string | undefined {
-        return this.authenticatedUser?.uid;
+        return this.authenticatedUser?.id;
+    }
+
+    @computed
+    public get divisionUser(): (IUser & { id: string }) | undefined {
+        const divisionUser = this._divisionUser.get();
+
+        return divisionUser
+            ? { ...divisionUser.data!, id: divisionUser.id }
+            : this.authenticatedUser ? { ...this.authenticatedUser } : undefined;
     }
 
     @action
+    private setDivisionUser(id: string | undefined) {
+        if (!id) {
+            this._divisionUser.set(undefined);
+        } else {
+            this.divisionUsersCollection.getAsync(id)
+                .then(this.setDivisionUserSuccess)
+                .catch(() => {
+                    this.setDivisionUserSuccess(undefined);
+                });
+        }
+    }
+
+    @action.bound
+    private setDivisionUserSuccess(result: Doc<IUser> | undefined) {
+        this._divisionUser.set(result);
+    }
+
+    public updateDivisionUser(userData: Partial<IUser>): void {
+        const user = this.divisionUser;
+        if (user) { this.divisionUsersCollection.updateAsync(userData, user.id); }
+    }
+
     public updateAuthenticatedUser(userData: Partial<IUser>): void {
         const user = this.authenticatedUser;
-        if (user) { this.usersCollection.updateAsync(userData, user.uid); }
+        if (user) { this.usersCollection.updateAsync(userData, user.id); }
     }
 
     @action
@@ -188,7 +263,7 @@ export class UserStore implements IUserStore {
         if (!fbUser) {
             transaction(() => {
                 this.isAuthInitialised = true;
-                this._fbUser = fbUser;
+                this._authUser.set(undefined);
             });
 
             if (typeof gapi !== "undefined") {
@@ -196,50 +271,42 @@ export class UserStore implements IUserStore {
             }
         } else {
             this.state = StoreState.Pending;
-            this.organisationUsersCollection.query = (ref) => ref.where("uid", "==", fbUser.uid);
-            this.organisationUsersCollection.fetchAsync()
-                .then(
-                    async () => {
-                        const user = await this.getAuthenticatedUserAsync(fbUser);
-                        if (user) {
-                            this.getAuthUserSuccess(fbUser);
-                        } else {
-                            const newUserData = {
-                                roles: { user: true },
-                                name: fbUser.displayName || "",
-                                tasks: new Map(),
-                                recentProjects: [],
-                                email: fbUser.email || undefined,
-                                uid: fbUser.uid,
-                            };
 
-                            this.usersCollection.addAsync(
-                                newUserData,
-                                fbUser.uid,
-                            ).then(
-                                (userId) => {
-                                    // get the newly registered user
-                                    return this.usersCollection.getAsync(userId)
-                                        .then(() => {
-                                            this.getAuthUserSuccess(fbUser);
-                                        }, this.getUserError);
-                                },
-                                error => console.log(`${error}\nCoudn't save newly registered user. `),
-                            );
-                        }
-                    },
-                );
+            this.getAuthenticatedUserAsync(fbUser)
+                .then((user) => {
+                    this.getAuthUserSuccess(user);
+                }, () => {
+                    const newUserData = {
+                        roles: { user: true },
+                        name: fbUser.displayName || "",
+                        tasks: new Map(),
+                        recentProjects: [],
+                        email: fbUser.email || undefined,
+                        uid: fbUser.uid,
+                    };
+
+                    this.usersCollection.addAsync(
+                        newUserData,
+                        fbUser.uid,
+                    ).then(
+                        (userId) => {
+                            // get the newly registered user
+                            return this.usersCollection.getAsync(userId)
+                                .then((user) => {
+                                    this.getAuthUserSuccess(user);
+                                }, this.getUserError);
+                        },
+                        error => console.log(`${error}\nCoudn't save newly registered user. `),
+                    );
+                });
         }
     }
 
-    private getAuthenticatedUserAsync(fbUser: firebase.User) {
-        const organisationUsers = this.organisationUsersCollection.docs;
-        if (organisationUsers.length) {
-            return Promise.resolve(organisationUsers[0]);
-        } else {
-            // backwords compatibility, get single user by id and patch user data
-            return this.usersCollection.getAsync(fbUser.uid)
-                .then(async (userDoc) => {
+    private getAuthenticatedUserAsync(fbUser: firebase.User): Promise<Doc<IUser> | undefined> {
+        return this.usersCollection.getAsync(fbUser.uid)
+            .then(async (userDoc) => {
+                if (!userDoc.data!.uid || !userDoc.data!.email) {
+                    // backwords compatibility, get single user by id and patch user data
                     await this.usersCollection.updateAsync(
                         {
                             email: fbUser.email || "",
@@ -247,22 +314,17 @@ export class UserStore implements IUserStore {
                         },
                         fbUser.uid,
                     );
-                    userDoc.data!.email = fbUser.email || undefined;
-                    userDoc.data!.uid = fbUser.uid;
-                    return userDoc;
-                })
-                .catch(() => {
-                    return undefined;
-                });
-        }
+                }
+                return userDoc;
+            });
     }
 
     @action.bound
-    getAuthUserSuccess = (fbUser: firebase.User | null) => {
+    getAuthUserSuccess = (authUser: Doc<IUser> | undefined) => {
         transaction(() => {
             this.state = StoreState.Done;
             this.isAuthInitialised = true;
-            this._fbUser = fbUser;
+            this._authUser.set(authUser);
         });
     }
 
@@ -283,6 +345,8 @@ export class UserStore implements IUserStore {
     }
 
     public dispose() {
+        this.reactionDisposeFns.forEach(fn => fn());
         this.usersCollection.dispose();
+        this.divisionUsersCollection.dispose();
     }
 }

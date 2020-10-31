@@ -9,22 +9,107 @@ exports[`Drawer should render 1`] = `
       class="mdc-drawer__header"
     >
       <div
-        class="account-badge"
+        class="mdc-menu-surface--anchor"
       >
         <div
-          class="account-badge--content"
+          class="division-users-menu mdc-menu-surface"
+          style="transform-origin: left top; left: 0px; top: 0px; max-height: 736px;"
+        >
+          <ul
+            class="mdc-list"
+          >
+            <li
+              class="mdc-list-divider"
+              role="separator"
+            />
+            <li
+              class="mdc-list-item"
+              tabindex="0"
+            >
+              <i
+                aria-hidden="true"
+                class="rmwc-icon rmwc-icon--ligature material-icons mdc-list-item__graphic"
+              >
+                all_inclusive
+              </i>
+              <span
+                class="mdc-list-item__text"
+              >
+                Default
+              </span>
+            </li>
+          </ul>
+          <li
+            class="mdc-list-divider"
+            role="separator"
+          />
+          <ul
+            class="mdc-list"
+          >
+            <li
+              class="mdc-list-item"
+              role="menuitem"
+              tabindex="0"
+            >
+              Manage divisions
+            </li>
+            <li
+              class="mdc-list-item"
+              role="menuitem"
+              tabindex="0"
+            >
+              Preferences
+            </li>
+            <li
+              class="mdc-list-divider"
+              role="separator"
+            />
+            <li
+              class="mdc-list-item"
+              role="menuitem"
+              tabindex="0"
+            >
+              <i
+                aria-hidden="true"
+                class="rmwc-icon rmwc-icon--ligature material-icons mdc-list-item__graphic"
+              >
+                perm_identity
+              </i>
+              <span
+                class="mdc-list-item__text"
+              >
+                Logout
+              </span>
+            </li>
+          </ul>
+        </div>
+        <div
+          class="account-badge"
         >
           <div
-            class="account-badge--image"
+            class="account-badge__content"
           >
-            <img
-              src="https://www.gravatar.com/avatar/db2ff1aecc3bb4c910ab7289c7f920a2?d=mp&s=40"
-            />
-          </div>
-          <div
-            class="account-badge--name"
-          >
-            Foobar
+            <div
+              class="account-badge__image"
+            >
+              <img
+                src="https://www.gravatar.com/avatar/db2ff1aecc3bb4c910ab7289c7f920a2?d=mp&s=40"
+              />
+            </div>
+            <div
+              class="account-badge__name"
+            >
+              Foobar
+            </div>
+            <div
+              class="account-badge__meta"
+            >
+              <i
+                class="rmwc-icon rmwc-icon--ligature material-icons"
+              >
+                expand_more
+              </i>
+            </div>
           </div>
         </div>
       </div>
@@ -776,26 +861,6 @@ exports[`Drawer should render 1`] = `
         <hr
           class="mdc-list-divider"
         />
-      </div>
-      <div
-        class="mdc-list"
-      >
-        <a
-          class="mdc-list-item"
-          href="#"
-        >
-          <i
-            aria-hidden="true"
-            class="material-icons mdc-list-item__graphic"
-          >
-            perm_identity
-          </i>
-          <span
-            class="mdc-list-item__text"
-          >
-            Login
-          </span>
-        </a>
       </div>
     </div>
   </aside>

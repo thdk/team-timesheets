@@ -1,3 +1,7 @@
 import userDetail from './detail';
+import userProfile from './profile';
 
-export default { ...userDetail };
+export default {
+    ...userDetail,
+    ...userProfile,
+};

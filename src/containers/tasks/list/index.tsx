@@ -9,11 +9,11 @@ import { useViewStore } from '../../../contexts/view-context';
 
 export const TaskList = observer((props: React.HTMLProps<HTMLDivElement>) => {
     const { addAsync, tasks, taskId, setTaskId } = useTasks();
-    const { authenticatedUser } = useUserStore();
-    const { selection, toggleSelection } = useViewStore();
+    const view = useViewStore();
+    const user = useUserStore();
 
     const selectItem = (id: string | undefined) => {
-        if (canEditTask(authenticatedUser) || canDeleteTask(authenticatedUser)) {
+        if (canEditTask(user.divisionUser) || canDeleteTask(user.divisionUser)) {
             setTaskId(id);
         }
     }
@@ -21,18 +21,18 @@ export const TaskList = observer((props: React.HTMLProps<HTMLDivElement>) => {
     const saveListItem = (data: IListItemData, id?: string) => {
         setTaskId(undefined);
         if (data.name) {
-            addAsync({ name: data.name, icon: data.icon }, id);
+            addAsync({ name: data.name, icon: data.icon, divisionId: user.divisionUser?.divisionId }, id);
         }
     }
 
     return (
         <SettingsList {...props}
-            readonly={!canManageTasks(authenticatedUser)}
+            readonly={!canManageTasks(user.divisionUser)}
             items={tasks}
             onAddItem={saveListItem}
-            onToggleSelection={id => toggleSelection(id)}
+            onToggleSelection={id => view.toggleSelection(id)}
             onItemClick={selectItem}
-            selection={selection}
+            selection={view.selection}
             activeItemId={taskId}
         />
     );

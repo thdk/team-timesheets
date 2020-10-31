@@ -16,8 +16,8 @@ export const goToProjects = (router: RouterStore<IRootStore>, tab: ProjectsTab =
 export type ProjectsTab = "active" | "archived";
 
 const setActions = (tab: ProjectsTab, store: IRootStore) => {
-    when(() => store.user.authenticatedUser !== undefined, () => {
-        if (!canManageProjects(store.user.authenticatedUser)) {
+    when(() => store.user.divisionUser !== undefined, () => {
+        if (!canManageProjects(store.user.divisionUser)) {
             return;
         }
 

@@ -1,4 +1,4 @@
-import { observable, computed, action } from 'mobx';
+import { observable, computed, action, reaction } from 'mobx';
 import { Collection, ICollection, RealtimeMode, FetchMode } from "firestorable";
 import { IRootStore } from '../root-store';
 import { IClient, IClientData, ITeam, ITeamData, ITaskData, IConfig, ConfigValue, ITask } from '../../../common/dist';
@@ -19,7 +19,7 @@ export class ConfigStore implements IConfigStore {
     @observable.ref teamId?: string;
 
     constructor(
-        _rootStore: IRootStore,
+        rootStore: IRootStore,
         {
             firestore,
         }: {
@@ -36,8 +36,7 @@ export class ConfigStore implements IConfigStore {
             "tasks",
             {
                 realtimeMode: RealtimeMode.on,
-                fetchMode: FetchMode.once,
-                query: ref => ref.orderBy("name_insensitive"),
+                fetchMode: FetchMode.manual,
                 serialize: serializer.convertNameWithIcon,
                 deserialize: deserializer.convertNameWithIcon,
             },
@@ -50,8 +49,7 @@ export class ConfigStore implements IConfigStore {
                 "clients",
                 {
                     realtimeMode: RealtimeMode.on,
-                    fetchMode: FetchMode.once,
-                    query: ref => ref.orderBy("name_insensitive"),
+                    fetchMode: FetchMode.manual,
                     serialize: serializer.convertNameWithIcon,
                     deserialize: deserializer.convertNameWithIcon,
                 },
@@ -63,8 +61,7 @@ export class ConfigStore implements IConfigStore {
             "teams",
             {
                 realtimeMode: RealtimeMode.on,
-                fetchMode: FetchMode.once,
-                query: ref => ref.orderBy("name_insensitive"),
+                fetchMode: FetchMode.manual,
                 serialize: serializer.convertNameWithIcon,
                 deserialize: deserializer.convertNameWithIcon,
             },
@@ -75,9 +72,51 @@ export class ConfigStore implements IConfigStore {
             firestore,
             "configs",
             {
-                fetchMode: FetchMode.once,
+                fetchMode: FetchMode.auto,
+                realtimeMode: RealtimeMode.off,
             }
         )
+
+        reaction(() => rootStore.user.divisionUser, (user) => {
+            if (!user) {
+                this.teamsCollection.query = null;
+                this.tasksCollection.query = null;
+                this.clientsCollection.query = null;
+            }
+            else {
+                if (user.divisionId) {
+                    const query = (ref: firebase.firestore.CollectionReference) =>
+                        ref.orderBy("name_insensitive")
+                            .where("divisionId", "==", user.divisionId);
+
+                    this.teamsCollection.query = query;
+                    this.tasksCollection.query = query;
+                    this.configsCollection.query = query;
+                    this.clientsCollection.query = query;
+                } else {
+                    const query = (ref: firebase.firestore.CollectionReference) =>
+                        ref.orderBy("name_insensitive");
+
+                    this.teamsCollection.query = query;
+                    this.tasksCollection.query = query;
+                    this.configsCollection.query = undefined;
+                    this.clientsCollection.query = undefined;
+                }
+
+                if (!this.teamsCollection.isFetched) {
+                    this.teamsCollection.fetchAsync();
+                }
+
+                if (!this.tasksCollection.isFetched) {
+                    this.tasksCollection.fetchAsync();
+                }
+
+                if (!this.clientsCollection.isFetched) {
+                    this.clientsCollection.fetchAsync();
+                }
+            }
+
+        });
     }
 
     @computed
@@ -121,5 +160,12 @@ export class ConfigStore implements IConfigStore {
         }
 
         return doc.data!.value as unknown as T;
+    }
+
+    public dispose() {
+        this.clientsCollection.dispose();
+        this.teamsCollection.dispose();
+        this.tasksCollection.dispose();
+        this.configsCollection.dispose();
     }
 }

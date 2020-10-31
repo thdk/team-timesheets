@@ -6,7 +6,6 @@ import { useCallback, useState } from 'react';
 import { Icon } from '@rmwc/icon';
 import DebouncedTextfield from '../debounced-textfield';
 
-
 type Props = {
     onClose: (icon: string | undefined) => void,
     isOpen: boolean,

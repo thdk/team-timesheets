@@ -5,13 +5,13 @@ import cryptoRandomString from 'crypto-random-string';
 import copy from "copy-text-to-clipboard";
 
 import { useUserStore } from "../../../contexts/user-context";
-import { SettingsList } from "../../../components/settings-list";
 import { useViewStore } from "../../../contexts/view-context";
-import { INameWithIcon } from "../../../../common";
 import { useDivisionStore } from "../../../contexts/division-context";
+import { SettingsList } from "../../../components/settings-list";
+import { INameWithIcon } from "../../../../common";
 import { queue } from "../../../components/snackbar";
 
-export const DivisionsList = observer(() => {
+export const DivisionUserList = observer(() => {
     const user = useUserStore();
     const view = useViewStore();
     const division = useDivisionStore();
@@ -71,7 +71,7 @@ export const DivisionsList = observer(() => {
                         selection={view.selection}
                         onItemClick={(id) => {
 
-                            const divisionId = user.divisionUsersCollection.get(id)?.data!.divisionId;
+                            const divisionId = division.userDivisions.find(userDivision => userDivision.id === id)?.divisionId;
                             division.divisionCodesCollection.query = ref => ref.where("divisionId", "==", divisionId);
                             division.divisionCodesCollection.fetchAsync()
                                 .then(() => {
@@ -105,6 +105,7 @@ export const DivisionsList = observer(() => {
 
     return (
         <>
+            <CurrentDivisions />
             <p>
                 or create your own division and start recruiting or go solo!
             </p>
@@ -115,8 +116,7 @@ export const DivisionsList = observer(() => {
                 selection={view.selection}
                 onToggleSelection={() => { }}
             />
-            <CurrentDivisions />
         </>
     );
 });
-DivisionsList.displayName = "DivisionsList";
+DivisionUserList.displayName = "DivisionUserList";

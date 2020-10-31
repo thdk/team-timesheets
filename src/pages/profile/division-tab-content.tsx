@@ -4,18 +4,21 @@ import { transaction } from "mobx";
 import { useViewStore } from "../../contexts/view-context";
 import { useUserStore } from "../../contexts/user-context";
 import { Box } from "../../components/layout/box";
-import { DivisionJoinform } from "../../containers/division-users/join-form";
-import { DivisionsList } from "../../containers/division-users/list";
-import { queue } from "../../components/snackbar";
+import { DivisionUserList } from "../../containers/division-users/list";
+import { queue as snackbarQueue } from "../../components/snackbar";
+import { queue as dialogQueue } from "../../components/dialog-queue";
 
+import { useDivisionStore } from "../../contexts/division-context";
 import "./division-tab-content.css";
 
 export const DivisionsTabContent = () => {
     const view = useViewStore();
     const user = useUserStore();
+    const divisionStore = useDivisionStore();
 
     useEffect(() => {
         view.setActions([
+            // leave division
             {
                 action: (selection) => {
                     transaction(async () => {
@@ -31,7 +34,7 @@ export const DivisionsTabContent = () => {
                             });
 
                         if (isLeavingActiveDivision) {
-                            queue.notify({
+                            snackbarQueue.notify({
                                 title: "You can't leave your active division."
                             });
                         }
@@ -47,17 +50,40 @@ export const DivisionsTabContent = () => {
                 contextual: true,
                 selection: view.selection,
             },
+            // join division
+            {
+                action: () => {
+                    dialogQueue.prompt({
+                        title: 'Join a division',
+                        body: 'Enter the division entry code',
+                        acceptLabel: 'Join',
+                        cancelLabel: 'Cancel',
+                        inputProps: {
+                            outlined: true
+                        },
+                    }).then((code) => {
+                        if (code) {
+                            divisionStore.joinDivision(
+                                code,
+                                (message) => {
+                                    snackbarQueue.notify({
+                                        title: message,
+                                    });
+                                });
+                        }
+                    });
+                },
+                icon: {
+                    content: "person_add",
+                    label: "Join a division",
+                }
+            }
         ])
     }, [view]);
 
     return (
         <Box className="division-tab-content">
-            <div className="division-tab-content__left">
-                <DivisionJoinform />
-            </div>
-            <div className="division-tab-content__right">
-                <DivisionsList />
-            </div>
+            <DivisionUserList />
         </Box>
     );
 }

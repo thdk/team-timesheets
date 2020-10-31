@@ -9,6 +9,7 @@ import { IDivision, IDivisionCode } from "../../../common/interfaces/IOrganisati
 import { IDivisionData } from "../../../common/interfaces/IOrganisationData";
 import { firestore } from "firebase";
 import { IUserData, IUser } from "../../../common";
+import firebase from "firebase/app";
 
 export class DivisionStore {
     readonly divisionCollection: ICollection<IDivision, IDivisionData>;
@@ -109,5 +110,57 @@ export class DivisionStore {
                 }
                 return p;
             }, [] as (IDivision & { divisionUserId: string })[]);
+    }
+
+    public joinDivision(code: string, callback: (message: string) => void) {
+        return firebase.functions().httpsCallable("getDivisionByEntryCode")(code)
+            .then(({ data: divisionId }) => {
+                if (!divisionId) {
+                    return Promise.reject(
+                        new Error("unknown-division"),
+                    );
+                }
+
+                if (this.userDivisions.some(data => data.id === divisionId)
+                ) {
+                    return Promise.reject(
+                        new Error("already-in-division"),
+                    )
+                }
+
+                return this.rootStore.user.divisionUsersCollection.addAsync(
+                    {
+                        ...this.rootStore.user.authenticatedUser!,
+                        divisionId,
+                        roles: {
+                            user: true
+                        },
+                    },
+                ).then(
+                    (divisionUserId) => {
+                        return this.rootStore.user.updateAuthenticatedUser({
+                            divisionUserId,
+                            divisionId,
+                        });
+                    },
+                )
+            })
+            .then(
+                () => {
+                    callback(`Successfully joined this division`);
+                }, (e: Error) => {
+                    let title: string;
+                    switch (e.message) {
+                        case "already-in-division":
+                            title = "You are already in this division";
+                            break;
+
+                        default:
+                            title = "You can't join this division";
+                            break;
+                    }
+                    callback(title);
+                },
+            );
     }
 }

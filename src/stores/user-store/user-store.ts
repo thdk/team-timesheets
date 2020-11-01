@@ -85,9 +85,11 @@ export class UserStore implements IUserStore {
                 defaultSetOptions: {
                     merge: true
                 },
-            }, {
-            // logger: console.log
-        });
+            },
+            {
+                //logger: console.log
+            },
+        );
 
         this.divisionUsersAllCollection = new Collection(
             firestore,
@@ -100,9 +102,11 @@ export class UserStore implements IUserStore {
                 query: (ref) => ref
                     .where("divisionId", "==", this.divisionUser?.divisionId)
                     .where("deleted", "==", false),
-            }, {
-            // logger: console.log
-        });
+            },
+            {
+                // logger: console.log
+            },
+        );
 
         this.reactionDisposeFns = [
             reaction(() => this.divisionUser, user => {

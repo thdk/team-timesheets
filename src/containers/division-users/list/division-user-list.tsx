@@ -59,8 +59,8 @@ export const DivisionUserList = observer(() => {
             ? (
                 <>
                     <p>
-                        You're in the following divisions
-                </p>
+                        Click any of your divisions to get the entry code.
+                    </p>
                     <SettingsList
                         items={division.userDivisions.map(userDivision => ({
                             id: userDivision.divisionUserId,
@@ -71,7 +71,9 @@ export const DivisionUserList = observer(() => {
                         selection={view.selection}
                         onItemClick={(id) => {
 
-                            const divisionId = division.userDivisions.find(userDivision => userDivision.id === id)?.divisionId;
+                            const divisionId = division.userDivisions.find(
+                                userDivision => userDivision.divisionUserId === id
+                            )?.id;
                             division.divisionCodesCollection.query = ref => ref.where("divisionId", "==", divisionId);
                             division.divisionCodesCollection.fetchAsync()
                                 .then(() => {
@@ -99,6 +101,7 @@ export const DivisionUserList = observer(() => {
             : (
                 <p>
                     You aren't in any division yet.
+                    <br /><br /><br />
                 </p>
             )
     });
@@ -107,7 +110,7 @@ export const DivisionUserList = observer(() => {
         <>
             <CurrentDivisions />
             <p>
-                or create your own division and start recruiting or go solo!
+                You can create your own division and start recruiting!
             </p>
             <SettingsList
                 items={[]}

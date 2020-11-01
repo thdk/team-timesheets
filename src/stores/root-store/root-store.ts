@@ -27,8 +27,10 @@ export class Store implements IRootStore {
     constructor({
         auth,
         firestore,
+        httpsCallable,
     }: {
         firestore: firebase.firestore.Firestore,
+        httpsCallable?: (name: string) => firebase.functions.HttpsCallable,
         auth?: firebase.auth.Auth,
     }) {
         this.user = new UserStore(
@@ -80,6 +82,7 @@ export class Store implements IRootStore {
             this,
             {
                 firestore,
+                httpsCallable,
             },
         );
         this.router = new RouterStore<IRootStore>(this);

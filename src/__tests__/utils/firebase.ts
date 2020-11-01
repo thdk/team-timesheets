@@ -45,6 +45,7 @@ export const initTestFirestore = (
             : [],
         firestore,
         firestoreTest: firestoreTest,
+        testApp,
         clearFirestoreDataAsync: () => clearFirestoreDataAsync(projectId),
     };
 };
@@ -55,5 +56,18 @@ export const clearFirestoreDataAsync = (projectId: string) => {
 
 export const deleteFirebaseAppsAsync = () => {
     return Promise.all(apps().map(app => app.delete()));
+};
+
+export const initTestFunctions = (
+    projectId: string,
+) => {
+    const app = initializeAdminApp({
+        projectId,
+    });
+
+    const functions = app.functions();
+    functions.useFunctionsEmulator('http://localhost:5001');
+
+    return functions;
 };
 

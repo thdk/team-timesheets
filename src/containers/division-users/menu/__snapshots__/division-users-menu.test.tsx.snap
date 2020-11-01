@@ -13,46 +13,18 @@ exports[`DivisionUsersMenu should render 1`] = `
         class="mdc-list"
       >
         <li
-          class="mdc-list-divider"
-          role="separator"
-        />
-        <li
           class="mdc-list-item"
+          role="menuitem"
           tabindex="0"
         >
-          <i
-            aria-hidden="true"
-            class="rmwc-icon rmwc-icon--ligature material-icons mdc-list-item__graphic"
-          >
-            all_inclusive
-          </i>
-          <span
-            class="mdc-list-item__text"
-          >
-            Default
-          </span>
+          Preferences
         </li>
-      </ul>
-      <li
-        class="mdc-list-divider"
-        role="separator"
-      />
-      <ul
-        class="mdc-list"
-      >
         <li
           class="mdc-list-item"
           role="menuitem"
           tabindex="0"
         >
           Manage divisions
-        </li>
-        <li
-          class="mdc-list-item"
-          role="menuitem"
-          tabindex="0"
-        >
-          Preferences
         </li>
         <li
           class="mdc-list-divider"

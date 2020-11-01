@@ -12,9 +12,7 @@ const {
         "registrations",
     ]);
 
-const store = new Store({
-    firestore,
-});
+const store = new Store({ firestore, });
 
 jest.mock("../../contexts/store-context", () => ({
     useStore: () => store,

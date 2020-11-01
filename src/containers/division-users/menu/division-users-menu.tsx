@@ -43,7 +43,7 @@ export const DivisionUsersMenu = observer(({
         setIsMenuOpen(false);
     };
 
-    const areDivisionsEnabled = configs.getConfigValue("enable-divisions", false);
+    const areDivisionsEnabled = configs.getConfigValue("enable-divisions", false) || false;
 
     const displayName = division.division || user.authenticatedUser?.divisionId
         ? (
@@ -70,7 +70,7 @@ export const DivisionUsersMenu = observer(({
                 className={"division-users-menu"}
                 {...menuProps}
             >
-                {areDivisionsEnabled
+                {areDivisionsEnabled && division.userDivisions.length
                     ? (
                         <>
                             <List>
@@ -101,12 +101,20 @@ export const DivisionUsersMenu = observer(({
                     )
                     : null}
                 <List>
+                    <MenuItem
+                        onClick={() => {
+                            setIsMenuOpen(false);
+                            goToUserProfile(router, "preferences");
+                        }}
+                    >
+                        Preferences
+                    </MenuItem>
                     {areDivisionsEnabled
                         ? (
                             <MenuItem
                                 onClick={() => {
                                     setIsMenuOpen(false);
-                                    goToUserProfile(router);
+                                    goToUserProfile(router, "divisions");
                                 }}
                             >
                                 Manage divisions
@@ -114,14 +122,6 @@ export const DivisionUsersMenu = observer(({
                         )
                         : null
                     }
-                    <MenuItem
-                        onClick={() => {
-                            setIsMenuOpen(false);
-                            goToUserProfile(router);
-                        }}
-                    >
-                        Preferences
-                    </MenuItem>
                     <ListDivider />
                     <MenuItem
                         onClick={() => {

@@ -1,4 +1,4 @@
-import { initTestFirestore, deleteFirebaseAppsAsync } from "../../__tests__/utils/firebase";
+import { initTestFirestore, deleteFirebaseAppsAsync, initTestFunctions } from "../../__tests__/utils/firebase";
 
 import { TestCollection } from "../../__tests__/utils/firestorable/collection";
 import { IRegistrationData } from "../../../common";
@@ -13,13 +13,15 @@ const {
     refs: [
         registrationRef,
         userRef,
-    ]
+    ],
 } = initTestFirestore("registration-store-test",
     [
         "registrations",
         "users",
         "division-users",
     ]);
+
+const functions = initTestFunctions("registration-store-test");
 
 const userCollection = new TestCollection(firestore, userRef);
 const registrationCollection = new TestCollection<IRegistrationData>(firestore, registrationRef);
@@ -100,7 +102,9 @@ const setupAsync = () => {
 
 let unsubscribe: () => void;
 beforeEach(() => {
-    store = new Store({ firestore });
+    if (functions) {
+        store = new Store({ firestore, httpsCallable: jest.fn() });
+    }
     return setupAsync();
 });
 

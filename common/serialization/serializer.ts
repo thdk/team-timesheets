@@ -133,7 +133,7 @@ export function convertTeam(appData: Partial<ITeam>): Partial<ITeamData> {
     return convertNameWithIcon(appData);
 }
 
-export function convertOrganisation(appData: Partial<IDivision> | null): Partial<IDivisionData> {
+export function convertDivision(appData: Partial<IDivision> | null): Partial<IDivisionData> {
     let data: Partial<IDivisionData>;
 
     if (appData === null) {

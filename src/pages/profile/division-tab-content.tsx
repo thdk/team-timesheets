@@ -65,9 +65,17 @@ export const DivisionsTabContent = () => {
                         if (code) {
                             divisionStore.joinDivision(
                                 code,
-                                (message) => {
+                            ).then(
+                                (successMessage) => {
+                                    return successMessage;
+                                },
+                                (errorMessage) => {
+                                    return errorMessage;
+                                }
+                            )
+                                .then((result) => {
                                     snackbarQueue.notify({
-                                        title: message,
+                                        title: result,
                                     });
                                 });
                         }

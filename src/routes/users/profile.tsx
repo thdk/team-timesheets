@@ -5,8 +5,14 @@ import { App } from "../../internal";
 import { IRootStore } from "../../stores/root-store";
 import { ProfilePage } from "../../pages/profile";
 
-export const goToUserProfile = (router: RouterStore<IRootStore>) => {
-    router.goTo(routes.userProfile);
+
+export type ProfileRouteQueryParams = { tab: ProfileTab };
+export type ProfileRoute = Route<IRootStore, {}, ProfileRouteQueryParams>;
+
+export type ProfileTab = "preferences" | "divisions";
+
+export const goToUserProfile = (router: RouterStore<IRootStore>, tab: ProfileTab = "preferences") => {
+    router.goTo(routes.userProfile, {}, { tab });
 };
 
 const routes = {

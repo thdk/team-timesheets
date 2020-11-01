@@ -17,10 +17,12 @@ export const StoreProvider = ({ children, testStore }: React.PropsWithChildren<{
 
     const auth = firebase.auth();
     const firestore = firebase.firestore();
+    const functions = firebase.functions();
 
     const store = (window as any)["store"] = testStore || new Store({
         auth,
         firestore,
+        httpsCallable: functions.httpsCallable.bind(functions),
     });
 
     return (

@@ -7,7 +7,6 @@ import * as serializer from '../../../common/serialization/serializer';
 import * as deserializer from '../../../common/serialization/deserializer';
 import { IDivision, IDivisionCode } from "../../../common/interfaces/IOrganisation";
 import { IDivisionData } from "../../../common/interfaces/IOrganisationData";
-import { firestore } from "firebase";
 import { IUserData, IUser } from "../../../common";
 import firebase from "firebase/app";
 
@@ -18,19 +17,24 @@ export class DivisionStore {
     @observable.ref projectId?: string;
     @observable.ref division: Doc<IDivision> | undefined;
 
+    private readonly httpsCallable?: (name: string) => firebase.functions.HttpsCallable;
+
     private rootStore: IRootStore;
     constructor(
         rootStore: IRootStore,
         {
             firestore,
+            httpsCallable,
         }: {
             firestore: firebase.firestore.Firestore,
+            httpsCallable?: (name: string) => firebase.functions.HttpsCallable,
         }
     ) {
+        this.httpsCallable = httpsCallable
 
         this.rootStore = rootStore;
 
-        const createQuery = (ref: firestore.CollectionReference, docs: Doc<IUser, IUserData>[]) => {
+        const createQuery = (ref: firebase.firestore.CollectionReference, docs: Doc<IUser, IUserData>[]) => {
             if (docs.length) {
                 const ids = docs
                     .reduce((p, c) => {
@@ -55,8 +59,8 @@ export class DivisionStore {
             {
                 realtimeMode: RealtimeMode.on,
                 fetchMode: FetchMode.manual,
-                serialize: serializer.convertOrganisation,
-                deserialize: deserializer.convertOrganisation,
+                serialize: serializer.convertDivision,
+                deserialize: deserializer.convertDivision,
             },
             {
                 // logger: console.log,
@@ -112,42 +116,52 @@ export class DivisionStore {
             }, [] as (IDivision & { divisionUserId: string })[]);
     }
 
-    public joinDivision(code: string, callback: (message: string) => void) {
-        return firebase.functions().httpsCallable("getDivisionByEntryCode")(code)
-            .then(({ data: divisionId }) => {
-                if (!divisionId) {
-                    return Promise.reject(
-                        new Error("unknown-division"),
-                    );
-                }
+    public joinDivision(code: string) {
+        if (!this.httpsCallable) {
+            throw new Error("DivisionStore needs to be provided with httpsCallable in constructor");
+        }
 
-                if (this.userDivisions.some(data => data.id === divisionId)
-                ) {
-                    return Promise.reject(
-                        new Error("already-in-division"),
-                    )
-                }
+        return this.httpsCallable("getDivisionByEntryCode")(code)
+            .then(
+                ({ data: divisionId }) => {
+                    if (!divisionId) {
+                        return Promise.reject(
+                            new Error("unknown-division"),
+                        );
+                    }
 
-                return this.rootStore.user.divisionUsersCollection.addAsync(
-                    {
-                        ...this.rootStore.user.authenticatedUser!,
-                        divisionId,
-                        roles: {
-                            user: true
-                        },
-                    },
-                ).then(
-                    (divisionUserId) => {
-                        return this.rootStore.user.updateAuthenticatedUser({
-                            divisionUserId,
+                    if (this.userDivisions.some(data => data.id === divisionId)
+                    ) {
+                        return Promise.reject(
+                            new Error("already-in-division"),
+                        )
+                    }
+
+                    return this.rootStore.user.divisionUsersCollection.addAsync(
+                        {
+                            ...this.rootStore.user.authenticatedUser!,
                             divisionId,
-                        });
-                    },
-                )
-            })
+                            roles: {
+                                user: true
+                            },
+                        },
+                    ).then(
+                        (divisionUserId) => {
+                            return this.rootStore.user.updateAuthenticatedUser({
+                                divisionUserId,
+                                divisionId,
+                            });
+                        },
+                    )
+                },
+                e => {
+                    console.error(e);
+                    throw e;
+                },
+            )
             .then(
                 () => {
-                    callback(`Successfully joined this division`);
+                    return "Successfully joined this division";
                 }, (e: Error) => {
                     let title: string;
                     switch (e.message) {
@@ -159,7 +173,7 @@ export class DivisionStore {
                             title = "You can't join this division";
                             break;
                     }
-                    callback(title);
+                    return Promise.reject(title);
                 },
             );
     }

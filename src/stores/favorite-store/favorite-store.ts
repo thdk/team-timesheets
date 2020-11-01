@@ -1,6 +1,5 @@
 import { ICollection, Collection, FetchMode, RealtimeMode } from "firestorable";
 import { observable, reaction, computed, action } from "mobx";
-import { CollectionReference } from "@firebase/firestore-types";
 
 import { IRootStore } from "../root-store";
 import { IFavoriteRegistrationGroup, IFavoriteRegistration, IFavoriteRegistrationGroupData } from "../../../common/dist";
@@ -11,7 +10,7 @@ export class FavoriteStore {
     public favoriteGroupCollection: ICollection<IFavoriteRegistrationGroup, IFavoriteRegistrationGroupData>;
     public favoriteCollection: ICollection<IFavoriteRegistration>;
 
-    private favoriteGroupCollectionRef: CollectionReference;
+    private favoriteGroupCollectionRef: firebase.firestore.CollectionReference;
     private db: firebase.firestore.Firestore;
 
     @observable.ref
@@ -28,7 +27,7 @@ export class FavoriteStore {
         this.favoriteGroupCollectionRef = this.db.collection("favorite-groups");
         const createQuery = () =>
             rootStore.user.divisionUser
-                ? (ref: CollectionReference) => ref.where("userId", "==", rootStore.user.divisionUser?.id).orderBy("name")
+                ? (ref: firebase.firestore.CollectionReference) => ref.where("userId", "==", rootStore.user.divisionUser?.id).orderBy("name")
                 : null;
 
         this.favoriteGroupCollection = new Collection(

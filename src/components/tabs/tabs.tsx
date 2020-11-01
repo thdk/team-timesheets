@@ -1,6 +1,7 @@
 import React, { useMemo, useState } from 'react';
 import { Tab, TabBar } from "@rmwc/tabs";
 import { useCallback } from 'react';
+import { useEffect } from 'react';
 
 export interface ITabData<T extends string = string> {
     id: T;
@@ -46,20 +47,29 @@ export const Tabs = <T extends string>({
     }, [tabData]);
 
     const [tab, setTab] = useState(activeTab);
+
+    useEffect(() => {
+        setTab(activeTab);
+    }, [activeTab])
+
     const activeTabIndex = useMemo(
         () => {
-            return tab
+            const index = tab
                 ? validTabs.findIndex(t => t.id === tab)
                 : 0;
+            return index === -1
+                ? 0
+                : index;
         },
         [validTabs, tab],
     );
 
     const handleOnTabClick = useCallback(
         (id: T) => {
-            setTab(id);
             if (onTabChange) {
                 onTabChange(id);
+            } else {
+                setTab(id);
             }
         },
         [onTabChange],

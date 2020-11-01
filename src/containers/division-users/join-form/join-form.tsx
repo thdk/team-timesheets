@@ -17,17 +17,16 @@ export const DivisionJoinform = () => {
         setValue(target.value);
     }, [setValue]);
 
-    const handleOnClick = () => {
+    const handleOnClick = async () => {
         if (value) {
             setValue("");
-            division.joinDivision(
+            const result = await division.joinDivision(
                 value,
-                (message) => {
-                    queue.notify({
-                        title: message,
-                    });
-                },
             );
+
+            queue.notify({
+                title: result,
+            });
         }
     };
 

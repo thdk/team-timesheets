@@ -69,7 +69,7 @@ export const convertProject = (firestoreData: IProjectData) => {
     } as IProject;
 }
 
-export const convertOrganisation = (firestoreData: IDivisionData) => {
+export const convertDivision = (firestoreData: IDivisionData) => {
     return {
         ...convertNameWithIcon(firestoreData),
         createdBy: firestoreData.createdBy,

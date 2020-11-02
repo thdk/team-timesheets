@@ -52,7 +52,7 @@ const setupAsync = async () => {
         },
     ]);
 
-    projectIds = await store.projects.projectsCollection.addAsync([
+    projectIds = await store.projects.addDocuments([
         {
             name: "Project 1",
             icon: "people",

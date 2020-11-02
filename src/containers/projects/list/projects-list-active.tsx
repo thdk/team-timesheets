@@ -21,7 +21,7 @@ export const ActiveProjectList = observer((props: React.HTMLProps<HTMLDivElement
         if (view.selection.size) {
             view.toggleSelection(id);
         } else {
-            const project = projects.projectsCollection.get(id);
+            const project = projects.collection.get(id);
             if (project && canEditProject(project.data!, user.divisionUser, user.divisionUser?.id)
             ) {
                 setGoToProject(id);
@@ -42,7 +42,7 @@ export const ActiveProjectList = observer((props: React.HTMLProps<HTMLDivElement
                 onToggleSelection={onSelectItem}
                 onItemClick={handleItemClicked}
                 selection={view.selection}
-                activeItemId={projects.projectId}
+                activeItemId={projects.activeDocumentId}
             ></SettingsList>
         );
 });

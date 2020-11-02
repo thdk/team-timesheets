@@ -103,7 +103,7 @@ const routes = {
         },
         onParamsChange: (_route, _params, s: IRootStore, queryParams: { tab: ProjectsTab }) => {
             transaction(() => {
-                s.projects.setProjectId(undefined);
+                s.projects.setActiveDocumentId(undefined);
                 s.view.selection.clear();
             });
             setActions(queryParams.tab, s);
@@ -111,7 +111,7 @@ const routes = {
         title: "Projects",
         beforeExit: (_route, _param, s: IRootStore) => {
             transaction(() => {
-                s.projects.setProjectId(undefined);
+                s.projects.setActiveDocumentId(undefined);
                 s.view.selection.clear();
                 s.view.setFabs([]);
                 s.view.setActions([]);

@@ -4,7 +4,7 @@ import { Collection, ICollectionOptions, ICollectionDependencies } from "firesto
 
 export class FirestorableStore<T, K> {
     @observable.ref
-    private activeDocumentId: string | undefined = undefined;
+    private activeDocumentIdField: string | undefined = undefined;
 
     public readonly collection: Collection<T, K>;
 
@@ -40,7 +40,7 @@ export class FirestorableStore<T, K> {
         );
 
         reaction(
-            () => this.activeDocumentId,
+            () => this.activeDocumentIdField,
             (id) => {
                 if (!id) {
                     this.newDocument.set(undefined);
@@ -53,17 +53,21 @@ export class FirestorableStore<T, K> {
         ids.length && this.collection.updateAsync(null, ...ids);
     }
 
-    public addDocuments(document: T, id?: string) {
-        this.collection.addAsync(document, id);
+    public addDocument(document: T, id?: string) {
+        return this.collection.addAsync(document, id);
+    }
+
+    public addDocuments(documents: T[]) {
+        return this.collection.addAsync(documents);
     }
 
     public updateDocument(document: Partial<T>, id: string) {
-        this.collection.updateAsync(document, id);
+        return this.collection.updateAsync(document, id);
     }
 
     @action
     public setActiveDocumentId(id?: string) {
-        this.activeDocumentId = id;
+        this.activeDocumentIdField = id;
     }
 
     @action
@@ -74,17 +78,22 @@ export class FirestorableStore<T, K> {
 
         transaction(() => {
             this.newDocument.set({ ...defaultData, ...document });
-            this.activeDocumentId = undefined;
+            this.activeDocumentIdField = undefined;
         });
     }
 
     @computed
     public get activeDocument() {
-        if (this.activeDocumentId) {
-            const doc = this.collection.get(this.activeDocumentId);
+        if (this.activeDocumentIdField) {
+            const doc = this.collection.get(this.activeDocumentIdField);
             return doc ? doc.data : undefined;
         } else {
             return this.newDocument.get();
         }
+    }
+
+    @computed
+    public get activeDocumentId() {
+        return this.activeDocumentIdField;
     }
 }

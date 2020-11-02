@@ -1,6 +1,6 @@
 {
   "name": "thdk-timesheets-app",
-  "version": "0.10.3",
+  "version": "1.0.0",
   "description": "A replacement web app for old school timesheets",
   "main": "src/js/app.ts",
   "scripts": {

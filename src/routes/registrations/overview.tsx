@@ -149,7 +149,9 @@ const setActions = (s: IRootStore, alowInserts = false) => {
         )
     }
 
-    transaction(() => {
+    transaction(async () => {
+        // temporary because useEffect unmount callback are called before mobx router on-enter callback
+        await Promise.resolve();
         s.view.setActions(actions);
         s.view.setFabs([{
             action: () => {
@@ -158,7 +160,7 @@ const setActions = (s: IRootStore, alowInserts = false) => {
             },
             icon: {
                 content: "add",
-                label: "Add new registration"
+                label: "New registration"
             },
             shortKey: {
                 key: "a",

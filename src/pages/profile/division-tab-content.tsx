@@ -9,12 +9,16 @@ import { queue as snackbarQueue } from "../../components/snackbar";
 import { queue as dialogQueue } from "../../components/dialog-queue";
 
 import { useDivisionStore } from "../../contexts/division-context";
+import { goToDivision } from "../../routes/divisions/detail";
+import { useRouterStore } from "../../stores/router-store";
+
 import "./division-tab-content.css";
 
 export const DivisionsTabContent = () => {
     const view = useViewStore();
     const user = useUserStore();
     const divisionStore = useDivisionStore();
+    const router = useRouterStore();
 
     useEffect(() => {
         view.setActions([
@@ -50,8 +54,14 @@ export const DivisionsTabContent = () => {
                 contextual: true,
                 selection: view.selection,
             },
-            // join division
+        ]);
+
+        view.setFabs([
             {
+                icon: {
+                    content: "person_add",
+                    label: "Join division",
+                },
                 action: () => {
                     dialogQueue.prompt({
                         title: 'Join a division',
@@ -81,13 +91,23 @@ export const DivisionsTabContent = () => {
                         }
                     });
                 },
+            },
+            {
                 icon: {
-                    content: "person_add",
-                    label: "Join a division",
-                }
-            }
-        ])
-    }, [view]);
+                    content: "add",
+                    label: "New division",
+                },
+                action: () => {
+                    goToDivision(router);
+                },
+            },
+        ]);
+
+        return () => {
+            view.setActions([]);
+            view.setFabs([]);
+        };
+    }, [view, user, divisionStore]);
 
     return (
         <Box className="division-tab-content">

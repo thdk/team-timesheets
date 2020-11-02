@@ -9,9 +9,12 @@ jest.mock("../../contexts/division-context");
 describe("DivisionTabContent", () => {
     it("should add view actions when rendered", () => {
         const setActions = jest.fn();
-        (useViewStore as unknown as jest.Mock<Partial<ReturnType<typeof useViewStore>>>).mockReturnValue({
-            setActions,
-        }
+        const setFabs = jest.fn();
+        (useViewStore as unknown as jest.Mock<Partial<ReturnType<typeof useViewStore>>>).mockReturnValue(
+            {
+                setActions,
+                setFabs,
+            }
         );
         render(
             <DivisionsTabContent />
@@ -25,12 +28,6 @@ describe("DivisionTabContent", () => {
                         label: "Leave division"
                     },
                 }),
-                expect.objectContaining({
-                    icon: {
-                        content: "person_add",
-                        label: "Join a division",
-                    }
-                })
             ])
         )
     });

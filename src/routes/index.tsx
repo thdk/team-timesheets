@@ -10,6 +10,7 @@ import projectRoutes from './projects';
 import dashboardRoures from './dashboard';
 import loginRoutes from './login';
 import favoriteRoutes from './favorites';
+import divisionRoutes from './divisions';
 import { IRootStore } from '../stores/root-store';
 
 const root = {
@@ -33,4 +34,5 @@ export const routes = {
   ...projectRoutes,
   ...dashboardRoures,
   ...favoriteRoutes,
+  ...divisionRoutes,
 };

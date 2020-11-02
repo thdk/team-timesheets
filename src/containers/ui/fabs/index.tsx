@@ -8,14 +8,25 @@ import "./fabs.css";
 export const Fabs = observer(() => {
     const store = useStore();
 
-    return <>
-        {store.view.fabs.map(fab => (
+    return <div
+        className="fabs"
+    >
+        {store.view.fabs.map((fab, index) => (
             <Fab
                 key={fab.icon.content}
                 onClick={fab.action}
                 icon={fab.icon.content}
-                name={fab.icon.label}
+                title={fab.icon.label}
+                label={fab.icon.label}
+                theme={[
+                    index === 0
+                        ? 'primaryBg'
+                        : 'primaryBg',
+                    index === 0
+                        ? 'onPrimary'
+                        : 'onPrimary'
+                ]}
             />
         ))}
-    </>;
+    </div>;
 });

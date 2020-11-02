@@ -125,6 +125,7 @@ export const DivisionUsersMenu = observer(({
                     <ListDivider />
                     <MenuItem
                         onClick={() => {
+                            setIsMenuOpen(false);
                             user.authenticatedUser ? user.signout() : goToLogin(router);
                         }}
                     >

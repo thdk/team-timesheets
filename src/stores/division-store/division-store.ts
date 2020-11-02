@@ -9,12 +9,11 @@ import { IDivision, IDivisionCode } from "../../../common/interfaces/IOrganisati
 import { IDivisionData } from "../../../common/interfaces/IOrganisationData";
 import { IUserData, IUser } from "../../../common";
 import firebase from "firebase/app";
+import { FirestorableStore } from "../firestorable-store";
 
-export class DivisionStore {
-    readonly divisionCollection: ICollection<IDivision, IDivisionData>;
+export class DivisionStore extends FirestorableStore<IDivision, IDivisionData> {
     readonly divisionCodesCollection: ICollection<IDivisionCode>;
 
-    @observable.ref projectId?: string;
     @observable.ref division: Doc<IDivision> | undefined;
 
     private readonly httpsCallable?: (name: string) => firebase.functions.HttpsCallable;
@@ -30,6 +29,21 @@ export class DivisionStore {
             httpsCallable?: (name: string) => firebase.functions.HttpsCallable,
         }
     ) {
+        super(
+            {
+                collection: "divisions",
+                collectionOptions: {
+                    realtimeMode: RealtimeMode.on,
+                    fetchMode: FetchMode.manual,
+                    serialize: serializer.convertDivision,
+                    deserialize: deserializer.convertDivision,
+                },
+            },
+            {
+                firestore,
+            },
+        );
+
         this.httpsCallable = httpsCallable
 
         this.rootStore = rootStore;
@@ -53,20 +67,6 @@ export class DivisionStore {
             return ref;
         };
 
-        this.divisionCollection = new Collection<IDivision, IDivisionData>(
-            firestore,
-            "divisions",
-            {
-                realtimeMode: RealtimeMode.on,
-                fetchMode: FetchMode.manual,
-                serialize: serializer.convertDivision,
-                deserialize: deserializer.convertDivision,
-            },
-            {
-                // logger: console.log,
-            },
-        );
-
         this.divisionCodesCollection = new Collection<IDivisionCode>(
             firestore,
             "division-codes",
@@ -80,14 +80,14 @@ export class DivisionStore {
         );
 
         reaction(() => this.rootStore.user.divisionUsersCollection.docs, (docs) => {
-            this.divisionCollection.query = (ref) => createQuery(ref, docs);
-            if (!this.divisionCollection.isFetched) {
-                this.divisionCollection.fetchAsync();
+            this.collection.query = (ref) => createQuery(ref, docs);
+            if (!this.collection.isFetched) {
+                this.collection.fetchAsync();
             }
         });
 
         autorun(() => {
-            const division = this.divisionId ? this.divisionCollection.get(this.divisionId) : undefined;
+            const division = this.divisionId ? this.collection.get(this.divisionId) : undefined;
 
             this.division = division;
         });
@@ -104,7 +104,7 @@ export class DivisionStore {
             .reduce((p, c) => {
                 const orgId = c.data!.divisionId;
                 if (orgId) {
-                    const org = this.divisionCollection.get(orgId);
+                    const org = this.collection.get(orgId);
                     if (org) {
                         p.push({
                             ...org.data!,

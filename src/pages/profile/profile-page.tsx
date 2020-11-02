@@ -16,7 +16,7 @@ export const ProfilePage = withAuthentication(observer(() => {
     const configs = useConfigs();
     const router = useRouterStore();
 
-    const areDivisionsEnabled = configs.getConfigValue<boolean>("enable-divisions", false) || false;
+    const areDivisionsEnabled = configs.getConfigValue<boolean>("enable-divisions", false) || true;
 
     const { divisionUser } = useUserStore();
 

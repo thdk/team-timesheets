@@ -43,7 +43,7 @@ export const DivisionUsersMenu = observer(({
         setIsMenuOpen(false);
     };
 
-    const areDivisionsEnabled = configs.getConfigValue("enable-divisions", false) || false;
+    const areDivisionsEnabled = configs.getConfigValue("enable-divisions", false) || true;
 
     const displayName = division.division || user.authenticatedUser?.divisionId
         ? (

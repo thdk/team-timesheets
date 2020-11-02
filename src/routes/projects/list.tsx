@@ -69,19 +69,23 @@ const setActions = (tab: ProjectsTab, store: IRootStore) => {
                 break;
         }
 
-        store.view.setActions(actions);
-        store.view.setFabs([{
-            action: () => {
-                store.router.goTo(detailRoutes.newProject, {});
-            },
-            icon: {
-                content: "add",
-                label: "Add new project"
-            },
-            shortKey: {
-                key: "a",
-            },
-        }]);
+        transaction(async () => {
+            // temporary because useEffect unmount callback are called before mobx router on-enter callback
+            await Promise.resolve();
+            store.view.setActions(actions);
+            store.view.setFabs([{
+                action: () => {
+                    store.router.goTo(detailRoutes.newProject, {});
+                },
+                icon: {
+                    content: "add",
+                    label: "New project"
+                },
+                shortKey: {
+                    key: "a",
+                },
+            }]);
+        });
     });
 }
 

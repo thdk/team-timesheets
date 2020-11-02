@@ -27,7 +27,8 @@ const IconPicker = (props: Props) => {
 
     const [isOpen, setIsOpen] = useState(false);
 
-    const [icon, setIcon] = useState((value || "").toString())
+    const [icon, setIcon] = useState((value || "").toString());
+    const [validIcon, setValidIcon] = useState(icon);
 
     const handleTextFieldChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
         setIcon(e.target.value);
@@ -54,9 +55,17 @@ const IconPicker = (props: Props) => {
     useEffect(() => {
         // only call onChange if value of inputField is a valid icon
         if (icons.indexOf(icon) !== -1) {
-            onChange(icon);
+            console.log({
+                iconPicker: icon,
+            });
+            setValidIcon(icon);
         }
-    }, [icon, onChange]);
+    }, [icon]);
+
+    useEffect(() => {
+        // only call onChange if value of inputField is a valid icon
+        onChange(validIcon);
+    }, [validIcon, onChange]);
 
     const Dialog = () =>
         isOpen
@@ -68,7 +77,7 @@ const IconPicker = (props: Props) => {
 
     return (<>
         <TextField
-            icon={icon}
+            icon={validIcon}
             trailingIcon={{
                 icon: editIcon,
                 onClick: handleTrailingIconClick,

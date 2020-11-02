@@ -6,7 +6,7 @@ import { App, goToOverview, DateObject } from '../../internal';
 import Registration from '../../pages/registration-detail';
 import { setTitleForRoute } from '../actions';
 import { IRootStore } from '../../stores/root-store';
-import { IViewAction } from '../../stores/view-store';
+import { IViewAction, ViewStore } from '../../stores/view-store';
 
 const path = "/timesheetsdetail";
 
@@ -25,12 +25,34 @@ export const goToNewRegistration = (router: RouterStore<IRootStore>) => {
     );
 };
 
-export const setBackToOverview = (store: IRootStore, action?: () => void, currentDate?: number, targetDate?: DateObject) => {
+export const setBackToOverview = (
+    store: Pick<IRootStore, "view" | "router">,
+    action?: () => void, currentDate?: number,
+    targetDate?: DateObject,
+    navigate?: () => void,
+) => {
     store.view.setNavigation({
         action: () => {
             action && action();
-            goToOverview(store, targetDate, { track: store.view.track, currentDate });
+            if (navigate) {
+                navigate();
+            } else {
+                goToOverview(store, targetDate, { track: store.view.track, currentDate });
+            }
         },
+        icon: { label: "Back", content: "arrow_back" }
+    });
+}
+
+export const setChildNavigation = ({
+    view,
+    navigateBack,
+}: {
+    view: ViewStore;
+    navigateBack: () => void;
+}) => {
+    view.setNavigation({
+        action: navigateBack,
         icon: { label: "Back", content: "arrow_back" }
     });
 }

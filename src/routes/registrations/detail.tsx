@@ -59,12 +59,15 @@ export const setChildNavigation = ({
 
 const onEnter = (route: RegistrationsDetailRoute, params: RouteParams, s: IRootStore) => {
     if (params && params.id) {
-        s.timesheets.setSelectedRegistration(params.id);
+        s.timesheets.setActiveDocumentId(params.id);
     }
 
     const deleteAction: IViewAction = {
         action: () => {
-            s.timesheets.registrationId && s.timesheets.deleteRegistrationsAsync(s.timesheets.registrationId);
+            s.timesheets.activeDocumentId && s.timesheets.deleteDocuments(
+                undefined,
+                s.timesheets.activeDocumentId,
+            );
             goToOverview(s);
         },
         icon: { label: "Delete", content: "delete" },
@@ -86,13 +89,17 @@ const onEnter = (route: RegistrationsDetailRoute, params: RouteParams, s: IRootS
             deleteAction
         ]);
 
-        setBackToOverview(s, () => s.timesheets.saveSelectedRegistration(), s.timesheets.registration && s.timesheets.registration.date!.getDate());
+        setBackToOverview(
+            s,
+            () => s.timesheets.saveSelectedRegistration(),
+            s.timesheets.activeDocument && s.timesheets.activeDocument.date!.getDate(),
+        );
         setTitleForRoute(s, route);
     });
 };
 
 const beforeExit = (_route: RegistrationsDetailRoute, _params: RouteParams, s: IRootStore) => {
-    s.timesheets.setSelectedRegistration(undefined);
+    s.timesheets.setActiveDocumentId(undefined);
     s.view.setNavigation("default");
 };
 

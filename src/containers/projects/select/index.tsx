@@ -11,16 +11,16 @@ import { useRegistrationStore } from '../../../contexts/registration-context';
 export const ProjectSelect = observer(() => {
     const { divisionUser } = useUserStore();
     const { activeProjects, archivedProjects } = useProjectStore();
-    const { registration } = useRegistrationStore();
+    const { activeDocument } = useRegistrationStore();
 
     const onProjectChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
         const value = event.currentTarget.value;
 
-        if (registration && registration)
-           registration.project = value;
+        if (activeDocument && activeDocument)
+           activeDocument.project = value;
     }
 
-    let project = registration ? registration.project : "";
+    let project = activeDocument ? activeDocument.project : "";
 
     const userRecentProjects = divisionUser ? divisionUser.recentProjects : [];
 

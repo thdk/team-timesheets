@@ -65,7 +65,7 @@ describe("RegistrationDetail", () => {
 
     it("should render when there is a registration", () => {
         (useRegistrationStore as any).mockReturnValue({
-            registration: {
+            activeDocument: {
                 date: new Date(2020, 2, 1),
                 isPersisted: true,
                 userId: "user-1",
@@ -88,7 +88,7 @@ describe("RegistrationDetail", () => {
 
     it("should only show user tasks instead of all tasks", () => {
         (useRegistrationStore as any).mockReturnValue({
-            registration: {
+            activeDocument: {
                 date: new Date(2020, 2, 1),
                 isPersisted: true,
                 userId: "user-1",

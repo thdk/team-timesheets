@@ -242,7 +242,7 @@ describe("RegistrationStore", () => {
         describe("when set from false (default) to true", () => {
             it("should set isCollapsed property of all groups to 'true'", async () => {
                 await waitFor(() => expect(store.user.divisionUser).toBeDefined());
-                await waitFor(() => expect(store.timesheets.registrations.isFetched).toBeTruthy());
+                await waitFor(() => expect(store.timesheets.collection.isFetched).toBeTruthy());
 
                 store.timesheets.areGroupedRegistrationsCollapsed = true;
 
@@ -308,7 +308,7 @@ describe("RegistrationStore", () => {
 
             it("should set selectedRegistrationDays", async () => {
                 await waitFor(() => expect(store.user.divisionUser).toBeDefined());
-                await waitFor(() => expect(store.timesheets.registrations.isFetched).toBeTruthy());
+                await waitFor(() => expect(store.timesheets.collection.isFetched).toBeTruthy());
 
                 await waitFor(() =>
                     expect(store.timesheets.registrationsGroupedByDay
@@ -347,30 +347,30 @@ describe("RegistrationStore", () => {
         describe("when the requested registration id exists in the current filter", () => {
             it("should set selectedRegistration and selectedRegistrationId", async () => {
                 await waitFor(() => expect(store.user.divisionUser).toBeDefined());
-                await waitFor(() => expect(store.timesheets.registrations.isFetched).toBeTruthy());
+                await waitFor(() => expect(store.timesheets.collection.isFetched).toBeTruthy());
 
-                store.timesheets.setSelectedRegistration("reg-1");
+                store.timesheets.setActiveDocumentId("reg-1");
 
-                expect(store.timesheets.registrationId).toBe("reg-1");
-                expect(store.timesheets.registration).toBeDefined();
-                expect(store.timesheets.registration!.description).toBe("desc 3");
+                expect(store.timesheets.activeDocumentId).toBe("reg-1");
+                expect(store.timesheets.activeDocument).toBeDefined();
+                expect(store.timesheets.activeDocument!.description).toBe("desc 3");
             });
         });
 
         describe("when the requested registration id does not exist in the current filter", () => {
             it("should fetch the registration and set selectedRegistration and selectedRegistrationId", async () => {
                 await waitFor(() => expect(store.user.divisionUser).toBeDefined());
-                await waitFor(() => expect(store.timesheets.registrations.isFetched).toBeTruthy());
+                await waitFor(() => expect(store.timesheets.collection.isFetched).toBeTruthy());
 
-                store.timesheets.setSelectedRegistration("reg-2");
+                store.timesheets.setActiveDocumentId("reg-2");
 
                 await waitFor(() => {
-                    expect(store.timesheets.registrationId).toBe("reg-2");
-                    expect(store.timesheets.registration).toBeDefined();
-                    expect(store.timesheets.registration!.description).toBe("desc 4");
+                    expect(store.timesheets.activeDocumentId).toBe("reg-2");
+                    expect(store.timesheets.activeDocument).toBeDefined();
+                    expect(store.timesheets.activeDocument!.description).toBe("desc 4");
                 });
 
-                store.timesheets.setSelectedRegistration(undefined);
+                store.timesheets.setActiveDocumentId(undefined);
             });
         });
     });
@@ -378,23 +378,21 @@ describe("RegistrationStore", () => {
     describe("saveSelectedRegistration", () => {
         it("should save changes to the selected registration", async () => {
             await waitFor(() => expect(store.user.divisionUser).toBeDefined());
-            await waitFor(() => expect(store.timesheets.registrations.isFetched).toBeTruthy());
+            await waitFor(() => expect(store.timesheets.collection.isFetched).toBeTruthy());
 
-            store.timesheets.setSelectedRegistration("reg-1");
+            store.timesheets.setActiveDocumentId("reg-1");
 
             await waitFor(() => {
-                expect(store.timesheets.registration).toBeDefined();
+                expect(store.timesheets.activeDocument).toBeDefined();
             })
 
-            expect(store.timesheets.registrationId).toBe("reg-1");
-            expect(store.timesheets.registration!.description).toBe("desc 3");
+            expect(store.timesheets.activeDocumentId).toBe("reg-1");
+            expect(store.timesheets.activeDocument!.description).toBe("desc 3");
 
-            store.timesheets.updateSelectedRegistration({
-                description: "desc 3 a",
-                project: "project-1",
-            });
+            store.timesheets.activeDocument!.description = "desc 3 a";
+            store.timesheets.activeDocument!.project = "project-1";
 
-            expect(store.timesheets.registration!.description).toBe("desc 3 a");
+            expect(store.timesheets.activeDocument!.description).toBe("desc 3 a");
 
             await store.timesheets.saveSelectedRegistration();
 
@@ -410,14 +408,14 @@ describe("RegistrationStore", () => {
                 );
             });
 
-            store.timesheets.setSelectedRegistration(undefined);
+            store.timesheets.setActiveDocumentId(undefined);
         });
     });
 
     describe("toggleSelectedRegistrationDay", () => {
         it("should set selectedRegistrationDays property", async () => {
             await waitFor(() => expect(store.user.divisionUser).toBeDefined());
-            await waitFor(() => expect(store.timesheets.registrations.isFetched).toBeTruthy());
+            await waitFor(() => expect(store.timesheets.collection.isFetched).toBeTruthy());
 
             store.timesheets.toggleSelectedRegistrationDay(
                 "Sat Apr 04 2020"

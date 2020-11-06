@@ -116,7 +116,7 @@ describe("Export Page", () => {
 
         await waitFor(() => expect(getByText("April")));
 
-        const regIds = await store.timesheets.addRegistrationsAsync(registrations);
+        const regIds = await store.timesheets.addDocuments(registrations);
 
         await waitFor(() => expect(getByText("Foobar 5")));
 
@@ -132,7 +132,7 @@ describe("Export Page", () => {
                 "March 24th",
             ]);
 
-        await store.timesheets.deleteRegistrationsAsync(...regIds);
+        await store.timesheets.deleteDocuments(undefined, ...regIds);
 
         await waitFor(() => expect(asFragment()).toMatchSnapshot());
     });

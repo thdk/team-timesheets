@@ -9,7 +9,6 @@ export const DivisionDetailContainer = observer(() => {
     const activeDocument = divisionStore.activeDocument;
 
     const handleIconChanged = useCallback((icon: string) => {
-        console.log({ icon })
         if (activeDocument) {
             activeDocument.icon = icon;
         }

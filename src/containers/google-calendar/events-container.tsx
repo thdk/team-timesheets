@@ -32,7 +32,7 @@ export const GoogleCalendarEvents =
         const handleEventClick = (event: gapi.client.calendar.Event) => {
             const start = new Date((event.start?.date || event.start?.dateTime) as string);
             const end = event.start?.date ? undefined : new Date(event.end?.dateTime!);
-            timesheet.setSelectedRegistrationDefault({
+            timesheet.createNewDocument({
                 date: start,
                 description: event.summary,
                 time: end ? Math.abs(end.getTime() - start.getTime()) / 3600000 : undefined,

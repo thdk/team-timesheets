@@ -1,4 +1,4 @@
-import { Doc, ICollection, Collection, RealtimeMode, FetchMode } from "firestorable";
+import { Doc, ICollection, RealtimeMode, FetchMode } from "firestorable";
 import { observable, computed, reaction, when, action, toJS } from 'mobx';
 import moment from 'moment';
 
@@ -7,6 +7,7 @@ import * as deserializer from '../../../common/serialization/deserializer';
 import * as serializer from '../../../common/serialization/serializer';
 import { SortOrder } from '../../containers/timesheet/days';
 import { IRegistration, IRegistrationData } from '../../../common/dist';
+import { FirestorableStore } from "../firestorable-store";
 
 export interface IGroupedRegistrations<T> {
     registrations: Doc<IRegistration, IRegistrationData>[];
@@ -17,14 +18,64 @@ export interface IGroupedRegistrations<T> {
 
 export interface IRegistrationsStore extends RegistrationStore { };
 
-export class RegistrationStore implements IRegistrationsStore {
+const createQuery = (
+    userId: string | undefined,
+    moment: moment.Moment,
+) => {
+    if (userId) {
+        const endDate = moment.clone().endOf("month").toDate();
+        const startDate = moment.clone().startOf("month").toDate();
+        const queryFn = (ref: firebase.firestore.CollectionReference) => {
+            let query = ref
+                .where("date", ">=", startDate)
+                .where("date", "<=", endDate)
+                .where("userId", "==", userId.toString());
+
+            return query;
+        }
+
+        return queryFn;
+    }
+    else {
+        return null;
+    }
+};
+
+const createDefaults = (
+    overrideDefaultsWith: Partial<IRegistration> | undefined,
+    rootStore: IRootStore,
+) => {
+    return when(() => !!rootStore.user.divisionUser)
+        .then(() => {
+            if (!rootStore.user.divisionUser || !rootStore.user.divisionUser.id) throw new Error("User must be set");
+
+            const {
+                recentProjects = [],
+                defaultTask: task = rootStore.config.tasks.length ? rootStore.config.tasks[0].id : undefined,
+                defaultClient: client = undefined
+            } = rootStore.user.divisionUser || {};
+
+            const recentActiveProjects = recentProjects
+                .filter(projectId => rootStore.projects.activeProjects
+                    .some(p => p.id === projectId));
+
+            return {
+                date: rootStore.view.day === undefined
+                    ? moment().startOf("day").toDate()
+                    : rootStore.view.moment.toDate(),
+                task,
+                client,
+                userId: rootStore.user.divisionUser.id,
+                project: recentActiveProjects.length ? recentActiveProjects[0] : undefined,
+                isPersisted: false,
+                ...overrideDefaultsWith
+            };
+        });
+};
+
+export class RegistrationStore extends FirestorableStore<IRegistration, IRegistrationData> implements IRegistrationsStore {
     private rootStore: IRootStore;
-    public readonly registrations: ICollection<IRegistration, IRegistrationData>;
     readonly clipboard = observable(new Map<string, IRegistration>());
-
-    private _selectedRegistration = observable.box<IRegistration | undefined>();
-
-    private _selectedRegistrationId = observable.box<string | undefined>();
 
     @observable
     public selectedRegistrationDays = observable([] as string[]);
@@ -44,51 +95,32 @@ export class RegistrationStore implements IRegistrationsStore {
             firestore: firebase.firestore.Firestore,
         },
     ) {
-        this.rootStore = rootStore;
-
-        const createQuery = (
-            userId: string | undefined,
-        ) => {
-            if (userId) {
-                const moment = rootStore.view.moment;
-                const endDate = moment.clone().endOf("month").toDate();
-                const startDate = moment.clone().startOf("month").toDate();
-                const queryFn = (ref: firebase.firestore.CollectionReference) => {
-                    let query = ref
-                        .where("date", ">=", startDate)
-                        .where("date", "<=", endDate)
-                        .where("userId", "==", userId.toString());
-
-                    return query;
-                }
-
-                return queryFn;
-            }
-            else {
-                return null;
-            }
-        };
-
-        this.registrations = new Collection<IRegistration, IRegistrationData>(
-            firestore,
-            "registrations",
+        super(
             {
-                realtimeMode: RealtimeMode.on,
-                fetchMode: FetchMode.auto,
-                deserialize: deserializer.convertRegistration,
-                serialize: serializer.convertRegistration,
-                query: createQuery(
-                    rootStore.user.divisionUser?.id,
-                ),
+                collection: "registrations",
+                collectionOptions: {
+                    realtimeMode: RealtimeMode.on,
+                    fetchMode: FetchMode.auto,
+                    deserialize: deserializer.convertRegistration,
+                    serialize: serializer.convertRegistration,
+                    query: createQuery(
+                        rootStore.user.divisionUser?.id,
+                        rootStore.view.moment,
+                    ),
+                },
+                createNewDocumentDefaults: (overrideDefaultsWith) => createDefaults(overrideDefaultsWith, rootStore),
             },
             {
-                // logger: console.log,
+                firestore,
             },
         );
 
+        this.rootStore = rootStore;
+
         const updateRegistrationQuery = (userId: string | undefined) => {
-            this.registrations.query = createQuery(
+            this.collection.query = createQuery(
                 userId,
+                rootStore.view.moment,
             );
         };
 
@@ -136,11 +168,11 @@ export class RegistrationStore implements IRegistrationsStore {
     }
 
     @computed get registrationsGroupedByDayReversed() {
-        return this.getGroupedRegistrations(this.registrations, SortOrder.Descending);
+        return this.getGroupedRegistrations(this.collection, SortOrder.Descending);
     }
 
     @computed get registrationsGroupedByDay() {
-        return this.getGroupedRegistrations(this.registrations);
+        return this.getGroupedRegistrations(this.collection);
     }
 
     private getGroupedRegistrations(registrations: ICollection<IRegistration, IRegistrationData>, sortOrder = SortOrder.Ascending) {
@@ -182,64 +214,6 @@ export class RegistrationStore implements IRegistrationsStore {
             }, []);
     }
 
-    @computed
-    public get registration() {
-        return this._selectedRegistration.get();
-    }
-
-    @computed
-    public get registrationId() {
-        return this._selectedRegistrationId.get();
-    }
-
-    public updateSelectedRegistration(data: Partial<IRegistration> | undefined) {
-        this.registration && this._selectedRegistration.set(data ? { ...this.registration, ...data } : undefined);
-    }
-
-    @action
-    public setSelectedRegistration(id: string | undefined) {
-        if ((!id && this._selectedRegistration) || (id !== this._selectedRegistrationId.get())) {
-            this._selectedRegistrationId.set(id);
-
-            const registration = id ? this.registrations.get(id) : undefined;
-
-            if (id && !registration) {
-                // fetch the registration manually
-                this.registrations.getAsync(id)
-                    .then(regDoc => this.setSelectedRegistrationObservable(regDoc.data))
-            } else if (registration) {
-                this.setSelectedRegistrationObservable(registration.data!);
-            } else {
-                this.setSelectedRegistrationObservable(undefined);
-            }
-        }
-    }
-
-    @action
-    public setSelectedRegistrationDefault(defaultData?: Partial<IRegistration>) {
-        return this.getNewRegistrationDataAsync(defaultData)
-            .then(data => {
-                this.setSelectedRegistrationObservable(data);
-            });
-    }
-
-    @action.bound
-    private setSelectedRegistrationObservable(registration: IRegistration | undefined) {
-        this._selectedRegistration.set(registration);
-    }
-
-    public deleteRegistrationsAsync(...ids: string[]) {
-        return this.registrations.updateAsync(null, ...ids)
-            .catch(e => {
-                console.error(e);
-                return [];
-            })
-    }
-
-    public addRegistrationsAsync(data: IRegistration[]) {
-        return this.registrations.addAsync(data);
-    }
-
     public copyRegistrationToDate(source: Omit<IRegistration, "date" | "isPersisted">, newDate: Date) {
         const date = newDate;
 
@@ -260,53 +234,23 @@ export class RegistrationStore implements IRegistrationsStore {
     }
 
     public getRegistrationById(id: string): IRegistration | null {
-        const doc = this.registrations.get(id);
+        const doc = this.collection.get(id);
         return doc && doc.data ? doc.data : null;
     }
 
-    private getNewRegistrationDataAsync(defaultData?: Partial<IRegistration>): Promise<IRegistration> {
-        return when(() => !!this.rootStore.user.divisionUser)
-            .then(() => {
-                if (!this.rootStore.user.divisionUser || !this.rootStore.user.divisionUser.id) throw new Error("User must be set");
-
-                const {
-                    recentProjects = [],
-                    defaultTask: task = this.rootStore.config.tasks.length ? this.rootStore.config.tasks[0].id : undefined,
-                    defaultClient: client = undefined
-                } = this.rootStore.user.divisionUser || {};
-
-                const recentActiveProjects = recentProjects
-                    .filter(projectId => this.rootStore.projects.activeProjects
-                        .some(p => p.id === projectId));
-
-                return {
-                    date: this.rootStore.view.day === undefined
-                        ? moment().startOf("day").toDate()
-                        : this.rootStore.view.moment.toDate(),
-                    task,
-                    client,
-                    userId: this.rootStore.user.divisionUser.id,
-                    project: recentActiveProjects.length ? recentActiveProjects[0] : undefined,
-                    isPersisted: false,
-                    ...defaultData
-                };
-            });
-    }
-
     public saveSelectedRegistration() {
-        if (this.registration) {
-            const { registration } = this;
+        if (this.activeDocument) {
+            const { activeDocument } = this;
 
-            const saveOrUpdateAsync = (registration: IRegistration, id: string | undefined): Promise<void[] | string> => {
+            const saveOrUpdateAsync = (registration: Partial<IRegistration>, id: string | undefined): Promise<void[] | string> => {
                 return id
-                    ? this.registrations.updateAsync(registration, id)
-                    : this.registrations.addAsync(registration);
-
+                    ? this.updateDocument(registration, id)
+                    : this.addDocument(registration as IRegistration); // TODO: unsafe typing!
             };
 
-            return saveOrUpdateAsync(registration, this.registrationId)
+            return saveOrUpdateAsync(activeDocument, this.activeDocumentId)
                 .then(() => {
-                    const { project = undefined } = registration || {};
+                    const { project = undefined } = activeDocument || {};
                     // TODO: move set recent project to firebase function
                     // triggering for every update/insert of a registration?
                     if (this.rootStore.user.divisionUser?.id && project) {
@@ -339,6 +283,6 @@ export class RegistrationStore implements IRegistrationsStore {
 
     public dispose() {
         this.reactionDisposeFns.forEach(fn => fn());
-        this.registrations.dispose();
+        this.collection.dispose();
     }
 }

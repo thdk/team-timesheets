@@ -18,7 +18,11 @@ const setActions = (s: IRootStore) => {
 
         const deleteAction: IViewAction = {
             action: () => {
-                s.view.selection.size && s.favorites.deleteGroups(...s.view.selection.keys());
+                s.view.selection.size && s.favorites.deleteDocuments(
+                    {
+                        useFlag: false,
+                    },
+                    ...s.view.selection.keys());
                 s.view.selection.clear();
             },
             icon: { label: "Delete", content: "delete" },
@@ -37,7 +41,7 @@ const path = '/favorites'
 const routes = {
     favorites: new Route({
         path,
-        component: <App><Favorites/></App>,
+        component: <App><Favorites /></App>,
         onEnter: (route: FavoritesListRoute, _params, s: IRootStore) => {
             setActions(s);
             setNavigationContent(s, route, false);
@@ -45,7 +49,7 @@ const routes = {
         title: "Favorites",
         beforeExit: (_route, _param, s: IRootStore) => {
             transaction(() => {
-                s.favorites.setActiveFavoriteGroupId(undefined);
+                s.favorites.setActiveDocumentId(undefined);
                 s.view.selection.clear();
                 s.view.setActions([]);
             });

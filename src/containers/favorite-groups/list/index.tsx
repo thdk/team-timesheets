@@ -28,8 +28,8 @@ const FavoriteGroupList = observer((props: FavoriteGroupListProps) => {
     };
 
     const onSelectItem = (id: string) => {
-        if (store.favorites.activeFavoriteGroup) {
-            store.favorites.setActiveFavoriteGroupId(undefined);
+        if (store.favorites.activeDocument) {
+            store.favorites.setActiveDocumentId(undefined);
         }
 
         store.view.toggleSelection(id);
@@ -46,7 +46,7 @@ const FavoriteGroupList = observer((props: FavoriteGroupListProps) => {
                 onToggleSelection={onSelectItem}
                 onItemClick={handleItemClicked}
                 selection={store.view.selection}
-                activeItemId={store.favorites.activeFavoriteGroup && store.favorites.activeFavoriteGroup.id}
+                activeItemId={store.favorites.activeDocumentId}
             ></SettingsList>
             <hr className="mdc-list-divider" />
         </>

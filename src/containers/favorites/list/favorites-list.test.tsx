@@ -159,7 +159,7 @@ describe("FavoritesList", () => {
             email: "email@email.com",
         } as firebase.User);
 
-        store.favorites.setActiveFavoriteGroupId("group-1");
+        store.favorites.setActiveDocumentId("group-1");
 
 
         const { getByText, asFragment } = render(

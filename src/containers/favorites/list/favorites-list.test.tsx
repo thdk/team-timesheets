@@ -176,6 +176,7 @@ describe("FavoritesList", () => {
             () => expect(getByText("Favorite desc 2")),
         );
 
-        expect(asFragment()).toMatchSnapshot();
+        await waitFor(() => expect(store.config.clientsCollection.isFetched).toBeTruthy());
+        await waitFor(() => expect(asFragment()).toMatchSnapshot());
     });
 });

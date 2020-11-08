@@ -1,114 +1,41 @@
-# Timesheets app
+# Team Timesheets
 
 ![Cloud Build](https://storage.googleapis.com/timesheets-ffc4b-badges/builds/timesheets/branches/develop.svg?branch=develop)
-[![Codecov](https://codecov.io/gh/thdk/timesheets/branch/develop/graph/badge.svg)](https://codecov.io/gh/thdk/timesheets)
+[![Codecov](https://codecov.io/gh/thdk/team-timesheets/branch/master/graph/badge.svg)](https://codecov.io/gh/thdk/team-timesheets)
+
 
 Web base timesheet app. Built to replace old school excel timesheets.
 
-Demo: [Develop branch](https://timesheets-ffc4b.firebaseapp.com)
+:alarm_clock: [Team Timesheets web app](https://team-timesheets.web.app) :alarm_clock:
 
-This app is build using [Firestorable](https://github.com/thdk/firestorable). Have a look, it's great! (I made it :))
+Try it out yourself :point_up:
 
-## Getting Started
+Or just look at some screenshots :point_down:
 
-These instructions will get you a copy of the project up and running on your local machine for development and testing purposes. See deployment for notes on how to deploy the project on a live system.
+**Day view**
+![day-view](screenshots/day-view.png)
 
-### Prerequisites
+**Month view**
+![month-view](screenshots/month-view.png)
 
-#### Node
+**Divisions**
+![divisions](screenshots/divisions.png)
 
-Supported node version: 10 (I'm using 10.18.0)
+**Settings - tasks**
+![settings-tasks](screenshots/settings-tasks.png)
 
-#### Firebase tools
+## Features
 
-```
-npm install -g firebase-tools
-```
-
-### Firebase
-
-The project is build entirely for Google Cloud Firebase.
-
-#### Firebase project
-
-If you want to develop for an existing project, ask the project admin to add you as a user for that firebase project.
-
-You can [create and/or manage firebase projects here](https://console.firebase.google.com).
-
-Once you have setup your firebase project, continue below.
-
-#### Get authenticated
-
-`firebase login`
-
-#### Select firebase project
-`firebase use --add`
-
-(follow instructions)
-
-When your project was succesfully selected, it will be stored in the file called: *.firebasesrc*
-
-### Installing
-
-Install dependencies
-
-    npm install
-
-Build everything (outputs will live in `dist/`-directory)
-
-    npm run build
-
-    // run build for production (default is development)
-    npm run build:production
-
-Start development server (open `http://localhost:5000/`)
-
-    npm run server
-
-## Running the tests
-
-Before you can run tests, you must start the firestore emulator.
-
-```shell
-npm run emulator
-```
-Keep the emulator running in one terminal window while running tests in another terminal.
-
-```shell
-npm run test
-```
-
-If you only need to run the test once, you can use:
-
-```shell
-npm run test:emulator
-```
-This will start the emulator, run the tests and finally also stop the firebase emulator.
-
-## Google cloud build (CI/CD)
-
-A google cloud build trigger has been setup for CI/CD purposes for this repo.
-
-For pull requests, google cloud build will use `cloudbuild.build.yaml`.
-
-Commits on the `develop` branch will trigger a build using `cloudbuild.deploy.yaml` and deploy the project.
-
-See these files for information of the build steps.
-
-## Built With
-
-* Typescript
-* React
-* Mobx
-* Webpack
-* Gulp
-* Material Design ([Material Components for the web](https://github.com/material-components/material-components-web))
-* Firebase
-* Google cloud build
+- **Divisions**  Manage your timesheets seperatly for multiple divisions.
+- **Google calendar** Get suggestions for your timesheets from your google calendar events.
+- **Copy & Paste** Simply copy repetitive tasks from one day into many other days.
+- **Favorites** Quickly insert from your favorites / templates.
+- **Export to csv** Get csv exports per month for your timesheets.
+- **Bigquery** Can be set up to sync with bigquery for advanced reports.
 
 ## Contributing
 
-Feel free to contribute!
+Feel free to [contribute](./CONTRIBUTING.md)!
 
 ## Authors
 
@@ -117,3 +44,6 @@ Feel free to contribute!
 ## License
 
 No license yet. See [no permission](https://choosealicense.com/no-permission/).
+
+## Spam
+This app is build using [Firestorable](https://github.com/thdk/firestorable). Have a look, it's great! (I made it :))

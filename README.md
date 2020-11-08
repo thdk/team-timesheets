@@ -13,16 +13,16 @@ Try it out yourself :point_up:
 Or just look at some screenshots :point_down:
 
 **Day view**
-![day-view](screenshots/day-view.png)
+![day-view](screenshots/day-view.PNG)
 
 **Month view**
-![month-view](screenshots/month-view.png)
+![month-view](screenshots/month-view.PNG)
 
 **Divisions**
-![divisions](screenshots/divisions.png)
+![divisions](screenshots/divisions.PNG)
 
 **Settings - tasks**
-![settings-tasks](screenshots/settings-tasks.png)
+![settings-tasks](screenshots/settings-tasks.PNG)
 
 ## Features
 

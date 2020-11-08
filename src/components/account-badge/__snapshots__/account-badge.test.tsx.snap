@@ -1,0 +1,29 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`AccountBadge should render 1`] = `
+<DocumentFragment>
+  <div
+    class="account-badge"
+  >
+    <div
+      class="account-badge__content"
+    >
+      <div
+        class="account-badge__image"
+      >
+        <img
+          src="https://www.gravatar.com/avatar/0d4907cea9d97688aa7a5e722d742f71?d=mp&s=40"
+        />
+      </div>
+      <div
+        class="account-badge__name"
+      >
+        Foobar
+      </div>
+      <div
+        class="account-badge__meta"
+      />
+    </div>
+  </div>
+</DocumentFragment>
+`;

@@ -27,7 +27,13 @@ export const routeWithDateChanged = (_route: Route<IRootStore, any, any>, params
     });
 }
 
-export const setNavigationContent = (store: IRootStore, route: Route<IRootStore, any, any>, isChildRoute = true, targetDate?: DateObject, currentDate?: number) => {
+export const setNavigationContent = (
+    store: Pick<IRootStore, "view" | "router">,
+    route: { title?: string },
+    isChildRoute = true,
+    targetDate?: DateObject,
+    currentDate?: number
+) => {
     if (isChildRoute) {
         setBackToOverview(store, undefined, currentDate, targetDate);
         store.view.track = true;
@@ -39,7 +45,10 @@ export const setNavigationContent = (store: IRootStore, route: Route<IRootStore,
     setTitleForRoute(store, route);
 }
 
-export const setTitleForRoute = (store: IRootStore, route: Route<IRootStore, any, any>) => {
+export const setTitleForRoute = (
+    store: Pick<IRootStore, "view">,
+    route: { title?: string },
+) => {
     store.view.title = route.title || "";
 }
 

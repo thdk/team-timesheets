@@ -2,36 +2,44 @@ import React from "react";
 
 
 import { initTestFirestore, deleteFirebaseAppsAsync } from "../../../__tests__/utils/firebase";
-import { Store } from "../../../stores/root-store";
+import { Store, IRootStore } from "../../../stores/root-store";
 import { render, waitFor, fireEvent } from "@testing-library/react";
 import { TimesheetDays, SortOrder } from ".";
 import { Timesheet } from "..";
 import { goToNewRegistration } from "../../../routes/registrations/detail";
+import { useStore } from "../../../contexts/store-context";
+
+let store: IRootStore;
 
 const {
     firestore,
     clearFirestoreDataAsync,
+    refs: [
+        ,
+        userRef,
+    ],
 } = initTestFirestore("timesheet-test",
     [
         "registrations",
+        "users",
     ]);
-
-const store = new Store({
-    firestore,
-});
-
-jest.mock("../../../contexts/store-context", () => ({
-    useStore: () => store,
-}));
 
 jest.mock("../../google-calendar");
 
 jest.mock("../../../rules");
 jest.mock("../../../routes/registrations/detail");
 
-beforeAll(clearFirestoreDataAsync);
+jest.mock("../../../contexts/store-context");
+
+const setupAsync = () => {
+    return userRef.doc("user-1").set({
+        uid: "user-1",
+        email: "email@email.com",
+    });
+};
+
 afterAll(() => {
-    store.dispose();
+
     return Promise.all([
         deleteFirebaseAppsAsync(),
     ])
@@ -95,6 +103,22 @@ const registrations = [
 ];
 
 describe("TimesheetDays", () => {
+
+    beforeEach(() => {
+        if (store) {
+            store.dispose();
+        }
+        store = new Store({ firestore });
+        return Promise.all(
+            [
+                clearFirestoreDataAsync(),
+                setupAsync(),
+            ],
+        ).then(() => {
+            (useStore as jest.Mock<ReturnType<typeof useStore>>).mockReturnValue(store);
+        })
+    });
+
     it("should render without registrations", () => {
         const { asFragment } = render(<TimesheetDays
             isMonthView={false}
@@ -112,9 +136,7 @@ describe("TimesheetDays", () => {
 
         store.user.setUser({ uid: "user-1" } as firebase.User);
 
-
         const {
-            asFragment,
             getByText,
             container,
             queryByText
@@ -122,7 +144,7 @@ describe("TimesheetDays", () => {
 
         expect(queryByText("Foobar 5")).toBeFalsy();
 
-        const regIds = await store.timesheets.addRegistrationsAsync(registrations);
+        await store.timesheets.addDocuments(registrations);
 
         await waitFor(() => expect(getByText("Foobar 5")));
 
@@ -147,13 +169,6 @@ describe("TimesheetDays", () => {
                 "March 24th",
             ])
         );
-
-        store.timesheets.setRegistrationsGroupedByDaySortOrder(SortOrder.Descending);
-
-        await store.timesheets.deleteRegistrationsAsync(...regIds);
-
-
-        await waitFor(() => expect(asFragment()).toMatchSnapshot());
     });
 
     it("should display registrations for the specified day", async () => {
@@ -165,16 +180,14 @@ describe("TimesheetDays", () => {
 
         store.user.setUser({ uid: "user-1" } as firebase.User);
 
+        await waitFor(() => expect(store.user.divisionUser).toBeDefined());
+
+        await store.timesheets.addDocuments(registrations);
+
         const {
-            asFragment,
             getByText,
-            queryByText,
             container,
         } = render(<Timesheet />);
-
-        expect(queryByText("Foobar 5")).toBeFalsy();
-
-        const regIds = await store.timesheets.addRegistrationsAsync(registrations);
 
         await waitFor(() => expect(getByText("Foobar 5")));
 
@@ -188,9 +201,6 @@ describe("TimesheetDays", () => {
             registrationItems.length
         ).toBe(3);
 
-        await store.timesheets.deleteRegistrationsAsync(...regIds);
-
-        await waitFor(() => expect(asFragment()).toMatchSnapshot());
     });
     it("should unfold registration when header is clicked", async () => {
         store.view.setViewDate({
@@ -200,16 +210,11 @@ describe("TimesheetDays", () => {
 
         store.user.setUser({ uid: "user-1" } as firebase.User);
 
+        await store.timesheets.addDocuments(registrations);
         const {
-            asFragment,
             getByText,
-            queryByText,
             container,
         } = render(<Timesheet />);
-
-        expect(queryByText("Foobar 5")).toBeFalsy();
-
-        const regIds = await store.timesheets.addRegistrationsAsync(registrations);
 
         await waitFor(() => expect(getByText("Foobar 5")));
 
@@ -221,10 +226,6 @@ describe("TimesheetDays", () => {
         fireEvent.click(headerEls[1]);
 
         await waitFor(() => expect(getByText("Foobar 2")));
-
-        await store.timesheets.deleteRegistrationsAsync(...regIds);
-
-        await waitFor(() => expect(asFragment()).toMatchSnapshot());
     });
 
     it("should NOT unfold registration when header add button is clicked", async () => {
@@ -235,16 +236,12 @@ describe("TimesheetDays", () => {
 
         store.user.setUser({ uid: "user-1" } as firebase.User);
 
+        await store.timesheets.addDocuments(registrations);
+
         const {
-            asFragment,
             getByText,
-            queryByText,
             container,
         } = render(<Timesheet />);
-
-        expect(queryByText("Foobar 5")).toBeFalsy();
-
-        const regIds = await store.timesheets.addRegistrationsAsync(registrations);
 
         await waitFor(() => expect(getByText("Foobar 5")));
 
@@ -256,9 +253,5 @@ describe("TimesheetDays", () => {
         fireEvent.click(headerAddButtonEls[1]);
 
         await waitFor(() => expect(goToNewRegistration).toBeCalled());
-
-        await store.timesheets.deleteRegistrationsAsync(...regIds);
-
-        await waitFor(() => expect(asFragment()).toMatchSnapshot());
     });
 });

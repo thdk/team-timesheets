@@ -32,13 +32,13 @@ export const Login = ({ configs }: Props) => {
     const firebase = useFirebase();
 
     React.useEffect(() => {
+        firebase.auth().signOut();
         const { loginProviders } = configs;
 
         const loginUiConfig = {
             callbacks: {
-                signInSuccessWithAuthResult: (authResult: firebase.auth.UserCredential, _redirectUrl: string) => {
+                signInSuccessWithAuthResult: (_authResult: firebase.auth.UserCredential, _redirectUrl: string) => {
                     // authResult.user?.getIdToken()
-                    console.log({authResult});
                     return false;
                 }
             },
@@ -66,7 +66,7 @@ export const Login = ({ configs }: Props) => {
         };
     }, []);
 
-    return(
+    return (
         <div>
             <div id="firebaseui-auth-container"></div>
         </div>

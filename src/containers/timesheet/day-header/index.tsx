@@ -82,12 +82,12 @@ export const GroupedRegistrationHeader = (props: GroupedRegistrationHeaderProps)
                         id => {
                             if (!id) {
                                 timesheets.toggleSelectedRegistrationDay(date.toDateString(), true);
-                                timesheets.setSelectedRegistrationDefault(date ? { date: moment(date).toDate() } : undefined);
+                                timesheets.createNewDocument(date ? { date: moment(date).toDate() } : undefined);
                                 goToNewRegistration(router);
                             } else {
                                 store.favorites.getFavoritesByGroupIdAsync(id)
                                     .then(favoriteDocs => {
-                                        timesheets.addRegistrationsAsync(
+                                        timesheets.addDocuments(
                                             favoriteDocs.map(reg =>
                                                 timesheets.copyRegistrationToDate(reg.data!, date)
                                             )
@@ -97,7 +97,7 @@ export const GroupedRegistrationHeader = (props: GroupedRegistrationHeaderProps)
                             }
                         }
                     }
-                ></FavoriteGroupsMenu>
+                />
             </>
             : <>
                 {displayJSX}

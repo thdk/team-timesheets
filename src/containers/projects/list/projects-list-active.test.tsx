@@ -42,7 +42,6 @@ afterAll(() => {
     ])
 });
 
-
 describe("ProjectListActive", () => {
 
     it("renders without projects", () => {
@@ -64,19 +63,25 @@ describe("ProjectListActive", () => {
         const { getByText, queryByText } = render(<ActiveProjectList />);
         await waitFor(() => getByText("Project 1"));
 
-        await projectsCollection.updateAsync({
-            isArchived: true,
-        }, ...projectIds);
+        await act(async () => {
+            await projectsCollection.updateAsync({
+                isArchived: true,
+            }, ...projectIds);
+        });
 
         await waitFor(() => expect(queryByText("Project 1")).toBeNull());
 
-        await projectsCollection.updateAsync({
-            isArchived: false,
-        }, ...projectIds);
+        await act(async () => {
+            await projectsCollection.updateAsync({
+                isArchived: false,
+            }, ...projectIds);
+        });
 
         await waitFor(() => getByText("Project 1"));
 
-        await projectsCollection.deleteAsync(...projectIds);
+        act(() => {
+            store.projects.deleteProjects(...projectIds);
+        });
 
         await waitFor(() => expect(queryByText("Project 1")).toBeNull());
     });
@@ -118,10 +123,22 @@ describe("ProjectListActive", () => {
 
         expect(store.view.selection.size).toBe(1);
 
-        store.view.selection.clear();
-        await projectsCollection.deleteAsync(...projectIds);
+        act(() => {
+            store.view.selection.clear();
+            store.projects.deleteProjects(...projectIds);
+        });
 
-        await waitFor(() => expect(store.projects.activeProjects.length).toBe(0));
+        await waitFor(
+            () => expect(
+                store.projects.activeProjects.length
+            ).toBe(0)
+        );
+
+        await waitFor(
+            () => expect(
+                container.querySelectorAll(".settings-list-item").length
+            ).toBe(0)
+        );
     });
 
     it("redirects to project detail on project click", async () => {
@@ -144,9 +161,17 @@ describe("ProjectListActive", () => {
 
         await waitFor(() => expect(getByText("GoToProject")));
 
-        await projectsCollection.deleteAsync(...projectIds);
+        act(() => {
+            store.projects.deleteProjects(...projectIds);
+        });
 
         await waitFor(() => expect(store.projects.activeProjects.length).toBe(0));
+
+        await waitFor(
+            () => expect(
+                container.querySelector(".settings-list-item")
+            ).toBeNull()
+        );
     });
 
     it("does not allow unauthorised users to edit project", async () => {
@@ -172,9 +197,16 @@ describe("ProjectListActive", () => {
 
         await waitFor(() => expect(queryByText("GoToProject")).toBeNull());
 
-        await projectsCollection.deleteAsync(...projectIds);
+        act(() => {
+            store.projects.deleteProjects(...projectIds);
+        });
 
         await waitFor(() => expect(store.projects.activeProjects.length).toBe(0));
 
+        await waitFor(
+            () => expect(
+                container.querySelectorAll(".settings-list-item").length
+            ).toBe(0)
+        );
     })
 });

@@ -1,0 +1,43 @@
+.account-badge {
+    background-color: rgba(255, 255, 255, 0.88);
+    border: 1px solid #dadce0;
+    -webkit-box-sizing: border-box;
+    box-sizing: border-box;
+    cursor: pointer;
+    display: inline-block;
+    overflow: hidden;
+    outline: none;
+    padding: 0;
+    vertical-align: middle;
+    -webkit-border-radius: 8px;
+    border-radius: 8px;
+    margin-top: 8px;
+    display: flex;
+    user-select: none;
+}
+
+.account-badge__content {
+    display: flex;
+    width: 100%;
+    align-items: center;
+}
+
+.account-badge__name {
+    display: flex;
+    align-items: center;
+    padding-left: 6px;
+    padding-right: 1em;
+    width: 100%;
+}
+
+.account-badge__icon, .account-badge__meta {
+    margin: 5px;
+}
+
+.account-badge__image {
+    display: flex;
+}
+.account-badge__image img {
+    border-radius: 25px;
+    margin: 3px;
+}

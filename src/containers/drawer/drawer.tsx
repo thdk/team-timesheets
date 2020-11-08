@@ -1,30 +1,30 @@
-import * as React from 'react';
-import { Drawer as RMWCDrawer, DrawerHeader, DrawerTitle, DrawerSubtitle, DrawerContent } from '@rmwc/drawer';
-
+import React from 'react';
+import { Drawer as RMWCDrawer, DrawerHeader, DrawerContent } from '@rmwc/drawer';
 import { observer } from 'mobx-react-lite';
-import Menu from '../ui/menu';
-import { useStore } from '../../contexts/store-context';
+
 import { ErrorBoundary } from '../../components/error-boundary/error-boundary';
+import { useUserStore } from '../../contexts/user-context';
+import { useViewStore } from '../../contexts/view-context';
+import { Menu } from '../ui/menu';
+import { DivisionUsersMenu } from '../division-users/menu';
 
 import "./drawer.scss";
 
-const Drawer = () => {
-    const store = useStore();
+export const Drawer = observer(() => {
+    const user = useUserStore();
+    const view = useViewStore();
 
-    const displayName = store.user.authenticatedUser ? store.user.authenticatedUser.name || "Guest" : "";
     return (
         <ErrorBoundary>
-            <RMWCDrawer dismissible open={store.view.isDrawerOpen}>
+            <RMWCDrawer dismissible open={user.divisionUser && view.isDrawerOpen}>
                 <DrawerHeader>
-                    <DrawerTitle>Timesheets</DrawerTitle>
-                    <DrawerSubtitle>{displayName}</DrawerSubtitle>
+                    <DivisionUsersMenu />
                 </DrawerHeader>
                 <DrawerContent>
                     <Menu />
                 </DrawerContent>
             </RMWCDrawer>
-        </ErrorBoundary>
+        </ErrorBoundary >
     );
-};
-
-export default observer(Drawer);
+});
+Drawer.displayName = "Drawer";

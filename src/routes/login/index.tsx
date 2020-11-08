@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Route } from 'mobx-router';
+import { Route, RouterStore } from 'mobx-router';
 import { IRootStore } from '../../stores/root-store';
 import { App, goToOverview } from '../../internal';
 import Login from '../../containers/login';
@@ -11,7 +11,7 @@ type LoginRoute = Route<IRootStore>;
 
 const login = new Route({
     path,
-    component: <App><Login></Login></App>,
+    component: <App><Login /></App>,
     onEnter: (route: LoginRoute, _params: any, s: IRootStore) => {
         when(() => !!s.user.authenticatedUser, () => goToOverview(s));
         setNavigationContent(s, route, false);
@@ -28,8 +28,8 @@ const login = new Route({
     },
 });
 
-export const goToLogin = (s: IRootStore) => {
-    s.router.goTo(login, undefined);
+export const goToLogin = (router: RouterStore<IRootStore>) => {
+    router.goTo(login, undefined);
 }
 
 export const RedirectToLogin = () => {

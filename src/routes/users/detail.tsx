@@ -7,7 +7,7 @@ import { IRootStore } from "../../stores/root-store";
 import { setTitleForRoute } from "../actions";
 import { goToSettings } from "../settings";
 import { transaction } from "mobx";
-import { IViewAction } from "../../stores/view-store";
+import { IViewAction } from '../../stores/view-store';
 
 type RouteParams = { id?: string };
 type UserDetailsRoute = Route<IRootStore, RouteParams>;
@@ -18,7 +18,7 @@ const routes = {
         component: <App><User></User></App>,
         title: "Edit user details",
         beforeEnter: (_route: UserDetailsRoute, params: RouteParams, s: IRootStore) => {
-            s.user.setSelectedUserId(params.id || s.user.authenticatedUserId);
+            s.user.setSelectedUserId(params.id || s.user.divisionUser?.id);
         },
         onEnter: (route: UserDetailsRoute, _params: RouteParams, s: IRootStore) => {
             const saveAction: IViewAction = {

@@ -1,0 +1,79 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`ClientPreferences should not render without clients 1`] = `<DocumentFragment />`;
+
+exports[`ClientPreferences should render clients 1`] = `
+<DocumentFragment>
+  <h3
+    class="mdc-typography--subtitle1"
+  >
+    Pick default client
+  </h3>
+  <div
+    class="formField"
+  >
+    <div
+      class="mdc-select mdc-select--outlined"
+      role="listbox"
+    >
+      <div
+        class="mdc-select__anchor"
+      >
+        <i
+          class="mdc-select__dropdown-icon"
+        />
+        <div
+          aria-disabled="false"
+          aria-haspopup="listbox"
+          class="mdc-select__selected-text"
+          role="button"
+          tabindex="-1"
+        >
+           
+        </div>
+        <div
+          class="mdc-notched-outline mdc-notched-outline--upgraded"
+        >
+          <div
+            class="mdc-notched-outline__leading"
+          />
+          <div
+            class="mdc-notched-outline__notch"
+          >
+            <span
+              class="mdc-floating-label"
+              for="client-collection"
+              style="transition-duration: 0s;"
+            >
+              Default client
+            </span>
+          </div>
+          <div
+            class="mdc-notched-outline__trailing"
+          />
+        </div>
+        <select
+          class="rmwc-select__native-control "
+          id="client-collection"
+          tabindex="0"
+        >
+          <option
+            disabled=""
+            value=""
+          />
+          <option
+            value="client-1"
+          >
+            Client 1
+          </option>
+          <option
+            value="client-2"
+          >
+            Client 2
+          </option>
+        </select>
+      </div>
+    </div>
+  </div>
+</DocumentFragment>
+`;

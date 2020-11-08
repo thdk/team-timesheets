@@ -9,3 +9,16 @@
     border-bottom: solid 1px lightgrey;
   }
 }
+
+@media (max-width: 599px) {
+  .mdc-drawer {
+    .mdc-drawer__header {
+      min-height: 56px;
+
+      img {
+        width: 32px;
+        height: 32px;
+      }
+    }
+  }
+}

@@ -27,7 +27,7 @@ beforeEach(() => {
     tasks.set("task-1", true);
     tasks.set("task-3", true);
     (useUserStore as any).mockReturnValue({
-        authenticatedUser: {
+        divisionUser: {
             id: "user-1",
             roles: {},
             tasks,
@@ -47,7 +47,7 @@ describe("RegistrationDetail", () => {
     it("should not render when there is no authenticated user", () => {
         (useRegistrationStore as any).mockReturnValue({});
         (useUserStore as any).mockReturnValue({
-            authenticatedUser: undefined,
+            divisionUser: undefined,
         });
         const { asFragment } = render(<RegistrationDetail />);
 
@@ -65,7 +65,7 @@ describe("RegistrationDetail", () => {
 
     it("should render when there is a registration", () => {
         (useRegistrationStore as any).mockReturnValue({
-            registration: {
+            activeDocument: {
                 date: new Date(2020, 2, 1),
                 isPersisted: true,
                 userId: "user-1",
@@ -88,7 +88,7 @@ describe("RegistrationDetail", () => {
 
     it("should only show user tasks instead of all tasks", () => {
         (useRegistrationStore as any).mockReturnValue({
-            registration: {
+            activeDocument: {
                 date: new Date(2020, 2, 1),
                 isPersisted: true,
                 userId: "user-1",

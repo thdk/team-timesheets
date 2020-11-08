@@ -12,23 +12,16 @@ const {
         "registrations",
     ]);
 
-const store = new Store({
-    firestore,
-});
+const store = new Store({ firestore, });
 
 jest.mock("../../contexts/store-context", () => ({
     useStore: () => store,
 }));
 
-jest.mock("../../contexts/user-context", () => ({
-    useUserStore: jest.fn().mockReturnValue({
-        authenticatedUser: {},
-    }),
-}));
+jest.mock("../../contexts/user-context");
 
 jest.mock("../../rules");
 jest.mock("../../routes/registrations/detail");
-
 
 beforeAll(clearFirestoreDataAsync);
 afterAll(() => {
@@ -97,6 +90,11 @@ const registrations = [
 
 describe("Export Page", () => {
     it("should render without registrations", () => {
+        store.view.setViewDate({
+            year: 2020,
+            month: 9,
+        });
+
         const { asFragment } = render(<ExportPage />);
 
         expect(asFragment()).toMatchSnapshot();
@@ -118,7 +116,7 @@ describe("Export Page", () => {
 
         await waitFor(() => expect(getByText("April")));
 
-        const regIds = await store.timesheets.addRegistrationsAsync(registrations);
+        const regIds = await store.timesheets.addDocuments(registrations);
 
         await waitFor(() => expect(getByText("Foobar 5")));
 
@@ -134,7 +132,7 @@ describe("Export Page", () => {
                 "March 24th",
             ]);
 
-        await store.timesheets.deleteRegistrationsAsync(...regIds);
+        await store.timesheets.deleteDocuments(undefined, ...regIds);
 
         await waitFor(() => expect(asFragment()).toMatchSnapshot());
     });

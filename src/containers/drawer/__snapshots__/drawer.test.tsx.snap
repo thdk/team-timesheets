@@ -1,0 +1,840 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Drawer should render 1`] = `
+<DocumentFragment>
+  <aside
+    class="mdc-drawer--open mdc-drawer--animate mdc-drawer mdc-drawer--dismissible"
+  >
+    <div
+      class="mdc-drawer__header"
+    >
+      <div
+        class="mdc-menu-surface--anchor"
+      >
+        <div
+          class="division-users-menu mdc-menu-surface"
+          style="transform-origin: left top; left: 0px; top: 0px; max-height: 736px;"
+        >
+          <ul
+            class="mdc-list"
+          >
+            <li
+              class="mdc-list-item"
+              role="menuitem"
+              tabindex="0"
+            >
+              Preferences
+            </li>
+            <li
+              class="mdc-list-item"
+              role="menuitem"
+              tabindex="0"
+            >
+              Manage divisions
+            </li>
+            <li
+              class="mdc-list-divider"
+              role="separator"
+            />
+            <li
+              class="mdc-list-item"
+              role="menuitem"
+              tabindex="0"
+            >
+              <i
+                aria-hidden="true"
+                class="rmwc-icon rmwc-icon--ligature material-icons mdc-list-item__graphic"
+              >
+                perm_identity
+              </i>
+              <span
+                class="mdc-list-item__text"
+              >
+                Logout
+              </span>
+            </li>
+          </ul>
+        </div>
+        <div
+          class="account-badge"
+        >
+          <div
+            class="account-badge__content"
+          >
+            <div
+              class="account-badge__image"
+            >
+              <img
+                src="https://www.gravatar.com/avatar/db2ff1aecc3bb4c910ab7289c7f920a2?d=mp&s=40"
+              />
+            </div>
+            <div
+              class="account-badge__name"
+            >
+              Foobar
+            </div>
+            <div
+              class="account-badge__meta"
+            >
+              <i
+                class="rmwc-icon rmwc-icon--ligature material-icons"
+              >
+                expand_more
+              </i>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div
+      class="mdc-drawer__content"
+    >
+      <div
+        class="react-calendar"
+      >
+        <div
+          class="react-calendar__navigation"
+          style="display: flex;"
+        >
+          <button
+            aria-label=""
+            class="react-calendar__navigation__arrow react-calendar__navigation__prev2-button"
+            type="button"
+          >
+            «
+          </button>
+          <button
+            aria-label=""
+            class="react-calendar__navigation__arrow react-calendar__navigation__prev-button"
+            type="button"
+          >
+            ‹
+          </button>
+          <button
+            aria-label=""
+            class="react-calendar__navigation__label"
+            style="flex-grow: 1;"
+            type="button"
+          >
+            March 2020
+          </button>
+          <button
+            aria-label=""
+            class="react-calendar__navigation__arrow react-calendar__navigation__next-button"
+            type="button"
+          >
+            ›
+          </button>
+          <button
+            aria-label=""
+            class="react-calendar__navigation__arrow react-calendar__navigation__next2-button"
+            type="button"
+          >
+            »
+          </button>
+        </div>
+        <div
+          class="react-calendar__viewContainer"
+        >
+          <div
+            class="react-calendar__month-view "
+          >
+            <div
+              style="display: flex; align-items: flex-end;"
+            >
+              <div
+                style="flex-grow: 1; width: 100%;"
+              >
+                <div
+                  class="react-calendar__month-view__weekdays"
+                  style="display: flex; flex-wrap: no-wrap;"
+                >
+                  <div
+                    class="react-calendar__month-view__weekdays__weekday"
+                    style="flex-basis: 14.285714285714286%; max-width: 14.285714285714286%; overflow: hidden;"
+                  >
+                    <abbr
+                      aria-label="Monday"
+                      title="Monday"
+                    >
+                      Mon
+                    </abbr>
+                  </div>
+                  <div
+                    class="react-calendar__month-view__weekdays__weekday"
+                    style="flex-basis: 14.285714285714286%; max-width: 14.285714285714286%; overflow: hidden;"
+                  >
+                    <abbr
+                      aria-label="Tuesday"
+                      title="Tuesday"
+                    >
+                      Tue
+                    </abbr>
+                  </div>
+                  <div
+                    class="react-calendar__month-view__weekdays__weekday"
+                    style="flex-basis: 14.285714285714286%; max-width: 14.285714285714286%; overflow: hidden;"
+                  >
+                    <abbr
+                      aria-label="Wednesday"
+                      title="Wednesday"
+                    >
+                      Wed
+                    </abbr>
+                  </div>
+                  <div
+                    class="react-calendar__month-view__weekdays__weekday"
+                    style="flex-basis: 14.285714285714286%; max-width: 14.285714285714286%; overflow: hidden;"
+                  >
+                    <abbr
+                      aria-label="Thursday"
+                      title="Thursday"
+                    >
+                      Thu
+                    </abbr>
+                  </div>
+                  <div
+                    class="react-calendar__month-view__weekdays__weekday"
+                    style="flex-basis: 14.285714285714286%; max-width: 14.285714285714286%; overflow: hidden;"
+                  >
+                    <abbr
+                      aria-label="Friday"
+                      title="Friday"
+                    >
+                      Fri
+                    </abbr>
+                  </div>
+                  <div
+                    class="react-calendar__month-view__weekdays__weekday"
+                    style="flex-basis: 14.285714285714286%; max-width: 14.285714285714286%; overflow: hidden;"
+                  >
+                    <abbr
+                      aria-label="Saturday"
+                      title="Saturday"
+                    >
+                      Sat
+                    </abbr>
+                  </div>
+                  <div
+                    class="react-calendar__month-view__weekdays__weekday"
+                    style="flex-basis: 14.285714285714286%; max-width: 14.285714285714286%; overflow: hidden;"
+                  >
+                    <abbr
+                      aria-label="Sunday"
+                      title="Sunday"
+                    >
+                      Sun
+                    </abbr>
+                  </div>
+                </div>
+                <div
+                  class="react-calendar__month-view__days"
+                  style="display: flex; flex-wrap: wrap;"
+                >
+                  <button
+                    class="react-calendar__tile react-calendar__month-view__days__day react-calendar__month-view__days__day--neighboringMonth"
+                    style="flex-basis: 14.285714285714286%; max-width: 14.285714285714286%; overflow: hidden;"
+                    type="button"
+                  >
+                    <abbr
+                      aria-label="February 24, 2020"
+                    >
+                      24
+                    </abbr>
+                  </button>
+                  <button
+                    class="react-calendar__tile react-calendar__month-view__days__day react-calendar__month-view__days__day--neighboringMonth"
+                    style="flex-basis: 14.285714285714286%; max-width: 14.285714285714286%; overflow: hidden;"
+                    type="button"
+                  >
+                    <abbr
+                      aria-label="February 25, 2020"
+                    >
+                      25
+                    </abbr>
+                  </button>
+                  <button
+                    class="react-calendar__tile react-calendar__month-view__days__day react-calendar__month-view__days__day--neighboringMonth"
+                    style="flex-basis: 14.285714285714286%; max-width: 14.285714285714286%; overflow: hidden;"
+                    type="button"
+                  >
+                    <abbr
+                      aria-label="February 26, 2020"
+                    >
+                      26
+                    </abbr>
+                  </button>
+                  <button
+                    class="react-calendar__tile react-calendar__month-view__days__day react-calendar__month-view__days__day--neighboringMonth"
+                    style="flex-basis: 14.285714285714286%; max-width: 14.285714285714286%; overflow: hidden;"
+                    type="button"
+                  >
+                    <abbr
+                      aria-label="February 27, 2020"
+                    >
+                      27
+                    </abbr>
+                  </button>
+                  <button
+                    class="react-calendar__tile react-calendar__month-view__days__day react-calendar__month-view__days__day--neighboringMonth"
+                    style="flex-basis: 14.285714285714286%; max-width: 14.285714285714286%; overflow: hidden;"
+                    type="button"
+                  >
+                    <abbr
+                      aria-label="February 28, 2020"
+                    >
+                      28
+                    </abbr>
+                  </button>
+                  <button
+                    class="react-calendar__tile react-calendar__month-view__days__day react-calendar__month-view__days__day--weekend react-calendar__month-view__days__day--neighboringMonth"
+                    style="flex-basis: 14.285714285714286%; max-width: 14.285714285714286%; overflow: hidden;"
+                    type="button"
+                  >
+                    <abbr
+                      aria-label="February 29, 2020"
+                    >
+                      29
+                    </abbr>
+                  </button>
+                  <button
+                    class="react-calendar__tile react-calendar__month-view__days__day react-calendar__month-view__days__day--weekend"
+                    style="flex-basis: 14.285714285714286%; max-width: 14.285714285714286%; overflow: hidden;"
+                    type="button"
+                  >
+                    <abbr
+                      aria-label="March 1, 2020"
+                    >
+                      1
+                    </abbr>
+                  </button>
+                  <button
+                    class="react-calendar__tile react-calendar__month-view__days__day"
+                    style="flex-basis: 14.285714285714286%; max-width: 14.285714285714286%; overflow: hidden;"
+                    type="button"
+                  >
+                    <abbr
+                      aria-label="March 2, 2020"
+                    >
+                      2
+                    </abbr>
+                  </button>
+                  <button
+                    class="react-calendar__tile react-calendar__month-view__days__day"
+                    style="flex-basis: 14.285714285714286%; max-width: 14.285714285714286%; overflow: hidden;"
+                    type="button"
+                  >
+                    <abbr
+                      aria-label="March 3, 2020"
+                    >
+                      3
+                    </abbr>
+                  </button>
+                  <button
+                    class="react-calendar__tile react-calendar__month-view__days__day"
+                    style="flex-basis: 14.285714285714286%; max-width: 14.285714285714286%; overflow: hidden;"
+                    type="button"
+                  >
+                    <abbr
+                      aria-label="March 4, 2020"
+                    >
+                      4
+                    </abbr>
+                  </button>
+                  <button
+                    class="react-calendar__tile react-calendar__month-view__days__day"
+                    style="flex-basis: 14.285714285714286%; max-width: 14.285714285714286%; overflow: hidden;"
+                    type="button"
+                  >
+                    <abbr
+                      aria-label="March 5, 2020"
+                    >
+                      5
+                    </abbr>
+                  </button>
+                  <button
+                    class="react-calendar__tile react-calendar__month-view__days__day"
+                    style="flex-basis: 14.285714285714286%; max-width: 14.285714285714286%; overflow: hidden;"
+                    type="button"
+                  >
+                    <abbr
+                      aria-label="March 6, 2020"
+                    >
+                      6
+                    </abbr>
+                  </button>
+                  <button
+                    class="react-calendar__tile react-calendar__month-view__days__day react-calendar__month-view__days__day--weekend"
+                    style="flex-basis: 14.285714285714286%; max-width: 14.285714285714286%; overflow: hidden;"
+                    type="button"
+                  >
+                    <abbr
+                      aria-label="March 7, 2020"
+                    >
+                      7
+                    </abbr>
+                  </button>
+                  <button
+                    class="react-calendar__tile react-calendar__month-view__days__day react-calendar__month-view__days__day--weekend"
+                    style="flex-basis: 14.285714285714286%; max-width: 14.285714285714286%; overflow: hidden;"
+                    type="button"
+                  >
+                    <abbr
+                      aria-label="March 8, 2020"
+                    >
+                      8
+                    </abbr>
+                  </button>
+                  <button
+                    class="react-calendar__tile react-calendar__month-view__days__day"
+                    style="flex-basis: 14.285714285714286%; max-width: 14.285714285714286%; overflow: hidden;"
+                    type="button"
+                  >
+                    <abbr
+                      aria-label="March 9, 2020"
+                    >
+                      9
+                    </abbr>
+                  </button>
+                  <button
+                    class="react-calendar__tile react-calendar__month-view__days__day"
+                    style="flex-basis: 14.285714285714286%; max-width: 14.285714285714286%; overflow: hidden;"
+                    type="button"
+                  >
+                    <abbr
+                      aria-label="March 10, 2020"
+                    >
+                      10
+                    </abbr>
+                  </button>
+                  <button
+                    class="react-calendar__tile react-calendar__month-view__days__day"
+                    style="flex-basis: 14.285714285714286%; max-width: 14.285714285714286%; overflow: hidden;"
+                    type="button"
+                  >
+                    <abbr
+                      aria-label="March 11, 2020"
+                    >
+                      11
+                    </abbr>
+                  </button>
+                  <button
+                    class="react-calendar__tile react-calendar__month-view__days__day"
+                    style="flex-basis: 14.285714285714286%; max-width: 14.285714285714286%; overflow: hidden;"
+                    type="button"
+                  >
+                    <abbr
+                      aria-label="March 12, 2020"
+                    >
+                      12
+                    </abbr>
+                  </button>
+                  <button
+                    class="react-calendar__tile react-calendar__month-view__days__day"
+                    style="flex-basis: 14.285714285714286%; max-width: 14.285714285714286%; overflow: hidden;"
+                    type="button"
+                  >
+                    <abbr
+                      aria-label="March 13, 2020"
+                    >
+                      13
+                    </abbr>
+                  </button>
+                  <button
+                    class="react-calendar__tile react-calendar__month-view__days__day react-calendar__month-view__days__day--weekend"
+                    style="flex-basis: 14.285714285714286%; max-width: 14.285714285714286%; overflow: hidden;"
+                    type="button"
+                  >
+                    <abbr
+                      aria-label="March 14, 2020"
+                    >
+                      14
+                    </abbr>
+                  </button>
+                  <button
+                    class="react-calendar__tile react-calendar__month-view__days__day react-calendar__month-view__days__day--weekend"
+                    style="flex-basis: 14.285714285714286%; max-width: 14.285714285714286%; overflow: hidden;"
+                    type="button"
+                  >
+                    <abbr
+                      aria-label="March 15, 2020"
+                    >
+                      15
+                    </abbr>
+                  </button>
+                  <button
+                    class="react-calendar__tile react-calendar__month-view__days__day"
+                    style="flex-basis: 14.285714285714286%; max-width: 14.285714285714286%; overflow: hidden;"
+                    type="button"
+                  >
+                    <abbr
+                      aria-label="March 16, 2020"
+                    >
+                      16
+                    </abbr>
+                  </button>
+                  <button
+                    class="react-calendar__tile react-calendar__month-view__days__day"
+                    style="flex-basis: 14.285714285714286%; max-width: 14.285714285714286%; overflow: hidden;"
+                    type="button"
+                  >
+                    <abbr
+                      aria-label="March 17, 2020"
+                    >
+                      17
+                    </abbr>
+                  </button>
+                  <button
+                    class="react-calendar__tile react-calendar__month-view__days__day"
+                    style="flex-basis: 14.285714285714286%; max-width: 14.285714285714286%; overflow: hidden;"
+                    type="button"
+                  >
+                    <abbr
+                      aria-label="March 18, 2020"
+                    >
+                      18
+                    </abbr>
+                  </button>
+                  <button
+                    class="react-calendar__tile react-calendar__month-view__days__day"
+                    style="flex-basis: 14.285714285714286%; max-width: 14.285714285714286%; overflow: hidden;"
+                    type="button"
+                  >
+                    <abbr
+                      aria-label="March 19, 2020"
+                    >
+                      19
+                    </abbr>
+                  </button>
+                  <button
+                    class="react-calendar__tile react-calendar__month-view__days__day"
+                    style="flex-basis: 14.285714285714286%; max-width: 14.285714285714286%; overflow: hidden;"
+                    type="button"
+                  >
+                    <abbr
+                      aria-label="March 20, 2020"
+                    >
+                      20
+                    </abbr>
+                  </button>
+                  <button
+                    class="react-calendar__tile react-calendar__month-view__days__day react-calendar__month-view__days__day--weekend"
+                    style="flex-basis: 14.285714285714286%; max-width: 14.285714285714286%; overflow: hidden;"
+                    type="button"
+                  >
+                    <abbr
+                      aria-label="March 21, 2020"
+                    >
+                      21
+                    </abbr>
+                  </button>
+                  <button
+                    class="react-calendar__tile react-calendar__tile--active react-calendar__tile--rangeStart react-calendar__tile--rangeEnd react-calendar__tile--rangeBothEnds react-calendar__month-view__days__day react-calendar__month-view__days__day--weekend"
+                    style="flex-basis: 14.285714285714286%; max-width: 14.285714285714286%; overflow: hidden;"
+                    type="button"
+                  >
+                    <abbr
+                      aria-label="March 22, 2020"
+                    >
+                      22
+                    </abbr>
+                  </button>
+                  <button
+                    class="react-calendar__tile react-calendar__month-view__days__day"
+                    style="flex-basis: 14.285714285714286%; max-width: 14.285714285714286%; overflow: hidden;"
+                    type="button"
+                  >
+                    <abbr
+                      aria-label="March 23, 2020"
+                    >
+                      23
+                    </abbr>
+                  </button>
+                  <button
+                    class="react-calendar__tile react-calendar__month-view__days__day"
+                    style="flex-basis: 14.285714285714286%; max-width: 14.285714285714286%; overflow: hidden;"
+                    type="button"
+                  >
+                    <abbr
+                      aria-label="March 24, 2020"
+                    >
+                      24
+                    </abbr>
+                  </button>
+                  <button
+                    class="react-calendar__tile react-calendar__month-view__days__day"
+                    style="flex-basis: 14.285714285714286%; max-width: 14.285714285714286%; overflow: hidden;"
+                    type="button"
+                  >
+                    <abbr
+                      aria-label="March 25, 2020"
+                    >
+                      25
+                    </abbr>
+                  </button>
+                  <button
+                    class="react-calendar__tile react-calendar__month-view__days__day"
+                    style="flex-basis: 14.285714285714286%; max-width: 14.285714285714286%; overflow: hidden;"
+                    type="button"
+                  >
+                    <abbr
+                      aria-label="March 26, 2020"
+                    >
+                      26
+                    </abbr>
+                  </button>
+                  <button
+                    class="react-calendar__tile react-calendar__month-view__days__day"
+                    style="flex-basis: 14.285714285714286%; max-width: 14.285714285714286%; overflow: hidden;"
+                    type="button"
+                  >
+                    <abbr
+                      aria-label="March 27, 2020"
+                    >
+                      27
+                    </abbr>
+                  </button>
+                  <button
+                    class="react-calendar__tile react-calendar__month-view__days__day react-calendar__month-view__days__day--weekend"
+                    style="flex-basis: 14.285714285714286%; max-width: 14.285714285714286%; overflow: hidden;"
+                    type="button"
+                  >
+                    <abbr
+                      aria-label="March 28, 2020"
+                    >
+                      28
+                    </abbr>
+                  </button>
+                  <button
+                    class="react-calendar__tile react-calendar__month-view__days__day react-calendar__month-view__days__day--weekend"
+                    style="flex-basis: 14.285714285714286%; max-width: 14.285714285714286%; overflow: hidden;"
+                    type="button"
+                  >
+                    <abbr
+                      aria-label="March 29, 2020"
+                    >
+                      29
+                    </abbr>
+                  </button>
+                  <button
+                    class="react-calendar__tile react-calendar__month-view__days__day"
+                    style="flex-basis: 14.285714285714286%; max-width: 14.285714285714286%; overflow: hidden;"
+                    type="button"
+                  >
+                    <abbr
+                      aria-label="March 30, 2020"
+                    >
+                      30
+                    </abbr>
+                  </button>
+                  <button
+                    class="react-calendar__tile react-calendar__month-view__days__day"
+                    style="flex-basis: 14.285714285714286%; max-width: 14.285714285714286%; overflow: hidden;"
+                    type="button"
+                  >
+                    <abbr
+                      aria-label="March 31, 2020"
+                    >
+                      31
+                    </abbr>
+                  </button>
+                  <button
+                    class="react-calendar__tile react-calendar__month-view__days__day react-calendar__month-view__days__day--neighboringMonth"
+                    style="flex-basis: 14.285714285714286%; max-width: 14.285714285714286%; overflow: hidden;"
+                    type="button"
+                  >
+                    <abbr
+                      aria-label="April 1, 2020"
+                    >
+                      1
+                    </abbr>
+                  </button>
+                  <button
+                    class="react-calendar__tile react-calendar__month-view__days__day react-calendar__month-view__days__day--neighboringMonth"
+                    style="flex-basis: 14.285714285714286%; max-width: 14.285714285714286%; overflow: hidden;"
+                    type="button"
+                  >
+                    <abbr
+                      aria-label="April 2, 2020"
+                    >
+                      2
+                    </abbr>
+                  </button>
+                  <button
+                    class="react-calendar__tile react-calendar__month-view__days__day react-calendar__month-view__days__day--neighboringMonth"
+                    style="flex-basis: 14.285714285714286%; max-width: 14.285714285714286%; overflow: hidden;"
+                    type="button"
+                  >
+                    <abbr
+                      aria-label="April 3, 2020"
+                    >
+                      3
+                    </abbr>
+                  </button>
+                  <button
+                    class="react-calendar__tile react-calendar__month-view__days__day react-calendar__month-view__days__day--weekend react-calendar__month-view__days__day--neighboringMonth"
+                    style="flex-basis: 14.285714285714286%; max-width: 14.285714285714286%; overflow: hidden;"
+                    type="button"
+                  >
+                    <abbr
+                      aria-label="April 4, 2020"
+                    >
+                      4
+                    </abbr>
+                  </button>
+                  <button
+                    class="react-calendar__tile react-calendar__month-view__days__day react-calendar__month-view__days__day--weekend react-calendar__month-view__days__day--neighboringMonth"
+                    style="flex-basis: 14.285714285714286%; max-width: 14.285714285714286%; overflow: hidden;"
+                    type="button"
+                  >
+                    <abbr
+                      aria-label="April 5, 2020"
+                    >
+                      5
+                    </abbr>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div
+        class="mdc-list"
+      >
+        <a
+          aria-selected="true"
+          class="mdc-list-item"
+          href="/"
+        >
+          <i
+            aria-hidden="true"
+            class="material-icons mdc-list-item__graphic"
+          >
+            today
+          </i>
+          <span
+            class="mdc-list-item__text"
+          >
+            Today
+          </span>
+        </a>
+        <a
+          aria-selected="true"
+          class="mdc-list-item"
+          href="/"
+        >
+          <i
+            aria-hidden="true"
+            class="material-icons mdc-list-item__graphic"
+          >
+            calendar_today
+          </i>
+          <span
+            class="mdc-list-item__text"
+          >
+            This month
+          </span>
+        </a>
+        <a
+          class="mdc-list-item"
+          href="#"
+        >
+          <i
+            aria-hidden="true"
+            class="material-icons mdc-list-item__graphic"
+          >
+            favorite
+          </i>
+          <span
+            class="mdc-list-item__text"
+          >
+            Favorites
+          </span>
+        </a>
+        <hr
+          class="mdc-list-divider"
+        />
+        <h6
+          class="mdc-list-group__subheader"
+        >
+          Reports
+        </h6>
+        <a
+          class="mdc-list-item"
+          href="#"
+        >
+          <i
+            aria-hidden="true"
+            class="material-icons mdc-list-item__graphic"
+          >
+            list
+          </i>
+          <span
+            class="mdc-list-item__text"
+          >
+            Export
+          </span>
+        </a>
+        <a
+          class="mdc-list-item"
+          href="#"
+        >
+          <i
+            aria-hidden="true"
+            class="material-icons mdc-list-item__graphic"
+          >
+            bar_chart
+          </i>
+          <span
+            class="mdc-list-item__text"
+          >
+            Dashboard
+          </span>
+        </a>
+        <hr
+          class="mdc-list-divider"
+        />
+        <a
+          class="mdc-list-item"
+          href="#"
+        >
+          <i
+            aria-hidden="true"
+            class="material-icons mdc-list-item__graphic"
+          >
+            star_border
+          </i>
+          <span
+            class="mdc-list-item__text"
+          >
+            Projects
+          </span>
+        </a>
+        <hr
+          class="mdc-list-divider"
+        />
+        <a
+          class="mdc-list-item"
+          href="#"
+        >
+          <i
+            aria-hidden="true"
+            class="material-icons mdc-list-item__graphic"
+          >
+            settings
+          </i>
+          <span
+            class="mdc-list-item__text"
+          >
+            Settings
+          </span>
+        </a>
+        <hr
+          class="mdc-list-divider"
+        />
+      </div>
+    </div>
+  </aside>
+</DocumentFragment>
+`;

@@ -1,12 +1,12 @@
 import * as React from 'react';
 import { observer } from 'mobx-react-lite';
 
-import { IAuthenticatedUser } from '../../../../common/dist';
 import { useUserStore } from "../../../contexts/user-context";
+import { IUser } from '../../../../common';
 
 export interface IWithAuthenticationOptions {
     placeholder?: JSX.Element,
-    condition?: (user?: IAuthenticatedUser) => boolean,
+    condition?: (user?: IUser) => boolean,
 }
 
 export function withAuthentication<T extends object>(

@@ -1,21 +1,21 @@
 import { ICollection, Collection, FetchMode, RealtimeMode } from "firestorable";
-import { observable, reaction, computed, action } from "mobx";
-import { CollectionReference } from "@firebase/firestore-types";
+import { reaction, computed } from "mobx";
 
 import { IRootStore } from "../root-store";
 import { IFavoriteRegistrationGroup, IFavoriteRegistration, IFavoriteRegistrationGroupData } from "../../../common/dist";
 import * as serializer from '../../../common/serialization/serializer';
 import * as deserializer from '../../../common/serialization/deserializer';
+import { FirestorableStore } from "../firestorable-store";
+import { IUserStore } from "../user-store";
 
-export class FavoriteStore {
-    public favoriteGroupCollection: ICollection<IFavoriteRegistrationGroup, IFavoriteRegistrationGroupData>;
+const createQuery = (userStore: IUserStore) =>
+userStore.divisionUser
+    ? (ref: firebase.firestore.CollectionReference) => ref.where("userId", "==", userStore.divisionUser?.id).orderBy("name")
+    : null;
+
+export class FavoriteStore extends FirestorableStore<IFavoriteRegistrationGroup, IFavoriteRegistrationGroupData> {
     public favoriteCollection: ICollection<IFavoriteRegistration>;
-
-    private favoriteGroupCollectionRef: CollectionReference;
     private db: firebase.firestore.Firestore;
-
-    @observable.ref
-    private activefavoriteGroupIdField: string | undefined;
     private readonly rootStore: IRootStore;
 
     constructor(rootStore: IRootStore, {
@@ -23,26 +23,19 @@ export class FavoriteStore {
     }: {
         firestore: firebase.firestore.Firestore,
     }) {
-        this.rootStore = rootStore;
-        this.db = firestore;
-        this.favoriteGroupCollectionRef = this.db.collection("favorite-groups");
-        const createQuery = () =>
-            rootStore.user.authenticatedUser
-                ? (ref: CollectionReference) => ref.where("userId", "==", rootStore.user.authenticatedUserId).orderBy("name")
-                : null;
-
-        this.favoriteGroupCollection = new Collection(
-            this.db,
-            this.favoriteGroupCollectionRef,
-            {
+        super({
+            collection: "favorite-groups",
+            collectionOptions: {
                 fetchMode: FetchMode.once,
                 name: "Favorite groups",
-                query: createQuery(),
+                query: createQuery(rootStore.user),
             },
-            {
-                // logger: console.log
-            },
-        );
+        }, {
+            firestore,
+        });
+
+        this.rootStore = rootStore;
+        this.db = firestore;
 
         this.favoriteCollection = new Collection(
             this.db,
@@ -58,27 +51,14 @@ export class FavoriteStore {
             },
         )
 
-        reaction(() => rootStore.user.authenticatedUserId, () => {
-            this.favoriteGroupCollection.query = createQuery();
+        reaction(() => rootStore.user.divisionUser, () => {
+            this.collection.query = createQuery(rootStore.user);
         });
     }
 
     @computed
-    public get activeFavoriteGroup() {
-        if (!this.activefavoriteGroupIdField) {
-            return undefined;
-        }
-
-        const doc = this.favoriteGroupCollection.get(this.activefavoriteGroupIdField);
-
-        return doc && doc.data
-            ? doc
-            : undefined;
-    }
-
-    @computed
     public get groups() {
-        return this.favoriteGroupCollection.docs
+        return this.collection.docs
             .reduce((data, doc) => {
                 if (doc.data) {
                     data.push({
@@ -112,26 +92,21 @@ export class FavoriteStore {
             });
     }
 
-    @action
-    public setActiveFavoriteGroupId(id: string | undefined) {
-        this.activefavoriteGroupIdField = id;
-    }
-
     public addFavorites(favorites: Omit<IFavoriteRegistration, "groupId">[], group: { name: string, id?: string }) {
         const groupId = group.id
             ? group.id
-            : this.favoriteGroupCollectionRef.doc().id;
+            : this.collection.newId();
 
         this.db.runTransaction(() => {
-            if (!this.rootStore.user.authenticatedUserId)
+            if (!this.rootStore.user.divisionUser)
                 return Promise.reject("Unauthenticated");
 
             return Promise.all<string[] | string | undefined>([
                 group.id
                     ? undefined
-                    : this.favoriteGroupCollection.addAsync({
+                    : this.collection.addAsync({
                         name: group.name,
-                        userId: this.rootStore.user.authenticatedUserId
+                        userId: this.rootStore.user.divisionUser.id
                     }, groupId),
                 this.favoriteCollection.addAsync(
                     favorites
@@ -141,18 +116,5 @@ export class FavoriteStore {
         });
 
         return groupId;
-    }
-
-    public deleteGroups(...ids: string[]) {
-        this.favoriteGroupCollection.deleteAsync(...ids);
-    }
-
-    public updateActiveFavoriteGroup() {
-        this.activefavoriteGroupIdField && this.activeFavoriteGroup &&
-            this.favoriteGroupCollection.updateAsync(this.activeFavoriteGroup.data!, this.activefavoriteGroupIdField);
-    }
-
-    public deleteActiveFavoriteGroup() {
-        this.activefavoriteGroupIdField && this.favoriteGroupCollection.deleteAsync(this.activefavoriteGroupIdField);
     }
 }

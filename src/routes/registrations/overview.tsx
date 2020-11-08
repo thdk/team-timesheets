@@ -68,7 +68,7 @@ const setActions = (s: IRootStore, alowInserts = false) => {
             action: selection => {
                 if (!selection) return;
 
-                s.timesheets.deleteRegistrationsAsync(...Array.from(selection.keys()));
+                s.timesheets.deleteDocuments(undefined, ...Array.from(selection.keys()));
                 s.view.selection.clear();
             },
             icon: { content: "delete", label: "Delete" },
@@ -115,7 +115,7 @@ const setActions = (s: IRootStore, alowInserts = false) => {
             action: selection => {
                 if (!selection) return;
 
-                s.timesheets.addRegistrationsAsync(
+                s.timesheets.addDocuments(
                     Array.from(selection.values())
                         .map(reg =>
                             s.timesheets.copyRegistrationToDate(reg, s.view.moment.toDate())
@@ -149,16 +149,19 @@ const setActions = (s: IRootStore, alowInserts = false) => {
         )
     }
 
-    transaction(() => {
+    transaction(async () => {
+        // temporary because useEffect unmount callback are called before mobx router on-enter callback
+        await Promise.resolve();
         s.view.setActions(actions);
         s.view.setFabs([{
             action: () => {
-                s.timesheets.setSelectedRegistrationDefault();
+                // todo: await creation of default new document?
+                s.timesheets.createNewDocument();
                 s.router.goTo(detailRoutes.newRegistration);
             },
             icon: {
                 content: "add",
-                label: "Add new registration"
+                label: "New registration"
             },
             shortKey: {
                 key: "a",

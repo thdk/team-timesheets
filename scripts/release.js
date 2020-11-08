@@ -17,5 +17,5 @@ process.on("unhandledRejection", (e) => {
 (async () => {
     const version = args[0];
     await execAsync(`npm version ${version}`, root);
-    await execAsync(`git push --tags`, root);
+    await execAsync(`git push --follow-tags`, root);
 })();

@@ -56,14 +56,12 @@ const exportTasks: ExportToBigQueryTask[] = [
 const performExportToBigQuery = () => exportToBigQuery(exportTasks, new BigQuery({ projectId: adminConfig.projectId }), db);
 exports.exportToBigQuery = functions.https.onCall(performExportToBigQuery);
 
-// TODO: Why do we need to cast as any here? Upgrade firebase packages?
-exports.scheduledExportToBigQuery = (functions.pubsub as any).schedule('every day 06:00')
+exports.scheduledExportToBigQuery = functions.pubsub.schedule('every day 06:00')
 .timeZone('Europe/Brussels')
     .onRun(() => performExportToBigQuery());
 
 // Temporary function to add timestamps to data already in database
 exports.initTimestampsForRegistrations = functions.https.onCall(() => initTimestamps(db));
-
 
 // Temporary function to add name_insensitive to data already in database
 exports.initNamesInsensitive = functions.https.onCall(() => initNamesInsensitive(db));
@@ -72,3 +70,5 @@ exports.watchForFilesToImportFrom = watchForFilesToImportFrom;
 exports.watchImportSessions = watchImportSessions;
 
 export * from "./create-csv";
+
+export * from "./firestore/division";

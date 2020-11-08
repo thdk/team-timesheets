@@ -1,24 +1,28 @@
-import { Route } from "mobx-router";
+import { Route, RouterStore } from "mobx-router";
 import * as React from 'react';
 import { transaction, when } from "mobx";
 
 import { App, setNavigationContent } from "../../internal";
 import { IRootStore } from "../../stores/root-store";
-import { IViewAction } from "../../stores/view-store";
+import { IViewAction } from '../../stores/view-store';
 import Favorites from "../../pages/favorites";
 
 type FavoritesListRoute = Route<IRootStore>;
 
-export const goToFavorites = (store: IRootStore) => {
-    store.router.goTo(routes.favorites, undefined);
+export const goToFavorites = (router: RouterStore<IRootStore>) => {
+    router.goTo(routes.favorites, undefined);
 }
 
 const setActions = (s: IRootStore) => {
-    when(() => s.user.authenticatedUser !== undefined, () => {
+    when(() => s.user.divisionUser !== undefined, () => {
 
         const deleteAction: IViewAction = {
             action: () => {
-                s.view.selection.size && s.favorites.deleteGroups(...s.view.selection.keys());
+                s.view.selection.size && s.favorites.deleteDocuments(
+                    {
+                        useFlag: false,
+                    },
+                    ...s.view.selection.keys());
                 s.view.selection.clear();
             },
             icon: { label: "Delete", content: "delete" },
@@ -37,7 +41,7 @@ const path = '/favorites'
 const routes = {
     favorites: new Route({
         path,
-        component: <App><Favorites/></App>,
+        component: <App><Favorites /></App>,
         onEnter: (route: FavoritesListRoute, _params, s: IRootStore) => {
             setActions(s);
             setNavigationContent(s, route, false);
@@ -45,7 +49,7 @@ const routes = {
         title: "Favorites",
         beforeExit: (_route, _param, s: IRootStore) => {
             transaction(() => {
-                s.favorites.setActiveFavoriteGroupId(undefined);
+                s.favorites.setActiveDocumentId(undefined);
                 s.view.selection.clear();
                 s.view.setActions([]);
             });

@@ -43,6 +43,7 @@ beforeAll(() => {
     store.user.setUser({
         uid: "user-1",
         displayName: "user 1",
+        email: "email@email.com",
     } as firebase.User);
 
     return store.config.tasksCollection.addAsync({
@@ -145,7 +146,7 @@ describe("GoogleCalendarEventsContainer", () => {
 
         await waitFor(
             () => expect(
-                store.timesheets.registration?.sourceId).toBe("event-1")
+                store.timesheets.activeDocument?.sourceId).toBe("event-1")
         );
 
         expect(goToNewRegistration).toBeCalledTimes(1);
@@ -155,7 +156,7 @@ describe("GoogleCalendarEventsContainer", () => {
 
         await waitFor(
             () => expect(
-                store.timesheets.registration
+                store.timesheets.activeDocument
             ).toEqual(
                 expect.objectContaining({
                     sourceId: "event-2",

@@ -1,11 +1,11 @@
-import { initTestFirestore, deleteFirebaseAppsAsync } from "../../__tests__/utils/firebase";
+import { initTestFirestore, deleteFirebaseAppsAsync, initTestFunctions } from "../../__tests__/utils/firebase";
 
 import { TestCollection } from "../../__tests__/utils/firestorable/collection";
 import { IRegistrationData } from "../../../common";
 import firebase from "firebase/app";
 import { waitFor } from "@testing-library/react";
 import { reaction, transaction } from "mobx";
-import { Store } from "../root-store";
+import { Store, IRootStore } from "../root-store";
 
 const {
     firestore,
@@ -13,17 +13,20 @@ const {
     refs: [
         registrationRef,
         userRef,
-    ]
+    ],
 } = initTestFirestore("registration-store-test",
     [
         "registrations",
         "users",
+        "division-users",
     ]);
+
+const functions = initTestFunctions("registration-store-test");
 
 const userCollection = new TestCollection(firestore, userRef);
 const registrationCollection = new TestCollection<IRegistrationData>(firestore, registrationRef);
 
-const store = new Store({ firestore });
+let store: IRootStore;
 
 const setupAsync = () => {
     return Promise.all([
@@ -33,7 +36,9 @@ const setupAsync = () => {
                 team: "team-1",
                 roles: {
                     user: true,
-                }
+                },
+                email: "email@email.com",
+                uid: "user-1",
             },
             "user-1",
         ),
@@ -95,19 +100,30 @@ const setupAsync = () => {
     ]);
 };
 
-beforeAll(() => Promise.all([
-    clearFirestoreDataAsync(),
-    setupAsync(),
-]));
+let unsubscribe: () => void;
+beforeEach(() => {
+    if (functions) {
+        store = new Store({ firestore, httpsCallable: jest.fn() });
+    }
+    return setupAsync();
+});
 
+afterEach(() => {
+    unsubscribe();
+    store.dispose();
+    return clearFirestoreDataAsync();
+});
 afterAll(deleteFirebaseAppsAsync);
 
 describe("RegistrationStore", () => {
-    let unsubscribe: () => void;
 
-    beforeAll(() => {
+    beforeEach(() => {
         transaction(() => {
-            store.user.setUser({ uid: "user-1", displayName: "user 1" } as firebase.User);
+            store.user.setUser({
+                uid: "user-1",
+                displayName: "user 1",
+                email: "email@email.com",
+            } as firebase.User);
             store.view.setViewDate({
                 year: 2020,
                 month: 4,
@@ -118,8 +134,6 @@ describe("RegistrationStore", () => {
         // We need to observe something otherwise registrations aren't fetched :)
         unsubscribe = reaction(() => store.timesheets.registrationsGroupedByDay, () => { })
     });
-
-    afterAll(() => unsubscribe());
 
     describe("registrationsGroupedByDay / registrationsGroupedByDayReversed", () => {
 
@@ -199,30 +213,26 @@ describe("RegistrationStore", () => {
                 store.user.setUser(null);
 
                 await waitFor(() => {
-                    expect(store.user.authenticatedUser).toBeFalsy();
+                    expect(store.user.divisionUser).toBeFalsy();
                     expect(
                         store.timesheets.registrationsGroupedByDay.length
                     ).toBe(0);
                 });
-
-                store.user.setUser({ uid: "user-1", displayName: "user 1" } as firebase.User);
-
-                await waitFor(() => expect(store.user.authenticatedUserId).toBe("user-1"));
             });
         });
 
         describe("when there are no registrations for the current user", () => {
             it("should return an empty list", async () => {
-                store.user.setUser({ uid: "user-2", displayName: "user 2" } as firebase.User)
+                store.user.setUser({
+                    uid: "user-2",
+                    displayName: "user 2",
+                    email: "email2@email.com",
+                } as firebase.User)
 
                 await waitFor(
                     () => expect(store.timesheets.registrationsGroupedByDay.length)
                         .toBe(0)
                 );
-
-                store.user.setUser({ uid: "user-1", displayName: "user 1" } as firebase.User);
-
-                await waitFor(() => expect(store.user.authenticatedUserId).toBe("user-1"));
             });
         });
     });
@@ -231,6 +241,9 @@ describe("RegistrationStore", () => {
 
         describe("when set from false (default) to true", () => {
             it("should set isCollapsed property of all groups to 'true'", async () => {
+                await waitFor(() => expect(store.user.divisionUser).toBeDefined());
+                await waitFor(() => expect(store.timesheets.collection.isFetched).toBeTruthy());
+
                 store.timesheets.areGroupedRegistrationsCollapsed = true;
 
                 await waitFor(() =>
@@ -240,6 +253,12 @@ describe("RegistrationStore", () => {
                 );
 
                 store.timesheets.areGroupedRegistrationsCollapsed = false;
+
+                await waitFor(() =>
+                    expect(store.timesheets.registrationsGroupedByDay
+                        .some(g => g.isCollapsed)
+                    ).toBe(false)
+                );
             });
 
             it("should clear selectedRegistrationDays", async () => {
@@ -257,6 +276,12 @@ describe("RegistrationStore", () => {
                 );
 
                 store.timesheets.areGroupedRegistrationsCollapsed = false;
+
+                await waitFor(() =>
+                    expect(store.timesheets.registrationsGroupedByDay
+                        .some(g => g.isCollapsed)
+                    ).toBe(false)
+                );
             });
         });
 
@@ -282,6 +307,9 @@ describe("RegistrationStore", () => {
             });
 
             it("should set selectedRegistrationDays", async () => {
+                await waitFor(() => expect(store.user.divisionUser).toBeDefined());
+                await waitFor(() => expect(store.timesheets.collection.isFetched).toBeTruthy());
+
                 await waitFor(() =>
                     expect(store.timesheets.registrationsGroupedByDay
                         .some(g => !g.isCollapsed)
@@ -307,58 +335,64 @@ describe("RegistrationStore", () => {
 
     describe("registrationsTotalTime", () => {
         it("should return the total amount of time for the current filtered registrations", async () => {
-            await waitFor(() => expect(
-                store.timesheets.registrationsTotalTime
-            ).toBe(13.5)
+            await waitFor(
+                () => expect(
+                    store.timesheets.registrationsTotalTime
+                ).toBe(13.5)
             );
         });
     });
 
     describe("setSelectedRegistration", () => {
         describe("when the requested registration id exists in the current filter", () => {
-            it("should set selectedRegistration and selectedRegistrationId", () => {
-                store.timesheets.setSelectedRegistration("reg-1");
+            it("should set selectedRegistration and selectedRegistrationId", async () => {
+                await waitFor(() => expect(store.user.divisionUser).toBeDefined());
+                await waitFor(() => expect(store.timesheets.collection.isFetched).toBeTruthy());
 
-                expect(store.timesheets.registrationId).toBe("reg-1");
-                expect(store.timesheets.registration).toBeDefined();
-                expect(store.timesheets.registration!.description).toBe("desc 3");
+                store.timesheets.setActiveDocumentId("reg-1");
 
-                store.timesheets.setSelectedRegistration(undefined);
+                expect(store.timesheets.activeDocumentId).toBe("reg-1");
+                expect(store.timesheets.activeDocument).toBeDefined();
+                expect(store.timesheets.activeDocument!.description).toBe("desc 3");
             });
         });
 
         describe("when the requested registration id does not exist in the current filter", () => {
             it("should fetch the registration and set selectedRegistration and selectedRegistrationId", async () => {
-                store.timesheets.setSelectedRegistration("reg-2");
+                await waitFor(() => expect(store.user.divisionUser).toBeDefined());
+                await waitFor(() => expect(store.timesheets.collection.isFetched).toBeTruthy());
+
+                store.timesheets.setActiveDocumentId("reg-2");
 
                 await waitFor(() => {
-                    expect(store.timesheets.registrationId).toBe("reg-2");
-                    expect(store.timesheets.registration).toBeDefined();
-                    expect(store.timesheets.registration!.description).toBe("desc 4");
+                    expect(store.timesheets.activeDocumentId).toBe("reg-2");
+                    expect(store.timesheets.activeDocument).toBeDefined();
+                    expect(store.timesheets.activeDocument!.description).toBe("desc 4");
                 });
 
-                store.timesheets.setSelectedRegistration(undefined);
+                store.timesheets.setActiveDocumentId(undefined);
             });
         });
     });
 
     describe("saveSelectedRegistration", () => {
         it("should save changes to the selected registration", async () => {
-            store.timesheets.setSelectedRegistration("reg-1");
+            await waitFor(() => expect(store.user.divisionUser).toBeDefined());
+            await waitFor(() => expect(store.timesheets.collection.isFetched).toBeTruthy());
+
+            store.timesheets.setActiveDocumentId("reg-1");
 
             await waitFor(() => {
-                expect(store.timesheets.registration).toBeDefined();
+                expect(store.timesheets.activeDocument).toBeDefined();
             })
 
-            expect(store.timesheets.registrationId).toBe("reg-1");
-            expect(store.timesheets.registration!.description).toBe("desc 3");
+            expect(store.timesheets.activeDocumentId).toBe("reg-1");
+            expect(store.timesheets.activeDocument!.description).toBe("desc 3");
 
-            store.timesheets.updateSelectedRegistration({
-                description: "desc 3 a",
-                project: "project-1",
-            });
+            store.timesheets.activeDocument!.description = "desc 3 a";
+            store.timesheets.activeDocument!.project = "project-1";
 
-            expect(store.timesheets.registration!.description).toBe("desc 3 a");
+            expect(store.timesheets.activeDocument!.description).toBe("desc 3 a");
 
             await store.timesheets.saveSelectedRegistration();
 
@@ -374,39 +408,44 @@ describe("RegistrationStore", () => {
                 );
             });
 
-            store.timesheets.setSelectedRegistration(undefined);
+            store.timesheets.setActiveDocumentId(undefined);
         });
     });
 
     describe("toggleSelectedRegistrationDay", () => {
-        store.timesheets.toggleSelectedRegistrationDay(
-            "Sat Apr 04 2020"
-        );
+        it("should set selectedRegistrationDays property", async () => {
+            await waitFor(() => expect(store.user.divisionUser).toBeDefined());
+            await waitFor(() => expect(store.timesheets.collection.isFetched).toBeTruthy());
 
-        expect(store.timesheets.selectedRegistrationDays)
-            .toEqual(
-                expect.arrayContaining([
-                    "Sat Apr 04 2020",
-                ])
+            store.timesheets.toggleSelectedRegistrationDay(
+                "Sat Apr 04 2020"
             );
 
-        store.timesheets.toggleSelectedRegistrationDay(
-            "Sat Apr 04 2020",
-            true,
-        );
+            expect(store.timesheets.selectedRegistrationDays)
+                .toEqual(
+                    expect.arrayContaining([
+                        "Sat Apr 04 2020",
+                    ])
+                );
 
-        expect(store.timesheets.selectedRegistrationDays)
-            .toEqual(
-                expect.arrayContaining([
-                    "Sat Apr 04 2020",
-                ])
+            store.timesheets.toggleSelectedRegistrationDay(
+                "Sat Apr 04 2020",
+                true,
             );
 
-        store.timesheets.toggleSelectedRegistrationDay(
-            "Sat Apr 04 2020"
-        );
+            expect(store.timesheets.selectedRegistrationDays)
+                .toEqual(
+                    expect.arrayContaining([
+                        "Sat Apr 04 2020",
+                    ])
+                );
 
-        expect(store.timesheets.selectedRegistrationDays)
-            .toEqual([]);
+            store.timesheets.toggleSelectedRegistrationDay(
+                "Sat Apr 04 2020"
+            );
+
+            expect(store.timesheets.selectedRegistrationDays)
+                .toEqual([]);
+        });
     });
 });

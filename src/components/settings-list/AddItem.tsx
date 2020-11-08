@@ -2,8 +2,15 @@ import * as React from 'react';
 import { INameWithIcon } from '../../../common';
 import { SettingsListItem } from '../settings-list-item';
 
-export const AddItem = (props: { addListItem: (data: INameWithIcon) => void } & React.HTMLProps<HTMLDivElement>) => {
-    const { addListItem, ...divProps } = props;
+export const AddItem = ({
+    onAddItem,
+    label = "Add item",
+    ...divProps
+}: {
+    onAddItem: (data: INameWithIcon) => void;
+    label?: string;
+} & React.HTMLProps<HTMLDivElement>) => {
+
     const [data, setData] = React.useState<Partial<INameWithIcon> | undefined>(undefined);
 
 
@@ -12,7 +19,7 @@ export const AddItem = (props: { addListItem: (data: INameWithIcon) => void } & 
             edit={true}
             itemData={data}
             onChangeItem={data => {
-                addListItem(data);
+                onAddItem(data);
                 setData(undefined);
             }}
             onCancel={() => setData(undefined)}
@@ -29,7 +36,7 @@ export const AddItem = (props: { addListItem: (data: INameWithIcon) => void } & 
         }}>
             <div className="list-item-props">
                 <i className="material-icons item-icon">add</i>
-                <a href="#" className="add-item-button">Add item</a>
+                <a href="#" className="add-item-button">{label}</a>
             </div>
         </div>
     }

@@ -6,7 +6,7 @@ import { App, goToOverview, DateObject } from '../../internal';
 import Registration from '../../pages/registration-detail';
 import { setTitleForRoute } from '../actions';
 import { IRootStore } from '../../stores/root-store';
-import { IViewAction } from '../../stores/view-store';
+import { IViewAction, ViewStore } from '../../stores/view-store';
 
 const path = "/timesheetsdetail";
 
@@ -25,24 +25,49 @@ export const goToNewRegistration = (router: RouterStore<IRootStore>) => {
     );
 };
 
-export const setBackToOverview = (store: IRootStore, action?: () => void, currentDate?: number, targetDate?: DateObject) => {
+export const setBackToOverview = (
+    store: Pick<IRootStore, "view" | "router">,
+    action?: () => void, currentDate?: number,
+    targetDate?: DateObject,
+    navigate?: () => void,
+) => {
     store.view.setNavigation({
         action: () => {
             action && action();
-            goToOverview(store, targetDate, { track: store.view.track, currentDate });
+            if (navigate) {
+                navigate();
+            } else {
+                goToOverview(store, targetDate, { track: store.view.track, currentDate });
+            }
         },
+        icon: { label: "Back", content: "arrow_back" }
+    });
+}
+
+export const setChildNavigation = ({
+    view,
+    navigateBack,
+}: {
+    view: ViewStore;
+    navigateBack: () => void;
+}) => {
+    view.setNavigation({
+        action: navigateBack,
         icon: { label: "Back", content: "arrow_back" }
     });
 }
 
 const onEnter = (route: RegistrationsDetailRoute, params: RouteParams, s: IRootStore) => {
     if (params && params.id) {
-        s.timesheets.setSelectedRegistration(params.id);
+        s.timesheets.setActiveDocumentId(params.id);
     }
 
     const deleteAction: IViewAction = {
         action: () => {
-            s.timesheets.registrationId && s.timesheets.deleteRegistrationsAsync(s.timesheets.registrationId);
+            s.timesheets.activeDocumentId && s.timesheets.deleteDocuments(
+                undefined,
+                s.timesheets.activeDocumentId,
+            );
             goToOverview(s);
         },
         icon: { label: "Delete", content: "delete" },
@@ -64,13 +89,17 @@ const onEnter = (route: RegistrationsDetailRoute, params: RouteParams, s: IRootS
             deleteAction
         ]);
 
-        setBackToOverview(s, () => s.timesheets.saveSelectedRegistration(), s.timesheets.registration && s.timesheets.registration.date!.getDate());
+        setBackToOverview(
+            s,
+            () => s.timesheets.saveSelectedRegistration(),
+            s.timesheets.activeDocument && s.timesheets.activeDocument.date!.getDate(),
+        );
         setTitleForRoute(s, route);
     });
 };
 
 const beforeExit = (_route: RegistrationsDetailRoute, _params: RouteParams, s: IRootStore) => {
-    s.timesheets.setSelectedRegistration(undefined);
+    s.timesheets.setActiveDocumentId(undefined);
     s.view.setNavigation("default");
 };
 

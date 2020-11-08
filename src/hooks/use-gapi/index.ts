@@ -99,7 +99,6 @@ export const useGapi = ({
     }, [loadScript, removeScript]);
 
     const signOut = () => {
-        console.log({ signout: true });
         gapi.auth2.getAuthInstance().signOut();
     };
 

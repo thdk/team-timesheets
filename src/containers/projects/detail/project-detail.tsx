@@ -50,7 +50,7 @@ const ProjectDetail = (props: Props) => {
                         onChange={handleIconChanged}
                         value={icon}
                         outlined
-                    ></IconPicker>
+                    />
                 </FormField>
             </FlexGroup>
             <FlexGroup extraCssClass="row">

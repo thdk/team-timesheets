@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { observer } from 'mobx-react-lite';
 import { useUserStore } from "../../contexts/user-context";
-import { useViewStore } from '../../stores/view-store';
+import { useViewStore } from '../../contexts/view-context';
 import { useFirebase } from '../../contexts/firebase-context';
 import { reaction } from 'mobx';
 import { useReportStore } from '../../stores/report-store';
@@ -38,10 +38,10 @@ export const ReportDownloadLink = observer(() => {
             () => reportDoc.data?.status, (status: "waiting" | "error" | "complete" | undefined) => {
                 if (status === "complete") {
                     const { month, year } = view;
-                    const { authenticatedUserId: userId } = userStore;
+                    const { divisionUser: user } = userStore;
 
                     resolveIfMounted(
-                        firebase.storage().ref(`reports/${year}/${month}/${userId}.csv`).getDownloadURL()
+                        firebase.storage().ref(`reports/${year}/${month}/${user?.id}.csv`).getDownloadURL()
                     ).then(url => setReportUrl(url));
                 }
             },

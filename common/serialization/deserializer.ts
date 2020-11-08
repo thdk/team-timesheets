@@ -1,5 +1,7 @@
 import { IRegistrationData, IRegistration, IUserData, IUser, ITeamData, ITeam, IProjectData, IProject, ITaskData, ITask, IFavoriteRegistration } from "../interfaces";
 import { INameWithIconData } from "../interfaces/base";
+import { IDivisionData } from "../interfaces/IOrganisationData";
+import { IDivision } from "../interfaces/IOrganisation";
 
 
 export const convertRegistration = (firestoreData: IRegistrationData) => {
@@ -43,6 +45,10 @@ export const convertUser = (firestoreData: IUserData) => {
         defaultTask: firestoreData.defaultTask,
         recentProjects: firestoreData.recentProjects || [],
         defaultClient: firestoreData.defaultClient || undefined,
+        email: firestoreData.email || undefined,
+        uid: firestoreData.uid || "undefined",
+        divisionId: firestoreData.divisionId || undefined,
+        divisionUserId: firestoreData.divisionUserId || undefined,
         team: firestoreData.team || undefined,
         created: firestoreData.created ? firestoreData.created.toDate() : undefined,
     };
@@ -58,8 +64,17 @@ export const convertProject = (firestoreData: IProjectData) => {
     return {
         ...convertNameWithIcon(firestoreData),
         createdBy: firestoreData.createdBy,
-        isArchived: firestoreData.isArchived
+        isArchived: firestoreData.isArchived,
+        divisionId: firestoreData.divisionId,
     } as IProject;
+}
+
+export const convertDivision = (firestoreData: IDivisionData) => {
+    return {
+        ...convertNameWithIcon(firestoreData),
+        createdBy: firestoreData.createdBy,
+        id: firestoreData.id,
+    } as IDivision;
 }
 
 export const convertTask = (firestoreData: ITaskData) => {
@@ -72,6 +87,7 @@ export const convertNameWithIcon = (firestoreData: INameWithIconData) => {
         icon: firestoreData.icon || "",
         created: firestoreData.created ? firestoreData.created.toDate() : undefined,
         deleted: firestoreData.deleted || false,
+        divisionId: firestoreData.divisionId || undefined
     };
 
     return data;

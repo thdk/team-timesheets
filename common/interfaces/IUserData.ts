@@ -1,7 +1,7 @@
 import { IRoles, RecentlyUsedProjects } from "./IUser";
 import { IPersistedEntity } from "./base";
 
-export interface IUserData extends IPersistedEntity{
+export interface IUserData extends IPersistedEntity {
     tasks?: string[];
     roles?: IRoles;
     name?: string;
@@ -9,4 +9,12 @@ export interface IUserData extends IPersistedEntity{
     defaultClient?: string;
     recentProjects?: RecentlyUsedProjects;
     team?: string;
+    email?: string;
+    uid?: string;
+    divisionId?: string;
+    divisionUserId?: string;
+}
+
+export interface IDivisionUserData extends IUserData {
+    deleted: boolean;
 }

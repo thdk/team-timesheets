@@ -1,5 +1,13 @@
-.mdc-fab {
+.fabs {
     position: fixed;
     bottom: 2rem;
     right: 2rem;
+    display: flex;
+    align-content: center;
+    align-items: flex-end;
+    flex-direction: column-reverse;
+}
+
+.fabs button {
+    margin-top: 1rem;
 }

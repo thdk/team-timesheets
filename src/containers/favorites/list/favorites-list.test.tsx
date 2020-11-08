@@ -58,6 +58,8 @@ class TestStore {
     public projects = new ProjectStore(this.rootStore, {
         firestore,
     });
+
+    public getDivisionId = () => undefined;
 }
 
 describe("FavoritesList", () => {
@@ -112,6 +114,8 @@ describe("FavoritesList", () => {
                 userCollection.addAsync(
                     {
                         name: "user 1",
+                        uid: "user-1",
+                        email: "email@email.com",
                     },
                     "user-1",
                 ),
@@ -152,9 +156,10 @@ describe("FavoritesList", () => {
         store.user.setUser({
             uid: "user-1",
             displayName: "user 1",
+            email: "email@email.com",
         } as firebase.User);
 
-        store.favorites.setActiveFavoriteGroupId("group-1");
+        store.favorites.setActiveDocumentId("group-1");
 
 
         const { getByText, asFragment } = render(
@@ -171,6 +176,7 @@ describe("FavoritesList", () => {
             () => expect(getByText("Favorite desc 2")),
         );
 
-        expect(asFragment()).toMatchSnapshot();
+        await waitFor(() => expect(store.config.clientsCollection.isFetched).toBeTruthy());
+        await waitFor(() => expect(asFragment()).toMatchSnapshot());
     });
 });

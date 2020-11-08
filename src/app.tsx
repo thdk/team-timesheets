@@ -2,6 +2,7 @@ import * as React from 'react';
 import { render } from 'react-dom';
 
 import '@rmwc/theme/styles';
+import '@rmwc/snackbar/styles';
 import '@rmwc/typography/styles';
 import '@rmwc/button/styles';
 import '@rmwc/tabs/styles';

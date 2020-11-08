@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { observer } from "mobx-react-lite";
 
 import { useGapi } from "../../hooks/use-gapi";
-import { useViewStore } from "../../stores/view-store";
+import { useViewStore } from "../../contexts/view-context";
 import { useGoogleConfig } from "../configs/use-google-config";
 
 import { GoogleCalendarEvents as PureGoogleCalendarEvents } from "./events";
@@ -32,7 +32,7 @@ export const GoogleCalendarEvents =
         const handleEventClick = (event: gapi.client.calendar.Event) => {
             const start = new Date((event.start?.date || event.start?.dateTime) as string);
             const end = event.start?.date ? undefined : new Date(event.end?.dateTime!);
-            timesheet.setSelectedRegistrationDefault({
+            timesheet.createNewDocument({
                 date: start,
                 description: event.summary,
                 time: end ? Math.abs(end.getTime() - start.getTime()) / 3600000 : undefined,

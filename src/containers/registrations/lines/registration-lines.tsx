@@ -25,7 +25,7 @@ export const RegistrationLines = observer((props: IRegistrationLinesProps) => {
 
         const { id, data: { description = "...", project, time, task, client } } = r;
 
-        const projectData = project ? projects.projectsCollection.get(project) : null;
+        const projectData = project ? projects.collection.get(project) : null;
         const { data: { name: projectName = "" } = {} } = projectData || {};
 
         const taskData = task ? tasks.get(task) : null;

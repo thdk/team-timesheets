@@ -1,23 +1,23 @@
-import { Route } from "mobx-router";
+import { Route, RouterStore } from "mobx-router";
 import * as React from 'react';
 import { transaction, when } from "mobx";
 
 import { App, setNavigationContent } from "../../internal";
 import { IRootStore } from "../../stores/root-store";
-import { IViewAction } from "../../stores/view-store";
+import { IViewAction } from '../../stores/view-store';
 import Projects from "../../pages/projects";
 import detailRoutes from "./detail";
 import { canManageProjects } from "../../rules";
 
-export const goToProjects = (store: IRootStore, tab: ProjectsTab = "active") => {
-    store.router.goTo(routes.projects, {}, { tab });
+export const goToProjects = (router: RouterStore<IRootStore>, tab: ProjectsTab = "active") => {
+    router.goTo(routes.projects, {}, { tab });
 }
 
 export type ProjectsTab = "active" | "archived";
 
 const setActions = (tab: ProjectsTab, store: IRootStore) => {
-    when(() => store.user.authenticatedUser !== undefined, () => {
-        if (!canManageProjects(store.user.authenticatedUser)) {
+    when(() => store.user.divisionUser !== undefined, () => {
+        if (!canManageProjects(store.user.divisionUser)) {
             return;
         }
 
@@ -69,19 +69,23 @@ const setActions = (tab: ProjectsTab, store: IRootStore) => {
                 break;
         }
 
-        store.view.setActions(actions);
-        store.view.setFabs([{
-            action: () => {
-                store.router.goTo(detailRoutes.newProject, {});
-            },
-            icon: {
-                content: "add",
-                label: "Add new project"
-            },
-            shortKey: {
-                key: "a",
-            },
-        }]);
+        transaction(async () => {
+            // temporary because useEffect unmount callback are called before mobx router on-enter callback
+            await Promise.resolve();
+            store.view.setActions(actions);
+            store.view.setFabs([{
+                action: () => {
+                    store.router.goTo(detailRoutes.newProject, {});
+                },
+                icon: {
+                    content: "add",
+                    label: "New project"
+                },
+                shortKey: {
+                    key: "a",
+                },
+            }]);
+        });
     });
 }
 
@@ -99,7 +103,7 @@ const routes = {
         },
         onParamsChange: (_route, _params, s: IRootStore, queryParams: { tab: ProjectsTab }) => {
             transaction(() => {
-                s.projects.setProjectId(undefined);
+                s.projects.setActiveDocumentId(undefined);
                 s.view.selection.clear();
             });
             setActions(queryParams.tab, s);
@@ -107,7 +111,7 @@ const routes = {
         title: "Projects",
         beforeExit: (_route, _param, s: IRootStore) => {
             transaction(() => {
-                s.projects.setProjectId(undefined);
+                s.projects.setActiveDocumentId(undefined);
                 s.view.selection.clear();
                 s.view.setFabs([]);
                 s.view.setActions([]);

@@ -6,20 +6,11 @@ import { IUserStore, UserStore } from "../user-store";
 import { IViewStore, ViewStore } from "../view-store";
 import { IReportStore, ReportStore } from "../report-store/report-store";
 import { DashboardStore, IDashboardStore } from "../dashboard-store";
-import { IProjectStore, ProjectStore } from "../project-store";
+import { ProjectStore } from "../project-store";
 import { FavoriteStore } from "../favorite-store";
+import { DivisionStore  } from "../division-store/division-store";
 
-export interface IRootStore {
-    readonly user: IUserStore;
-    readonly view: IViewStore;
-    readonly router: RouterStore<IRootStore>;
-    readonly timesheets: IRegistrationsStore;
-    readonly reports: IReportStore;
-    readonly config: IConfigStore;
-    readonly projects: IProjectStore;
-    readonly favorites: FavoriteStore;
-    readonly dashboard: IDashboardStore;
-}
+export interface IRootStore extends Store { };
 
 export class Store implements IRootStore {
     public readonly timesheets: IRegistrationsStore;
@@ -29,14 +20,17 @@ export class Store implements IRootStore {
     public readonly router: RouterStore<IRootStore>;
     public readonly reports: IReportStore;
     public readonly dashboard: IDashboardStore;
-    public readonly projects: IProjectStore;
+    public readonly projects: ProjectStore;
     public readonly favorites: FavoriteStore;
+    public readonly divisions: DivisionStore;
 
     constructor({
         auth,
         firestore,
+        httpsCallable,
     }: {
         firestore: firebase.firestore.Firestore,
+        httpsCallable?: (name: string) => firebase.functions.HttpsCallable,
         auth?: firebase.auth.Auth,
     }) {
         this.user = new UserStore(
@@ -84,16 +78,23 @@ export class Store implements IRootStore {
                 firestore,
             },
         );
+        this.divisions = new DivisionStore(
+            this,
+            {
+                firestore,
+                httpsCallable,
+            },
+        );
         this.router = new RouterStore<IRootStore>(this);
     }
 
     public dispose() {
-        // this.config.dispose();
+        this.config.dispose();
         // this.dashboard.dispose();
         // this.favorites.dispose();
         // this.projects.dispose();
         // this.reports.dispose();
-        // this.timesheets.dispose();
+        this.timesheets.dispose();
         this.user.dispose();
         // this.view.dispose();
     }

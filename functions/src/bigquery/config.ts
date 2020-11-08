@@ -3,7 +3,6 @@ import { IProjectData, IBigQueryProjectData } from "../interfaces/IProjectData";
 import { IRegistrationData, IBigQueryRegistrationData } from "../interfaces/IRegistrationData";
 import * as admin from 'firebase-admin';
 import { IUserData } from "../interfaces/IUserData";
-import { createDecipher } from "crypto";
 
 export const convertRegistration = (firebaseChange: FirebaseFirestore.DocumentSnapshot) => {
     const reg = firebaseChange.data() as unknown as IRegistrationData;
@@ -20,6 +19,7 @@ export const convertRegistration = (firebaseChange: FirebaseFirestore.DocumentSn
         modified: reg.modified ? reg.modified.toDate().toISOString().replace('Z', '') : null,
         deleted: reg.deleted,
         importId: reg.importId,
+        divisionId: reg.divisionId,
     };
 };
 
@@ -33,7 +33,8 @@ export const convertProject = (firebaseChange: FirebaseFirestore.DocumentSnapsho
         createdBy: project.createdBy,
         created: project.created ? project.created.toDate().toISOString().replace('Z', '') : null,
         modified: project.modified ? project.modified.toDate().toISOString().replace('Z', '') : null,
-        deleted: project.deleted
+        deleted: project.deleted,
+        divisionId: project.divisionId,
     };
 }
 
@@ -72,21 +73,22 @@ const convertCsvProjectToBigQuery = (data: any) => {
 // ipid-1	Automated price sync	true
 const convertCsvProjectToFirestore = (data: any) => {
     // validate input
-    const { name, icon, id, isArchived = "true" } = data;
+    const { name, icon, id, isArchived = "true", divisionId, } = data;
     if (!id) throw new Error("Cannot insert project data without id");
     if (!name) throw new Error("Name is missing for project with id: " + id);
 
     const now = admin.firestore.Timestamp.now();
     return ({
-        id: id,
-        name: name,
+        id,
+        name,
         name_insensitive: ((name || "") as string).toUpperCase(),
         icon: icon || null,
         deleted: false,
         created: now,
         modified: now,
         createdBy: "",
-        isArchived: ((isArchived || "") as string).toLowerCase() === "true"
+        isArchived: ((isArchived || "") as string).toLowerCase() === "true",
+        divisionId,
     } as IProjectData);
 }
 
@@ -95,7 +97,7 @@ const convertCsvProjectToFirestore = (data: any) => {
 // 2020-07-23 00:00:00 UTC	Foobar	        sLpzfJLhAHNeswVtcIub	XDiim1EzIR4JpSTF94sb	3	    Egzn2JunuWZj47KWxBIccm91bp33	ggVaApCbnJVW3LmqegoK	cTXyre5UPdgOz4EXj6tQ
 const convertCsvRegistrationToBigQuery = (data: any) => {
     // validate input
-    const { time, date, id, description, client, task, project, userId } = data;
+    const { time, date, id, description, client, task, project, userId, divisionId } = data;
     if (!id) throw new Error("Cannot insert registrations data without id");
 
     const now = new Date().toISOString().replace('Z', '');
@@ -110,7 +112,8 @@ const convertCsvRegistrationToBigQuery = (data: any) => {
         task,
         client,
         project,
-        userId
+        userId,
+        divisionId,
     } as IBigQueryRegistrationData);
 }
 
@@ -170,6 +173,7 @@ export const csvDerserializers = {
 export const projectSchema: BigQueryField[] = [
     { "name": "icon", "type": "STRING" },
     { "name": "name", "type": "STRING" },
+    { "name": "divisionId", "type": "STRING" },
     { "name": "deleted", "type": "BOOLEAN" },
     { "name": "created", "type": "TIMESTAMP" },
     { "name": "modified", "type": "TIMESTAMP" },
@@ -180,6 +184,7 @@ export const projectSchema: BigQueryField[] = [
 
 export const registrationSchema: BigQueryField[] = [
     { "name": "id", "type": "STRING" },
+    { "name": "divisionId", "type": "STRING" },
     { "name": "created", "type": "TIMESTAMP" },
     { "name": "deleted", "type": "BOOLEAN" },
     { "name": "date", "type": "TIMESTAMP" },

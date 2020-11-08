@@ -68,7 +68,7 @@ const setActions = (s: IRootStore, alowInserts = false) => {
             action: selection => {
                 if (!selection) return;
 
-                s.timesheets.deleteRegistrationsAsync(...Array.from(selection.keys()));
+                s.timesheets.deleteDocuments(undefined, ...Array.from(selection.keys()));
                 s.view.selection.clear();
             },
             icon: { content: "delete", label: "Delete" },
@@ -115,7 +115,7 @@ const setActions = (s: IRootStore, alowInserts = false) => {
             action: selection => {
                 if (!selection) return;
 
-                s.timesheets.addRegistrationsAsync(
+                s.timesheets.addDocuments(
                     Array.from(selection.values())
                         .map(reg =>
                             s.timesheets.copyRegistrationToDate(reg, s.view.moment.toDate())
@@ -155,7 +155,8 @@ const setActions = (s: IRootStore, alowInserts = false) => {
         s.view.setActions(actions);
         s.view.setFabs([{
             action: () => {
-                s.timesheets.setSelectedRegistrationDefault();
+                // todo: await creation of default new document?
+                s.timesheets.createNewDocument();
                 s.router.goTo(detailRoutes.newRegistration);
             },
             icon: {

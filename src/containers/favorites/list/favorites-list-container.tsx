@@ -10,8 +10,8 @@ export const FavoritesList = observer(() => {
 
     const FavoritesInGroup = withFavorites(PureFavoritesList);
 
-    const group = favorites.activeFavoriteGroup;
-    return group
-        ? <FavoritesInGroup groupId={group.id} />
+    const activeDocumentId = favorites.activeDocumentId;
+    return activeDocumentId
+        ? <FavoritesInGroup groupId={activeDocumentId} />
         : null;
 });

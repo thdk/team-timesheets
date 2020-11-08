@@ -21,7 +21,7 @@ export const Timesheet = observer(() => {
         if (view.selection.size) {
             view.toggleSelection(id);
         } else {
-            timesheets.setSelectedRegistration(id);
+            timesheets.setActiveDocumentId(id);
             goToRegistration(router, id);
         }
     }

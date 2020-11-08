@@ -16,11 +16,11 @@ const Tasks = observer(() => {
     const user = useUserStore();
 
     const taskClicked = useCallback((taskId: string) => {
-        if (timesheets.registration && timesheets.registration.task !== taskId)
-            timesheets.registration.task = taskId;
-    }, [timesheets.registration]);
+        if (timesheets.activeDocument && timesheets.activeDocument.task !== taskId)
+            timesheets.activeDocument.task = taskId;
+    }, [timesheets.activeDocument]);
 
-    if (!user.divisionUser || !timesheets.registration) {
+    if (!user.divisionUser || !timesheets.activeDocument) {
         return null;
     }
 
@@ -28,7 +28,7 @@ const Tasks = observer(() => {
     const tasks = tasksStore.tasks
         .filter(t => userTasks.length ? userTasks.some(userTaskId => userTaskId === t.id) : true)
 
-    const { task } = timesheets.registration;
+    const { task } = timesheets.activeDocument;
 
     return tasks.length
         ? (
@@ -52,28 +52,28 @@ export const RegistrationDetail = observer(() => {
     const timesheets = useRegistrationStore();
 
     const onDescriptionChange = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
-        if (timesheets.registration && timesheets.registration)
-            timesheets.registration.description = event.currentTarget.value.trimLeft();
-    }, [timesheets.registration]);
+        if (timesheets.activeDocument && timesheets.activeDocument)
+            timesheets.activeDocument.description = event.currentTarget.value.trimLeft();
+    }, [timesheets.activeDocument]);
 
     const onTimeChange = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
-        if (timesheets.registration && timesheets.registration)
-            timesheets.registration.time = +(event.currentTarget.value);
-    }, [timesheets.registration]);
+        if (timesheets.activeDocument && timesheets.activeDocument)
+            timesheets.activeDocument.time = +(event.currentTarget.value);
+    }, [timesheets.activeDocument]);
 
     const onClientChange = useCallback((value: string) => {
-        if (timesheets.registration)
-            timesheets.registration.client = value;
-    }, [timesheets.registration]);
+        if (timesheets.activeDocument)
+            timesheets.activeDocument.client = value;
+    }, [timesheets.activeDocument]);
 
-    if (!timesheets.registration || !user.divisionUser) return <></>;
+    if (!timesheets.activeDocument || !user.divisionUser) return <></>;
 
     const {
         description,
         time,
         date,
         client,
-    } = timesheets.registration;
+    } = timesheets.activeDocument;
 
     return (
         <>

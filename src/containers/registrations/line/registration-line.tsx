@@ -36,25 +36,25 @@ export const RegistrationLine = observer(({
     const view = useViewStore();
 
     const onTimeChange = (value: string) => {
-        if (timesheets.registration && timesheets.registration) {
-            timesheets.registration.time = +value;
+        if (timesheets.activeDocument) {
+            timesheets.activeDocument.time = +value;
             timesheets.saveSelectedRegistration();
-            timesheets.setSelectedRegistration(undefined);
+            timesheets.setActiveDocumentId(undefined);
         }
     }
 
     const onCancel = () => {
-        timesheets.setSelectedRegistration(undefined);
+        timesheets.setActiveDocumentId(undefined);
     };
 
-    const isEditing = timesheets.registration && timesheets.registrationId === id;
+    const isEditing = timesheets.activeDocument && timesheets.activeDocumentId === id;
     const timeJSX2 = (
         <DataRowColumn
             className="registration-line__time"
             onClick={(e) => {
                 e.preventDefault();
                 e.stopPropagation();
-                timesheets.setSelectedRegistration(id);
+                timesheets.setActiveDocumentId(id);
             }}
         >
             <EditableTextField

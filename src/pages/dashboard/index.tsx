@@ -64,7 +64,7 @@ class Dashboard extends React.Component {
         const projectChartProps: IRegistrationsChartProps<IProject> = {
             title: "Time / project",
             data: this.context.dashboard.registrationsGroupedByProject,
-            labelCollection: this.context.projects.projectsCollection,
+            labelCollection: this.context.projects.collection,
             getLabel: project => project.name,
             chart: ChartType.Doughnut
         };

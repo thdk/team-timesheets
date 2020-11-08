@@ -144,7 +144,7 @@ describe("TimesheetDays", () => {
 
         expect(queryByText("Foobar 5")).toBeFalsy();
 
-        await store.timesheets.addRegistrationsAsync(registrations);
+        await store.timesheets.addDocuments(registrations);
 
         await waitFor(() => expect(getByText("Foobar 5")));
 
@@ -182,7 +182,7 @@ describe("TimesheetDays", () => {
 
         await waitFor(() => expect(store.user.divisionUser).toBeDefined());
 
-        await store.timesheets.addRegistrationsAsync(registrations);
+        await store.timesheets.addDocuments(registrations);
 
         const {
             getByText,
@@ -210,7 +210,7 @@ describe("TimesheetDays", () => {
 
         store.user.setUser({ uid: "user-1" } as firebase.User);
 
-        await store.timesheets.addRegistrationsAsync(registrations);
+        await store.timesheets.addDocuments(registrations);
         const {
             getByText,
             container,
@@ -236,7 +236,7 @@ describe("TimesheetDays", () => {
 
         store.user.setUser({ uid: "user-1" } as firebase.User);
 
-        await store.timesheets.addRegistrationsAsync(registrations);
+        await store.timesheets.addDocuments(registrations);
 
         const {
             getByText,

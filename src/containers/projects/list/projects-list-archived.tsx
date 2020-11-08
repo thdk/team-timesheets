@@ -14,7 +14,7 @@ export const ArchivedProjectList = observer((props: React.HTMLProps<HTMLDivEleme
         onToggleSelection={id => store.view.toggleSelection(id)}
         onItemClick={id => store.view.toggleSelection(id)}
         selection={store.view.selection}
-        activeItemId={store.projects.projectId}
+        activeItemId={store.projects.activeDocumentId}
     ></SettingsList>;
 });
 

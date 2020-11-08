@@ -11,7 +11,7 @@ import FavoriteGroupDetailPage from '../../pages/favorite-group-detail';
 
 const path = "/favoritedetail";
 
-type RouteParams = {id?: string};
+type RouteParams = { id?: string };
 type FavoriteDetailRoute = Route<IRootStore, RouteParams, QueryParams>;
 
 export const goToFavorite = (store: IRootStore, id: string) => {
@@ -20,7 +20,7 @@ export const goToFavorite = (store: IRootStore, id: string) => {
 
 const beforeEnter = (_route: FavoriteDetailRoute, params: RouteParams, s: IRootStore) => {
     if (params.id) {
-        s.favorites.setActiveFavoriteGroupId(params.id);
+        s.favorites.setActiveDocumentId(params.id);
     }
     else {
         throw new Error("favorite id is missing in querystring");
@@ -29,11 +29,20 @@ const beforeEnter = (_route: FavoriteDetailRoute, params: RouteParams, s: IRootS
 
 const onEnter = (route: FavoriteDetailRoute, _params: RouteParams, s: IRootStore) => {
     const save = () => {
-        s.favorites.updateActiveFavoriteGroup();
+        if (s.favorites.activeDocument && s.favorites.activeDocumentId) {
+            s.favorites.updateDocument(s.favorites.activeDocument, s.favorites.activeDocumentId);
+        }
     };
     const deleteAction: IViewAction = {
         action: () => {
-            s.favorites.deleteActiveFavoriteGroup();
+            if (s.favorites.activeDocumentId) {
+                s.favorites.deleteDocuments(
+                    {
+                        useFlag: false,
+                    },
+                    s.favorites.activeDocumentId,
+                );
+            }
             goToFavorites(s.router);
         },
         icon: { label: "Delete", content: "delete" },
@@ -69,7 +78,7 @@ const onEnter = (route: FavoriteDetailRoute, _params: RouteParams, s: IRootStore
 
 const beforeExit = (_route: FavoriteDetailRoute, _params: RouteParams, s: IRootStore) => {
     transaction(() => {
-        s.favorites.setActiveFavoriteGroupId(undefined);
+        s.favorites.setActiveDocumentId(undefined);
         s.view.setNavigation("default");
         s.view.setActions([]);
     });

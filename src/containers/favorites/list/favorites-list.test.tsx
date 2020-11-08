@@ -159,7 +159,7 @@ describe("FavoritesList", () => {
             email: "email@email.com",
         } as firebase.User);
 
-        store.favorites.setActiveFavoriteGroupId("group-1");
+        store.favorites.setActiveDocumentId("group-1");
 
 
         const { getByText, asFragment } = render(
@@ -176,6 +176,7 @@ describe("FavoritesList", () => {
             () => expect(getByText("Favorite desc 2")),
         );
 
-        expect(asFragment()).toMatchSnapshot();
+        await waitFor(() => expect(store.config.clientsCollection.isFetched).toBeTruthy());
+        await waitFor(() => expect(asFragment()).toMatchSnapshot());
     });
 });

@@ -17,7 +17,7 @@ export function withFavoriteGroup<T extends Props = Props>(
     const ComponentWithFavoriteGroup = (props: Optionalize<T, IWithFavoriteGroupInjectedProps>) => {
         const store = useStore();
 
-        const group = store.favorites.activeFavoriteGroup;
+        const group = store.favorites.activeDocument;
         return group
             ? <WrappedComponent
                 group={group}

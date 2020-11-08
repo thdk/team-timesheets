@@ -16,7 +16,7 @@ export function withProject<T extends Props = Props>(
     const ComponentWithProject = (props: Optionalize<T, IWithProjectInjectedProps>) => {
         const projects = useProjectStore();
 
-        const project = projects.project;
+        const project = projects.activeDocument;
 
         return project
             ? <WrappedComponent

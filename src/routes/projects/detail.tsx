@@ -38,10 +38,10 @@ export const goToNewProject = (store: IRootStore) => {
 
 const beforeEnter = (_route: ProjectDetailRoute, params: Params, s: IRootStore) => {
     if (params.id) {
-        s.projects.setProjectId(params.id);
+        s.projects.setActiveDocumentId(params.id);
     }
     else {
-        s.projects.setDefaultProject();
+        s.projects.createNewDocument();
     }
 }
 
@@ -52,15 +52,15 @@ const onEnter = (route: ProjectDetailRoute, params: Params, s: IRootStore) => {
             return !!project && !!project.name;
         };
 
-        if (isValidProject(s.projects.project)) {
+        if (isValidProject(s.projects.activeDocument)) {
             params.id
-                ? s.projects.updateProject(s.projects.project, params.id)
-                : s.projects.addProject(s.projects.project);
+                ? s.projects.updateDocument(s.projects.activeDocument, params.id)
+                : s.projects.addDocument(s.projects.activeDocument);
         }
     };
     const deleteAction: IViewAction = {
         action: () => {
-            s.projects.projectId && s.projects.deleteProjects(s.projects.projectId);
+            s.projects.activeDocumentId && s.projects.deleteProjects(s.projects.activeDocumentId);
             goToProjects(s.router);
         },
         icon: { label: "Delete", content: "delete" },
@@ -96,7 +96,7 @@ const onEnter = (route: ProjectDetailRoute, params: Params, s: IRootStore) => {
 
 const beforeExit = (_route: ProjectDetailRoute, _params: Params, s: IRootStore) => {
     transaction(() => {
-        s.projects.setProjectId(undefined);
+        s.projects.setActiveDocumentId(undefined);
         s.view.setNavigation("default");
         s.view.setFabs([]);
         s.view.setActions([]);

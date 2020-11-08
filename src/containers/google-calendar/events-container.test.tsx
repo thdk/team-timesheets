@@ -146,7 +146,7 @@ describe("GoogleCalendarEventsContainer", () => {
 
         await waitFor(
             () => expect(
-                store.timesheets.registration?.sourceId).toBe("event-1")
+                store.timesheets.activeDocument?.sourceId).toBe("event-1")
         );
 
         expect(goToNewRegistration).toBeCalledTimes(1);
@@ -156,7 +156,7 @@ describe("GoogleCalendarEventsContainer", () => {
 
         await waitFor(
             () => expect(
-                store.timesheets.registration
+                store.timesheets.activeDocument
             ).toEqual(
                 expect.objectContaining({
                     sourceId: "event-2",

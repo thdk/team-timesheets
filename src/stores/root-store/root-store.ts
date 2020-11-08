@@ -6,7 +6,7 @@ import { IUserStore, UserStore } from "../user-store";
 import { IViewStore, ViewStore } from "../view-store";
 import { IReportStore, ReportStore } from "../report-store/report-store";
 import { DashboardStore, IDashboardStore } from "../dashboard-store";
-import { IProjectStore, ProjectStore } from "../project-store";
+import { ProjectStore } from "../project-store";
 import { FavoriteStore } from "../favorite-store";
 import { DivisionStore  } from "../division-store/division-store";
 
@@ -20,7 +20,7 @@ export class Store implements IRootStore {
     public readonly router: RouterStore<IRootStore>;
     public readonly reports: IReportStore;
     public readonly dashboard: IDashboardStore;
-    public readonly projects: IProjectStore;
+    public readonly projects: ProjectStore;
     public readonly favorites: FavoriteStore;
     public readonly divisions: DivisionStore;
 

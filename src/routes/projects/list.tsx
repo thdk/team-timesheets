@@ -5,7 +5,7 @@ import { transaction, when } from "mobx";
 import { App, setNavigationContent } from "../../internal";
 import { IRootStore } from "../../stores/root-store";
 import { IViewAction } from '../../stores/view-store';
-import Projects from "../../pages/projects";
+import { ProjectsPage } from "../../pages/projects";
 import detailRoutes from "./detail";
 import { canManageProjects } from "../../rules";
 
@@ -96,7 +96,7 @@ type ProjectRoute = Route<IRootStore, {}, ProjectRouteQueryParams>;
 const routes = {
     projects: new Route({
         path,
-        component: <App><Projects></Projects></App>,
+        component: <App><ProjectsPage></ProjectsPage></App>,
         onEnter: (route: ProjectRoute, _params, s: IRootStore, queryParams: { tab: ProjectsTab }) => {
             setActions(queryParams.tab, s);
             setNavigationContent(s, route, false);

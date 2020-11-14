@@ -1,7 +1,6 @@
 steps:
   - name: node:10.18.0
-    entrypoint: npm
-    args: ["ci"]
+    args: ["node", "./scripts/install"]
   - name: node:10.18.0
     entrypoint: npm
     args: ["run", "build:refs"]
@@ -27,7 +26,7 @@ steps:
   - name: node:10.18.0
     entrypoint: npm
     dir: "functions"
-    args: ["install"]
+    args: ["ci"]
   - name: node:10.18.0
     entrypoint: npm
     dir: "functions"

@@ -76,3 +76,5 @@ functions/lib
 
 # Jest
 coverage/
+
+*.service-account.json

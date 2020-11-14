@@ -1,12 +1,26 @@
 import { RealtimeMode, FetchMode } from "firestorable";
-import { observable, computed } from "mobx";
+import { observable, computed, reaction } from "mobx";
 
 import { IRootStore } from '../root-store';
-import { IProject, IProjectData } from '../../../common/dist';
+import { IProject, IProjectData, IUser } from '../../../common/dist';
 
 import * as serializer from '../../../common/serialization/serializer';
 import * as deserializer from '../../../common/serialization/deserializer';
 import { FirestorableStore } from "../firestorable-store";
+
+const createQuery = (user: IUser | undefined) => {
+    if (!user) {
+        return null;
+    }
+    else {
+        return user.divisionId
+            ? (ref: firebase.firestore.CollectionReference) =>
+                ref.orderBy("name_insensitive")
+                    .where("divisionId", "==", user.divisionId)
+            : (ref: firebase.firestore.CollectionReference) =>
+                ref.orderBy("name_insensitive");
+    }
+}
 
 export class ProjectStore extends FirestorableStore<IProject, IProjectData> {
     private readonly rootStore: IRootStore;
@@ -25,7 +39,7 @@ export class ProjectStore extends FirestorableStore<IProject, IProjectData> {
                 collectionOptions: {
                     realtimeMode: RealtimeMode.on,
                     fetchMode: FetchMode.once,
-                    query: ref => ref.orderBy("name_insensitive"),
+                    query: createQuery(rootStore.user.divisionUser),
                     serialize: serializer.convertProject,
                     deserialize: deserializer.convertProject,
                 },
@@ -39,6 +53,10 @@ export class ProjectStore extends FirestorableStore<IProject, IProjectData> {
             },
         );
         this.rootStore = rootStore;
+
+        reaction(() => rootStore.user.divisionUser, (user) => {
+            this.collection.query = createQuery(user);
+        });
     }
 
     public archiveProjects(...projectIds: string[]) {

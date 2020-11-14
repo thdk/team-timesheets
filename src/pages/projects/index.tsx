@@ -1,13 +1,12 @@
-
-import { observer } from 'mobx-react';
 import * as React from 'react'
-
+import { observer } from 'mobx-react-lite';
 import { Tab, TabBar } from "@rmwc/tabs";
+
 import { ProjectsTab, goToProjects, ProjectRouteQueryParams } from '../../routes/projects/list';
 import { ActiveProjectList, ArchivedProjectList } from '../../containers/projects/list';
 import { withAuthentication } from '../../containers/users/with-authentication';
 import { RedirectToLogin } from '../../routes/login';
-import { StoreContext } from '../../contexts/store-context';
+import { useRouterStore } from '../../stores/router-store';
 
 interface ITabData {
     id: ProjectsTab;
@@ -17,12 +16,10 @@ interface ITabData {
     tabContent: React.ReactNode;
 }
 
-@observer
-class Projects extends React.Component {
-    declare context: React.ContextType<typeof StoreContext>
-    static contextType = StoreContext;
+export const ProjectsPage = withAuthentication(
+    observer(() => {
+        const router = useRouterStore();
 
-    render() {
         const tabData: ITabData[] = [
             {
                 id: "active",
@@ -40,16 +37,16 @@ class Projects extends React.Component {
 
         if (!validTabs.length) return <></>
 
-        const query: { tab: ProjectsTab } = this.context.router.queryParams as ProjectRouteQueryParams;
+        const query: { tab: ProjectsTab } = router.queryParams as ProjectRouteQueryParams;
         const { tab: activeTabId = validTabs[0].id } = query || {};
 
         const activeTabIndex = validTabs.findIndex(t => t.id === activeTabId) || 0;
 
-        const tabs = validTabs.map(({id, icon, text})=> {
+        const tabs = validTabs.map(({ id, icon, text }) => {
             return <Tab
-            onClick={goToProjects.bind(this, this.context.router, id)}
-            iconIndicator={icon}
-            key={id}
+                onClick={goToProjects.bind(null, router, id)}
+                iconIndicator={icon}
+                key={id}
             >
                 {text}
             </Tab>;
@@ -65,10 +62,6 @@ class Projects extends React.Component {
                 {validTabs[activeTabIndex].tabContent}
             </>
         );
-    }
-}
-
-export default withAuthentication(
-    Projects,
+    }),
     <RedirectToLogin />,
 );

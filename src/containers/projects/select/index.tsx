@@ -17,7 +17,7 @@ export const ProjectSelect = observer(() => {
         const value = event.currentTarget.value;
 
         if (activeDocument && activeDocument)
-           activeDocument.project = value;
+            activeDocument.project = value;
     }
 
     let project = activeDocument ? activeDocument.project : "";
@@ -76,7 +76,7 @@ export const ProjectSelect = observer(() => {
     return (
         <Select
             disabled={isCurrentProjectArchived}
-            value={project}
+            value={project || ""}
             outlined={true}
             label="Project"
             onChange={onProjectChange}>

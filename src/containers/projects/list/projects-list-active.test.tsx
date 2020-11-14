@@ -7,20 +7,48 @@ import { ActiveProjectList } from ".";
 import { render, waitFor, fireEvent } from "@testing-library/react";
 import { canEditProject } from "../../../rules";
 import { act } from "react-dom/test-utils";
+
 const {
     firestore,
     clearFirestoreDataAsync,
     refs: [
+        userRef,
         projectRef,
     ]
 } = initTestFirestore("project-list-active-test",
     [
+        "users",
         "projects",
     ]);
 
+const userCollection = new TestCollection(
+    firestore,
+    userRef,
+);
+
+const projectsCollection = new TestCollection<IProjectData>(firestore, projectRef);
 const store = new Store({
     firestore,
 });
+
+const setupAsync = () => {
+    return Promise.all([
+        userCollection.addAsync(
+            {
+                name: "user 1",
+                team: "team-1",
+                roles: {
+                    user: true,
+                }
+            },
+            "user-1",
+        ),
+    ]).then(() => {
+        store.user.setUser({
+            uid: "user-1",
+        } as firebase.User);
+    });
+};
 
 jest.mock("../../../contexts/store-context", () => ({
     useStore: () => store,
@@ -32,9 +60,12 @@ jest.mock("../../../internal", () => ({
 
 jest.mock("../../../rules");
 
-const projectsCollection = new TestCollection<IProjectData>(firestore, projectRef);
 
-beforeAll(clearFirestoreDataAsync);
+beforeAll(() => Promise.all([
+    clearFirestoreDataAsync(),
+    setupAsync(),
+]));
+
 afterAll(() => {
     store.dispose();
     return Promise.all([

@@ -199,7 +199,6 @@ exports[`RegistrationDetail should only show user tasks instead of all tasks 1`]
             >
               <option
                 disabled=""
-                selected=""
                 value=""
               />
               <option
@@ -535,7 +534,6 @@ exports[`RegistrationDetail should render when there is a registration 1`] = `
             >
               <option
                 disabled=""
-                selected=""
                 value=""
               />
               <option

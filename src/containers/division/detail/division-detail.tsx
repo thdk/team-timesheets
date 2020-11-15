@@ -14,8 +14,8 @@ type Props = {
 
 export const DivisionDetail = (props: Props) => {
     const {
-        icon,
-        name,
+        icon = "",
+        name = "",
         onIconChanged,
         onNameChanged,
     } = props;

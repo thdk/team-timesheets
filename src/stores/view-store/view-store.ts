@@ -1,5 +1,6 @@
 import { observable, action, computed, transaction, ObservableMap } from "mobx";
 import moment from 'moment';
+import { IRootStore } from "../root-store";
 
 export interface IShortKey {
   ctrlKey?: boolean;
@@ -44,17 +45,20 @@ export class ViewStore implements IViewStore {
   readonly actions = observable<IViewAction>([]);
   readonly selection = observable(new Map<string, true>());
   readonly fabs = observable<IFab>([]);
+  readonly rootStore: IRootStore;
 
   @observable navigationAction: INavigationViewAction = {} as INavigationViewAction;
   @observable title = "";
-  @observable isDrawerOpen = true;
+  @observable isDrawerOpenField = true;
   @observable day?: number;
   @observable month?: number;
   @observable year?: number;
 
   public track?: boolean;
 
-  constructor(testDate?: Date) {
+  constructor(rootStore: IRootStore, testDate?: Date) {
+    this.rootStore = rootStore;
+
     const date = testDate || new Date();
     this.setViewDate({
       day: date.getDate(),
@@ -130,11 +134,21 @@ export class ViewStore implements IViewStore {
     this.navigationAction = action === "default"
       ? {
         action: () => {
-          this.isDrawerOpen = !this.isDrawerOpen;
+          this.setIsDrawerOpen(!this.isDrawerOpen);
         },
         icon: { content: "menu", label: "Menu" },
       }
       : action;
+  }
+
+  @action
+  setIsDrawerOpen(isOpen: boolean) {
+    this.isDrawerOpenField = isOpen;
+  }
+
+  @computed
+  public get isDrawerOpen() {
+    return this.rootStore.auth.activeDocument && this.isDrawerOpenField;
   }
 
   @computed get moment() {

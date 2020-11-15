@@ -43,7 +43,7 @@ const setupAsync = () => {
             "user-1",
         ),
     ]).then(() => {
-        store.user.setUser({
+        store.auth.setUser({
             uid: "user-1",
         } as firebase.User);
     });

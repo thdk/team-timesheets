@@ -20,7 +20,7 @@ export const App = observer(
         const store = useStore();
 
         // Wait for user initialization
-        if (!store.user.isAuthInitialised) return <></>;
+        if (!store.auth.isAuthInitialised) return <></>;
 
         return (
             <div className="body-wrapper">

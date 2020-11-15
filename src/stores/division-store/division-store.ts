@@ -147,7 +147,7 @@ export class DivisionStore extends FirestorableStore<IDivision, IDivisionData> {
                         },
                     ).then(
                         (divisionUserId) => {
-                            return this.rootStore.user.updateAuthenticatedUser({
+                            return this.rootStore.auth.updateActiveDocument({
                                 divisionUserId,
                                 divisionId,
                             });

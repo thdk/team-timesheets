@@ -13,12 +13,12 @@ const login = new Route({
     path,
     component: <App><Login /></App>,
     onEnter: (route: LoginRoute, _params: any, s: IRootStore) => {
-        when(() => !!s.user.authenticatedUser, () => goToOverview(s));
+        when(() => !!s.auth.activeDocumentId, () => goToOverview(s));
         setNavigationContent(s, route, false);
     },
     title: "Login",
     beforeEnter: (_route: LoginRoute, _params: any, s: IRootStore) => {
-        return s.user.getLoggedInUserAsync().then(() => {
+        return s.auth.getLoggedInUserAsync().then(() => {
             // TODO: detect requested page so we can redirect to that page when authenticated
             goToOverview(s);
             return false;

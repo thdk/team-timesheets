@@ -10,6 +10,7 @@ jest.mock('../../../contexts/division-context');
 jest.mock('../../configs/use-configs');
 
 jest.mock('../../../contexts/user-context');
+jest.mock('../../../contexts/auth-context');
 
 describe("DivisionUsersMenu", () => {
     const useDivisionStoreMock = (useDivisionStore as jest.Mock<ReturnType<typeof useDivisionStore>>)

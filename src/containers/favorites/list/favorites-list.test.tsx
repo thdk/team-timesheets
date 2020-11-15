@@ -12,6 +12,7 @@ import { FavoriteStore } from "../../../stores/favorite-store";
 import { UserStore } from "../../../stores/user-store";
 import { ConfigStore } from "../../../stores/config-store";
 import { ProjectStore } from "../../../stores/project-store";
+import { AuthStore } from "../../../stores/auth-store";
 
 const {
     firestore,
@@ -40,6 +41,10 @@ afterAll(() => deleteFirebaseAppsAsync());
 
 class TestStore {
     rootStore = this as unknown as IRootStore;
+    public auth = new AuthStore({
+        firestore,
+    });
+
     public user = new UserStore(this.rootStore, {
         firestore,
     });
@@ -59,7 +64,16 @@ class TestStore {
         firestore,
     });
 
+    public dispose = () => {
+        this.projects.dispose();
+        this.favorites.dispose();
+        this.config.dispose();
+        this.user.dispose();
+        this.auth.dispose();
+    }
+
     public getDivisionId = () => undefined;
+
 }
 
 describe("FavoritesList", () => {
@@ -74,6 +88,8 @@ describe("FavoritesList", () => {
         );
 
         expect(asFragment()).toMatchSnapshot();
+
+        store.dispose();
     });
 
     it("should render favorites", async () => {
@@ -116,6 +132,9 @@ describe("FavoritesList", () => {
                         name: "user 1",
                         uid: "user-1",
                         email: "email@email.com",
+                        roles: {
+                            user: true,
+                        },
                     },
                     "user-1",
                 ),
@@ -153,7 +172,7 @@ describe("FavoritesList", () => {
         let store: IRootStore;
 
         store = new TestStore() as unknown as IRootStore;
-        store.user.setUser({
+        store.auth.setUser({
             uid: "user-1",
             displayName: "user 1",
             email: "email@email.com",
@@ -178,5 +197,7 @@ describe("FavoritesList", () => {
 
         await waitFor(() => expect(store.config.clientsCollection.isFetched).toBeTruthy());
         await waitFor(() => expect(asFragment()).toMatchSnapshot());
+
+        store.dispose();
     });
 });

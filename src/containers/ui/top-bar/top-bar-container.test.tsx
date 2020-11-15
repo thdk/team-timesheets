@@ -3,8 +3,9 @@ import { ViewStore } from "../../../stores/view-store";
 import { render, fireEvent, act } from "@testing-library/react";
 import { TopBar } from "./";
 import { useViewStore } from "../../../contexts/view-context";
+import { IRootStore } from "../../../stores/root-store";
 
-const viewStore = new ViewStore();
+const viewStore = new ViewStore({} as unknown as IRootStore);
 jest.mock("../../../contexts/view-context");
 
 describe("TopBarContainer", () => {

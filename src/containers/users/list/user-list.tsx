@@ -21,7 +21,7 @@ export const UserList = ({
 }: IUserListProps) => {
 
     const userItems = users.map(data => {
-        const { name, roles, id, teamName } = data;
+        const { name: name, roles, id, teamName } = data;
         return (
             <ListItem
                 key={id}

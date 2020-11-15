@@ -1,12 +1,12 @@
 import "firebase/auth";
-import { action, transaction, observable, IObservableValue } from "mobx";
-import { Doc } from "firestorable";
+import { action, transaction, observable } from "mobx";
+import { Doc, Collection } from "firestorable";
 import { FirestorableStore, StoreOptions } from "../firestorable-store";
 
-export type AuthStoreUser = {
-    authDisplayName: string | undefined;
-    authEmail: string | undefined;
-    authUid: string;
+export interface AuthStoreUser {
+    name?: string;
+    email?: string;
+    uid: string;
 }
 
 /**
@@ -27,11 +27,12 @@ export class AuthStore<T extends AuthStoreUser, K> extends FirestorableStore<T, 
     @observable.ref
     isAuthInitialised = false;
 
-    @observable
-    private _authUser: IObservableValue<Doc<T, K> | undefined> = observable.box(undefined);
-
     private auth?: firebase.auth.Auth;
-    private patchExistingUser?(user: Doc<T, K>): Promise<Doc<T, K>>;
+    private patchExistingUser?(
+        user: Doc<T, K>,
+        collection: Collection<T, K>,
+        fbUser: firebase.User,
+    ): Promise<Doc<T, K>>;
     private onSignOut?(): void;
 
     constructor(
@@ -42,12 +43,18 @@ export class AuthStore<T extends AuthStoreUser, K> extends FirestorableStore<T, 
             firestore: firebase.firestore.Firestore,
             auth?: firebase.auth.Auth,
         },
-        storeOptions: StoreOptions<T, K>,
+        storeOptions: StoreOptions<T, K> = {
+            collection: "users",
+        },
         {
             patchExistingUser,
             onSignOut,
         }: {
-            patchExistingUser?(user: Doc<T, K>): Promise<Doc<T, K>>;
+            patchExistingUser?(
+                user: Doc<T, K>,
+                collection: Collection<T, K>,
+                fbUser: firebase.User,
+            ): Promise<Doc<T, K>>;
             onSignOut?(): void;
         } = {},
     ) {
@@ -66,11 +73,12 @@ export class AuthStore<T extends AuthStoreUser, K> extends FirestorableStore<T, 
     }
 
     @action
+    // todo: should be private (currently public for tests)
     public setUser(fbUser: firebase.User | null): void {
         if (!fbUser) {
             transaction(() => {
                 this.isAuthInitialised = true;
-                this._authUser.set(undefined);
+                this.setActiveDocumentId(undefined);
             });
 
             if (this.onSignOut) {
@@ -84,9 +92,9 @@ export class AuthStore<T extends AuthStoreUser, K> extends FirestorableStore<T, 
                     },
                     async () => {
                         const authStoreUser = {
-                            authDisplayName: fbUser.displayName || undefined,
-                            authEmail: fbUser.email || undefined,
-                            authUid: fbUser.uid,
+                            name: fbUser.displayName || undefined,
+                            email: fbUser.email || undefined,
+                            uid: fbUser.uid,
                         } as Partial<T>;
                         const newDocument = await this.createNewDocument(authStoreUser);
 
@@ -112,21 +120,25 @@ export class AuthStore<T extends AuthStoreUser, K> extends FirestorableStore<T, 
         return this.collection.getAsync(fbUser.uid)
             .then((userDoc) => {
                 return this.patchExistingUser
-                    ? this.patchExistingUser(userDoc)
+                    ? this.patchExistingUser(
+                        userDoc,
+                        this.collection,
+                        fbUser,
+                    )
                     : userDoc;
             });
     }
 
     @action.bound
-    getAuthUserSuccess = (authUser: Doc<T> | undefined) => {
+    private getAuthUserSuccess = (authUser: Doc<T> | undefined) => {
         transaction(() => {
             this.isAuthInitialised = true;
-            this._authUser.set(authUser);
+            this.setActiveDocumentId(authUser?.id);
         });
     }
 
     @action.bound
-    getUserError = (error: any) => {
+    private getUserError = (error: any) => {
         console.error(error);
     }
 

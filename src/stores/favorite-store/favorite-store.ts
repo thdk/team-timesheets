@@ -9,9 +9,9 @@ import { FirestorableStore } from "../firestorable-store";
 import { IUserStore } from "../user-store";
 
 const createQuery = (userStore: IUserStore) =>
-userStore.divisionUser
-    ? (ref: firebase.firestore.CollectionReference) => ref.where("userId", "==", userStore.divisionUser?.id).orderBy("name")
-    : null;
+    userStore.divisionUser
+        ? (ref: firebase.firestore.CollectionReference) => ref.where("userId", "==", userStore.divisionUser?.id).orderBy("name")
+        : null;
 
 export class FavoriteStore extends FirestorableStore<IFavoriteRegistrationGroup, IFavoriteRegistrationGroupData> {
     public favoriteCollection: ICollection<IFavoriteRegistration>;

@@ -1,5 +1,6 @@
 import * as firebase from 'firebase/app';
-import { IRegistration,
+import {
+    IRegistration,
     IRegistrationData,
     IUser,
     ITeam,
@@ -90,10 +91,10 @@ export const convertFavoriteRegistration = (appData: Partial<IFavoriteRegistrati
 
 export const convertUser = (appData: Partial<IUser> | null) => {
     let user: Partial<Omit<IDivisionUserData, "divisionId" | "divisionUserId">>
-    & Partial<{
-        divisionId: string | firebase.firestore.FieldValue;
-        divisionUserId: string | firebase.firestore.FieldValue;
-    }>;
+        & Partial<{
+            divisionId: string | firebase.firestore.FieldValue;
+            divisionUserId: string | firebase.firestore.FieldValue;
+        }>;
     const now = new Date();
     if (appData === null) {
         user = { deleted: true, modified: firebase.firestore.Timestamp.fromDate(now) };
@@ -117,6 +118,7 @@ export const convertUser = (appData: Partial<IUser> | null) => {
 
         // Todo: automatically remove undefined values for all keys
         if (!user.roles) delete user.roles;
+        if (!user.name) delete user.name;
         if (!user.name) delete user.name;
         if (!user.defaultTask) delete user.defaultTask;
         if (!user.tasks) delete user.tasks;

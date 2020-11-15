@@ -2,14 +2,12 @@ import React from "react";
 
 
 import { initTestFirestore, deleteFirebaseAppsAsync } from "../../../__tests__/utils/firebase";
-import { Store, IRootStore } from "../../../stores/root-store";
+import { Store } from "../../../stores/root-store";
 import { render, waitFor, fireEvent } from "@testing-library/react";
 import { TimesheetDays, SortOrder } from ".";
 import { Timesheet } from "..";
 import { goToNewRegistration } from "../../../routes/registrations/detail";
 import { useStore } from "../../../contexts/store-context";
-
-let store: IRootStore;
 
 const {
     firestore,
@@ -103,21 +101,18 @@ const registrations = [
 ];
 
 describe("TimesheetDays", () => {
+    const store = new Store({ firestore });
+    (useStore as jest.Mock<ReturnType<typeof useStore>>).mockReturnValue(store);
 
-    beforeEach(() => {
-        if (store) {
-            store.dispose();
-        }
-        store = new Store({ firestore });
-        return Promise.all(
-            [
-                clearFirestoreDataAsync(),
-                setupAsync(),
-            ],
-        ).then(() => {
-            (useStore as jest.Mock<ReturnType<typeof useStore>>).mockReturnValue(store);
-        })
+    beforeEach(async () => {
+        await clearFirestoreDataAsync();
+        await setupAsync();
+
     });
+
+    afterAll(() => {
+        store.dispose();
+    })
 
     it("should render without registrations", () => {
         const { asFragment } = render(<TimesheetDays
@@ -134,7 +129,7 @@ describe("TimesheetDays", () => {
             month: 3,
         });
 
-        store.user.setUser({ uid: "user-1" } as firebase.User);
+        store.auth.setUser({ uid: "user-1" } as firebase.User);
 
         const {
             getByText,
@@ -169,6 +164,10 @@ describe("TimesheetDays", () => {
                 "March 24th",
             ])
         );
+
+        await new Promise(resolve => setTimeout(() => {
+            resolve();
+        }, 400));
     });
 
     it("should display registrations for the specified day", async () => {
@@ -178,9 +177,9 @@ describe("TimesheetDays", () => {
             day: 24,
         });
 
-        store.user.setUser({ uid: "user-1" } as firebase.User);
+        store.auth.setUser({ uid: "user-1" } as firebase.User);
 
-        await waitFor(() => expect(store.user.divisionUser).toBeDefined());
+        await waitFor(() => expect(store.user.divisionUser?.id).toBeDefined());
 
         await store.timesheets.addDocuments(registrations);
 
@@ -208,7 +207,7 @@ describe("TimesheetDays", () => {
             month: 3,
         });
 
-        store.user.setUser({ uid: "user-1" } as firebase.User);
+        store.auth.setUser({ uid: "user-1" } as firebase.User);
 
         await store.timesheets.addDocuments(registrations);
         const {
@@ -234,7 +233,7 @@ describe("TimesheetDays", () => {
             month: 3,
         });
 
-        store.user.setUser({ uid: "user-1" } as firebase.User);
+        store.auth.setUser({ uid: "user-1" } as firebase.User);
 
         await store.timesheets.addDocuments(registrations);
 

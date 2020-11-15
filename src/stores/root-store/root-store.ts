@@ -2,20 +2,26 @@ import { RouterStore } from "mobx-router";
 
 import { IRegistrationsStore, RegistrationStore } from "../registration-store/registration-store";
 import { IConfigStore, ConfigStore } from "../config-store";
-import { IUserStore, UserStore } from "../user-store";
+import { UserStore } from "../user-store";
 import { IViewStore, ViewStore } from "../view-store";
 import { IReportStore, ReportStore } from "../report-store/report-store";
 import { DashboardStore, IDashboardStore } from "../dashboard-store";
 import { ProjectStore } from "../project-store";
 import { FavoriteStore } from "../favorite-store";
-import { DivisionStore  } from "../division-store/division-store";
+import { DivisionStore } from "../division-store/division-store";
+import { AuthStore } from "../auth-store";
+import { IUserData, IUser } from "../../../common";
+import * as deserializer from "../../../common/serialization/deserializer";
+import * as serializer from "../../../common/serialization/serializer";
+import { FetchMode, RealtimeMode } from "firestorable";
 
 export interface IRootStore extends Store { };
 
 export class Store implements IRootStore {
     public readonly timesheets: IRegistrationsStore;
     public readonly view: IViewStore;
-    public readonly user: IUserStore;
+    public readonly auth: AuthStore<IUser, IUserData>;
+    public readonly user: UserStore;
     public readonly config: IConfigStore;
     public readonly router: RouterStore<IRootStore>;
     public readonly reports: IReportStore;
@@ -33,15 +39,66 @@ export class Store implements IRootStore {
         httpsCallable?: (name: string) => firebase.functions.HttpsCallable,
         auth?: firebase.auth.Auth,
     }) {
+        this.auth = new AuthStore(
+            {
+                firestore,
+                auth,
+            },
+            {
+                collection: "users",
+                collectionOptions: {
+                    deserialize: deserializer.convertUser,
+                    serialize: serializer.convertUser,
+                    fetchMode: FetchMode.manual,
+                    realtimeMode: RealtimeMode.on,
+                    defaultSetOptions: {
+                        merge: true,
+                    }
+                },
+                createNewDocumentDefaults: (user) => {
+                    const defaults = {
+                        roles: { user: true },
+                        tasks: new Map(),
+                        recentProjects: [],
+                    };
+
+                    return {
+                        ...defaults,
+                        ...user,
+                    };
+                },
+            },
+            {
+                patchExistingUser: async (userDoc, usersCollection, fbUser) => {
+                    if (!userDoc.data!.uid || !userDoc.data!.email) {
+                        // backwords compatibility, get single user by id and patch user data
+                        await usersCollection.updateAsync(
+                            {
+                                email: fbUser.email || "",
+                                uid: fbUser.uid,
+                            },
+                            fbUser.uid,
+                        );
+                    }
+                    return userDoc;
+                },
+                onSignOut: () => {
+                    if (typeof gapi !== "undefined") {
+                        const authInstance = gapi.auth2.getAuthInstance();
+                        authInstance && authInstance.signOut();
+                    }
+                }
+            }
+        );
+
         this.user = new UserStore(
             this,
             {
-                auth,
                 firestore,
             }
         );
 
-        this.view = new ViewStore();
+        this.view = new ViewStore(this);
         this.config = new ConfigStore(
             this,
             {

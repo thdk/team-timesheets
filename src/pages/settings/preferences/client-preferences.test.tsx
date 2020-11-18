@@ -8,6 +8,7 @@ import { useUserStoreMock } from "../../../contexts/user-context/__mocks__";
 import { ClientPreferences } from "./client-preferences";
 
 jest.mock('../../../contexts/user-context');
+jest.mock('../../../contexts/auth-context');
 jest.mock('../../../contexts/client-context');
 
 const resetMocks = () => {

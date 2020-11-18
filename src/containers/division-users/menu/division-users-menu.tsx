@@ -13,6 +13,7 @@ import { IDivision } from "../../../../common/interfaces/IOrganisation";
 import "./division-users-menu.css";
 import { Icon } from "@rmwc/icon";
 import { useConfigs } from "../../configs/use-configs";
+import { useAuthStore } from "../../../contexts/auth-context";
 
 export const DivisionUsersMenu = observer(({
     children,
@@ -22,13 +23,14 @@ export const DivisionUsersMenu = observer(({
     const division = useDivisionStore();
     const router = useRouterStore();
     const user = useUserStore();
+    const auth = useAuthStore();
     const configs = useConfigs();
 
     const [isMenuOpen, setIsMenuOpen] = useState(false);
 
     const handleSelect = useCallback((selectedDivision: (IDivision & { divisionUserId: string }) | undefined) => {
         setIsMenuOpen(false);
-        user.updateAuthenticatedUser({
+        auth.updateActiveDocument({
             divisionUserId: selectedDivision?.divisionUserId,
             divisionId: selectedDivision?.id,
         });
@@ -45,7 +47,7 @@ export const DivisionUsersMenu = observer(({
 
     const areDivisionsEnabled = configs.getConfigValue("enable-divisions", false) || true;
 
-    const displayName = division.division || user.authenticatedUser?.divisionId
+    const name = division.division || user.authenticatedUser?.divisionId
         ? (
             division.division
                 ? division.division.data!.name
@@ -126,7 +128,7 @@ export const DivisionUsersMenu = observer(({
                     <MenuItem
                         onClick={() => {
                             setIsMenuOpen(false);
-                            user.authenticatedUser ? user.signout() : goToLogin(router);
+                            user.authenticatedUser ? auth.signout() : goToLogin(router);
                         }}
                     >
                         <ListItemGraphic
@@ -141,7 +143,7 @@ export const DivisionUsersMenu = observer(({
             </MenuSurface>
             <AccountBadge
                 email={email}
-                name={displayName}
+                name={name}
                 onClick={handleAccountOnClick}
                 meta={<Icon icon="expand_more" />}
             />

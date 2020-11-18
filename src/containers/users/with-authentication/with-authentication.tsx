@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { observer } from 'mobx-react-lite';
 
-import { useUserStore } from "../../../contexts/user-context";
 import { IUser } from '../../../../common';
+import { useAuthStore } from '../../../contexts/auth-context';
 
 export interface IWithAuthenticationOptions {
     placeholder?: JSX.Element,
@@ -14,8 +14,9 @@ export function withAuthentication<T extends object>(
     placeholder: JSX.Element = <></>,
 ) {
     const WithAuthenticationComponent = (props: T) => {
-        const user = useUserStore();
-        return user.authenticatedUser
+        const authStore = useAuthStore();
+
+        return authStore.activeDocumentId
             ? <WrappedComponent {...props} />
             : placeholder;
     };

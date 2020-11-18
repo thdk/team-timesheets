@@ -19,6 +19,7 @@ jest.mock("../../contexts/store-context", () => ({
 }));
 
 jest.mock("../../contexts/user-context");
+jest.mock("../../contexts/auth-context");
 
 jest.mock("../../rules");
 jest.mock("../../routes/registrations/detail");
@@ -106,7 +107,7 @@ describe("Export Page", () => {
             month: 3,
         });
 
-        store.user.setUser({ uid: "user-1" } as firebase.User);
+        store.auth.setUser({ uid: "user-1" } as firebase.User);
 
         const {
             asFragment,

@@ -5,9 +5,10 @@ import { useTasks } from "../../../contexts/task-context";
 import { useClients } from "../../../contexts/client-context";
 import { ITask, IClient } from "../../../../common";
 import { useUserStore } from "../../../contexts/user-context";
-import {useUserStoreMock} from "../../../contexts/user-context/__mocks__";
+import { useUserStoreMock } from "../../../contexts/user-context/__mocks__";
 
 jest.mock('../../../contexts/user-context');
+jest.mock('../../../contexts/auth-context');
 jest.mock('../../../contexts/task-context');
 jest.mock('../../../contexts/client-context');
 

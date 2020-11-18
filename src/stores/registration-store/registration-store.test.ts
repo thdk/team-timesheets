@@ -119,7 +119,7 @@ describe("RegistrationStore", () => {
 
     beforeEach(() => {
         transaction(() => {
-            store.user.setUser({
+            store.auth.setUser({
                 uid: "user-1",
                 displayName: "user 1",
                 email: "email@email.com",
@@ -210,7 +210,7 @@ describe("RegistrationStore", () => {
                     ).toBe(4);
                 });
 
-                store.user.setUser(null);
+                store.auth.setUser(null);
 
                 await waitFor(() => {
                     expect(store.user.divisionUser).toBeFalsy();
@@ -223,7 +223,7 @@ describe("RegistrationStore", () => {
 
         describe("when there are no registrations for the current user", () => {
             it("should return an empty list", async () => {
-                store.user.setUser({
+                store.auth.setUser({
                     uid: "user-2",
                     displayName: "user 2",
                     email: "email2@email.com",

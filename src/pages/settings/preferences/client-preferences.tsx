@@ -13,7 +13,6 @@ export const ClientPreferences = memo(() => {
         defaultClient = undefined,
     } = userStore.divisionUser || {};
     const defaultClientChanged = useCallback((defaultClient: string) => {
-        console.error({defaultClient});
         userStore.updateDivisionUser({
             defaultClient
         });

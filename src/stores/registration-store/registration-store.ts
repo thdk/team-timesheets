@@ -133,10 +133,10 @@ export class RegistrationStore extends FirestorableStore<IRegistration, IRegistr
                 updateRegistrationQuery(rootStore.user.divisionUser?.id);
             }),
             reaction(() => rootStore.user.authenticatedUser, user => {
-                if (!user)
+                if (!user || !user.uid)
                     updateRegistrationQuery(undefined);
                 else
-                    updateRegistrationQuery(user.divisionUserId || user.id);
+                    updateRegistrationQuery(user.divisionUserId || user.uid);
             }, {
                 fireImmediately: true,
             }),

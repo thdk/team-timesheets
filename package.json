@@ -8,7 +8,7 @@
     "release": "node scripts/release.js",
     "build:refs": "tsc -p common",
     "build": "webpack --env=dev",
-    "start": "webpack -w",
+    "start": "webpack --env=dev -w",
     "build:development": "webpack --env=dev",
     "build:production": "webpack --env=prod",
     "deploy:development": "npm run build:development && firebase deploy",

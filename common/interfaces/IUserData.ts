@@ -4,7 +4,7 @@ import { IPersistedEntity } from "./base";
 export interface IUserData extends IPersistedEntity {
     tasks?: string[];
     roles?: IRoles;
-    name?: string;
+    name: string;
     defaultTask?: string;
     defaultClient?: string;
     recentProjects?: RecentlyUsedProjects;

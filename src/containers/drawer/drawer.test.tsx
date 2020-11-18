@@ -4,6 +4,7 @@ import { Drawer } from ".";
 
 jest.mock("../../rules");
 jest.mock("../../contexts/user-context");
+jest.mock("../../contexts/auth-context");
 jest.mock("../../contexts/view-context");
 
 jest.mock('../../stores/router-store', () => ({

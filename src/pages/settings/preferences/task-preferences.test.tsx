@@ -8,6 +8,7 @@ import { TaskPreferences } from "./task-preferences";
 import { useTasks } from "../../../contexts/task-context";
 
 jest.mock('../../../contexts/user-context');
+jest.mock('../../../contexts/auth-context');
 jest.mock('../../../contexts/task-context');
 
 const resetMocks = () => {

@@ -59,7 +59,7 @@ const setupAsync = async () => {
         },
     ]);
 
-    store.user.setUser({
+    store.auth.setUser({
         uid: userId,
         displayName: "user 1",
         email: "email@email.com",
@@ -124,7 +124,7 @@ describe("RegistrationLines", () => {
     });
 
     it("should render registrations", async () => {
-        await waitFor(() => expect(store.user.authenticatedUser).toBeDefined());
+        await waitFor(() => expect(store.auth.activeDocument).toBeDefined());
 
         await waitFor(() => expect(store.config.clientsCollection.isFetched).toBeTruthy());
         const { asFragment } = render(
@@ -137,7 +137,7 @@ describe("RegistrationLines", () => {
     });
 
     it("should show checkbox for each registration when registrationToggleSelect is provided", async () => {
-        await waitFor(() => expect(store.user.authenticatedUser).toBeDefined());
+        await waitFor(() => expect(store.auth.activeDocument).toBeDefined());
 
         const registrationToggleSelect = jest.fn();
         const { container } = render(
@@ -156,7 +156,7 @@ describe("RegistrationLines", () => {
         const registrationToggleSelect = jest.fn();
         const registrationClick = jest.fn();
 
-        await waitFor(() => expect(store.user.authenticatedUser).toBeDefined());
+        await waitFor(() => expect(store.auth.activeDocument).toBeDefined());
 
         const { container, getByText } = render(
             <RegistrationLines

@@ -52,7 +52,7 @@ describe("ReportStore", () => {
 
     beforeAll(() => {
         transaction(() => {
-            store.user.setUser({
+            store.auth.setUser({
                 uid: "user-1",
                 displayName: "user 1",
                 email: "email@email.com",

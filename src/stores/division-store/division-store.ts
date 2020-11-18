@@ -61,7 +61,7 @@ export class DivisionStore extends FirestorableStore<IDivision, IDivisionData> {
                 return ref.where(
                     "id",
                     "in",
-                    ids,
+                    ids.slice(0, ids.length < 10 ? ids.length : 10),
                 );
             }
             return ref;
@@ -147,7 +147,7 @@ export class DivisionStore extends FirestorableStore<IDivision, IDivisionData> {
                         },
                     ).then(
                         (divisionUserId) => {
-                            return this.rootStore.user.updateAuthenticatedUser({
+                            return this.rootStore.auth.updateActiveDocument({
                                 divisionUserId,
                                 divisionId,
                             });

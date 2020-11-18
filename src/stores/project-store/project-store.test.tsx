@@ -116,7 +116,7 @@ const setupAsync = async () => {
     divisionUserId1 = generatedDivisionUserId1;
     divisionUserId2 = generatedDivisionUserId2;
 
-    store.user.setUser({
+    store.auth.setUser({
         uid: userId,
     } as firebase.User);
 };
@@ -183,21 +183,21 @@ describe("ProjectStore", () => {
 
                 await waitFor(() => expect(store.projects.activeProjects.length).toBe(6));
 
-                store.user.updateAuthenticatedUser({
+                store.auth.updateActiveDocument({
                     divisionUserId: divisionUserId1,
                     divisionId: divisionId1,
                 });
 
                 await waitFor(() => expect(store.projects.activeProjects.length).toBe(2));
 
-                store.user.updateAuthenticatedUser({
+                store.auth.updateActiveDocument({
                     divisionUserId: divisionUserId2,
                     divisionId: divisionId2,
                 });
 
                 await waitFor(() => expect(store.projects.activeProjects.length).toBe(1));
 
-                store.user.updateAuthenticatedUser({
+                store.auth.updateActiveDocument({
                     divisionUserId: undefined,
                     divisionId: undefined,
                 });

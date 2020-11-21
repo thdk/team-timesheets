@@ -18,7 +18,6 @@ const DebouncedTextfield = (props: Props) => {
         debounceDelay = 250,
         onKeyDown,
         onChange,
-        ref, // TODO: ref should be forwarded as a correct type to the textfield component
         ...restProps
     } = props;
 

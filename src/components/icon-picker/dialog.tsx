@@ -16,13 +16,14 @@ export const IconDialog = (props: Props) => {
 
     const [iconQuery, setIconQuery] = useState<string | undefined>(undefined);
 
-    // const [isOpen, setIsOpen] = useState(false);
-
     const handleDialogClose = useCallback((event: CustomEvent<{ action?: string }>) => {
         const { action } = event.detail;
 
-        onClose(action === "close" || action === "destroy" ? undefined : event.detail.action);
-        // setIsOpen(false)
+        onClose(
+            action === "close" || action === "destroy"
+                ? undefined
+                : event.detail.action
+        );
     }, []);
 
     const handleQueryTextBoxChange = (query: string | undefined) => {
@@ -69,7 +70,9 @@ export const IconDialog = (props: Props) => {
                             className="icon-dialog-content-item-icon"
                             icon={icon}
                         />
-                        <div className="icon-dialog-content-item-name">{icon}</div>
+                        <div className="icon-dialog-content-item-name">
+                            {icon}
+                        </div>
                     </div>
                 )}
             </div>

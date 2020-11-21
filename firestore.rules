@@ -10,7 +10,10 @@ service cloud.firestore {
         }
         function getAuthUser(data) {
             let user = get(/databases/$(database)/documents/users/$(request.auth.uid));
-            let authUser = data.keys().hasAny(["divisionId"])
+            let authUser = (
+                            data.keys().hasAny(["divisionId"]) 
+                            && data.divisionId != ""
+            )
                     ? get(/databases/$(database)/documents/division-users/$(user.data.divisionUserId))
                     : user;
 
@@ -93,7 +96,7 @@ service cloud.firestore {
                     && !isUpdateToField('roles')
                 );
             allow create: if (
-                request.auth != null && request.resource.data.uid == request.auth.uid && request.resource.data.roles.keys().hasOnly(["user"])
+                request.auth != null && request.resource.data.uid == request.auth.uid && request.resource.data.roles.keys().hasOnly(["recruit"])
             ) || isPowerUser(request.resource.data);
             allow delete: if isAuthorised(getAuthUser(request.resource.data), 'admin') == true;
         }

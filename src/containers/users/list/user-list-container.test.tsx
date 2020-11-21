@@ -80,6 +80,7 @@ const setupAsync = () => {
             {
                 name_insensitive: "TEAM 1",
                 name: "team 1",
+                divisionId: "",
             },
             "team-1",
         ),

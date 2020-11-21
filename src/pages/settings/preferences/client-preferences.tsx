@@ -1,11 +1,12 @@
-import React, { useCallback, memo } from "react";
+import React, { useCallback } from "react";
 
 import { FormField } from "../../../components/layout/form";
 import ClientSelect from "../../../containers/clients/select";
 import { useUserStore } from "../../../contexts/user-context";
 import { useClients } from "../../../contexts/client-context";
+import { observer } from "mobx-react-lite";
 
-export const ClientPreferences = memo(() => {
+export const ClientPreferences = observer(() => {
     const userStore = useUserStore();
     const clients = useClients();
 

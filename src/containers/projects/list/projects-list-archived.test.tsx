@@ -84,6 +84,7 @@ describe("ProjectListArchived", () => {
                 icon: "people",
                 createdBy: "user-1",
                 isArchived: true,
+                divisionId: "",
             },
         ]);
 
@@ -115,6 +116,7 @@ describe("ProjectListArchived", () => {
                 icon: "people",
                 createdBy: "user-1",
                 isArchived: true,
+                divisionId: "",
             },
             {
                 name: "Project 2",
@@ -122,6 +124,7 @@ describe("ProjectListArchived", () => {
                 icon: "favorite",
                 createdBy: "user-1",
                 isArchived: true,
+                divisionId: "",
             },
         ]);
 
@@ -163,6 +166,7 @@ describe("ProjectListArchived", () => {
                 icon: "people",
                 createdBy: "user-1",
                 isArchived: true,
+                divisionId: "",
             },
         ]);
 

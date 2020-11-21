@@ -10,15 +10,13 @@ const isAdmin = (
     return !!(user && user.roles.admin);
 }
 
+const isUser = (
+    user: IUser | undefined,
+) => !!(user && user.roles.user);
+
 const isEditor = (
     user: IUser | undefined,
-) => {
-    if (!user) {
-        return false;
-    }
-
-    return !!user.roles.editor;
-}
+) => !!(user && user.roles.editor);
 
 export const canManageTasks = (
     user: IUser | undefined,
@@ -117,3 +115,7 @@ export const canDeleteTeam = (
 export const canReadUsers = (
     user: IUser | undefined,
 ) => isAdmin(user);
+
+export const canAddRegistrations = (
+    user: IUser | undefined,
+) => isUser(user);

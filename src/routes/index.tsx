@@ -7,7 +7,7 @@ import settingsRoutes from './settings';
 import reportRoutes from './reports';
 import userRoutes from './users';
 import projectRoutes from './projects';
-import dashboardRoures from './dashboard';
+import dashboardRoutes from './dashboard';
 import loginRoutes from './login';
 import favoriteRoutes from './favorites';
 import divisionRoutes from './divisions';
@@ -32,7 +32,7 @@ export const routes = {
   ...reportRoutes,
   ...userRoutes,
   ...projectRoutes,
-  ...dashboardRoures,
+  ...dashboardRoutes,
   ...favoriteRoutes,
   ...divisionRoutes,
 };

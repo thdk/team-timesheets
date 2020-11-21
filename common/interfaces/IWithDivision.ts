@@ -1,3 +1,3 @@
 export interface IWithDivision {
-    divisionId?: string;
+    divisionId: string;
 }

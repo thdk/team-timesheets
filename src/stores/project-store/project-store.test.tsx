@@ -1,7 +1,7 @@
 import { Store } from "../root-store";
 import { initTestFirestore, deleteFirebaseAppsAsync } from "../../__tests__/utils/firebase";
 import { TestCollection } from "../../__tests__/utils/firestorable/collection";
-import { IProject, IProjectData } from "../../../common";
+import { IProject, IProjectData, IUserData } from "../../../common";
 import * as serializer from '../../../common/serialization/serializer';
 import { waitFor } from "@testing-library/react";
 
@@ -23,7 +23,7 @@ const {
         "projects",
     ]);
 
-const userCollection = new TestCollection(
+const userCollection = new TestCollection<IUserData>(
     firestore,
     userRef,
 );
@@ -143,16 +143,20 @@ describe("ProjectStore", () => {
                 projectIds = await projectCollection.addAsync([
                     {
                         name: "Project 1",
+                        divisionId: "",
                     },
                     {
                         name: "Project 2",
                         isArchived: true,
+                        divisionId: "",
                     },
                     {
                         name: "Project 3",
+                        divisionId: "",
                     },
                     {
                         name: "Project 4",
+                        divisionId: "",
                     },
                     {
                         name: "Project 5",
@@ -175,13 +179,13 @@ describe("ProjectStore", () => {
 
             it("should return an array of active projects", async () => {
                 await waitFor(() => expect(store.user.divisionUser).toBeDefined());
-                await waitFor(() => expect(store.projects.activeProjects.length).toBe(6));
+                await waitFor(() => expect(store.projects.activeProjects.length).toBe(3));
             });
 
             it("should return only projects of the current division user", async () => {
                 await waitFor(() => expect(store.user.divisionUser).toBeDefined());
 
-                await waitFor(() => expect(store.projects.activeProjects.length).toBe(6));
+                await waitFor(() => expect(store.projects.activeProjects.length).toBe(3));
 
                 store.auth.updateActiveDocument({
                     divisionUserId: divisionUserId1,
@@ -202,7 +206,7 @@ describe("ProjectStore", () => {
                     divisionId: undefined,
                 });
 
-                await waitFor(() => expect(store.projects.activeProjects.length).toBe(6));
+                await waitFor(() => expect(store.projects.activeProjects.length).toBe(3));
             });
         });
     });
@@ -213,10 +217,12 @@ describe("ProjectStore", () => {
             projectIds = await projectCollection.addAsync([
                 {
                     name: "Project 1",
+                    divisionId: "",
                 },
                 {
                     name: "Project 2",
                     isArchived: true,
+                    divisionId: "",
                 },
             ]);
         });
@@ -249,6 +255,7 @@ describe("ProjectStore", () => {
                 {
                     name: "New project 1",
                     createdBy: "user-1",
+                    divisionId: "",
                 },
                 "new-project-1",
             );
@@ -270,6 +277,7 @@ describe("ProjectStore", () => {
             store.projects.createNewDocument
             expect(() => store.projects.addDocument({
                 name: "Invalid project",
+                divisionId: "",
             })).toThrow();
         });
     });

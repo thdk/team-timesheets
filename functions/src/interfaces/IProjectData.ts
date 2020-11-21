@@ -8,7 +8,7 @@ export interface IProjectData {
     createdBy?: string;
     deleted?: boolean;
     isArchived: boolean;
-    divisionId?: string;
+    divisionId: string;
 }
 
 export interface IBigQueryProjectData extends Omit<IProjectData, "created" | "modified" | "isArchived"> {

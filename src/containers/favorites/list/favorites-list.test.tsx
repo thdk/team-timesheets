@@ -142,6 +142,7 @@ describe("FavoritesList", () => {
                     {
                         name_insensitive: "CLIENT 1",
                         name: "client 1",
+                        divisionId: "",
                     },
                     "client-1",
                 ),
@@ -155,12 +156,14 @@ describe("FavoritesList", () => {
                 projectCollection.addAsync(
                     {
                         name: "project 1",
+                        divisionId: "",
                     },
                     "project-1",
                 ),
                 taskCollection.addAsync(
                     {
                         name: "task 1",
+                        divisionId: "",
                     },
                     "task-1",
                 ),

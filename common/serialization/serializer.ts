@@ -9,6 +9,10 @@ import {
     IProjectData,
     IFavoriteRegistration,
     IDivisionUserData,
+    ITaskData,
+    ITask,
+    IClient,
+    IClientData,
 } from '../interfaces';
 import { INameWithIconData, INameWithIcon } from '../interfaces/base';
 import { IDivision } from '../interfaces/IOrganisation';
@@ -111,7 +115,7 @@ export const convertUser = (appData: Partial<IUser> | null) => {
             created: firebase.firestore.Timestamp.fromDate(appData.created || now),
             uid: appData.uid,
             email: appData.email,
-            divisionId: appData.divisionId || firebase.firestore.FieldValue.delete(),
+            divisionId: appData.divisionId || "",
             divisionUserId: appData.divisionUserId || firebase.firestore.FieldValue.delete(),
             deleted: false,
         }
@@ -131,8 +135,31 @@ export const convertUser = (appData: Partial<IUser> | null) => {
     return user;
 }
 
-export function convertTeam(appData: Partial<ITeam>): Partial<ITeamData> {
-    return convertNameWithIcon(appData);
+export function convertTeam(appData: Partial<ITeam> | null): Partial<ITeamData> {
+    return appData ?
+        {
+            ...convertNameWithIcon(appData),
+            divisionId: appData.divisionId || "",
+        } :
+        convertNameWithIcon(appData);
+}
+
+export function convertTask(appData: Partial<ITask> | null): Partial<ITaskData> {
+    return appData ?
+        {
+            ...convertNameWithIcon(appData),
+            divisionId: appData.divisionId || "",
+        } :
+        convertNameWithIcon(appData);
+}
+
+export function convertClient(appData: Partial<IClient> | null): Partial<IClientData> {
+    return appData ?
+        {
+            ...convertNameWithIcon(appData),
+            divisionId: appData.divisionId || "",
+        } :
+        convertNameWithIcon(appData);
 }
 
 export function convertDivision(appData: Partial<IDivision> | null): Partial<IDivisionData> {
@@ -165,13 +192,12 @@ export function convertProject(appData: Partial<IProject> | null): Partial<IProj
             ...convertNameWithIcon(appData),
             createdBy: appData.createdBy,
             isArchived: appData.isArchived,
-            divisionId: appData.divisionId,
+            divisionId: appData.divisionId || "",
         };
     }
 
     if (data.createdBy === undefined) delete (data.createdBy);
     if (data.isArchived === undefined) delete (data.isArchived);
-    if (data.divisionId === undefined) delete (data.divisionId);
     return data;
 }
 
@@ -191,14 +217,11 @@ export function convertNameWithIcon(appData: Partial<INameWithIcon> | null): Par
             name_insensitive: name.toUpperCase(),
             created: firebase.firestore.Timestamp.fromDate(appData.created || now),
             modified: firebase.firestore.Timestamp.fromDate(now),
-            divisionId: appData.divisionId,
         };
 
         if (appData.icon) {
             data.icon = appData.icon;
         }
-
-        if (!data.divisionId) delete data.divisionId;
     }
 
     return data;

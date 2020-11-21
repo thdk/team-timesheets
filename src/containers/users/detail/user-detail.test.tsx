@@ -68,6 +68,7 @@ describe("UserDetail", () => {
                         recentProjects: [],
                         tasks: new Map(),
                         uid: "user-1",
+                        divisionId: "",
                     },
                     "user-1",
                 ),

@@ -5,6 +5,7 @@ import { useDivisionStore } from "../../../contexts/division-context";
 
 jest.mock("../../../contexts/view-context");
 jest.mock("../../../contexts/division-context");
+jest.mock("../../../contexts/auth-context");
 
 const useDivisionStoreMock = (useDivisionStore as unknown as jest.Mock<Partial<ReturnType<typeof useDivisionStore>>>);
 
@@ -13,7 +14,9 @@ describe("DivisionUserList", () => {
         const {
             getByText,
         } = render(
-            <DivisionUserList />
+            <DivisionUserList 
+                placeholder="You aren't in any division yet."
+            />
         );
 
         getByText("You aren't in any division yet.");
@@ -34,7 +37,10 @@ describe("DivisionUserList", () => {
                     name: "Division 2",
                     createdBy: "user-div-2",
                 },
-            ]
+            ],
+            collection: {
+                isFetched: true,
+            } as any,
         });
         const {
             getByText,

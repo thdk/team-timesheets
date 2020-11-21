@@ -16,7 +16,9 @@ export const goToUserProfile = (router: RouterStore<IRootStore>, tab: ProfileTab
 };
 
 const routes = {
-    userProfile: new Route<IRootStore>({
+    userProfile: new Route<IRootStore, any, {
+        tab?: ProfileTab,
+    }>({
         path: '/profile',
         component: <App><ProfilePage /></App>,
         title: "Profile",

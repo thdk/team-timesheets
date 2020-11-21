@@ -12,10 +12,6 @@ export const withAuthorisation = (
     const WithAuthorisationComponent = () => {
         const user = useUserStore();
 
-        // if (!user.divisionUser) {
-        //     throw new Error("Can't check authorisation if no user is authenticated. (Wrap in withAuthentication?)");
-        // }
-
         return user.divisionUser && condition(user.divisionUser)
             ? <WrappedComponent />
             : <>{placeholder}</>;

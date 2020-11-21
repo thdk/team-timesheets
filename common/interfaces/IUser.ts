@@ -2,6 +2,7 @@ export interface IRoles {
     admin?: boolean;
     user?: boolean;
     editor?: boolean;
+    recruit?: boolean;
 }
 
 export type RecentlyUsedProjects = string[];
@@ -17,6 +18,6 @@ export interface IUser {
     created?: Date;
     email?: string;
     uid: string;
-    divisionId?: string;
+    divisionId: string;
     divisionUserId?: string;
 }

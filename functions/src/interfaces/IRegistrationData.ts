@@ -13,7 +13,7 @@ export interface IRegistrationData {
     created?: admin.firestore.Timestamp;
     modified?: admin.firestore.Timestamp;
     importId?: string;
-    divisionId?: string;
+    divisionId: string;
 }
 
 export interface IBigQueryRegistrationData extends Omit<IRegistrationData, "created" | "modified" | "date"> {

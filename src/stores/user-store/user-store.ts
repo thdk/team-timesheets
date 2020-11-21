@@ -85,7 +85,7 @@ export class UserStore implements IUserStore {
                 serialize: serializer.convertUser,
                 deserialize: deserializer.convertUser,
                 query: (ref) => ref
-                    .where("divisionId", "==", this.divisionUser?.divisionId)
+                    .where("divisionId", "==", (this.divisionUser?.divisionId || ""))
                     .where("deleted", "==", false),
             },
             {
@@ -99,8 +99,8 @@ export class UserStore implements IUserStore {
                 this.usersCollection.fetchAsync();
             }),
 
-            reaction(() => this.authenticatedUserId, userId => {
-                this.setDivisionUser(userId);
+            reaction(() => this.authenticatedUser, user => {
+                this.setDivisionUser(user?.divisionUserId);
             }),
 
             reaction(() => this.authenticatedUserId, id => {
@@ -218,7 +218,7 @@ export class UserStore implements IUserStore {
     public get divisionUser(): (IUser & { id: string }) | undefined {
         const divisionUser = this._divisionUser.get();
 
-        return divisionUser
+        return divisionUser 
             ? { ...divisionUser.data!, id: divisionUser.id }
             : this.authenticatedUser ? { ...this.authenticatedUser } : undefined;
     }
@@ -243,7 +243,13 @@ export class UserStore implements IUserStore {
 
     public updateDivisionUser(userData: Partial<IUser>): void {
         const user = this.divisionUser;
-        if (user) { this.divisionUsersCollection.updateAsync(userData, user.id); }
+        if (user) { 
+            if (this.divisionUser?.divisionId) {
+                this.divisionUsersCollection.updateAsync(userData, user.id);
+            } else {
+                this.usersCollection.updateAsync(userData, user.id);
+            }
+        }
     }
 
     public updateAuthenticatedUser(userData: Partial<IUser>): void {

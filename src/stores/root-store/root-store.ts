@@ -57,7 +57,9 @@ export class Store implements IRootStore {
                 },
                 createNewDocumentDefaults: (user) => {
                     const defaults = {
-                        roles: { user: true },
+                        roles: {
+                            recruit: true,
+                        },
                         tasks: new Map(),
                         recentProjects: [],
                     };
@@ -98,6 +100,14 @@ export class Store implements IRootStore {
             }
         );
 
+        this.divisions = new DivisionStore(
+            this,
+            {
+                firestore,
+                httpsCallable,
+            },
+        );
+
         this.view = new ViewStore(this);
         this.config = new ConfigStore(
             this,
@@ -133,13 +143,6 @@ export class Store implements IRootStore {
             this,
             {
                 firestore,
-            },
-        );
-        this.divisions = new DivisionStore(
-            this,
-            {
-                firestore,
-                httpsCallable,
             },
         );
         this.router = new RouterStore<IRootStore>(this);

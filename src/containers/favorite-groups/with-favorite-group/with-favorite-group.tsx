@@ -5,7 +5,7 @@ import { Doc } from "firestorable";
 import { useStore } from "../../../contexts/store-context";
 
 export interface IWithFavoriteGroupInjectedProps {
-    group: Doc<IFavoriteRegistrationGroup>;
+    group: IFavoriteRegistrationGroup;
     favorites: Doc<IFavoriteRegistration>[];
 }
 

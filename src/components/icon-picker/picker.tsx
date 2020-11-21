@@ -55,9 +55,6 @@ const IconPicker = (props: Props) => {
     useEffect(() => {
         // only call onChange if value of inputField is a valid icon
         if (icons.indexOf(icon) !== -1) {
-            console.log({
-                iconPicker: icon,
-            });
             setValidIcon(icon);
         }
     }, [icon]);

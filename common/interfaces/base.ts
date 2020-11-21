@@ -1,14 +1,13 @@
 import { Timestamp } from "@firebase/firestore-types";
-import { IWithDivision } from "./IWithDivision";
 
-export interface INameWithIcon extends IWithDivision {
+export interface INameWithIcon {
     name: string;
     icon?: string;
     created?: Date;
     deleted?: boolean;
 }
 
-export interface INameWithIconData extends IPersistedEntity, IWithDivision {
+export interface INameWithIconData extends IPersistedEntity {
     name: string;
     name_insensitive?: string;
     icon?: string;
@@ -18,4 +17,9 @@ export interface INameWithIconData extends IPersistedEntity, IWithDivision {
 export interface IPersistedEntity {
     created?: Timestamp;
     modified?: Timestamp;
+}
+
+export interface IFlaggedForDeletion {
+    deleted: boolean;
+    modified: firebase.firestore.FieldValue;
 }

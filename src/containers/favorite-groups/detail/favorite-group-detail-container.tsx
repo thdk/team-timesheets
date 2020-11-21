@@ -11,13 +11,15 @@ export const FavoriteGroupDetailForm = withFavoriteGroup(
         const { group } = props;
 
         const handleNameChanged = useCallback((name: string) => {
-            group.data!.name = name;
+            group.name = name;
         }, [group]);
 
 
-        return <PureFavoriteGroupDetailForm
-            onNameChanged={handleNameChanged}
-            name={group.data!.name}
-        />;
+        return group
+            ? <PureFavoriteGroupDetailForm
+                onNameChanged={handleNameChanged}
+                name={group.name}
+            />
+            : null;
     })
 );

@@ -1,12 +1,10 @@
 import * as React from 'react';
 import { observer } from 'mobx-react-lite';
 
-import { IUser } from '../../../../common';
 import { useAuthStore } from '../../../contexts/auth-context';
 
 export interface IWithAuthenticationOptions {
     placeholder?: JSX.Element,
-    condition?: (user?: IUser) => boolean,
 }
 
 export function withAuthentication<T extends object>(

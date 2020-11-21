@@ -37,8 +37,8 @@ export class ConfigStore implements IConfigStore {
             {
                 realtimeMode: RealtimeMode.on,
                 fetchMode: FetchMode.manual,
-                serialize: serializer.convertNameWithIcon,
-                deserialize: deserializer.convertNameWithIcon,
+                serialize: serializer.convertTask,
+                deserialize: deserializer.convertTask,
             },
             deps,
         );
@@ -50,8 +50,8 @@ export class ConfigStore implements IConfigStore {
                 {
                     realtimeMode: RealtimeMode.on,
                     fetchMode: FetchMode.manual,
-                    serialize: serializer.convertNameWithIcon,
-                    deserialize: deserializer.convertNameWithIcon,
+                    serialize: serializer.convertClient,
+                    deserialize: deserializer.convertClient,
                 },
                 deps,
             );
@@ -62,8 +62,8 @@ export class ConfigStore implements IConfigStore {
             {
                 realtimeMode: RealtimeMode.on,
                 fetchMode: FetchMode.manual,
-                serialize: serializer.convertNameWithIcon,
-                deserialize: deserializer.convertNameWithIcon,
+                serialize: serializer.convertTeam,
+                deserialize: deserializer.convertTeam,
             },
             deps,
         );
@@ -84,24 +84,14 @@ export class ConfigStore implements IConfigStore {
                 this.clientsCollection.query = null;
             }
             else {
-                if (user.divisionId) {
-                    const query = (ref: firebase.firestore.CollectionReference) =>
-                        ref.orderBy("name_insensitive")
-                            .where("divisionId", "==", user.divisionId);
+                const query = (ref: firebase.firestore.CollectionReference) =>
+                    ref.orderBy("name_insensitive")
+                        .where("divisionId", "==", user.divisionId || "");
 
-                    this.teamsCollection.query = query;
-                    this.tasksCollection.query = query;
-                    this.configsCollection.query = query;
-                    this.clientsCollection.query = query;
-                } else {
-                    const query = (ref: firebase.firestore.CollectionReference) =>
-                        ref.orderBy("name_insensitive");
-
-                    this.teamsCollection.query = query;
-                    this.tasksCollection.query = query;
-                    this.configsCollection.query = undefined;
-                    this.clientsCollection.query = undefined;
-                }
+                this.teamsCollection.query = query;
+                this.tasksCollection.query = query;
+                this.configsCollection.query = query;
+                this.clientsCollection.query = query;
 
                 if (!this.teamsCollection.isFetched) {
                     this.teamsCollection.fetchAsync();

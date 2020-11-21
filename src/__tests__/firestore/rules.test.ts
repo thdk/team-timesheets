@@ -75,7 +75,7 @@ describe("Firestore rules", () => {
         test("if user can insert new doc", async () => {
             await assertSucceeds(
                 usersRefTest.doc(Date.now().toString()).set({
-                    roles: { user: true },
+                    roles: { recruit: true },
                     uid: "alice",
                 })
             );

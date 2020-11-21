@@ -1,4 +1,4 @@
-import { Route } from "mobx-router";
+import { Route, QueryParams, RouteParams } from "mobx-router";
 import { DateObject } from './registrations/overview';
 import { IRootStore } from "../stores/root-store";
 import { setBackToOverview } from "../internal";
@@ -52,11 +52,11 @@ export const setTitleForRoute = (
     store.view.title = route.title || "";
 }
 
-export const Redirect = ({ route, params }: { route: Route<IRootStore, any, any>, params?: {} }) => {
+export function Redirect<T extends RouteParams, K extends QueryParams>({ route, params, queryParams }: { route: Route<IRootStore, T, K>, params?: T, queryParams?: K }) {
     const store = React.useContext(StoreContext);
 
     React.useEffect(() => {
-        store.router.goTo(route, params);
+        store.router.goTo(route, params, queryParams);
     }, []);
 
     return React.createElement(React.Fragment);

@@ -88,6 +88,7 @@ describe("ProjectListActive", () => {
                 name_insensitive: "PROJECT 1",
                 icon: "people",
                 createdBy: "user-1",
+                divisionId: "",
             },
         ]);
 
@@ -124,12 +125,14 @@ describe("ProjectListActive", () => {
                 name_insensitive: "PROJECT 1",
                 icon: "people",
                 createdBy: "user-1",
+                divisionId: "",
             },
             {
                 name: "Project 2",
                 name_insensitive: "PROJECT 2",
                 icon: "favorite",
                 createdBy: "user-1",
+                divisionId: "",
             },
         ]);
 
@@ -179,6 +182,7 @@ describe("ProjectListActive", () => {
                 name_insensitive: "PROJECT 1",
                 icon: "people",
                 createdBy: "user-1",
+                divisionId: "",
             },
         ]);
 
@@ -215,6 +219,7 @@ describe("ProjectListActive", () => {
                 name_insensitive: "PROJECT 1",
                 icon: "people",
                 createdBy: "user-1",
+                divisionId: "",
             },
         ]);
 

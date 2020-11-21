@@ -7,6 +7,8 @@ import { withAuthentication } from '../users/with-authentication';
 import { useRegistrationStore } from '../../contexts/registration-context';
 import { useViewStore } from '../../contexts/view-context';
 import { useRouterStore } from '../../stores/router-store';
+import { withAuthorisation } from '../users/with-authorisation';
+import { canAddRegistrations } from '../../rules';
 
 const TimesheetCalendar = observer(() => {
     const timesheets = useRegistrationStore();
@@ -37,5 +39,8 @@ const TimesheetCalendar = observer(() => {
 });
 
 export default withAuthentication(
-    TimesheetCalendar
+    withAuthorisation(
+        TimesheetCalendar,
+        canAddRegistrations,
+    ),
 );

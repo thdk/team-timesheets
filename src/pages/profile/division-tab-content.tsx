@@ -13,12 +13,54 @@ import { goToDivision } from "../../routes/divisions/detail";
 import { useRouterStore } from "../../stores/router-store";
 
 import "./division-tab-content.css";
+import { useCallback } from "react";
 
 export const DivisionsTabContent = () => {
     const view = useViewStore();
     const user = useUserStore();
     const divisionStore = useDivisionStore();
     const router = useRouterStore();
+
+    const handleJoinDivision = useCallback(
+        (e?: React.MouseEvent) => {
+            e && e.preventDefault();
+            dialogQueue.prompt({
+                title: 'Join a division',
+                body: 'Enter the division entry code',
+                acceptLabel: 'Join',
+                cancelLabel: 'Cancel',
+                inputProps: {
+                    outlined: true
+                },
+            }).then(
+                (code) => {
+                    if (code) {
+                        divisionStore.joinDivision(
+                            code,
+                        ).then(
+                            (successMessage) => {
+                                return successMessage;
+                            },
+                            (errorMessage) => {
+                                return errorMessage;
+                            }
+                        )
+                            .then((result) => {
+                                snackbarQueue.notify({
+                                    title: result,
+                                });
+                            });
+                    }
+                },
+            )
+        },
+        [snackbarQueue, divisionStore]
+    );
+
+    const handleCreateNewClick = useCallback((e: React.MouseEvent) => {
+        e.preventDefault();
+        goToDivision(router)
+    }, [goToDivision, router]);
 
     useEffect(() => {
         view.setActions([
@@ -62,35 +104,7 @@ export const DivisionsTabContent = () => {
                     content: "person_add",
                     label: "Join division",
                 },
-                action: () => {
-                    dialogQueue.prompt({
-                        title: 'Join a division',
-                        body: 'Enter the division entry code',
-                        acceptLabel: 'Join',
-                        cancelLabel: 'Cancel',
-                        inputProps: {
-                            outlined: true
-                        },
-                    }).then((code) => {
-                        if (code) {
-                            divisionStore.joinDivision(
-                                code,
-                            ).then(
-                                (successMessage) => {
-                                    return successMessage;
-                                },
-                                (errorMessage) => {
-                                    return errorMessage;
-                                }
-                            )
-                                .then((result) => {
-                                    snackbarQueue.notify({
-                                        title: result,
-                                    });
-                                });
-                        }
-                    });
-                },
+                action: () => handleJoinDivision(),
             },
             {
                 icon: {
@@ -111,7 +125,33 @@ export const DivisionsTabContent = () => {
 
     return (
         <Box className="division-tab-content">
-            <DivisionUserList />
+            <DivisionUserList
+                placeholder={
+                    <>
+                        <p>
+                            You aren't in any division yet.
+                    </p>
+                        <p>
+                            <a href="#"
+                                onClick={handleCreateNewClick}
+                            >Create a new division</a>
+                            <span> or </span>
+                            <a href="#"
+                                onClick={handleJoinDivision}
+                            >join an existing division</a>.
+                            <br /><br /><br />
+                            <p>
+                                A division is needed to start using Team Timesheets.
+                                If your division grows, you can recruit more team members to your division.
+                                <br/>
+                                Items such as projects, clients, tasks and teams are shared within a division.
+
+                                Nothing is shared with other divisons.
+                            </p>
+                        </p>
+                    </>
+                }
+            />
         </Box>
     );
 }

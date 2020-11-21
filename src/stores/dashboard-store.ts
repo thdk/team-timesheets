@@ -24,6 +24,7 @@ export interface IDashboardStore {
     readonly taskFilterValue?: string;
     readonly userFilterValue?: string;
     readonly timePeriodFilterValue?: TimePeriod;
+
 }
 
 export class DashboardStore implements IDashboardStore {
@@ -42,7 +43,6 @@ export class DashboardStore implements IDashboardStore {
             firestore: firebase.firestore.Firestore,
         },
     ) {
-
         this.registrationsField = new Collection<IRegistration, IRegistrationData>(
             firestore,
             "registrations",

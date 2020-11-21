@@ -10,6 +10,7 @@ import { DivisionsTabContent } from "./division-tab-content";
 import { useConfigs } from "../../containers/configs/use-configs";
 import { goToUserProfile, ProfileTab, ProfileRouteQueryParams } from "../../routes/users/profile";
 import { useRouterStore } from "../../stores/router-store";
+import { canAddRegistrations } from "../../rules";
 
 export const ProfilePage = withAuthentication(observer(() => {
     const view = useViewStore();
@@ -28,7 +29,7 @@ export const ProfilePage = withAuthentication(observer(() => {
         {
             id: "preferences",
             text: "Preferences",
-            canOpen: () => !!divisionUser,
+            canOpen: () => canAddRegistrations(divisionUser),
             tabContent: <Preferences />,
             icon: "list_alt",
         },

@@ -52,7 +52,7 @@ const createDefaults = (
             const {
                 recentProjects = [],
                 defaultTask: task = rootStore.config.tasks.length ? rootStore.config.tasks[0].id : undefined,
-                defaultClient: client = undefined
+                defaultClient: client = undefined,
             } = rootStore.user.divisionUser || {};
 
             const recentActiveProjects = recentProjects
@@ -68,6 +68,7 @@ const createDefaults = (
                 userId: rootStore.user.divisionUser.id,
                 project: recentActiveProjects.length ? recentActiveProjects[0] : undefined,
                 isPersisted: false,
+                description: "",
                 ...overrideDefaultsWith
             };
         });

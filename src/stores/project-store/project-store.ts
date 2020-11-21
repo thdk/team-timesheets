@@ -13,12 +13,9 @@ const createQuery = (user: IUser | undefined) => {
         return null;
     }
     else {
-        return user.divisionId
-            ? (ref: firebase.firestore.CollectionReference) =>
-                ref.orderBy("name_insensitive")
-                    .where("divisionId", "==", user.divisionId)
-            : (ref: firebase.firestore.CollectionReference) =>
-                ref.orderBy("name_insensitive");
+        return (ref: firebase.firestore.CollectionReference) =>
+            ref.orderBy("name_insensitive")
+                .where("divisionId", "==", user.divisionId || "");
     }
 }
 

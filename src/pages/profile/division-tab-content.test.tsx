@@ -5,6 +5,7 @@ import { useViewStore } from "../../contexts/view-context";
 
 jest.mock("../../contexts/view-context");
 jest.mock("../../contexts/division-context");
+jest.mock("../../contexts/auth-context");
 
 describe("DivisionTabContent", () => {
     it("should add view actions when rendered", () => {

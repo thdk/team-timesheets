@@ -52,7 +52,7 @@ export const convertUser = (firebaseChange: FirebaseFirestore.DocumentSnapshot) 
 
 const convertCsvProjectToBigQuery = (data: any) => {
     // validate input
-    const { name, icon, id } = data;
+    const { name, icon, id, divisionId = ""} = data;
     if (!id) throw new Error("Cannot insert project data without id");
     if (!name) throw new Error("Name is missing for project with id: " + id);
 
@@ -64,7 +64,8 @@ const convertCsvProjectToBigQuery = (data: any) => {
         deleted: false,
         created: now,
         modified: now,
-        createdBy: ""
+        createdBy: "",
+        divisionId,
     } as IBigQueryProjectData);
 }
 

@@ -2,21 +2,23 @@ import { IUser, IProject } from "../../common/dist";
 
 const isAdmin = (
     user: IUser | undefined,
-) => {
-    if (!user) {
-        return false;
-    }
-
-    return !!(user && user.roles.admin);
-}
+) => !!(user && user.roles.admin);
 
 const isUser = (
     user: IUser | undefined,
-) => !!(user && user.roles.user);
+) => (
+        isAdmin(user)
+        || isEditor(user)
+        || !!(user && user.roles.user)
+    );
 
 const isEditor = (
     user: IUser | undefined,
-) => !!(user && user.roles.editor);
+) =>
+    (
+        isAdmin(user)
+        || !!(user && user.roles.editor)
+    );
 
 export const canManageTasks = (
     user: IUser | undefined,

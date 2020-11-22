@@ -23,6 +23,7 @@ export const ProfilePage = withAuthentication(observer(() => {
 
     useEffect(() => {
         view.title = "User profile";
+        view.setNavigation("default");
     }, [view]);
 
     const tabData: ITabData<ProfileTab>[] = useMemo(() => [

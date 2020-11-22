@@ -5,12 +5,12 @@ import { useUserStore } from "../../../contexts/user-context";
 import { IUser } from '../../../../common';
 import { useAuthStore } from '../../../contexts/auth-context';
 
-export const withAuthorisation = (
-    WrappedComponent: React.ComponentType,
+export const withAuthorisation = <T extends {}>(
+    WrappedComponent: React.ComponentType<T>,
     condition: (user: IUser) => boolean,
     placeholder?: React.ReactNode,
 ) => {
-    const WithAuthorisationComponent = () => {
+    return observer((props: T) => {
         const user = useUserStore();
         const auth = useAuthStore();
 
@@ -18,13 +18,11 @@ export const withAuthorisation = (
             || !user.divisionUsersCollection.isFetched
             || !user.usersCollection.isFetched
             ) {
-            return null;
+            return <></>;
         }
 
         return user.divisionUser && condition(user.divisionUser)
-            ? <WrappedComponent />
+            ? <WrappedComponent {...props}/>
             : <>{placeholder}</>;
-    };
-
-    return observer(WithAuthorisationComponent);
+    });
 };

@@ -113,7 +113,9 @@ const AuthenticatedMenu = withAuthentication(
     }) => {
         return (
             <>
-                <TimesheetCalendar />
+                <TimesheetCalendar 
+                    onAction={onAction}
+                />
                 <List
                     onAction={onAction}
                 >

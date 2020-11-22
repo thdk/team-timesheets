@@ -149,7 +149,7 @@ export class ViewStore implements IViewStore {
   @computed
   public get isDrawerOpen() {
     return !!(
-      this.rootStore.auth.activeDocument
+      this.rootStore.auth.activeDocumentId
       && this.isDrawerOpenField
     );
   }

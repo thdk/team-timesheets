@@ -10,7 +10,11 @@ import { withAuthorisation } from '../users/with-authorisation';
 import { canAddRegistrations } from '../../rules';
 
 export const TimesheetCalendar = withAuthorisation(
-    observer(() => {
+    observer(({
+        onAction,
+    }: {
+        onAction?(): void;
+    }) => {
         const timesheets = useRegistrationStore();
         const router = useRouterStore();
         const view = useViewStore();
@@ -18,7 +22,10 @@ export const TimesheetCalendar = withAuthorisation(
         const dateChanged = React.useCallback((dates: Date | Date[]) => {
             const date = dates instanceof (Date) ? dates : dates[0];
             goToOverview({ router, view }, { year: date.getFullYear(), day: date.getDate(), month: date.getMonth() + 1 }, { track: false });
-        }, []);
+            if (onAction) {
+                onAction();
+            }
+        }, [onAction, goToOverview]);
 
         const getTileClassName = (tile: CalendarTileProperties) => {
             const classNames = [];

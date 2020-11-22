@@ -1,4 +1,4 @@
-import { observable, action, computed, observe, reaction, IObservableValue } from "mobx";
+import { observable, action, computed, reaction, IObservableValue } from "mobx";
 import { ICollection, Collection, Doc, RealtimeMode, FetchMode, CollectionReference } from "firestorable";
 import { IRootStore } from "../root-store";
 import * as deserializer from "../../../common/serialization/deserializer";
@@ -15,7 +15,8 @@ export class UserStore implements IUserStore {
 
     private readonly _selectedUser = observable.box<IUser | undefined>();
 
-    private _selectedUserId = observable.box<string | undefined>();
+    @observable.ref
+    private _selectedUserId: string | undefined = undefined;
 
     public readonly usersCollection: ICollection<IUser, IUserData>;
     public readonly divisionUsersCollection: ICollection<IUser, IUserData>;
@@ -128,13 +129,13 @@ export class UserStore implements IUserStore {
         //     return change;
         // });
 
-        observe(this._selectedUserId, change => this.setSelectedUser(change.newValue));
+        reaction(() => this._selectedUserId, id => this.setSelectedUser(id));
     }
 
     @action
     private setSelectedUser(id: string | undefined): void {
         const collection = this.divisionUser?.divisionId
-            ? this.divisionUsersCollection
+            ? this.divisionUsersAllCollection
             : this.usersCollection;
 
         const user: Doc<IUser, IUserData> | undefined = id ? collection.get(id) : undefined;
@@ -193,12 +194,12 @@ export class UserStore implements IUserStore {
 
     @action
     public setSelectedUserId(id: string | undefined): void {
-        this._selectedUserId.set(id);
+        this._selectedUserId = id;
     }
 
     @computed
     public get selectedUserId(): string | undefined {
-        return this._selectedUserId.get();
+        return this._selectedUserId;
     }
 
     @computed

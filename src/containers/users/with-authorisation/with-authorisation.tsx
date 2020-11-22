@@ -21,6 +21,10 @@ export const withAuthorisation = <T extends {}>(
             return <></>;
         }
 
+        if (auth.activeDocument?.divisionUserId && auth.activeDocument?.divisionUserId !== user.divisionUser?.id) {
+            return null;
+        }
+
         return user.divisionUser && condition(user.divisionUser)
             ? <WrappedComponent {...props}/>
             : <>{placeholder}</>;

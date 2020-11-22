@@ -35,7 +35,10 @@ export class UserStore implements IUserStore {
         this.rootStore = rootStore;
 
         const createQuery = (user?: IUser) => {
-            const query = (ref: CollectionReference) => ref.orderBy("name", "asc");
+            const query = (ref: CollectionReference) =>
+                ref.where("divisionId", "==", (this.divisionUser?.divisionId || ""))
+                    .orderBy("name", "asc");
+
             return canReadUsers(user)
                 ? query
                 : null;
@@ -218,7 +221,7 @@ export class UserStore implements IUserStore {
     public get divisionUser(): (IUser & { id: string }) | undefined {
         const divisionUser = this._divisionUser.get();
 
-        return divisionUser 
+        return divisionUser
             ? { ...divisionUser.data!, id: divisionUser.id }
             : this.authenticatedUser ? { ...this.authenticatedUser } : undefined;
     }
@@ -243,7 +246,7 @@ export class UserStore implements IUserStore {
 
     public updateDivisionUser(userData: Partial<IUser>): void {
         const user = this.divisionUser;
-        if (user) { 
+        if (user) {
             if (this.divisionUser?.divisionId) {
                 this.divisionUsersCollection.updateAsync(userData, user.id);
             } else {

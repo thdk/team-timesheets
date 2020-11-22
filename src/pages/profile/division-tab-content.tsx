@@ -130,7 +130,7 @@ export const DivisionsTabContent = () => {
                     <>
                         <p>
                             You aren't in any division yet.
-                    </p>
+                        </p>
                         <p>
                             <a href="#"
                                 onClick={handleCreateNewClick}
@@ -139,16 +139,14 @@ export const DivisionsTabContent = () => {
                             <a href="#"
                                 onClick={handleJoinDivision}
                             >join an existing division</a>.
-                            <br /><br /><br />
-                            <p>
-                                A division is needed to start using Team Timesheets.
-                                If your division grows, you can recruit more team members to your division.
-                                <br/>
-                                Items such as projects, clients, tasks and teams are shared within a division.
-
-                                Nothing is shared with other divisons.
-                            </p>
+                            <br />
                         </p>
+                        <p>
+                            If your division grows, you can recruit more team members to your division.
+                            <br /><br />
+                            Items such as projects, clients, tasks and teams are shared within a division.
+                            Nothing is shared with other divisons.
+                         </p>
                     </>
                 }
             />

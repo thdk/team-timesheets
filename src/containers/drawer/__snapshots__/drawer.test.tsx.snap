@@ -20,14 +20,12 @@ exports[`Drawer should render 1`] = `
           >
             <li
               class="mdc-list-item"
-              role="menuitem"
               tabindex="0"
             >
               Preferences
             </li>
             <li
               class="mdc-list-item"
-              role="menuitem"
               tabindex="0"
             >
               Manage divisions
@@ -38,7 +36,6 @@ exports[`Drawer should render 1`] = `
             />
             <li
               class="mdc-list-item"
-              role="menuitem"
               tabindex="0"
             >
               <i
@@ -699,17 +696,16 @@ exports[`Drawer should render 1`] = `
           </div>
         </div>
       </div>
-      <div
+      <ul
         class="mdc-list"
       >
-        <a
-          aria-selected="true"
+        <li
           class="mdc-list-item"
-          href="/"
+          tabindex="0"
         >
           <i
             aria-hidden="true"
-            class="material-icons mdc-list-item__graphic"
+            class="rmwc-icon rmwc-icon--ligature material-icons mdc-list-item__graphic"
           >
             today
           </i>
@@ -718,15 +714,14 @@ exports[`Drawer should render 1`] = `
           >
             Today
           </span>
-        </a>
-        <a
-          aria-selected="true"
+        </li>
+        <li
           class="mdc-list-item"
-          href="/"
+          tabindex="0"
         >
           <i
             aria-hidden="true"
-            class="material-icons mdc-list-item__graphic"
+            class="rmwc-icon rmwc-icon--ligature material-icons mdc-list-item__graphic"
           >
             calendar_today
           </i>
@@ -735,14 +730,14 @@ exports[`Drawer should render 1`] = `
           >
             This month
           </span>
-        </a>
-        <a
+        </li>
+        <li
           class="mdc-list-item"
-          href="#"
+          tabindex="0"
         >
           <i
             aria-hidden="true"
-            class="material-icons mdc-list-item__graphic"
+            class="rmwc-icon rmwc-icon--ligature material-icons mdc-list-item__graphic"
           >
             favorite
           </i>
@@ -751,17 +746,18 @@ exports[`Drawer should render 1`] = `
           >
             Favorites
           </span>
-        </a>
-        <hr
+        </li>
+        <li
           class="mdc-list-divider"
+          role="separator"
         />
-        <a
+        <li
           class="mdc-list-item"
-          href="#"
+          tabindex="0"
         >
           <i
             aria-hidden="true"
-            class="material-icons mdc-list-item__graphic"
+            class="rmwc-icon rmwc-icon--ligature material-icons mdc-list-item__graphic"
           >
             list
           </i>
@@ -770,14 +766,14 @@ exports[`Drawer should render 1`] = `
           >
             Export
           </span>
-        </a>
-        <a
+        </li>
+        <li
           class="mdc-list-item"
-          href="#"
+          tabindex="0"
         >
           <i
             aria-hidden="true"
-            class="material-icons mdc-list-item__graphic"
+            class="rmwc-icon rmwc-icon--ligature material-icons mdc-list-item__graphic"
           >
             bar_chart
           </i>
@@ -786,17 +782,18 @@ exports[`Drawer should render 1`] = `
           >
             Dashboard
           </span>
-        </a>
-        <hr
+        </li>
+        <li
           class="mdc-list-divider"
+          role="separator"
         />
-        <a
+        <li
           class="mdc-list-item"
-          href="#"
+          tabindex="0"
         >
           <i
             aria-hidden="true"
-            class="material-icons mdc-list-item__graphic"
+            class="rmwc-icon rmwc-icon--ligature material-icons mdc-list-item__graphic"
           >
             star_border
           </i>
@@ -805,14 +802,14 @@ exports[`Drawer should render 1`] = `
           >
             Projects
           </span>
-        </a>
-        <a
+        </li>
+        <li
           class="mdc-list-item"
-          href="#"
+          tabindex="0"
         >
           <i
             aria-hidden="true"
-            class="material-icons mdc-list-item__graphic"
+            class="rmwc-icon rmwc-icon--ligature material-icons mdc-list-item__graphic"
           >
             settings
           </i>
@@ -821,11 +818,12 @@ exports[`Drawer should render 1`] = `
           >
             Settings
           </span>
-        </a>
-        <hr
+        </li>
+        <li
           class="mdc-list-divider"
+          role="separator"
         />
-      </div>
+      </ul>
     </div>
   </aside>
 </DocumentFragment>

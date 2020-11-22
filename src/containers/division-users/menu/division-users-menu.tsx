@@ -1,5 +1,5 @@
 import React, { useCallback, useState } from "react";
-import { MenuSurfaceAnchor, MenuItem, MenuHTMLProps, MenuSurface } from "@rmwc/menu";
+import { MenuSurfaceAnchor, MenuHTMLProps, MenuSurface } from "@rmwc/menu";
 import { ListItem, List, ListDivider, ListItemGraphic, ListItemText } from "@rmwc/list";
 import { observer } from "mobx-react-lite";
 
@@ -17,8 +17,11 @@ import { useAuthStore } from "../../../contexts/auth-context";
 
 export const DivisionUsersMenu = observer(({
     children,
+    onAction,
     ...menuProps
-}: MenuHTMLProps
+}: MenuHTMLProps & {
+    onAction?(): void;
+}
 ) => {
     const division = useDivisionStore();
     const router = useRouterStore();
@@ -75,7 +78,9 @@ export const DivisionUsersMenu = observer(({
                 {areDivisionsEnabled && division.userDivisions.length
                     ? (
                         <>
-                            <List>
+                            <List
+                                onAction={onAction}
+                            >
                                 {division.userDivisions.map(division => <ListItem
                                     role="menuitem"
                                     tabIndex={0}
@@ -102,30 +107,32 @@ export const DivisionUsersMenu = observer(({
                         </>
                     )
                     : null}
-                <List>
-                    <MenuItem
+                <List
+                    onAction={onAction}
+                >
+                    <ListItem
                         onClick={() => {
                             setIsMenuOpen(false);
                             goToUserProfile(router, "preferences");
                         }}
                     >
                         Preferences
-                    </MenuItem>
+                    </ListItem>
                     {areDivisionsEnabled
                         ? (
-                            <MenuItem
+                            <ListItem
                                 onClick={() => {
                                     setIsMenuOpen(false);
                                     goToUserProfile(router, "divisions");
                                 }}
                             >
                                 Manage divisions
-                            </MenuItem>
+                            </ListItem>
                         )
                         : null
                     }
                     <ListDivider />
-                    <MenuItem
+                    <ListItem
                         onClick={() => {
                             setIsMenuOpen(false);
                             user.authenticatedUser ? auth.signout() : goToLogin(router);
@@ -137,7 +144,7 @@ export const DivisionUsersMenu = observer(({
                         <ListItemText>
                             Logout
                         </ListItemText>
-                    </MenuItem>
+                    </ListItem>
                 </List>
 
             </MenuSurface>

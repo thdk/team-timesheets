@@ -14,14 +14,12 @@ exports[`DivisionUsersMenu should render 1`] = `
       >
         <li
           class="mdc-list-item"
-          role="menuitem"
           tabindex="0"
         >
           Preferences
         </li>
         <li
           class="mdc-list-item"
-          role="menuitem"
           tabindex="0"
         >
           Manage divisions
@@ -32,7 +30,6 @@ exports[`DivisionUsersMenu should render 1`] = `
         />
         <li
           class="mdc-list-item"
-          role="menuitem"
           tabindex="0"
         >
           <i

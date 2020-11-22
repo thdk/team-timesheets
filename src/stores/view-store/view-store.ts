@@ -49,7 +49,7 @@ export class ViewStore implements IViewStore {
 
   @observable navigationAction: INavigationViewAction = {} as INavigationViewAction;
   @observable title = "";
-  @observable isDrawerOpenField = true;
+  @observable isDrawerOpenField = window.innerWidth > 600;
   @observable day?: number;
   @observable month?: number;
   @observable year?: number;
@@ -148,11 +148,7 @@ export class ViewStore implements IViewStore {
 
   @computed
   public get isDrawerOpen() {
-    return !!(
-      this.rootStore.auth.activeDocument
-      && this.rootStore.auth.activeDocument.divisionId
-      && this.isDrawerOpenField
-    );
+    return this.isDrawerOpenField;
   }
 
   @computed get moment() {

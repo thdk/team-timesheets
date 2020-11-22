@@ -5,21 +5,26 @@ import { reaction } from "mobx";
 export const useConfigs = () => {
     const configStore = useConfigStore();
 
-    const [areConfigsFetched, setAreConfigsFetched] = useState(configStore.configsCollection.isFetched);
+    const fn = () => configStore.configsCollection.isFetched
+        ? configStore.getConfigValue.bind(configStore)
+        : () => undefined;
+
+    const [getConfigValue, setgetConfigValue] = useState<ReturnType<typeof fn>>(fn);
 
     useEffect(
         () => {
             reaction(() => configStore.configsCollection.isFetched, (isFetched) => {
-                if (isFetched !== areConfigsFetched) {
-                    setAreConfigsFetched(isFetched);
+                if (isFetched) {
+                    setgetConfigValue(fn);
                 }
             });
-        }, [
-        configStore,
-        areConfigsFetched,
-    ]);
+        },
+        [
+            configStore,
+        ]
+    );
 
     return {
-        getConfigValue: configStore.getConfigValue.bind(configStore),
+        getConfigValue,
     }
 };

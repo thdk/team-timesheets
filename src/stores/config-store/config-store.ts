@@ -74,6 +74,9 @@ export class ConfigStore implements IConfigStore {
             {
                 fetchMode: FetchMode.auto,
                 realtimeMode: RealtimeMode.off,
+            },
+            {
+                // logger: msg => console.log(msg),
             }
         )
 
@@ -90,7 +93,6 @@ export class ConfigStore implements IConfigStore {
 
                 this.teamsCollection.query = query;
                 this.tasksCollection.query = query;
-                this.configsCollection.query = query;
                 this.clientsCollection.query = query;
 
                 if (!this.teamsCollection.isFetched) {

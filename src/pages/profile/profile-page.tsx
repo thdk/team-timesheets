@@ -7,17 +7,13 @@ import { Preferences } from "../settings/preferences";
 import { withAuthentication } from "../../containers/users/with-authentication";
 import { RedirectToLogin } from "../../internal";
 import { DivisionsTabContent } from "./division-tab-content";
-import { useConfigs } from "../../containers/configs/use-configs";
 import { goToUserProfile, ProfileTab, ProfileRouteQueryParams } from "../../routes/users/profile";
 import { useRouterStore } from "../../stores/router-store";
 import { canAddRegistrations } from "../../rules";
 
 export const ProfilePage = withAuthentication(observer(() => {
     const view = useViewStore();
-    const configs = useConfigs();
     const router = useRouterStore();
-
-    const areDivisionsEnabled = configs.getConfigValue<boolean>("enable-divisions", false) || true;
 
     const { divisionUser } = useUserStore();
 
@@ -39,9 +35,9 @@ export const ProfilePage = withAuthentication(observer(() => {
             tabContent: <DivisionsTabContent />,
             text: "My divisions",
             icon: "groups",
-            canOpen: () => !!divisionUser && areDivisionsEnabled,
+            canOpen: () => !!divisionUser,
         },
-    ], [divisionUser, areDivisionsEnabled]);
+    ], [divisionUser]);
 
     const onTabChange = useCallback((tabId: ProfileTab) => {
         goToUserProfile(router, tabId);

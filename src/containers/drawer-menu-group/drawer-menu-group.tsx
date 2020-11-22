@@ -17,22 +17,26 @@ export const DrawerMenuGroup = ({
 }) => {
     return (
         <>
-            {items.map(({
-                icon,
-                text,
-                action,
-            }) => {
-                return (
-                    <ListItem
-                        onClick={action}
-                    >
-                        <ListItemGraphic icon={icon} />
-                        <ListItemText>
-                            {text}
-                        </ListItemText>
-                    </ListItem>
-                );
-            })}
+            {items.map(
+                ({
+                    icon,
+                    text,
+                    action,
+                },
+                    key,
+                ) => {
+                    return (
+                        <ListItem
+                            onClick={action}
+                            key={key}
+                        >
+                            <ListItemGraphic icon={icon} />
+                            <ListItemText>
+                                {text}
+                            </ListItemText>
+                        </ListItem>
+                    );
+                })}
 
             {bottomDivider ? <ListDivider /> : null}
         </>

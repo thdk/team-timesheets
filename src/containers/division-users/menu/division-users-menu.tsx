@@ -48,7 +48,7 @@ export const DivisionUsersMenu = observer(({
         setIsMenuOpen(false);
     };
 
-    const areDivisionsEnabled = configs.getConfigValue("enable-divisions", false) || true;
+    const isNoDivisionEnabled = configs.getConfigValue("enable-no-division", false);
 
     const name = division.division || user.authenticatedUser?.divisionId
         ? (
@@ -75,35 +75,49 @@ export const DivisionUsersMenu = observer(({
                 className={"division-users-menu"}
                 {...menuProps}
             >
-                {areDivisionsEnabled && division.userDivisions.length
+                {division.userDivisions.length
                     ? (
                         <>
                             <List
                                 onAction={onAction}
                             >
-                                {division.userDivisions.map(division => <ListItem
-                                    role="menuitem"
-                                    tabIndex={0}
-                                    key={division.divisionUserId}
-                                    onClick={() => handleSelect(division)}
-                                >
-                                    <ListItemGraphic icon={division.icon} />
-                                    <ListItemText>
-                                        {division.name}
-                                    </ListItemText>
-                                </ListItem>)}
+                                {division.userDivisions
+                                    .map((division) => {
+                                        return (
+                                            <ListItem
+                                                role="menuitem"
+                                                tabIndex={0}
+                                                key={division.divisionUserId}
+                                                onClick={() => handleSelect(division)}
+                                            >
+                                                <ListItemGraphic icon={division.icon} />
+                                                <ListItemText>
+                                                    {division.name}
+                                                </ListItemText>
+                                            </ListItem>
+                                        );
+                                    })
+                                }
                                 <ListDivider />
-                                <ListItem
-                                    onClick={() => handleSelect(undefined)}>
-                                    <ListItemGraphic
-                                        icon={"all_inclusive"}
-                                    />
-                                    <ListItemText>
-                                        {user.authenticatedUser?.name}
-                                    </ListItemText>
-                                </ListItem>
+                                {
+                                    isNoDivisionEnabled
+                                        ? (
+                                            <>
+                                                <ListItem
+                                                    onClick={() => handleSelect(undefined)}>
+                                                    <ListItemGraphic
+                                                        icon={"all_inclusive"}
+                                                    />
+                                                    <ListItemText>
+                                                        {user.authenticatedUser?.name}
+                                                    </ListItemText>
+                                                </ListItem>
+                                                <ListDivider />
+                                            </>
+                                        )
+                                        : null
+                                }
                             </List>
-                            <ListDivider />
                         </>
                     )
                     : null}
@@ -118,19 +132,14 @@ export const DivisionUsersMenu = observer(({
                     >
                         Preferences
                     </ListItem>
-                    {areDivisionsEnabled
-                        ? (
-                            <ListItem
-                                onClick={() => {
-                                    setIsMenuOpen(false);
-                                    goToUserProfile(router, "divisions");
-                                }}
-                            >
-                                Manage divisions
-                            </ListItem>
-                        )
-                        : null
-                    }
+                    <ListItem
+                        onClick={() => {
+                            setIsMenuOpen(false);
+                            goToUserProfile(router, "divisions");
+                        }}
+                    >
+                        Manage divisions
+                    </ListItem>
                     <ListDivider />
                     <ListItem
                         onClick={() => {

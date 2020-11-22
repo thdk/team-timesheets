@@ -36,8 +36,7 @@ export class UserStore implements IUserStore {
 
         const createQuery = (user?: IUser) => {
             const query = (ref: CollectionReference) =>
-                ref.where("divisionId", "==", (this.divisionUser?.divisionId || ""))
-                    .orderBy("name", "asc");
+                ref.orderBy("name", "asc");
 
             return canReadUsers(user)
                 ? query

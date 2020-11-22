@@ -181,7 +181,7 @@ const beforeTimesheetExit = (_route: RegistrationsOverviewRoute, _params: any, s
 const routes = {
     overview: new Route({
         path: path + '/:year/:month/:day',
-        component: <App><RegistrationsPage></RegistrationsPage></App>,
+        component: <App><RegistrationsPage /></App>,
         onEnter: (route: RegistrationsOverviewRoute, params: DateObject, s: IRootStore) => {
             routeChanged(route, params, s);
             setActions(s, true);

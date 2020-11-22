@@ -7,16 +7,16 @@ import { canAddRegistrations } from '../../rules';
 import { Redirect } from '../../routes/actions';
 import routes from '../../routes/users';
 
-export const RegistrationsPage = withAuthentication(
-    withAuthorisation(
+export const RegistrationsPage = withAuthorisation(
+    withAuthentication(
         Timesheet,
-        canAddRegistrations,
-        <Redirect
-            route={routes.userProfile}
-            queryParams={{
-                tab: "divisions",
-            }}
-        />
+        <RedirectToLogin />,
     ),
-    <RedirectToLogin />,
+    canAddRegistrations,
+    <Redirect
+        route={routes.userProfile}
+        queryParams={{
+            tab: "divisions",
+        }}
+    />
 );

@@ -13,6 +13,12 @@ export const useUserStoreMock = {
             admin: true,
         },
     },
+    usersCollection: {
+        isFetched: true,
+    },
+    divisionUsersCollection: {
+        isFetched: true,
+    },
 } as ReturnType<typeof useUserStore>;
 
 export const useUserStore = jest.fn().mockReturnValue(useUserStoreMock);

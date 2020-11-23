@@ -63,30 +63,6 @@ exports[`SettingsPage should render 1`] = `
               class="mdc-tab__ripple "
             />
           </button>
-          <button
-            class="mdc-tab"
-          >
-            <div
-              class="mdc-tab__content"
-            >
-              <span
-                class="mdc-tab__text-label"
-              >
-                Connections
-              </span>
-            </div>
-            <span
-              class="mdc-tab-indicator"
-            >
-              <span
-                aria-hidden="true"
-                class="mdc-tab-indicator__content mdc-tab-indicator__content--underline"
-              />
-            </span>
-            <div
-              class="mdc-tab__ripple "
-            />
-          </button>
         </div>
       </div>
     </div>

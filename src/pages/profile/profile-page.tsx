@@ -3,13 +3,14 @@ import { observer } from "mobx-react-lite";
 import { useViewStore } from "../../contexts/view-context";
 import { ITabData, Tabs } from "../../components/tabs";
 import { useUserStore } from "../../contexts/user-context";
-import { Preferences } from "../settings/preferences";
+import { Preferences } from "./preferences";
 import { withAuthentication } from "../../containers/users/with-authentication";
 import { RedirectToLogin } from "../../internal";
 import { DivisionsTabContent } from "./division-tab-content";
 import { goToUserProfile, ProfileTab, ProfileRouteQueryParams } from "../../routes/users/profile";
 import { useRouterStore } from "../../stores/router-store";
 import { canAddRegistrations } from "../../rules";
+import { Connections } from "./connections";
 
 export const ProfilePage = withAuthentication(observer(() => {
     const view = useViewStore();
@@ -37,6 +38,7 @@ export const ProfilePage = withAuthentication(observer(() => {
             icon: "groups",
             canOpen: () => !!divisionUser,
         },
+        { id: "connections", text: "Connections", tabContent: <Connections /> },
     ], [divisionUser]);
 
     const onTabChange = useCallback((tabId: ProfileTab) => {

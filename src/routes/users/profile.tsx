@@ -9,7 +9,7 @@ import { ProfilePage } from "../../pages/profile";
 export type ProfileRouteQueryParams = { tab: ProfileTab };
 export type ProfileRoute = Route<IRootStore, {}, ProfileRouteQueryParams>;
 
-export type ProfileTab = "preferences" | "divisions";
+export type ProfileTab = "preferences" | "divisions" | "connections";
 
 export const goToUserProfile = (router: RouterStore<IRootStore>, tab: ProfileTab = "preferences") => {
     router.goTo(routes.userProfile, {}, { tab });

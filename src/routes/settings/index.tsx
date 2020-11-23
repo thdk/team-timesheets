@@ -15,7 +15,7 @@ export const goToSettings = (router: RouterStore<IRootStore>, tab: SettingsTab =
     router.goTo(routes.preferences, {}, { tab });
 }
 
-export type SettingsTab = "connections" | "tasks" | "clients" | "users" | "teams";
+export type SettingsTab = "tasks" | "clients" | "users" | "teams";
 
 const setActions = (tab: SettingsTab, store: IRootStore) => {
     when(() => store.user.divisionUser !== undefined, () => {

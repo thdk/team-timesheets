@@ -1,6 +1,6 @@
 import React from "react";
 import { render } from "@testing-library/react";
-import { Preferences } from "./";
+import { Preferences } from ".";
 import { useTasks } from "../../../contexts/task-context";
 import { useClients } from "../../../contexts/client-context";
 import { ITask, IClient } from "../../../../common";

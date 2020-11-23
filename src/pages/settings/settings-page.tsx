@@ -10,7 +10,6 @@ import { TeamList } from '../../containers/teams/list';
 import { useRouterStore } from '../../stores/router-store';
 import { observer } from 'mobx-react-lite';
 import { useUserStore } from "../../contexts/user-context";
-import { Connections } from './connections';
 import { Tabs, ITabData } from '../../components/tabs';
 
 export const SettingsPage = observer(() => {
@@ -18,13 +17,12 @@ export const SettingsPage = observer(() => {
 
     const { divisionUser: user } = useUserStore();
 
-          const tabData: ITabData<SettingsTab>[] = [
-              { id: "tasks", text: "Tasks", tabContent: <TaskList /> },
-              { id: "clients", text: "Clients", tabContent: <ClientList /> },
-              { id: "teams", text: "Teams", canOpen: () => canManageTeams(user), tabContent: <TeamList /> },
-              { id: "users", text: "Users", canOpen: () => canReadUsers(user), tabContent: <UserList /> },
-              { id: "connections", text: "Connections", tabContent: <Connections /> },
-        ];
+    const tabData: ITabData<SettingsTab>[] = [
+        { id: "tasks", text: "Tasks", tabContent: <TaskList /> },
+        { id: "clients", text: "Clients", tabContent: <ClientList /> },
+        { id: "teams", text: "Teams", canOpen: () => canManageTeams(user), tabContent: <TeamList /> },
+        { id: "users", text: "Users", canOpen: () => canReadUsers(user), tabContent: <UserList /> },
+    ];
 
     const onTabChange = useCallback((tabId: SettingsTab) => {
         goToSettings(router, tabId);

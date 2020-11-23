@@ -1,8 +1,7 @@
 import * as React from 'react';
-import { observer } from 'mobx-react-lite';
 import { List } from '@rmwc/list';
 
-import { goToOverview, goToSettings, goToReports, goToProjects, goToDashboard, goToFavorites } from "../../internal";
+import { goToSettings, goToReports, goToProjects, goToDashboard } from "../../internal";
 
 import { withAuthorisation } from '../users/with-authorisation';
 import { useViewStore } from '../../contexts/view-context';
@@ -11,46 +10,7 @@ import { canAddRegistrations } from '../../rules';
 import { withAuthentication } from '../users/with-authentication';
 import { DrawerMenuGroup } from '../drawer-menu-group';
 import { TimesheetCalendar } from '../timesheet-calendar';
-
-const TimesheetMenu = withAuthorisation(
-    observer(() => {
-        const view = useViewStore();
-        const router = useRouterStore();
-
-        const navigateToOverview = (month = false) => {
-            const date = new Date();
-            goToOverview({
-                router,
-                view,
-            }, { day: month ? undefined : date.getDate(), month: date.getMonth() + 1, year: date.getFullYear() }, { track: false });
-        }
-
-        return (
-            <DrawerMenuGroup
-                items={
-                    [
-                        {
-                            action: navigateToOverview,
-                            text: "Today",
-                            icon: "today",
-                        },
-                        {
-                            action: navigateToOverview.bind(null, true),
-                            text: "This month",
-                            icon: "calendar_today",
-                        },
-                        {
-                            action: () => goToFavorites(router),
-                            text: "Favorites",
-                            icon: "favorite",
-                        }
-                    ]
-                }
-            />
-        );
-    }),
-    user => canAddRegistrations(user),
-);
+import { TimesheetMenu } from './timesheet-menu';
 
 const ReportMenu = withAuthorisation(
     () => {

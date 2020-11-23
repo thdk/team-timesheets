@@ -20,7 +20,21 @@ export const path = "/timesheets";
 
 type RegistrationsOverviewRoute = Route<IRootStore, DateObject, { last: string }>;
 
-export const goToOverview = (s: Pick<IRootStore, "router" | "view"> , date?: DateObject, trackOptions?: { track?: boolean, currentDate?: number }) => {
+export const goToQuickOverview = (
+    {
+        router,
+        view,
+    }: Pick<IRootStore, "router" | "view">,
+    month = false,
+) => {
+    const date = new Date();
+    goToOverview({
+        router,
+        view,
+    }, { day: month ? undefined : date.getDate(), month: date.getMonth() + 1, year: date.getFullYear() }, { track: false });
+}
+
+export const goToOverview = (s: Pick<IRootStore, "router" | "view">, date?: DateObject, trackOptions?: { track?: boolean, currentDate?: number }) => {
     let route = routes.monthOverview;
     if ((date && date.day) || (!date && s.view.day)) {
         route = routes.overview;

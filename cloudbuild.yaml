@@ -1,11 +1,18 @@
 steps:
-- name: 'gcr.io/kaniko-project/executor:latest'
+- name: "gcr.io/cloud-builders/curl"
+  entrypoint: bash
   args:
-  - --destination=gcr.io/$PROJECT_ID/app
-  - --cache=true
+    [
+      "-c",
+      "bash <(curl -s https://codecov.io/env)",
+    ]
   env:
   - "VCS_COMMIT_ID=$COMMIT_SHA"
   - "VCS_BRANCH_NAME=$BRANCH_NAME"
   - "VCS_PULL_REQUEST=$_PR_NUMBER"
   - "CI_BUILD_ID=$BUILD_ID"
   - "CODECOV_TOKEN=$_CODECOV_TOKEN"
+- name: 'gcr.io/kaniko-project/executor:latest'
+  args:
+  - --destination=gcr.io/$PROJECT_ID/app
+  - --cache=true

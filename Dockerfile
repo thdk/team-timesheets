@@ -22,7 +22,8 @@ RUN npm run build:refs \
     && npm run build:production \
     && npm run test:cloudbuild \
     && if [ "$CODECOV_TOKEN" != "" ]; \
-        then curl -s https://codecov.io/bash | bash -s - -X gcov -X coveragepy -X fix -s coverage
+        then curl -s https://codecov.io/bash | bash -s - -X gcov -X coveragepy -X fix -s coverage; \
+    fi
 
 WORKDIR /functions
 

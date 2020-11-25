@@ -1,5 +1,22 @@
+#  '--build-arg VCS_COMMIT_ID=$COMMIT_SHA',
+# '--build-arg VCS_BRANCH_NAME=$BRANCH_NAME',
+# '--build-arg VCS_PULL_REQUEST=$_PR_NUMBER',
+# '--build-arg CI_BUILD_ID=$BUILD_ID',
+# '--build-arg CODECOV_TOKEN=$_CODECOV_TOKEN',
 # Pull base image.
 FROM gcr.io/team-timesheets/builder as BUILDER
+
+ARG VCS_COMMIT_ID
+ARG VCS_BRANCH_NAME
+ARG VCS_PULL_REQUEST
+ARG CI_BUILD_ID
+ARG CODECOV_TOKEN
+
+ENV VCS_COMMIT_ID=$VCS_COMMIT_ID
+ENV VCS_BRANCH_NAME=$VCS_BRANCH_NAME
+ENV VCS_PULL_REQUEST=$VCS_PULL_REQUEST
+ENV CI_BUILD_ID=$CI_BUILD_ID
+ENV CODECOV_TOKEN=$CODECOV_TOKEN
 
 # Install dependencies
 WORKDIR /functions
@@ -22,7 +39,7 @@ RUN npm run build:refs \
     && npm run build:production \
     && npm run test:cloudbuild \
     && if [ "$CODECOV_TOKEN" != "" ]; \
-        then curl -s https://codecov.io/bash | bash -s - -X gcov -X coveragepy -X fix; \
+        then curl -s https://codecov.io/bash | bash -s - -X gcov -X coveragepy -X fix -s coverage; \
     fi
 
 WORKDIR /functions

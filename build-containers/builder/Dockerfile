@@ -1,4 +1,4 @@
-FROM ubuntu as BUILDER
+FROM ubuntu
 ARG DEBIAN_FRONTEND=noninteractive
 RUN apt-get update \
     && apt-get upgrade -y \
@@ -11,5 +11,3 @@ RUN apt-get update \
         git \
     && npm install -g firebase-tools && \
     firebase setup:emulators:firestore
-
-ENTRYPOINT ["/usr/local/bin/npm"]

@@ -408,7 +408,9 @@ describe("RegistrationStore", () => {
                 );
             });
 
-            store.timesheets.setActiveDocumentId(undefined);
+            // After saving the activeDocumentId and activeDocument should have been reset
+            expect(store.timesheets.activeDocumentId).toBeUndefined();
+            expect(store.timesheets.activeDocument).toBeUndefined();
         });
     });
 

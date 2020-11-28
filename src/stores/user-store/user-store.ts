@@ -102,8 +102,8 @@ export class UserStore implements IUserStore {
                 this.usersCollection.fetchAsync();
             }),
 
-            reaction(() => this.authenticatedUser, user => {
-                this.setDivisionUser(user?.divisionUserId);
+            reaction(() => this.authenticatedUserId, id => {
+                this.setDivisionUser(id);
             }),
 
             reaction(() => this.authenticatedUserId, id => {

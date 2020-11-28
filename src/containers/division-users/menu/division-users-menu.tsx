@@ -144,7 +144,7 @@ export const DivisionUsersMenu = observer(({
                     <ListItem
                         onClick={() => {
                             setIsMenuOpen(false);
-                            user.authenticatedUser ? auth.signout() : goToLogin(router);
+                            user.authenticatedUserId ? auth.signout() : goToLogin(router);
                         }}
                     >
                         <ListItemGraphic

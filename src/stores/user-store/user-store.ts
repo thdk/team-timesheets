@@ -75,7 +75,7 @@ export class UserStore implements IUserStore {
                 },
             },
             {
-                //logger: console.log
+                // logger: console.log
             },
         );
 
@@ -97,13 +97,19 @@ export class UserStore implements IUserStore {
         );
 
         this.reactionDisposeFns = [
-            reaction(() => this.divisionUser, user => {
-                this.usersCollection.query = createQuery(user);
-                this.usersCollection.fetchAsync();
-            }),
+            reaction(() => this.authenticatedUser, user => {
+                if (
+                    (canReadUsers(user) && !this.usersCollection.isFetched)
+                    ||
+                    (!canReadUsers(user) && this.usersCollection.isFetched)
+                ) {
+                    this.usersCollection.query = createQuery(user);
+                    this.usersCollection.fetchAsync();
+                }
 
-            reaction(() => this.authenticatedUserId, id => {
-                this.setDivisionUser(id);
+                if (this._divisionUser.get()?.id !== user?.divisionUserId) {
+                    this.setDivisionUser(user?.divisionUserId);
+                }
             }),
 
             reaction(() => this.authenticatedUserId, id => {

@@ -87,16 +87,15 @@ const setupAsync = () => {
     ]);
 };
 
-
 describe("UserListContainer", () => {
-    const store = new Store({ firestore });
+    let store: Store;
     beforeEach(async () => {
         await clearFirestoreDataAsync();
         await setupAsync();
+        store = new Store({ firestore });
     });
 
-    afterAll(() => store.dispose());
-
+    afterEach(() => store.dispose());
 
     it("should render without users", () => {
 

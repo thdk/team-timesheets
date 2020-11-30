@@ -5,6 +5,7 @@ import { Store } from "../../stores/root-store";
 import { TestCollection } from "../../__tests__/utils/firestorable/collection";
 import { waitFor, render } from "@testing-library/react";
 import { ReportDownloadLink } from "./report-download-link";
+import { StoreContext } from "../../contexts/store-context";
 
 jest.mock("../../contexts/firebase-context", () => ({
     useFirebase: () => ({
@@ -31,14 +32,6 @@ const {
         "users",
     ]);
 
-const store = new Store({
-    firestore,
-});
-
-jest.mock("../../contexts/store-context", () => ({
-    useStore: () => store,
-}));
-
 const userCollection = new TestCollection(firestore, userRef);
 
 const setupAsync = () => {
@@ -56,17 +49,15 @@ const setupAsync = () => {
     ]);
 };
 
-beforeAll(clearFirestoreDataAsync);
-beforeAll(setupAsync);
-afterAll(() => {
-    store.dispose();
-    return Promise.all([
-        deleteFirebaseAppsAsync(),
-    ])
-});
-
 describe("ReportDownloadLink", () => {
-    beforeEach(() => {
+    let store: Store;
+
+    beforeEach(async () => {
+        await setupAsync();
+
+        store = new Store({
+            firestore,
+        });
         transaction(() => {
             store.auth.setUser({
                 uid: "user-1",
@@ -81,9 +72,18 @@ describe("ReportDownloadLink", () => {
         });
     });
 
+    afterEach(async () => {
+        store.dispose();
+        await clearFirestoreDataAsync();
+    });
+
+    afterAll(deleteFirebaseAppsAsync);
+
     it("should not render when there is no report", async () => {
         const { asFragment } = render(
-            <ReportDownloadLink />
+            <StoreContext.Provider value={store}>
+                <ReportDownloadLink />
+            </StoreContext.Provider>
         );
 
         await waitFor(() => expect(asFragment()).toMatchSnapshot());
@@ -122,7 +122,9 @@ describe("ReportDownloadLink", () => {
 
     it("should not crash when report is deleted in database", async () => {
         const { findByText, queryByText } = render(
-            <ReportDownloadLink />
+            <StoreContext.Provider value={store}>
+                <ReportDownloadLink />
+            </StoreContext.Provider>
         );
 
         store.reports.requestReport("user-1", 2020, 4);

@@ -20,7 +20,7 @@ export class FirestorableStore<T, K> {
     private newDocumentField = observable.box<Partial<T> | undefined>();
     private createNewDocumentDefaults?(): Partial<T> | Promise<Partial<T>>;
 
-    private disposeFn: () => void;
+    private disposeFns: (() => void)[];
 
     constructor(
         {
@@ -44,22 +44,29 @@ export class FirestorableStore<T, K> {
             collectionDependencies,
         );
 
-        this.disposeFn = reaction(
-            () => this.activeDocumentIdField,
-            (id) => {
-                if (!id) {
-                    this.newDocumentField.set(undefined);
+        this.disposeFns = [
+            reaction(
+                () => this.activeDocumentIdField,
+                (id) => {
+                    if (!id) {
+                        this.newDocumentField.set(undefined);
 
-                } else {
-                    this.activeDocumentField = this.collection.get(id);
-                    if (!this.activeDocumentField) {
-                        // fetch the registration manually
-                        this.collection.getAsync(id)
-                            .then(regDoc => this.activeDocumentField = regDoc);
+                    } else {
+                        this.activeDocumentField = this.collection.get(id);
+                        if (!this.activeDocumentField) {
+                            // fetch the registration manually
+                            this.collection.getAsync(id)
+                                .then(regDoc => this.activeDocumentField = regDoc);
+                        }
                     }
+                },
+            ),
+            reaction(() => this.activeDocumentId, (id) => {
+                if (!id) {
+                    this.activeDocumentField = undefined;
                 }
-            },
-        );
+            }),
+        ];
     }
 
     public deleteDocuments(
@@ -141,6 +148,6 @@ export class FirestorableStore<T, K> {
     }
 
     public dispose() {
-        this.disposeFn();
+        this.disposeFns.reverse().forEach(fn => fn());
     }
 }

@@ -7,6 +7,7 @@ import { ArchivedProjectList } from ".";
 import { render, waitFor, fireEvent } from "@testing-library/react";
 import { canManageProjects } from "../../../rules";
 import { act } from "react-dom/test-utils";
+import { StoreContext } from "../../../contexts/store-context";
 const {
     firestore,
     clearFirestoreDataAsync,
@@ -26,9 +27,6 @@ const userCollection = new TestCollection(
 );
 
 const projectsCollection = new TestCollection<IProjectData>(firestore, projectRef);
-const store = new Store({
-    firestore,
-});
 
 const setupAsync = () => {
     return Promise.all([
@@ -42,36 +40,40 @@ const setupAsync = () => {
             },
             "user-1",
         ),
-    ]).then(() => {
+    ]);
+};
+
+jest.mock("../../../rules");
+
+
+afterAll(deleteFirebaseAppsAsync);
+
+describe("ProjectListArchived", () => {
+    let store: Store;
+
+    beforeEach(async () => {
+        await setupAsync();
+
+        store = new Store({
+            firestore,
+        });
+
         store.auth.setUser({
             uid: "user-1",
         } as firebase.User);
     });
-};
 
-jest.mock("../../../contexts/store-context", () => ({
-    useStore: () => store,
-}));
-
-jest.mock("../../../rules");
-
-beforeAll(() => Promise.all([
-    clearFirestoreDataAsync(),
-    setupAsync(),
-]));
-
-afterAll(() => {
-    store.dispose();
-    return Promise.all([
-        deleteFirebaseAppsAsync(),
-    ])
-});
-
-
-describe("ProjectListArchived", () => {
+    afterEach(async () => {
+        store.dispose();
+        await clearFirestoreDataAsync();
+    });
 
     it("renders without projects", () => {
-        const { asFragment } = render(<ArchivedProjectList />);
+        const { asFragment } = render(
+            <StoreContext.Provider value={store}>
+                <ArchivedProjectList />
+            </StoreContext.Provider>
+        );
 
         expect(asFragment()).toMatchSnapshot();
     });
@@ -88,7 +90,11 @@ describe("ProjectListArchived", () => {
             },
         ]);
 
-        const { getByText, queryByText } = render(<ArchivedProjectList />);
+        const { getByText, queryByText } = render(
+            <StoreContext.Provider value={store}>
+                <ArchivedProjectList />
+            </StoreContext.Provider>
+        );
         await waitFor(() => getByText("Project 1"));
 
         await projectsCollection.updateAsync({
@@ -128,9 +134,19 @@ describe("ProjectListArchived", () => {
             },
         ]);
 
-        const { container } = render(<ArchivedProjectList />);
-        const items = container.querySelectorAll(".settings-list-item");
-        expect(items.length).toBe(2);
+        const { container } = render(
+            <StoreContext.Provider value={store}>
+                <ArchivedProjectList />
+            </StoreContext.Provider>
+        );
+
+        let items: HTMLElement[];
+        await waitFor(() => {
+            items = Array.from(
+                container.querySelectorAll<HTMLElement>(".settings-list-item"),
+            );
+            expect(items.length).toBe(2);
+        });
 
         const checkboxes = container.querySelectorAll("input[type=checkbox]");
         expect(checkboxes.length).toBe(2);
@@ -157,7 +173,7 @@ describe("ProjectListArchived", () => {
 
     it("does not allow unauthorised users to click a project", async () => {
         (canManageProjects as any)
-            .mockReturnValueOnce(false);
+            .mockReturnValue(false);
 
         const projectIds = await projectsCollection.addAsync([
             {
@@ -170,9 +186,17 @@ describe("ProjectListArchived", () => {
             },
         ]);
 
-        const { container } = render(<ArchivedProjectList />);
-        const item = container.querySelector(".settings-list-item");
-        expect(item).not.toBeNull();
+        const { container } = render(
+            <StoreContext.Provider value={store}>
+                <ArchivedProjectList />
+            </StoreContext.Provider>
+        );
+
+        let item: HTMLElement;
+        await waitFor(() => {
+            item = container.querySelector<HTMLElement>(".settings-list-item")!;
+            expect(item).not.toBeNull();
+        });
 
         act(() => {
             fireEvent.click(item!);
@@ -184,5 +208,7 @@ describe("ProjectListArchived", () => {
 
         await waitFor(() => expect(store.projects.activeProjects.length).toBe(0));
 
+        (canManageProjects as any)
+            .mockReturnValue(true);
     });
 });

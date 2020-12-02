@@ -239,7 +239,7 @@ export class RegistrationStore extends FirestorableStore<IRegistration, IRegistr
         return doc && doc.data ? doc.data : null;
     }
 
-    public saveSelectedRegistration() {
+    public async saveSelectedRegistration() {
         if (this.activeDocument) {
             const { activeDocument } = this;
 
@@ -249,7 +249,7 @@ export class RegistrationStore extends FirestorableStore<IRegistration, IRegistr
                     : this.addDocument(registration as IRegistration); // TODO: unsafe typing!
             };
 
-            return saveOrUpdateAsync(activeDocument, this.activeDocumentId)
+            await saveOrUpdateAsync(activeDocument, this.activeDocumentId)
                 .then(() => {
                     const { project = undefined } = activeDocument || {};
                     // TODO: move set recent project to firebase function
@@ -276,9 +276,11 @@ export class RegistrationStore extends FirestorableStore<IRegistration, IRegistr
                         }
                     }
                 });
+
+                this.setActiveDocumentId(undefined);
         }
         else {
-            return Promise.reject("No registration selected to save");
+            await Promise.reject("No registration selected to save");
         }
     }
 

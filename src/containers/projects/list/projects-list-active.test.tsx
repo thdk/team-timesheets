@@ -7,6 +7,7 @@ import { ActiveProjectList } from ".";
 import { render, waitFor, fireEvent } from "@testing-library/react";
 import { canEditProject } from "../../../rules";
 import { act } from "react-dom/test-utils";
+import { StoreContext } from "../../../contexts/store-context";
 
 const {
     firestore,
@@ -27,9 +28,6 @@ const userCollection = new TestCollection(
 );
 
 const projectsCollection = new TestCollection<IProjectData>(firestore, projectRef);
-const store = new Store({
-    firestore,
-});
 
 const setupAsync = () => {
     return Promise.all([
@@ -43,16 +41,8 @@ const setupAsync = () => {
             },
             "user-1",
         ),
-    ]).then(() => {
-        store.auth.setUser({
-            uid: "user-1",
-        } as firebase.User);
-    });
+    ]);
 };
-
-jest.mock("../../../contexts/store-context", () => ({
-    useStore: () => store,
-}));
 
 jest.mock("../../../internal", () => ({
     GoToProject: () => "GoToProject",
@@ -60,23 +50,33 @@ jest.mock("../../../internal", () => ({
 
 jest.mock("../../../rules");
 
-
-beforeAll(() => Promise.all([
-    clearFirestoreDataAsync(),
-    setupAsync(),
-]));
-
-afterAll(() => {
-    store.dispose();
-    return Promise.all([
-        deleteFirebaseAppsAsync(),
-    ])
-});
-
 describe("ProjectListActive", () => {
+    let store: Store;
+    beforeEach(async () => {
+        await setupAsync();
+
+        store = new Store({
+            firestore,
+        });
+
+        store.auth.setUser({
+            uid: "user-1",
+        } as firebase.User);
+    });
+
+    afterEach(async () => {
+        store.dispose();
+        await clearFirestoreDataAsync();
+    });
+
+    afterAll(deleteFirebaseAppsAsync);
 
     it("renders without projects", () => {
-        const { asFragment } = render(<ActiveProjectList />);
+        const { asFragment } = render(
+            <StoreContext.Provider value={store}>
+                <ActiveProjectList />
+            </StoreContext.Provider>
+        );
 
         expect(asFragment()).toMatchSnapshot();
     });
@@ -92,7 +92,11 @@ describe("ProjectListActive", () => {
             },
         ]);
 
-        const { getByText, queryByText } = render(<ActiveProjectList />);
+        const { getByText, queryByText } = render(
+            <StoreContext.Provider value={store}>
+                <ActiveProjectList />
+            </StoreContext.Provider>
+        );
         await waitFor(() => getByText("Project 1"));
 
         await act(async () => {
@@ -136,9 +140,17 @@ describe("ProjectListActive", () => {
             },
         ]);
 
-        const { container } = render(<ActiveProjectList />);
-        const items = container.querySelectorAll(".settings-list-item");
-        expect(items.length).toBe(2);
+        const { container } = render(
+            <StoreContext.Provider value={store}>
+                <ActiveProjectList />
+            </StoreContext.Provider>
+        );
+
+        let items: HTMLElement[];
+        await waitFor(() => {
+            items = Array.from(container.querySelectorAll<HTMLElement>(".settings-list-item"));
+            expect(items.length).toBe(2);
+        });
 
         const checkboxes = container.querySelectorAll("input[type=checkbox]");
         expect(checkboxes.length).toBe(2);
@@ -186,9 +198,17 @@ describe("ProjectListActive", () => {
             },
         ]);
 
-        const { getByText, container } = render(<ActiveProjectList />);
-        const item = container.querySelector(".settings-list-item");
-        expect(item).not.toBeNull();
+        const { getByText, container } = render(
+            <StoreContext.Provider value={store}>
+                <ActiveProjectList />
+            </StoreContext.Provider>
+        );
+
+        let item: HTMLElement;
+        await waitFor(() => {
+            item = container.querySelector<HTMLElement>(".settings-list-item")!;
+            expect(item).not.toBeNull();
+        });
 
         act(() => {
             fireEvent.click(item!);
@@ -223,9 +243,17 @@ describe("ProjectListActive", () => {
             },
         ]);
 
-        const { queryByText, container } = render(<ActiveProjectList />);
-        const item = container.querySelector(".settings-list-item");
-        expect(item).not.toBeNull();
+        const { queryByText, container } = render(
+            <StoreContext.Provider value={store}>
+                <ActiveProjectList />
+            </StoreContext.Provider>
+        );
+
+        let item: HTMLElement;
+        await waitFor(() => {
+            item = container.querySelector<HTMLElement>(".settings-list-item")!;
+            expect(item).not.toBeNull();
+        });
 
         act(() => {
             fireEvent.click(item!);

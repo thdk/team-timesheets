@@ -14,10 +14,10 @@ export const withAuthorisation = <T extends {}>(
         const user = useUserStore();
         const auth = useAuthStore();
 
-        if (!auth.isAuthInitialised 
+        if (!auth.isAuthInitialised
             || !user.divisionUsersCollection.isFetched
-            || !user.usersCollection.isFetched
-            ) {
+            || !user.authenticatedUser
+        ) {
             return <></>;
         }
 
@@ -26,7 +26,7 @@ export const withAuthorisation = <T extends {}>(
         }
 
         return user.divisionUser && condition(user.divisionUser)
-            ? <WrappedComponent {...props}/>
+            ? <WrappedComponent {...props} />
             : <>{placeholder}</>;
     });
 };

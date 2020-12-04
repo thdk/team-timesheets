@@ -18,8 +18,7 @@ RUN npm ci
 # Copy all app source files
 COPY . .
 
-RUN npm run build:refs \
-    && npm run build:production
+RUN npm run build:refs && npm run build:production
 
 ARG VCS_COMMIT_ID
 ARG VCS_BRANCH_NAME

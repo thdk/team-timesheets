@@ -48,5 +48,5 @@ ARG FIREBASE_PROJECT_ID
 ARG FIREBASE_TOKEN
 
 RUN if [ "$FIREBASE_TOKEN" != "" ]; \
-       firebase deploy --project $FIREBASE_PROJECT_ID --token $FIREBASE_TOKEN; \
+       then firebase deploy --project $FIREBASE_PROJECT_ID --token $FIREBASE_TOKEN; \
     fi

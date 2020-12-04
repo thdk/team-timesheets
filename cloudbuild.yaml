@@ -1,0 +1,19 @@
+steps:
+- name: 'gcr.io/kaniko-project/executor:latest'
+  args:
+  - --build-arg 
+  -  VCS_COMMIT_ID=$COMMIT_SHA
+  - --build-arg 
+  - VCS_BRANCH_NAME=$BRANCH_NAME
+  - --build-arg 
+  - VCS_PULL_REQUEST=$_PR_NUMBER
+  - --build-arg 
+  - CI_BUILD_ID=$BUILD_ID
+  - --build-arg 
+  - CODECOV_TOKEN=$_CODECOV_TOKEN
+  - --build-arg 
+  - FIREBASE_PROJECT_ID=$_FIREBASE_PROJECT_ID
+  - --build-arg 
+  - FIREBASE_TOKEN=$_FIREBASE_TOKEN
+  - --destination=gcr.io/$PROJECT_ID/app
+  - --cache=true

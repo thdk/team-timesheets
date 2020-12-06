@@ -1,5 +1,6 @@
 import { RealtimeMode, FetchMode } from "firestorable";
 import { observable, computed, reaction } from "mobx";
+import type firebase from "firebase";
 
 import { IRootStore } from '../root-store';
 import { IProject, IProjectData, IUser } from '../../../common/dist';
@@ -22,6 +23,7 @@ const createQuery = (user: IUser | undefined) => {
 export class ProjectStore extends FirestorableStore<IProject, IProjectData> {
     private readonly rootStore: IRootStore;
 
+    private disposables: (() => void)[] = [];
     constructor(
         rootStore: IRootStore,
         {
@@ -51,9 +53,11 @@ export class ProjectStore extends FirestorableStore<IProject, IProjectData> {
         );
         this.rootStore = rootStore;
 
-        reaction(() => rootStore.user.divisionUser, (user) => {
-            this.collection.query = createQuery(user);
-        });
+        this.disposables.push(
+            reaction(() => rootStore.user.divisionUser, (user) => {
+                this.collection.query = createQuery(user);
+            })
+        );
     }
 
     public archiveProjects(...projectIds: string[]) {
@@ -94,5 +98,10 @@ export class ProjectStore extends FirestorableStore<IProject, IProjectData> {
         return observable(Array.from(this.collection.docs.values())
             .map(doc => ({ ...doc.data!, id: doc.id }))
             .filter(p => p.isArchived && !p.deleted));
+    }
+
+    public dispose() {
+        super.dispose();
+        this.disposables.reverse().forEach(d => d());
     }
 }

@@ -1,6 +1,7 @@
 import { IFavoriteRegistration } from "../../../../common";
 import { TestCollection } from "./collection";
 import { convertFavoriteRegistration } from "../../../../common/serialization/serializer";
+import type firebase from "firebase";
 
 export class FavoriteCollection extends TestCollection<IFavoriteRegistration> {
     constructor(

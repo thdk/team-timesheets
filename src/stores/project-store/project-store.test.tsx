@@ -1,79 +1,46 @@
 import { Store } from "../root-store";
-import { initTestFirestore, deleteFirebaseAppsAsync } from "../../__tests__/utils/firebase";
-import { TestCollection } from "../../__tests__/utils/firestorable/collection";
-import { IProject, IProjectData, IUserData } from "../../../common";
-import * as serializer from '../../../common/serialization/serializer';
+import path from "path";
+import fs from "fs";
+import type firebase from "firebase";
 import { waitFor } from "@testing-library/react";
+import { initializeTestApp, loadFirestoreRules, clearFirestoreData, } from "@firebase/rules-unit-testing";
+import { useStore } from "../../contexts/store-context";
 
-const {
-    firestore,
-    clearFirestoreDataAsync,
-    refs: [
-        userRef,
-        divisionUserRef,
-        divisionRef,
-        projectRef,
+jest.mock("../../contexts/store-context");
 
-    ]
-} = initTestFirestore("project-store-test",
-    [
-        "users",
-        "divisionUsers",
-        "divisions",
-        "projects",
-    ]);
+const projectId = "project-store-test";
+const app = initializeTestApp({
+    projectId,
+});
 
-const userCollection = new TestCollection<IUserData>(
-    firestore,
-    userRef,
-);
-const divisionUserCollection = new TestCollection(
-    firestore,
-    divisionUserRef,
-    {
-        serialize: serializer.convertUser,
-        defaultSetOptions: {
-            merge: true,
-        },
-    },
-);
-const divisionCollection = new TestCollection(
-    firestore,
-    divisionRef,
-    {
-        serialize: serializer.convertDivision,
-    }
-);
-const projectCollection = new TestCollection<IProject, IProjectData>(
-    firestore,
-    projectRef,
-    {
-        serialize: serializer.convertProject,
-    },
-);
 
-const store = new Store({ firestore });
-
-let userId: string;
 let divisionUserId1: string;
 let divisionUserId2: string;
 const divisionId1 = "div-1";
 const divisionId2 = "div-2";
 
+let store: Store;
 const setupAsync = async () => {
-    const [
-        generatedUserId,
-    ] = await Promise.all([
-        userCollection.addAsync(
+    store = new Store({
+        firestore: app.firestore(),
+    });
+
+    await Promise.all([
+        store.auth.collection.addAsync(
             {
                 name: "user 1",
                 team: "team-1",
                 roles: {
                     user: true,
-                }
-            }
+                },
+                uid: "user-1",
+                divisionId: "",
+                recentProjects: [],
+                tasks: new Map(),
+            },
+            "user-1",
         ),
-        divisionCollection.addAsync([
+        store.divisions.addDocuments([
             {
                 name: "Division 1",
                 createdBy: "user-1",
@@ -89,18 +56,16 @@ const setupAsync = async () => {
         ]),
     ]);
 
-    userId = generatedUserId;
-
     const [
         generatedDivisionUserId1,
         generatedDivisionUserId2,
-    ] = await divisionUserCollection.addAsync([
+    ] = await store.user.divisionUsersCollection.addAsync([
         {
             name: "Division User 1",
             divisionId: divisionId1,
             tasks: new Map<string, true>(),
             recentProjects: [] as string[],
-            uid: userId,
+            uid: "user-1",
             roles: {}
         },
         {
@@ -108,7 +73,7 @@ const setupAsync = async () => {
             divisionId: divisionId2,
             tasks: new Map<string, true>(),
             recentProjects: [] as string[],
-            uid: userId,
+            uid: "user-1",
             roles: {}
         },
     ]);
@@ -117,16 +82,30 @@ const setupAsync = async () => {
     divisionUserId2 = generatedDivisionUserId2;
 
     store.auth.setUser({
-        uid: userId,
+        uid: "user-1",
     } as firebase.User);
 };
 
-beforeAll(() => Promise.all([
-    clearFirestoreDataAsync(),
-    setupAsync(),
-]));
+beforeAll(async () => {
+    await loadFirestoreRules({
+        projectId,
+        rules: fs.readFileSync(path.resolve(__dirname, "../../../firestore.rules.test"), "utf8"),
+    })
+});
 
-afterAll(deleteFirebaseAppsAsync);
+beforeEach(async () => {
+    await setupAsync();
+    (useStore as jest.Mock<ReturnType<typeof useStore>>).mockReturnValue(store);
+});
+
+afterEach(async () => {
+    await store.dispose();
+    await clearFirestoreData({
+        projectId,
+    });
+});
+
+afterAll(() => app.delete());
 
 describe("ProjectStore", () => {
 
@@ -138,9 +117,8 @@ describe("ProjectStore", () => {
         });
 
         describe("when there are projects", () => {
-            let projectIds: string[];
-            beforeAll(async () => {
-                projectIds = await projectCollection.addAsync([
+            beforeEach(async () => {
+                await store.projects.addDocuments([
                     {
                         name: "Project 1",
                         divisionId: "",
@@ -171,10 +149,6 @@ describe("ProjectStore", () => {
                         divisionId: divisionId2,
                     },
                 ]);
-            });
-
-            afterAll(() => {
-                return projectCollection.deleteAsync(...projectIds);
             });
 
             it("should return an array of active projects", async () => {
@@ -213,8 +187,8 @@ describe("ProjectStore", () => {
 
     describe("unarchiveProjects & archiveProjects", () => {
         let projectIds: string[];
-        beforeAll(async () => {
-            projectIds = await projectCollection.addAsync([
+        beforeEach(async () => {
+            projectIds = await store.projects.addDocuments([
                 {
                     name: "Project 1",
                     divisionId: "",
@@ -225,10 +199,6 @@ describe("ProjectStore", () => {
                     divisionId: "",
                 },
             ]);
-        });
-
-        afterAll(() => {
-            return projectCollection.deleteAsync(...projectIds);
         });
 
         it("should update activeProjects and archivedProjects accordingly", async () => {
@@ -287,7 +257,7 @@ describe("ProjectStore", () => {
             await waitFor(() => expect(store.user.divisionUser).toBeDefined());
             store.projects.createNewDocument();
 
-            await waitFor(() => expect(store.projects.activeDocument?.createdBy).toBe(userId));
+            await waitFor(() => expect(store.projects.activeDocument?.createdBy).toBe("user-1"));
         });
     });
 });

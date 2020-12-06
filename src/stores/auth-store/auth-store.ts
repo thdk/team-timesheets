@@ -1,4 +1,4 @@
-import "firebase/auth";
+import type firebase from "firebase";
 import { action, transaction, observable } from "mobx";
 import { Doc, Collection } from "firestorable";
 import { FirestorableStore, StoreOptions } from "../firestorable-store";

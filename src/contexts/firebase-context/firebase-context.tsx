@@ -1,5 +1,5 @@
 import React, { createContext, useState } from 'react';
-import * as firebase from "firebase/app";
+import firebase from "firebase/app";
 import { useEffect } from 'react';
 
 

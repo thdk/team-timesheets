@@ -1,48 +1,16 @@
+import fs from "fs";
+import path from "path";
+
 import React from "react";
-import { initTestFirestore, deleteFirebaseAppsAsync } from "../../../__tests__/utils/firebase";
+import type firebase from "firebase";
+
 import { Store } from "../../../stores/root-store";
-import { TestCollection } from "../../../__tests__/utils/firestorable/collection";
-import { IProjectData } from "../../../../common";
 import { ActiveProjectList } from ".";
 import { render, waitFor, fireEvent } from "@testing-library/react";
 import { canEditProject } from "../../../rules";
 import { act } from "react-dom/test-utils";
 import { StoreContext } from "../../../contexts/store-context";
-
-const {
-    firestore,
-    clearFirestoreDataAsync,
-    refs: [
-        userRef,
-        projectRef,
-    ]
-} = initTestFirestore("project-list-active-test",
-    [
-        "users",
-        "projects",
-    ]);
-
-const userCollection = new TestCollection(
-    firestore,
-    userRef,
-);
-
-const projectsCollection = new TestCollection<IProjectData>(firestore, projectRef);
-
-const setupAsync = () => {
-    return Promise.all([
-        userCollection.addAsync(
-            {
-                name: "user 1",
-                team: "team-1",
-                roles: {
-                    user: true,
-                }
-            },
-            "user-1",
-        ),
-    ]);
-};
+import { initializeTestApp, clearFirestoreData, loadFirestoreRules } from "@firebase/rules-unit-testing";
 
 jest.mock("../../../internal", () => ({
     GoToProject: () => "GoToProject",
@@ -50,49 +18,81 @@ jest.mock("../../../internal", () => ({
 
 jest.mock("../../../rules");
 
+const projectId = "project-list-active-test";
+const app = initializeTestApp({
+    projectId,
+});
+
+let store: Store;
+const setupAsync = async () => {
+    store = new Store({
+        firestore: app.firestore(),
+    });
+    await Promise.all([
+        store.user.usersCollection.addAsync(
+            {
+                name: "user 1",
+                team: "team-1",
+                roles: {
+                    user: true,
+                },
+                uid: "user-1",
+                tasks: new Map(),
+                recentProjects: [],
+                divisionId: "",
+            },
+            "user-1",
+        ),
+    ]);
+
+    store.auth.setUser({
+        uid: "user-1",
+    } as firebase.User);
+};
+
+beforeAll(async () => {
+    await loadFirestoreRules({
+        projectId,
+        rules: fs.readFileSync(path.resolve(__dirname, "../../../../firestore.rules.test"), "utf8"),
+    })
+})
+
+beforeEach(() => setupAsync());
+
+afterEach(async () => {
+    store.dispose();
+    await clearFirestoreData({
+        projectId,
+    });
+});
+
+afterAll(() => app.delete());
+
 describe("ProjectListActive", () => {
-    let store: Store;
-    beforeEach(async () => {
-        await setupAsync();
-
-        store = new Store({
-            firestore,
-        });
-
-        store.auth.setUser({
-            uid: "user-1",
-        } as firebase.User);
-    });
-
-    afterEach(async () => {
-        store.dispose();
-        await clearFirestoreDataAsync();
-    });
-
-    afterAll(deleteFirebaseAppsAsync);
 
     it("renders without projects", () => {
-        const { asFragment } = render(
+        const { asFragment, unmount, } = render(
             <StoreContext.Provider value={store}>
                 <ActiveProjectList />
             </StoreContext.Provider>
         );
 
         expect(asFragment()).toMatchSnapshot();
+
+        unmount();
     });
 
     it("displays active projects", async () => {
-        const projectIds = await projectsCollection.addAsync([
+        const projectIds = await store.projects.addDocuments([
             {
                 name: "Project 1",
-                name_insensitive: "PROJECT 1",
                 icon: "people",
                 createdBy: "user-1",
                 divisionId: "",
             },
         ]);
 
-        const { getByText, queryByText } = render(
+        const { getByText, queryByText, unmount, } = render(
             <StoreContext.Provider value={store}>
                 <ActiveProjectList />
             </StoreContext.Provider>
@@ -100,7 +100,7 @@ describe("ProjectListActive", () => {
         await waitFor(() => getByText("Project 1"));
 
         await act(async () => {
-            await projectsCollection.updateAsync({
+            await store.projects.collection.updateAsync({
                 isArchived: true,
             }, ...projectIds);
         });
@@ -108,39 +108,33 @@ describe("ProjectListActive", () => {
         await waitFor(() => expect(queryByText("Project 1")).toBeNull());
 
         await act(async () => {
-            await projectsCollection.updateAsync({
+            await store.projects.collection.updateAsync({
                 isArchived: false,
             }, ...projectIds);
         });
 
         await waitFor(() => getByText("Project 1"));
 
-        act(() => {
-            store.projects.deleteProjects(...projectIds);
-        });
-
-        await waitFor(() => expect(queryByText("Project 1")).toBeNull());
+        unmount();
     });
 
     it("allow to select multiple projects", async () => {
-        const projectIds = await projectsCollection.addAsync([
+        const projectIds = await store.projects.addDocuments([
             {
                 name: "Project 1",
-                name_insensitive: "PROJECT 1",
                 icon: "people",
                 createdBy: "user-1",
                 divisionId: "",
             },
             {
                 name: "Project 2",
-                name_insensitive: "PROJECT 2",
                 icon: "favorite",
                 createdBy: "user-1",
                 divisionId: "",
             },
         ]);
 
-        const { container } = render(
+        const { container, unmount, } = render(
             <StoreContext.Provider value={store}>
                 <ActiveProjectList />
             </StoreContext.Provider>
@@ -185,20 +179,21 @@ describe("ProjectListActive", () => {
                 container.querySelectorAll(".settings-list-item").length
             ).toBe(0)
         );
+
+        unmount();
     });
 
     it("redirects to project detail on project click", async () => {
-        const projectIds = await projectsCollection.addAsync([
+        const projectIds = await store.projects.addDocuments([
             {
                 name: "Project 1",
-                name_insensitive: "PROJECT 1",
                 icon: "people",
                 createdBy: "user-1",
                 divisionId: "",
             },
         ]);
 
-        const { getByText, container } = render(
+        const { getByText, container, unmount, } = render(
             <StoreContext.Provider value={store}>
                 <ActiveProjectList />
             </StoreContext.Provider>
@@ -227,23 +222,24 @@ describe("ProjectListActive", () => {
                 container.querySelector(".settings-list-item")
             ).toBeNull()
         );
+
+        unmount();
     });
 
     it("does not allow unauthorised users to edit project", async () => {
         (canEditProject as any)
             .mockReturnValueOnce(false);
 
-        const projectIds = await projectsCollection.addAsync([
+        const projectIds = await store.projects.addDocuments([
             {
                 name: "Project 1",
-                name_insensitive: "PROJECT 1",
                 icon: "people",
                 createdBy: "user-1",
                 divisionId: "",
             },
         ]);
 
-        const { queryByText, container } = render(
+        const { queryByText, container, unmount } = render(
             <StoreContext.Provider value={store}>
                 <ActiveProjectList />
             </StoreContext.Provider>
@@ -272,5 +268,7 @@ describe("ProjectListActive", () => {
                 container.querySelectorAll(".settings-list-item").length
             ).toBe(0)
         );
+
+        unmount();
     })
 });

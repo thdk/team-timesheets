@@ -1,4 +1,4 @@
-import { Timestamp } from "@firebase/firestore-types";
+import type firebase from "firebase";
 
 export interface INameWithIcon {
     name: string;
@@ -15,8 +15,8 @@ export interface INameWithIconData extends IPersistedEntity {
 }
 
 export interface IPersistedEntity {
-    created?: Timestamp;
-    modified?: Timestamp;
+    created?: firebase.firestore.Timestamp;
+    modified?: firebase.firestore.Timestamp;
 }
 
 export interface IFlaggedForDeletion {

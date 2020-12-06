@@ -1,36 +1,33 @@
+import fs from "fs";
+import path from "path";
+
 import React from "react";
-import { initTestFirestore, deleteFirebaseAppsAsync } from "../../__tests__/utils/firebase";
+import type firebase from "firebase";
+
 import { Store } from "../../stores/root-store";
 import { render, waitFor } from "@testing-library/react";
 import { ExportPage } from ".";
+import { initializeTestApp, clearFirestoreData, loadFirestoreRules } from "@firebase/rules-unit-testing";
+import { useStore } from "../../contexts/store-context";
 
-const {
-    firestore,
-    clearFirestoreDataAsync,
-} = initTestFirestore("export-page-test",
-    [
-        "registrations",
-    ]);
+const projectId = "export-page-test";
+let store: Store;
+const app = initializeTestApp({ projectId });
 
-const store = new Store({ firestore, });
+const setupAsync = async () => {
+    store = new Store({
+        firestore: app.firestore(),
+    });
 
-jest.mock("../../contexts/store-context", () => ({
-    useStore: () => store,
-}));
+    return store;
+};
+
 
 jest.mock("../../contexts/user-context");
 jest.mock("../../contexts/auth-context");
 
 jest.mock("../../rules");
 jest.mock("../../routes/registrations/detail");
-
-beforeAll(clearFirestoreDataAsync);
-afterAll(() => {
-    store.dispose();
-    return Promise.all([
-        deleteFirebaseAppsAsync(),
-    ])
-});
 
 const registrations = [
     {
@@ -89,6 +86,25 @@ const registrations = [
     },
 ];
 
+jest.mock("../../contexts/store-context");
+
+beforeAll(() => loadFirestoreRules({
+    projectId,
+    rules: fs.readFileSync(path.resolve(__dirname, "../../../firestore.rules.test"), "utf8"),
+}));
+
+beforeEach(async () => {
+    store = await setupAsync();
+    (useStore as jest.Mock<ReturnType<typeof useStore>>).mockReturnValue(store);
+});
+
+afterEach(async () => {
+    await store.dispose();
+    await clearFirestoreData({projectId});
+});
+
+afterAll(() => app.delete());
+
 describe("Export Page", () => {
     it("should render without registrations", () => {
         store.view.setViewDate({
@@ -96,9 +112,11 @@ describe("Export Page", () => {
             month: 9,
         });
 
-        const { asFragment } = render(<ExportPage />);
+        const { asFragment, unmount, } = render(<ExportPage />);
 
         expect(asFragment()).toMatchSnapshot();
+
+        unmount();
     });
 
     it("should display report for the specified month", async () => {
@@ -110,14 +128,14 @@ describe("Export Page", () => {
         store.auth.setUser({ uid: "user-1" } as firebase.User);
 
         const {
-            asFragment,
             getByText,
             container,
+            unmount,
         } = render(<ExportPage />);
 
         await waitFor(() => expect(getByText("April")));
 
-        const regIds = await store.timesheets.addDocuments(registrations);
+        await store.timesheets.addDocuments(registrations);
 
         await waitFor(() => expect(getByText("Foobar 5")));
 
@@ -132,9 +150,7 @@ describe("Export Page", () => {
                 "March 2nd",
                 "March 24th",
             ]);
-
-        await store.timesheets.deleteDocuments(undefined, ...regIds);
-
-        await waitFor(() => expect(asFragment()).toMatchSnapshot());
+        
+        unmount();
     });
 });

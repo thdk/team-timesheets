@@ -4,7 +4,7 @@ import {
     clearFirestoreData,
     initializeTestApp,
     loadFirestoreRules,
-} from "@firebase/testing";
+} from "@firebase/rules-unit-testing";
 
 const fs = require("fs");
 import path from "path";

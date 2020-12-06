@@ -1,61 +1,67 @@
-import { initTestFirestore, deleteFirebaseAppsAsync } from "../../__tests__/utils/firebase";
+import fs from "fs";
+import path from "path";
 
-import { TestCollection } from "../../__tests__/utils/firestorable/collection";
 import firebase from "firebase/app";
 import { waitFor } from "@testing-library/react";
 import { reaction, transaction } from "mobx";
 import { Store } from "../root-store";
-import { IReport } from "../../../common";
+import { clearFirestoreData, initializeTestApp, loadFirestoreRules } from "@firebase/rules-unit-testing";
 
-const {
-    firestore,
-    clearFirestoreDataAsync,
-    refs: [
-        reportsRef,
-        userRef,
-    ]
-} = initTestFirestore("reports-store-test",
-    [
-        "reports",
-        "users",
-    ]);
+const projectId = "reports-store-test";
+const app = initializeTestApp({
+    projectId,
+});
 
-const userCollection = new TestCollection(firestore, userRef);
-const reportsCollection = new TestCollection<IReport>(firestore, reportsRef);
-
-const store = new Store({ firestore });
-
+let store: Store;
 const setupAsync = () => {
+    store = new Store({
+        firestore: app.firestore(),
+    });
+
     return Promise.all([
-        userCollection.addAsync(
+        store.user.usersCollection.addAsync(
             {
                 name: "user 1",
+                email: "email@email.com",
                 team: "team-1",
                 roles: {
                     user: true,
-                }
+                },
+                uid: "user-1",
+                divisionId: "",
+                recentProjects: [],
+                tasks: new Map(),
             },
             "user-1",
         ),
     ]);
 };
 
-beforeAll(() => Promise.all([
-    clearFirestoreDataAsync(),
-    setupAsync(),
-]));
+beforeAll(async () => {
+    await loadFirestoreRules({
+        projectId,
+        rules: fs.readFileSync(path.resolve(__dirname, "../../../firestore.rules.test"), "utf8"),
+    })
+});
 
-afterAll(deleteFirebaseAppsAsync);
+beforeEach(() => setupAsync());
+
+afterEach(async () => {
+    store.dispose();
+    await clearFirestoreData({
+        projectId,
+    });
+});
+
+afterAll(() => app.delete());
 
 describe("ReportStore", () => {
     let unsubscribe: () => void;
 
-    beforeAll(() => {
+    beforeEach(() => {
         transaction(() => {
             store.auth.setUser({
-                uid: "user-1",
-                displayName: "user 1",
-                email: "email@email.com",
+                uid: "user-1",                
             } as firebase.User);
             store.view.setViewDate({
                 year: 2020,
@@ -66,7 +72,7 @@ describe("ReportStore", () => {
         unsubscribe = reaction(() => store.reports.report, () => { })
     });
 
-    afterAll(() => unsubscribe());
+    afterEach(() => unsubscribe());
 
     describe("report", () => {
         it("should be undefined when there is no report for current user or date", async () => {
@@ -90,8 +96,6 @@ describe("ReportStore", () => {
                     }),
                 );
             });
-
-            await reportsCollection.deleteAsync(store.reports.report!.id);
         });
     });
 });

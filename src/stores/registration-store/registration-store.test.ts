@@ -1,36 +1,26 @@
-import { initTestFirestore, deleteFirebaseAppsAsync, initTestFunctions } from "../../__tests__/utils/firebase";
+import fs from "fs";
+import path from "path";
 
-import { TestCollection } from "../../__tests__/utils/firestorable/collection";
-import { IRegistrationData } from "../../../common";
+import { IRegistration, IUser } from "../../../common";
 import firebase from "firebase/app";
 import { waitFor } from "@testing-library/react";
 import { reaction, transaction } from "mobx";
-import { Store, IRootStore } from "../root-store";
+import { Store } from "../root-store";
+import { initializeTestApp, loadFirestoreRules, clearFirestoreData } from "@firebase/rules-unit-testing";
 
-const {
-    firestore,
-    clearFirestoreDataAsync,
-    refs: [
-        registrationRef,
-        userRef,
-    ],
-} = initTestFirestore("registration-store-test",
-    [
-        "registrations",
-        "users",
-        "division-users",
-    ]);
+const projectId = "registration-store-test";
+const app = initializeTestApp({
+    projectId,
+});
 
-const functions = initTestFunctions("registration-store-test");
+let store: Store;
+const setupAsync = async () => {
+    store = new Store({
+        firestore: app.firestore(),
+    });
 
-const userCollection = new TestCollection(firestore, userRef);
-const registrationCollection = new TestCollection<IRegistrationData>(firestore, registrationRef);
-
-let store: IRootStore;
-
-const setupAsync = () => {
-    return Promise.all([
-        userCollection.addAsync(
+    await Promise.all([
+        store.user.usersCollection.addAsync(
             {
                 name: "user 1",
                 team: "team-1",
@@ -39,16 +29,15 @@ const setupAsync = () => {
                 },
                 email: "email@email.com",
                 uid: "user-1",
-            },
+            } as IUser,
             "user-1",
         ),
-        registrationCollection.addAsync([
+        store.timesheets.addDocuments([
             {
                 userId: "user-1",
                 description: "desc 0",
                 date: new Date(2020, 3, 1),
                 time: 1,
-                isPersisted: true,
                 created: new Date(2020, 3, 1, 15, 50, 0),
             },
             {
@@ -56,7 +45,6 @@ const setupAsync = () => {
                 description: "desc 1",
                 date: new Date(2020, 3, 4),
                 time: 3,
-                isPersisted: true,
                 created: new Date(2020, 3, 4, 7, 50, 0),
             },
             {
@@ -64,7 +52,6 @@ const setupAsync = () => {
                 description: "desc 2",
                 date: new Date(2020, 3, 4),
                 time: 2.5,
-                isPersisted: true,
                 created: new Date(2020, 3, 4, 7, 51, 0),
             },
             {
@@ -72,67 +59,70 @@ const setupAsync = () => {
                 description: "desc 3",
                 date: new Date(2020, 3, 7),
                 time: 2.5,
-                isPersisted: true,
             },
-        ] as any as IRegistrationData[]),
-        registrationCollection.addAsync(
+        ] as IRegistration[]),
+        store.timesheets.addDocument(
             {
                 userId: "user-1",
                 description: "desc 3",
                 date: new Date(2020, 3, 9),
                 time: 4.50,
-                isPersisted: true,
                 created: new Date(2020, 3, 9, 17, 50, 0),
-            } as any as IRegistrationData,
+            } as IRegistration,
             "reg-1",
         ),
-        registrationCollection.addAsync(
+        store.timesheets.addDocument(
             {
                 userId: "user-1",
                 description: "desc 4",
                 date: new Date(2020, 5, 9),
                 time: 4.50,
-                isPersisted: true,
                 created: new Date(2020, 5, 9, 17, 50, 0),
-            } as any as IRegistrationData,
+            } as IRegistration,
             "reg-2",
-        )
+        ),
     ]);
+
+    transaction(() => {
+        store.auth.setUser({
+            uid: "user-1",
+            displayName: "user 1",
+            email: "email@email.com",
+        } as firebase.User);
+        store.view.setViewDate({
+            year: 2020,
+            month: 4,
+            day: 1,
+        });
+    });
 };
 
-let unsubscribe: () => void;
-beforeEach(() => {
-    if (functions) {
-        store = new Store({ firestore, httpsCallable: jest.fn() });
-    }
-    return setupAsync();
+beforeAll(async () => {
+    await loadFirestoreRules({
+        projectId,
+        rules: fs.readFileSync(path.resolve(__dirname, "../../../firestore.rules.test"), "utf8"),
+    });
 });
 
-afterEach(() => {
-    unsubscribe();
+beforeEach(() => setupAsync());
+
+afterEach(async () => {
     store.dispose();
-    return clearFirestoreDataAsync();
+    await clearFirestoreData({
+        projectId,
+    });
 });
-afterAll(deleteFirebaseAppsAsync);
+
+afterAll(() => app.delete());
 
 describe("RegistrationStore", () => {
+    let unsubscribe: () => void;
+    beforeEach(async () => {
+        unsubscribe = reaction(() => store.timesheets.registrationsGroupedByDay, () => { });
+    });
 
-    beforeEach(() => {
-        transaction(() => {
-            store.auth.setUser({
-                uid: "user-1",
-                displayName: "user 1",
-                email: "email@email.com",
-            } as firebase.User);
-            store.view.setViewDate({
-                year: 2020,
-                month: 4,
-                day: 1,
-            });
-        });
-
-        // We need to observe something otherwise registrations aren't fetched :)
-        unsubscribe = reaction(() => store.timesheets.registrationsGroupedByDay, () => { })
+    afterEach(async () => {
+        unsubscribe();
     });
 
     describe("registrationsGroupedByDay / registrationsGroupedByDayReversed", () => {
@@ -397,7 +387,7 @@ describe("RegistrationStore", () => {
             await store.timesheets.saveSelectedRegistration();
 
             await waitFor<void>(async () => {
-                const reg = await registrationCollection.getAsync("reg-1")
+                const reg = await store.timesheets.collection.getAsync("reg-1")
                     .then(doc => doc.data);
 
                 return expect(reg).toEqual(

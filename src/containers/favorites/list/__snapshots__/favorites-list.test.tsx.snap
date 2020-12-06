@@ -59,6 +59,11 @@ exports[`FavoritesList should render favorites 1`] = `
       class="data-row__column registration-line__content"
     >
       <span
+        class="data-row__line1 mdc-typography--subtitle1"
+      >
+        project 1
+      </span>
+      <span
         class="data-row__line2 mdc-typography--subtitle2"
       >
         Favorite desc 3

@@ -1,38 +1,30 @@
+import fs from "fs";
+import path from "path";
+
 import React from "react";
 import { render, waitFor, fireEvent } from "@testing-library/react";
 
-import { initTestFirestore, deleteFirebaseAppsAsync } from "../../../__tests__/utils/firebase";
-
-import { TestCollection } from "../../../__tests__/utils/firestorable/collection";
-
 import { StoreContext } from "../../../contexts/store-context";
 import { Store } from "../../../stores/root-store";
-import { ITeamData } from "../../../../common";
 import { UserList } from ".";
 
-const {
-    firestore,
-    refs: [
-        userRef,
-        teamRef,
-    ],
-    clearFirestoreDataAsync
-} = initTestFirestore("user-list-test",
-    [
-        "users",
-        "teams",
-    ]);
+import type firebase from "firebase";
+import { loadFirestoreRules, initializeTestApp, clearFirestoreData, } from "@firebase/rules-unit-testing";
 
-beforeAll(clearFirestoreDataAsync);
-afterAll(() => deleteFirebaseAppsAsync());
+const projectId = "user-list-container-test";
+const app = initializeTestApp({
+    projectId,
+});
 
-const userCollection = new TestCollection(firestore, userRef);
-const teamCollection = new TestCollection<ITeamData>(firestore, teamRef);
+let store: Store;
 
 const setupAsync = () => {
+    store = new Store({
+        firestore: app.firestore(),
+    });
 
     return Promise.all([
-        userCollection.addAsync(
+        store.user.usersCollection.addAsync(
             {
                 name: "user 1",
                 team: "team-1",
@@ -40,10 +32,13 @@ const setupAsync = () => {
                     user: true,
                 },
                 uid: "user-1",
+                divisionId: "",
+                recentProjects: [],
+                tasks: new Map(),
             },
             "user-1",
         ),
-        userCollection.addAsync(
+        store.user.usersCollection.addAsync(
             {
                 name: "user 2",
                 team: "team-0",
@@ -51,20 +46,26 @@ const setupAsync = () => {
                     user: true,
                 },
                 uid: "user-2",
+                divisionId: "",
+                recentProjects: [],
+                tasks: new Map(),
             },
             "user-2",
         ),
-        userCollection.addAsync(
+        store.user.usersCollection.addAsync(
             {
                 name: "user 3",
                 roles: {
                     user: true,
                 },
                 uid: "user-3",
+                divisionId: "",
+                recentProjects: [],
+                tasks: new Map(),
             },
             "user-3",
         ),
-        userCollection.addAsync(
+        store.user.usersCollection.addAsync(
             {
                 name: "admin 1",
                 team: "team-1",
@@ -73,12 +74,14 @@ const setupAsync = () => {
                     user: true,
                 },
                 uid: "admin-1",
+                divisionId: "",
+                recentProjects: [],
+                tasks: new Map(),
             },
             "admin-1",
         ),
-        teamCollection.addAsync(
+        store.config.teamsCollection.addAsync(
             {
-                name_insensitive: "TEAM 1",
                 name: "team 1",
                 divisionId: "",
             },
@@ -87,25 +90,38 @@ const setupAsync = () => {
     ]);
 };
 
-describe("UserListContainer", () => {
-    let store: Store;
-    beforeEach(async () => {
-        await clearFirestoreDataAsync();
-        await setupAsync();
-        store = new Store({ firestore });
-    });
+beforeAll(async () => {
+    await loadFirestoreRules({
+        projectId,
+        rules: fs.readFileSync(path.resolve(__dirname, "../../../../firestore.rules.test"), "utf8"),
+    })
+})
 
-    afterEach(() => store.dispose());
+beforeEach(() => setupAsync());
+
+afterEach(async () => {
+    store.dispose();
+    await clearFirestoreData({
+        projectId,
+    });
+});
+
+afterAll(() => app.delete());
+
+
+describe("UserListContainer", () => {
 
     it("should render without users", () => {
 
-        const { asFragment } = render(
+        const { asFragment, unmount, } = render(
             <StoreContext.Provider value={store}>
                 <UserList />
             </StoreContext.Provider>
         );
 
         expect(asFragment()).toMatchSnapshot();
+
+        unmount();
     });
 
     describe("when logged in user is admin", () => {
@@ -120,7 +136,7 @@ describe("UserListContainer", () => {
         });
 
         it("should render users", async () => {
-            const { getByText, asFragment } = render(
+            const { getByText, asFragment, unmount, } = render(
                 <StoreContext.Provider value={store}>
                     <UserList />
                 </StoreContext.Provider>
@@ -131,13 +147,15 @@ describe("UserListContainer", () => {
             );
 
             expect(asFragment()).toMatchSnapshot();
+
+            unmount();
         });
 
         it("should navigate to user detail when item is clicked", async () => {
             const goTo = jest.fn();
             store.router.goTo = goTo;
 
-            const { findByText } = render(
+            const { findByText, unmount, } = render(
                 <StoreContext.Provider value={store}>
                     <UserList />
                 </StoreContext.Provider>
@@ -157,6 +175,8 @@ describe("UserListContainer", () => {
                     id: "user-1"
                 },
             );
+
+            unmount();
         });
 
         // describe("when user is added in the collection", () => {

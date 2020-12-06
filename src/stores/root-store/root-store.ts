@@ -1,4 +1,5 @@
 import { RouterStore } from "mobx-router";
+import type firebase from "firebase";
 
 import { IRegistrationsStore, RegistrationStore } from "../registration-store/registration-store";
 import { IConfigStore, ConfigStore } from "../config-store";
@@ -151,9 +152,10 @@ export class Store implements IRootStore {
     public dispose() {
         this.config.dispose();
         // this.dashboard.dispose();
-        // this.favorites.dispose();
-        // this.projects.dispose();
+        this.favorites.dispose();
+        this.projects.dispose();
         // this.reports.dispose();
+        this.divisions.dispose();
         this.timesheets.dispose();
         this.user.dispose();
         // this.view.dispose();

@@ -1,4 +1,5 @@
 import { observable, action, computed, reaction, IObservableValue } from "mobx";
+import type firebase from "firebase";
 import { ICollection, Collection, Doc, RealtimeMode, FetchMode, CollectionReference } from "firestorable";
 import { IRootStore } from "../root-store";
 import * as deserializer from "../../../common/serialization/deserializer";

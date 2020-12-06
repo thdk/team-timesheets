@@ -1,4 +1,4 @@
-import "firebase/auth";
+import type firebase from "firebase";
 
 /**
  * Resolves with firbase.User if user is logged in

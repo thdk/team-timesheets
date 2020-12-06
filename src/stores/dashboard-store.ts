@@ -1,5 +1,6 @@
 import { observable, reaction, computed, action } from "mobx";
 import { ICollection, Collection, RealtimeMode } from "firestorable";
+import type firebase from "firebase";
 
 import moment from 'moment';
 

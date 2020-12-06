@@ -1,11 +1,13 @@
+import fs from "fs";
+import path from "path";
+
 import React from "react";
-import { transaction } from "mobx";
-import { initTestFirestore, deleteFirebaseAppsAsync } from "../../__tests__/utils/firebase";
+import type firebase from "firebase";
 import { Store } from "../../stores/root-store";
-import { TestCollection } from "../../__tests__/utils/firestorable/collection";
 import { waitFor, render } from "@testing-library/react";
 import { ReportDownloadLink } from "./report-download-link";
 import { StoreContext } from "../../contexts/store-context";
+import { initializeTestApp, clearFirestoreData, loadFirestoreRules } from "@firebase/rules-unit-testing";
 
 jest.mock("../../contexts/firebase-context", () => ({
     useFirebase: () => ({
@@ -21,72 +23,77 @@ jest.mock("../../contexts/firebase-context", () => ({
     })
 }));
 
-const {
-    firestore,
-    clearFirestoreDataAsync,
-    refs: [
-        userRef,
-    ]
-} = initTestFirestore("report-download-link-test",
-    [
-        "users",
-    ]);
+const projectId = "report-download-link-test";
+const app = initializeTestApp({
+    projectId,
+    auth: {
+        uid: "user-1",
+    },
+});
 
-const userCollection = new TestCollection(firestore, userRef);
+let store: Store;
+const setupAsync = async () => {
+    store = new Store({
+        firestore: app.firestore(),
+    });
 
-const setupAsync = () => {
-    return Promise.all([
-        userCollection.addAsync(
+    await Promise.all([
+        store.user.usersCollection.addAsync(
             {
                 name: "user 1",
                 team: "team-1",
+                email: "email@email.com",
                 roles: {
-                    user: true,
-                }
+                    recruit: true,
+                },
+                uid: "user-1",
+                divisionId: "",
+                recentProjects: [],
+                tasks: new Map(),
             },
             "user-1",
         ),
     ]);
+
+    store.auth.setUser({
+        uid: "user-1",
+        displayName: "user 1",
+        email: "email@email.com",
+    } as firebase.User);
+    store.view.setViewDate({
+        year: 2020,
+        month: 4,
+        day: 1,
+    });
 };
 
+beforeAll(async () => {
+    await loadFirestoreRules({
+        projectId,
+        rules: fs.readFileSync(path.resolve(__dirname, "../../../firestore.rules.test"), "utf8"),
+    });
+});
+
+beforeEach(() => setupAsync());
+afterEach(async () => {
+    store.dispose();
+    await clearFirestoreData({ projectId });
+});
+
+afterAll(() => app.delete());
+
 describe("ReportDownloadLink", () => {
-    let store: Store;
-
-    beforeEach(async () => {
-        await setupAsync();
-
-        store = new Store({
-            firestore,
-        });
-        transaction(() => {
-            store.auth.setUser({
-                uid: "user-1",
-                displayName: "user 1",
-                email: "email@email.com",
-            } as firebase.User);
-            store.view.setViewDate({
-                year: 2020,
-                month: 4,
-                day: 1,
-            });
-        });
-    });
-
-    afterEach(async () => {
-        store.dispose();
-        await clearFirestoreDataAsync();
-    });
-
-    afterAll(deleteFirebaseAppsAsync);
 
     it("should not render when there is no report", async () => {
-        const { asFragment } = render(
+        const { asFragment, unmount } = render(
             <StoreContext.Provider value={store}>
                 <ReportDownloadLink />
             </StoreContext.Provider>
         );
 
         await waitFor(() => expect(asFragment()).toMatchSnapshot());
+
+        unmount();
     });
 
     // it("should display report status and download link when report is completed", async () => {
@@ -121,7 +128,7 @@ describe("ReportDownloadLink", () => {
     // });
 
     it("should not crash when report is deleted in database", async () => {
-        const { findByText, queryByText } = render(
+        const { findByText, unmount } = render(
             <StoreContext.Provider value={store}>
                 <ReportDownloadLink />
             </StoreContext.Provider>
@@ -132,8 +139,6 @@ describe("ReportDownloadLink", () => {
         // Report status should be updated to 'waiting'
         await findByText("waiting");
 
-        // Cleanup
-        await store.reports.reports.deleteAsync(store.reports.report!.id);
-        await waitFor(() => expect(queryByText("waiting")).toBeNull());
+        unmount();
     });
 });

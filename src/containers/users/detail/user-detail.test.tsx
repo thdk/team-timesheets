@@ -1,42 +1,65 @@
 import React from "react";
+import fs from "fs";
+import path from "path";
 
-import { initTestFirestore, deleteFirebaseAppsAsync } from "../../../__tests__/utils/firebase";
 import { Store } from "../../../stores/root-store";
 import { UserDetail } from "./user-detail";
 import { render, waitFor } from "@testing-library/react";
-import { TestCollection } from "../../../__tests__/utils/firestorable/collection";
-import { IUser, IUserData } from "../../../../common";
-import { convertUser } from "../../../../common/serialization/serializer";
+import { initializeTestApp, loadFirestoreRules, clearFirestoreData } from "@firebase/rules-unit-testing";
+import { useStore } from "../../../contexts/store-context";
 
-const {
-    firestore,
-    clearFirestoreDataAsync,
-    refs: [
-        userRef,
-    ]
-} = initTestFirestore("user-detail-test",
-    [
-        "users",
-        "teams",
-    ]);
-
-const store = new Store({
-    firestore,
-});
-
-jest.mock("../../../contexts/store-context", () => ({
-    useStore: () => store,
-}));
-
+jest.mock("../../../contexts/store-context");
 jest.mock("../../../rules");
 
-beforeAll(clearFirestoreDataAsync);
-afterAll(() => {
-    store.dispose();
-    return Promise.all([
-        deleteFirebaseAppsAsync(),
-    ])
+const projectId = "user-detail-test";
+const app = initializeTestApp({
+    projectId,
 });
+
+let store: Store;
+const setupAsync = async () => {
+    store = new Store({
+        firestore: app.firestore(),
+    });
+
+    await Promise.all([
+        store.user.usersCollection.addAsync(
+            {
+                name: "User 1",
+                roles: {
+                    admin: true,
+                },
+                recentProjects: [],
+                tasks: new Map(),
+                uid: "user-1",
+                divisionId: "",
+            },
+            "user-1",
+        ),
+    ]);
+};
+
+beforeAll(async () => {
+    await loadFirestoreRules({
+        projectId,
+        rules: fs.readFileSync(path.resolve(__dirname, "../../../../", "firestore.rules.test"), "utf8"),
+    });
+})
+
+beforeEach(async () => {
+   await setupAsync();
+
+   (useStore as jest.Mock<ReturnType<typeof useStore>>).mockReturnValue(store);
+})
+
+afterEach(async () => {
+    store.dispose();
+    await clearFirestoreData({
+        projectId,
+    });
+});
+
+afterAll(() => app.delete());
 
 
 describe("UserDetail", () => {
@@ -47,35 +70,9 @@ describe("UserDetail", () => {
     });
 
     describe("when there is a selected user", () => {
-        const usercollection = new TestCollection<IUser, IUserData>(
-            firestore,
-            userRef,
-            {
-                serialize: convertUser,
-                defaultSetOptions: {
-                    merge: true,
-                },
-            },
+        beforeEach(() =>
+            store.user.setSelectedUserId("user-1"),
         );
-        beforeAll(async () => {
-            await Promise.all([
-                usercollection.addAsync(
-                    {
-                        name: "User 1",
-                        roles: {
-                            admin: true,
-                        },
-                        recentProjects: [],
-                        tasks: new Map(),
-                        uid: "user-1",
-                        divisionId: "",
-                    },
-                    "user-1",
-                ),
-            ]);
-
-            store.user.setSelectedUserId("user-1");
-        });
 
         test("it should display user properties", async () => {
             await waitFor(() => expect(store.user.selectedUser).toBeDefined());

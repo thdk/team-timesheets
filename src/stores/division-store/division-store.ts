@@ -18,6 +18,8 @@ export class DivisionStore extends FirestorableStore<IDivision, IDivisionData> {
 
     private readonly httpsCallable?: (name: string) => firebase.functions.HttpsCallable;
 
+    private disposables: (() => void)[] = [];
+
     private rootStore: IRootStore;
     constructor(
         rootStore: IRootStore,
@@ -79,18 +81,22 @@ export class DivisionStore extends FirestorableStore<IDivision, IDivisionData> {
             },
         );
 
-        reaction(() => this.rootStore.user.divisionUsersCollection.docs, (docs) => {
-            this.collection.query = (ref) => createQuery(ref, docs);
-            if (!this.collection.isFetched) {
-                this.collection.fetchAsync();
-            }
-        });
+        this.disposables.push(
+            reaction(() => this.rootStore.user.divisionUsersCollection.docs, (docs) => {
+                this.collection.query = (ref) => createQuery(ref, docs);
+                if (!this.collection.isFetched) {
+                    this.collection.fetchAsync();
+                }
+            })
+        );
 
-        autorun(() => {
-            const division = this.divisionId ? this.collection.get(this.divisionId) : undefined;
+        this.disposables.push(
+            autorun(() => {
+                const division = this.divisionId ? this.collection.get(this.divisionId) : undefined;
 
-            this.division = division;
-        });
+                this.division = division;
+            })
+        );
     }
 
     @computed get divisionId() {
@@ -137,9 +143,13 @@ export class DivisionStore extends FirestorableStore<IDivision, IDivisionData> {
                         )
                     }
 
+                    if (!this.rootStore.user.authenticatedUser) {
+                        return Promise.reject(new Error("unauthenticated"));
+                    }
+
                     return this.rootStore.user.divisionUsersCollection.addAsync(
                         {
-                            ...this.rootStore.user.authenticatedUser!,
+                            ...this.rootStore.user.authenticatedUser,
                             divisionId,
                             roles: {
                                 user: true
@@ -168,13 +178,18 @@ export class DivisionStore extends FirestorableStore<IDivision, IDivisionData> {
                         case "already-in-division":
                             title = "You are already in this division";
                             break;
-
-                        default:
+                        case "unknown-division":
                             title = "You can't join this division";
                             break;
+                        default:
+                            return Promise.reject(e);
                     }
                     return Promise.reject(title);
                 },
             );
+    }
+
+    public dispose() {
+        this.disposables.reverse().forEach((d) => d());
     }
 }

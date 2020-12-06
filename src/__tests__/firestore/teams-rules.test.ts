@@ -5,7 +5,7 @@ import {
 import {
     assertFails,
     assertSucceeds,
-} from "@firebase/testing";
+} from "@firebase/rules-unit-testing";
 
 const {
     refs: [

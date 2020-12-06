@@ -1,6 +1,6 @@
 import * as React from 'react';
 
-import * as firebase from 'firebase/app';
+import firebase from 'firebase/app';
 import * as firebaseui from 'firebaseui';
 
 import { LoginProvider } from '../../firebase/types';

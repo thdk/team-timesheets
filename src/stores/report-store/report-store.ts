@@ -2,7 +2,7 @@ import { ICollection, Collection, Doc, RealtimeMode, FetchMode } from "firestora
 import { IRootStore } from "../root-store";
 import { reaction, computed, observable, action } from "mobx";
 
-import * as firebase from 'firebase/app';
+import firebase from "firebase";
 import { IReport } from "../../../common/dist";
 
 export interface IReportStore {

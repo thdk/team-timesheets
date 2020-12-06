@@ -1,38 +1,54 @@
+import path from "path";
+import fs from "fs";
 import React from "react";
-import { initTestFirestore, deleteFirebaseAppsAsync } from "../../../__tests__/utils/firebase";
+import { deleteFirebaseAppsAsync } from "../../../__tests__/utils/firebase";
 import { Store } from "../../../stores/root-store";
 import { render, fireEvent } from "@testing-library/react";
 import { TopBarActions } from "./top-bar-actions-container";
 import { ObservableMap } from "mobx";
+import { initializeTestApp, loadFirestoreRules, clearFirestoreData } from "@firebase/rules-unit-testing";
+import { StoreContext } from "../../../contexts/store-context";
+import { act } from "react-dom/test-utils";
 
-const {
-    firestore,
-    clearFirestoreDataAsync,
-} = initTestFirestore("top-bar-actions-test", []);
-
-const store = new Store({
-    firestore,
+const projectId = "top-bar-actions-test";
+const app = initializeTestApp({
+    projectId,
 });
 
-jest.mock("../../../contexts/store-context", () => ({
-    useStore: () => store,
+let store: Store;
+const setupAsync = async () => {
+    store = new Store({
+        firestore: app.firestore(),
+    });
+};
+
+beforeAll(() => loadFirestoreRules({
+    projectId,
+    rules: fs.readFileSync(path.resolve(__dirname, "../../../../firestore.rules.test"), "utf8"),
 }));
 
-beforeAll(clearFirestoreDataAsync);
-
-afterAll(() => {
-    store.dispose();
-    return Promise.all([
-        deleteFirebaseAppsAsync(),
-    ])
+beforeEach(async () => {
+    await setupAsync();
 });
 
+afterEach(async () => {
+    store.dispose();
+    await clearFirestoreData({ projectId });
+});
+
+afterAll(deleteFirebaseAppsAsync);
 
 describe("TopBarActionsContainer", () => {
     it("should render when there are no actions", () => {
-        const { asFragment } = render(<TopBarActions />);
+        const { asFragment, unmount } = render(
+            <StoreContext.Provider value={store}>
+                <TopBarActions />
+            </StoreContext.Provider>
+        );
 
         expect(asFragment()).toMatchSnapshot();
+
+        unmount();
     });
 
     it("should show actions", () => {
@@ -82,11 +98,15 @@ describe("TopBarActionsContainer", () => {
             },
         ]);
 
-        const { getByText } = render(<TopBarActions />);
+        const { getByText, unmount } = render(
+            <StoreContext.Provider value={store}>
+                <TopBarActions />
+            </StoreContext.Provider>
+        );
 
         expect(getByText("favorite")).toBeDefined();
         expect(getByText("people_border")).toBeDefined();
-        store.view.setActions([]);
+        unmount();
     });
 
     it("should not show contextual actions when there is no selection", () => {
@@ -113,13 +133,17 @@ describe("TopBarActionsContainer", () => {
             },
         ]);
 
-        const { queryByText, getByText, asFragment } = render(<TopBarActions />);
+        const { queryByText, getByText, asFragment, unmount } = render(
+            <StoreContext.Provider value={store}>
+                <TopBarActions />
+            </StoreContext.Provider>
+        );
 
         expect(asFragment()).toMatchSnapshot();
         expect(queryByText("favorite")).toBeNull();
         expect(getByText("people"));
 
-        store.view.setActions([]);
+        unmount();
     });
 
     it("should only show contextual actions when there is a selection", () => {
@@ -148,14 +172,17 @@ describe("TopBarActionsContainer", () => {
 
         store.view.selection.set("foo", true);
 
-        const { queryByText, getByText, asFragment } = render(<TopBarActions />);
+        const { queryByText, getByText, asFragment, unmount } = render(
+            <StoreContext.Provider value={store}>
+                <TopBarActions />
+            </StoreContext.Provider>
+        );
 
         expect(asFragment()).toMatchSnapshot();
         expect(getByText("favorite"));
         expect(queryByText("people")).toBeNull();
 
-        store.view.setActions([]);
-        store.view.selection.clear();
+        unmount();
     });
 
     it("should call the action when clicked", () => {
@@ -171,13 +198,18 @@ describe("TopBarActionsContainer", () => {
             },
         ]);
 
-        const { getByText } = render(<TopBarActions />);
+        const { getByText, unmount } = render(
+            <StoreContext.Provider value={store}>
+                <TopBarActions />
+            </StoreContext.Provider>
+        );
 
-        fireEvent.click(getByText("favorite"));
+        act(() => {
+            fireEvent.click(getByText("favorite"));
+        });
 
         expect(action).toBeCalled();
 
-        store.view.setActions([]);
-        store.view.selection.clear();
+        unmount();
     });
 });

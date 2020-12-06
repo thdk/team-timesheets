@@ -1,26 +1,16 @@
 import React from "react";
+import fs from "fs";
+import path from "path";
+import type firebase from "firebase";
 
-
-import { initTestFirestore, deleteFirebaseAppsAsync } from "../../../__tests__/utils/firebase";
 import { Store } from "../../../stores/root-store";
 import { render, waitFor, fireEvent } from "@testing-library/react";
 import { TimesheetDays, SortOrder } from ".";
 import { Timesheet } from "..";
 import { goToNewRegistration } from "../../../routes/registrations/detail";
 import { useStore } from "../../../contexts/store-context";
-
-const {
-    firestore,
-    clearFirestoreDataAsync,
-    refs: [
-        ,
-        userRef,
-    ],
-} = initTestFirestore("timesheet-test",
-    [
-        "registrations",
-        "users",
-    ]);
+import { initializeTestApp, loadFirestoreRules, clearFirestoreData } from "@firebase/rules-unit-testing";
+import { act } from "react-dom/test-utils";
 
 jest.mock("../../google-calendar");
 
@@ -29,19 +19,57 @@ jest.mock("../../../routes/registrations/detail");
 
 jest.mock("../../../contexts/store-context");
 
-const setupAsync = () => {
-    return userRef.doc("user-1").set({
-        uid: "user-1",
-        email: "email@email.com",
+const projectId = "timesheet-test";
+const app = initializeTestApp({
+    projectId,
+});
+
+let store: Store;
+
+const setupAsync = async () => {
+    store = new Store({
+        firestore: app.firestore(),
     });
+    await store.user.usersCollection.addAsync(
+        {
+            name: "user 1",
+            team: "team-1",
+            roles: {
+                user: true,
+            },
+            uid: "user-1",
+            divisionId: "",
+            recentProjects: [],
+            tasks: new Map(),
+        },
+        "user-1",
+    );
+
+    store.auth.setUser({ uid: "user-1" } as firebase.User);
+
+    return store;
 };
 
-afterAll(() => {
-
-    return Promise.all([
-        deleteFirebaseAppsAsync(),
-    ])
+beforeAll(async () => {
+    await loadFirestoreRules({
+        projectId,
+        rules: fs.readFileSync(path.resolve(__dirname, "../../../../firestore.rules.test"), "utf8"),
+    });
 });
+
+beforeEach(async () => {
+    await setupAsync();
+    (useStore as jest.Mock<ReturnType<typeof useStore>>).mockReturnValue(store);
+});
+
+afterEach(async () => {
+    store.dispose();
+    await clearFirestoreData({
+        projectId,
+    });
+});
+
+afterAll(() => app.delete());
 
 const registrations = [
     {
@@ -101,45 +129,31 @@ const registrations = [
 ];
 
 describe("TimesheetDays", () => {
-    const store = new Store({ firestore });
-    (useStore as jest.Mock<ReturnType<typeof useStore>>).mockReturnValue(store);
-
-    beforeEach(async () => {
-        await clearFirestoreDataAsync();
-        await setupAsync();
-
-    });
-
-    afterAll(() => {
-        store.dispose();
-    })
-
     it("should render without registrations", () => {
-        const { asFragment } = render(<TimesheetDays
+        const { asFragment, unmount } = render(<TimesheetDays
             isMonthView={false}
             registrationClick={jest.fn()}
         />);
 
         expect(asFragment()).toMatchSnapshot();
+
+        unmount();
     });
 
     it("should display registrations for the specified month", async () => {
         store.view.setViewDate({
             year: 2020,
             month: 3,
-        });
+        });        
 
-        store.auth.setUser({ uid: "user-1" } as firebase.User);
+        await store.timesheets.addDocuments(registrations);
+        await waitFor(() => expect(store.user.divisionUser?.id).toBeDefined());
 
         const {
             getByText,
             container,
-            queryByText
+            unmount,
         } = render(<Timesheet />);
-
-        expect(queryByText("Foobar 5")).toBeFalsy();
-
-        await store.timesheets.addDocuments(registrations);
 
         await waitFor(() => expect(getByText("Foobar 5")));
 
@@ -165,9 +179,7 @@ describe("TimesheetDays", () => {
             ])
         );
 
-        await new Promise(resolve => setTimeout(() => {
-            resolve();
-        }, 400));
+        unmount();
     });
 
     it("should display registrations for the specified day", async () => {
@@ -179,13 +191,14 @@ describe("TimesheetDays", () => {
 
         store.auth.setUser({ uid: "user-1" } as firebase.User);
 
-        await waitFor(() => expect(store.user.divisionUser?.id).toBeDefined());
+        await waitFor(() => expect(store.user.divisionUser).toBeDefined());
 
         await store.timesheets.addDocuments(registrations);
 
         const {
             getByText,
             container,
+            unmount,
         } = render(<Timesheet />);
 
         await waitFor(() => expect(getByText("Foobar 5")));
@@ -200,6 +213,7 @@ describe("TimesheetDays", () => {
             registrationItems.length
         ).toBe(3);
 
+        unmount();
     });
     it("should unfold registration when header is clicked", async () => {
         store.view.setViewDate({
@@ -209,10 +223,13 @@ describe("TimesheetDays", () => {
 
         store.auth.setUser({ uid: "user-1" } as firebase.User);
 
+        await waitFor(() => expect(store.user.divisionUser?.id).toBeDefined());
+
         await store.timesheets.addDocuments(registrations);
         const {
             getByText,
             container,
+            unmount,
         } = render(<Timesheet />);
 
         await waitFor(() => expect(getByText("Foobar 5")));
@@ -222,9 +239,13 @@ describe("TimesheetDays", () => {
             headerEls.length
         ).toBe(3);
 
-        fireEvent.click(headerEls[1]);
+        act(() => {
+            fireEvent.click(headerEls[1]);
+        });
 
         await waitFor(() => expect(getByText("Foobar 2")));
+
+        unmount();
     });
 
     it("should NOT unfold registration when header add button is clicked", async () => {
@@ -240,6 +261,7 @@ describe("TimesheetDays", () => {
         const {
             getByText,
             container,
+            unmount,
         } = render(<Timesheet />);
 
         await waitFor(() => expect(getByText("Foobar 5")));
@@ -249,8 +271,12 @@ describe("TimesheetDays", () => {
             headerAddButtonEls.length
         ).toBe(3);
 
-        fireEvent.click(headerAddButtonEls[1]);
+        act(() => {
+            fireEvent.click(headerAddButtonEls[1]);
+        });
 
         await waitFor(() => expect(goToNewRegistration).toBeCalled());
+
+        unmount();
     });
 });

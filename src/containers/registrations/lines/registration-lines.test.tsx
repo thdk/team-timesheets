@@ -1,42 +1,45 @@
 import React from "react";
+import type firebase from "firebase";
+
+import fs from "fs";
+import path from "path";
 
 import { Store } from "../../../stores/root-store";
-import { initTestFirestore, deleteFirebaseAppsAsync } from "../../../__tests__/utils/firebase";
 import { RegistrationLines } from "./registration-lines";
 import { render, waitFor } from "@testing-library/react";
 import { Doc } from "firestorable";
-import { IRegistration, IUserData } from "../../../../common";
+import { IRegistration } from "../../../../common";
 import userEvent from "@testing-library/user-event";
+import { initializeTestApp, loadFirestoreRules, clearFirestoreData, } from "@firebase/rules-unit-testing";
 import { useStore } from "../../../contexts/store-context";
 
-const {
-    firestore,
-    clearFirestoreDataAsync,
-    refs: [
-        usersRef
-    ]
-} = initTestFirestore(
-    "registrations-line-test",
-    [
-        "users",
-    ]
-);
+const projectId = "registrations-line-test";
 
-const store = new Store({
-    firestore,
+const app = initializeTestApp({
+    projectId,
 });
 
-jest.mock("../../../contexts/store-context");
-
+let store: Store;
 let clientIds: string[];
 let taskIds: string[];
 let projectIds: string[];
 const userId = "user-1";
 const setupAsync = async () => {
-    await usersRef.doc(userId).set({
+    store = new Store({
+        firestore: app.firestore(),
+    });
+
+    await store.auth.addDocument({
+        divisionId: "",
         name: "User 1",
-    } as Partial<IUserData>
-    );
+        recentProjects: [],
+        roles: {
+            user: true,
+        },
+        tasks: new Map(),
+        uid: "user-1",
+    }, "user-1");
+
     taskIds = await store.config.tasksCollection.addAsync([
         {
             name: "Task 1",
@@ -67,16 +70,27 @@ const setupAsync = async () => {
 };
 
 beforeAll(async () => {
-    (useStore as jest.Mock<ReturnType<typeof useStore>>).mockReturnValue(store);
-    await clearFirestoreDataAsync();
+    await loadFirestoreRules({
+        projectId,
+        rules: fs.readFileSync(path.resolve(__dirname, "../../../../firestore.rules.test"), "utf8"),
+    });
+});
+
+beforeEach(async () => {
     await setupAsync();
+    (useStore as jest.Mock<ReturnType<typeof useStore>>).mockReturnValue(store);
 });
-afterAll(() => {
+
+afterEach(async () => {
     store.dispose();
-    return Promise.all([
-        deleteFirebaseAppsAsync(),
-    ]);
+    await clearFirestoreData({
+        projectId,
+    });
 });
+
+afterAll(() => app.delete());
+
+jest.mock("../../../contexts/store-context");
 
 describe("RegistrationLines", () => {
     const getRegistrations = () => [
@@ -114,33 +128,37 @@ describe("RegistrationLines", () => {
     ] as Doc<IRegistration>[];
 
     it("should render without registrations", () => {
-        const { asFragment } = render(
+        const { asFragment, unmount, } = render(
             <RegistrationLines
                 registrations={[]}
             />
         );
 
         expect(asFragment()).toMatchSnapshot();
+
+        unmount();
     });
 
     it("should render registrations", async () => {
         await waitFor(() => expect(store.auth.activeDocument).toBeDefined());
 
         await waitFor(() => expect(store.config.clientsCollection.isFetched).toBeTruthy());
-        const { asFragment } = render(
+        const { asFragment, unmount, } = render(
             <RegistrationLines
                 registrations={getRegistrations()}
             />
         );
 
         expect(asFragment()).toMatchSnapshot();
+        
+        unmount();
     });
 
     it("should show checkbox for each registration when registrationToggleSelect is provided", async () => {
         await waitFor(() => expect(store.auth.activeDocument).toBeDefined());
 
         const registrationToggleSelect = jest.fn();
-        const { container } = render(
+        const { container, unmount, } = render(
             <RegistrationLines
                 registrations={getRegistrations()}
                 registrationToggleSelect={registrationToggleSelect}
@@ -150,6 +168,8 @@ describe("RegistrationLines", () => {
         expect(
             container.querySelectorAll("input[type=checkbox]").length
         ).toBe(3);
+
+        unmount();
     });
 
     it("should call callbacks for registration click and select", async () => {
@@ -158,7 +178,7 @@ describe("RegistrationLines", () => {
 
         await waitFor(() => expect(store.auth.activeDocument).toBeDefined());
 
-        const { container, getByText } = render(
+        const { container, getByText, unmount, } = render(
             <RegistrationLines
                 registrations={getRegistrations()}
                 registrationToggleSelect={registrationToggleSelect}
@@ -178,5 +198,7 @@ describe("RegistrationLines", () => {
         userEvent.click(getByText("Client 1 - Registration 2"));
 
         expect(registrationClick).toBeCalledWith("reg-2");
+
+        unmount();
     });
 });

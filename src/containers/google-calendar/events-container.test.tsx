@@ -1,12 +1,16 @@
 import React from "react";
-import { render, waitFor, fireEvent } from "@testing-library/react";
+import type firebase from "firebase";
+import path from "path";
+import fs from "fs";
+import { render, waitFor, fireEvent, act } from "@testing-library/react";
 import { GoogleCalendarEvents } from "./";
-import { initTestFirestore, deleteFirebaseAppsAsync } from "../../__tests__/utils/firebase";
 import { Store } from "../../stores/root-store";
 import { events } from "./events.test";
 import { IntlProvider } from "react-intl";
 import { goToNewRegistration } from "../../routes/registrations/detail";
 import { useGapi } from "../../hooks/use-gapi";
+import { StoreContext } from "../../contexts/store-context";
+import { initializeTestApp, clearFirestoreData, loadFirestoreRules } from "@firebase/rules-unit-testing";
 
 jest.mock("../../hooks/use-gapi");
 jest.mock("../configs/use-google-config", () => ({
@@ -14,18 +18,6 @@ jest.mock("../configs/use-google-config", () => ({
 }));
 
 jest.mock("../../routes/registrations/detail");
-
-const {
-    firestore,
-} = initTestFirestore("events");
-
-const store = new Store({
-    firestore,
-});
-
-jest.mock("../../contexts/store-context", () => ({
-    useStore: () => store,
-}));
 
 const getEventsList = jest.fn();
 
@@ -39,6 +31,34 @@ beforeAll(() => {
             }
         }
     };
+});
+
+const projectId = "events-container";
+
+const app = initializeTestApp({
+    projectId,
+});
+
+let store: Store;
+const setupAsync = async () => {
+    store = new Store({
+        firestore: app.firestore(),
+    });
+
+    await store.user.usersCollection.addAsync(
+        {
+            name: "user 1",
+            team: "team-1",
+            roles: {
+                user: true,
+            },
+            divisionId: "",
+            recentProjects: [],
+            tasks: new Map(),
+            uid: "user-1",
+        },
+        "user-1",
+    );
 
     store.auth.setUser({
         uid: "user-1",
@@ -46,18 +66,30 @@ beforeAll(() => {
         email: "email@email.com",
     } as firebase.User);
 
-    return store.config.tasksCollection.addAsync({
+    await store.config.tasksCollection.addAsync({
         name: "Meeting",
         icon: "people",
     });
+};
+
+beforeAll(async () => {
+    await loadFirestoreRules({
+        projectId,
+        rules: fs.readFileSync(path.resolve(__dirname, "../../../firestore.rules.test"), "utf8"),
+    });
 });
 
-afterAll(() => {
+
+beforeEach(() => setupAsync());
+
+afterEach(async () => {
     store.dispose();
-    return Promise.all([
-        deleteFirebaseAppsAsync(),
-    ])
+    await clearFirestoreData({
+        projectId,
+    });
 });
+
+afterAll(() => app.delete());
 
 describe("GoogleCalendarEventsContainer", () => {
     it("should render without google calendar events", async () => {
@@ -66,10 +98,15 @@ describe("GoogleCalendarEventsContainer", () => {
                 items: [],
             },
         });
-        const { asFragment } = render(<GoogleCalendarEvents />);
+        const { asFragment, unmount } = render(
+            <StoreContext.Provider value={store}>
+                <GoogleCalendarEvents />
+            </StoreContext.Provider>
+        );
 
         await waitFor(() => expect(asFragment()).toMatchSnapshot());
 
+        unmount();
     });
 
     it("should render when gapi is not loaded", async () => {
@@ -79,7 +116,11 @@ describe("GoogleCalendarEventsContainer", () => {
                 isGapiLoaded: false,
             });
 
-        const { asFragment } = render(<GoogleCalendarEvents />);
+        const { asFragment, unmount } = render(
+            <StoreContext.Provider value={store}>
+                <GoogleCalendarEvents />
+            </StoreContext.Provider>
+        );
 
         await waitFor(() => expect(asFragment()).toMatchSnapshot());
 
@@ -88,6 +129,8 @@ describe("GoogleCalendarEventsContainer", () => {
                 user: {} as gapi.auth2.GoogleUser,
                 isGapiLoaded: true,
             });
+
+        unmount();
     });
 
     it("should render when gapi is loaded but auth user is undefined", async () => {
@@ -96,7 +139,11 @@ describe("GoogleCalendarEventsContainer", () => {
                 isGapiLoaded: true,
             });
 
-        const { asFragment } = render(<GoogleCalendarEvents />);
+        const { asFragment, unmount } = render(
+            <StoreContext.Provider value={store}>
+                <GoogleCalendarEvents />
+            </StoreContext.Provider>
+        );
 
         await waitFor(() => expect(asFragment()).toMatchSnapshot());
 
@@ -105,6 +152,8 @@ describe("GoogleCalendarEventsContainer", () => {
                 user: {} as gapi.auth2.GoogleUser,
                 isGapiLoaded: true,
             });
+
+        unmount();
     });
 
     it("should render with google calendar events", async () => {
@@ -114,15 +163,19 @@ describe("GoogleCalendarEventsContainer", () => {
             },
         });
 
-        const { asFragment } = render(
-            <IntlProvider
-                locale={"en-US"}
-                timeZone={"Europe/Brussels"}
-            ><GoogleCalendarEvents />
-            </IntlProvider>
+        const { asFragment, unmount } = render(
+            <StoreContext.Provider value={store}>
+                <IntlProvider
+                    locale={"en-US"}
+                    timeZone={"Europe/Brussels"}
+                ><GoogleCalendarEvents />
+                </IntlProvider>
+            </StoreContext.Provider>
         );
 
         await waitFor(() => expect(asFragment()).toMatchSnapshot());
+
+        unmount();
 
     });
 
@@ -133,16 +186,21 @@ describe("GoogleCalendarEventsContainer", () => {
             },
         });
 
-        const { findByText } = render(
-            <IntlProvider
-                locale={"en-US"}
-                timeZone={"Europe/Brussels"}
-            ><GoogleCalendarEvents />
-            </IntlProvider>
+        const { findByText, unmount } = render(
+            <StoreContext.Provider value={store}>
+                <IntlProvider
+                    locale={"en-US"}
+                    timeZone={"Europe/Brussels"}
+                ><GoogleCalendarEvents />
+                </IntlProvider>
+            </StoreContext.Provider>
         );
 
         const eventItem1 = await findByText("Summary 1");
-        fireEvent.click(eventItem1);
+
+        act(() => {
+            fireEvent.click(eventItem1);
+        });
 
         await waitFor(
             () => expect(
@@ -167,5 +225,7 @@ describe("GoogleCalendarEventsContainer", () => {
         );
 
         expect(goToNewRegistration).toBeCalledTimes(2);
+
+        unmount();
     });
 });

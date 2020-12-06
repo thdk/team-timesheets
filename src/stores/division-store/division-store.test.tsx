@@ -1,65 +1,37 @@
+import type firebase from "firebase";
+import fs from "fs";
+import path from "path";
+
 import { Store } from "../root-store";
-import { initTestFirestore, deleteFirebaseAppsAsync } from "../../__tests__/utils/firebase";
-import { TestCollection } from "../../__tests__/utils/firestorable/collection";
-import { IDivision } from "../../../common/interfaces/IOrganisation";
-import { IDivisionUserData, IUser } from "../../../common";
-import * as serializer from '../../../common/serialization/serializer';
-import { IDivisionData } from "../../../common/interfaces/IOrganisationData";
 import { reaction } from "mobx";
 import { waitFor } from "@testing-library/react";
-
-const {
-    firestore,
-    clearFirestoreDataAsync,
-    refs: [
-        userRef,
-        divisionRef,
-        divisionUserRef,
-
-    ]
-} = initTestFirestore("division-store-test",
-    [
-        "users",
-        "divisions",
-        "division-users",
-    ]);
-
-const userCollection = new TestCollection(
-    firestore,
-    userRef,
-);
-const divisionCollection = new TestCollection<IDivision, IDivisionData>(
-    firestore,
-    divisionRef,
-    {
-        serialize: serializer.convertDivision,
-    },
-);
-
-const divisionUserCollection = new TestCollection<IUser, IDivisionUserData>(
-    firestore,
-    divisionUserRef,
-    {
-        serialize: serializer.convertUser,
-        defaultSetOptions: {
-            merge: true,
-        },
-    },
-);
+import { loadFirestoreRules, initializeTestApp, clearFirestoreData, } from "@firebase/rules-unit-testing";
+const projectId = "division-store-test";
+const app = initializeTestApp({
+    projectId,
+});
 
 const getDivisionByEntryCode = jest.fn().mockRejectedValue("error");
 const httpsCallable = jest.fn(() => getDivisionByEntryCode);
-const store = new Store({ firestore, httpsCallable });
+let store: Store;
+const setupAsync = async () => {
+    store = new Store({
+        firestore: app.firestore(),
+        httpsCallable,
+    });
 
-const setupAsync = () => {
-    return Promise.all([
-        userCollection.addAsync(
+    await Promise.all([
+        store.user.usersCollection.addAsync(
             {
                 name: "user 1",
                 team: "team-1",
                 roles: {
                     user: true,
-                }
+                },
+                uid: "user-1",
+                divisionId: "",
+                recentProjects: [],
+                tasks: new Map(),
             },
             "user-1",
         ),
@@ -68,14 +40,22 @@ const setupAsync = () => {
             uid: "user-1",
         } as firebase.User);
     });
+
+    return store;
 };
 
-beforeAll(() => Promise.all([
-    clearFirestoreDataAsync(),
-    setupAsync(),
-]));
+beforeAll(() => loadFirestoreRules({
+    projectId,
+    rules: fs.readFileSync(path.resolve(__dirname, "../../../firestore.rules.test"), "utf8"),
+}));
 
-afterAll(deleteFirebaseAppsAsync);
+beforeEach(async () => {
+    store = await setupAsync();
+});
+
+afterEach(() => clearFirestoreData({ projectId }));
+
+afterAll(() => app.delete());
 
 describe("DivisionStore", () => {
     let unsubscribe: () => void;
@@ -98,11 +78,10 @@ describe("DivisionStore", () => {
         });
 
         describe("when there are division users", () => {
-            let divisionIds: string[];
-            beforeAll(async () => {
+            beforeEach(async () => {
                 await Promise.all(
                     [
-                        divisionCollection.addAsync(
+                        store.divisions.addDocument(
                             {
                                 name: "Division 1",
                                 createdBy: "user-1",
@@ -111,7 +90,7 @@ describe("DivisionStore", () => {
                             },
                             "div-1"
                         ),
-                        divisionCollection.addAsync(
+                        store.divisions.addDocument(
                             {
                                 name: "Division 2",
                                 createdBy: "user-2",
@@ -119,9 +98,8 @@ describe("DivisionStore", () => {
                                 id: "div-2"
                             },
                             "div-2",
-                        )]).then(async (ids) => {
-                            divisionIds = ids;
-                            await divisionUserCollection.addAsync([
+                        )]).then(async () => {
+                            await store.user.divisionUsersCollection.addAsync([
                                 {
                                     name: "User 1",
                                     divisionId: "div-1",
@@ -143,10 +121,6 @@ describe("DivisionStore", () => {
 
             });
 
-            afterAll(() => {
-                return divisionCollection.deleteAsync(...divisionIds);
-            });
-
             it("should return an array of division users", async () => {
                 await waitFor(() => expect(store.user.divisionUsersCollection.isFetched).toBeTruthy());
                 await waitFor(() => expect(store.divisions.userDivisions.length).toBe(2));
@@ -156,11 +130,13 @@ describe("DivisionStore", () => {
 
     describe("joinDivision", () => {
         it("should return a success message", async () => {
-            getDivisionByEntryCode.mockResolvedValueOnce(
+            getDivisionByEntryCode.mockResolvedValue(
                 { data: "div-1" },
             );
 
             const successMessage = "Successfully joined this division";
+
+            await waitFor(() => expect(store.user.authenticatedUser).toBeDefined());
 
             await expect(
                 store.divisions.joinDivision("entry-code"),
@@ -168,7 +144,7 @@ describe("DivisionStore", () => {
         });
 
         it("should return an error message when no division exists for entry code", async () => {
-            getDivisionByEntryCode.mockResolvedValueOnce(
+            getDivisionByEntryCode.mockResolvedValue(
                 { data: undefined },
             );
 
@@ -180,7 +156,7 @@ describe("DivisionStore", () => {
         });
 
         it("should return an error message when user is already in the division", async () => {
-            await divisionCollection.addAsync(
+            await store.divisions.addDocument(
                 {
                     name: "Division 1",
                     createdBy: "user-1",
@@ -189,7 +165,7 @@ describe("DivisionStore", () => {
                 },
                 "div-1"
             ).then(async () => {
-                await divisionUserCollection.addAsync(
+                await store.user.divisionUsersCollection.addAsync(
                     {
                         name: "User 1",
                         divisionId: "div-1",
@@ -202,7 +178,9 @@ describe("DivisionStore", () => {
                 );
             });
 
-            getDivisionByEntryCode.mockResolvedValueOnce(
+            await waitFor(() => expect(store.user.authenticatedUser).toBeDefined());
+
+            getDivisionByEntryCode.mockResolvedValue(
                 { data: "div-1" },
             );
 
@@ -211,9 +189,6 @@ describe("DivisionStore", () => {
             await expect(
                 store.divisions.joinDivision("entry-code"),
             ).rejects.toEqual(errorMessage);
-
-            await divisionCollection.deleteAsync("div-1");
-            await divisionUserCollection.deleteAsync("div-user-1");
         });
     });
 });

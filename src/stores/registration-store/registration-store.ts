@@ -1,6 +1,7 @@
 import { Doc, ICollection, RealtimeMode, FetchMode } from "firestorable";
 import { observable, computed, reaction, when, action, toJS } from 'mobx';
 import moment from 'moment';
+import type firebase from "firebase";
 
 import { IRootStore } from '../root-store';
 import * as deserializer from '../../../common/serialization/deserializer';
@@ -285,7 +286,7 @@ export class RegistrationStore extends FirestorableStore<IRegistration, IRegistr
     }
 
     public dispose() {
-        this.reactionDisposeFns.forEach(fn => fn());
-        this.collection.dispose();
+        this.reactionDisposeFns.reverse().forEach(fn => fn());
+        super.dispose();
     }
 }

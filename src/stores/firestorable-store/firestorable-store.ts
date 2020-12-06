@@ -1,5 +1,6 @@
 import { observable, action, transaction, computed, reaction } from "mobx";
 import { Collection, ICollectionOptions, ICollectionDependencies, Doc } from "firestorable";
+import type firebase from "firebase";
 
 export interface StoreOptions<T, K> {
     collection: string,
@@ -148,6 +149,7 @@ export class FirestorableStore<T, K> {
     }
 
     public dispose() {
+        this.collection.dispose();
         this.disposeFns.reverse().forEach(fn => fn());
     }
 }

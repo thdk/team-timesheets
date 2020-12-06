@@ -13,7 +13,7 @@ export const useConfigs = () => {
 
     useEffect(
         () => {
-            reaction(() => configStore.configsCollection.isFetched, (isFetched) => {
+            return reaction(() => configStore.configsCollection.isFetched, (isFetched) => {
                 if (isFetched) {
                     setgetConfigValue(fn);
                 }

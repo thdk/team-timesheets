@@ -1,87 +1,49 @@
 import React from "react";
-import { initTestFirestore, deleteFirebaseAppsAsync } from "../../../__tests__/utils/firebase";
+import type firebase from "firebase";
+
+import path from "path";
+import fs from "fs";
+
 import { FavoritesList } from ".";
-import { FavoriteCollection } from "../../../__tests__/utils/firestorable/favorite-collection";
-import { UserCollection } from "../../../__tests__/utils/firestorable/user-collection";
-import { TestCollection } from "../../../__tests__/utils/firestorable/collection";
-import { IClientData, IFavoriteRegistrationGroup, IProjectData, ITaskData } from "../../../../common";
 import { StoreContext } from "../../../contexts/store-context";
-import { IRootStore } from "../../../stores/root-store";
+import { Store } from "../../../stores/root-store";
 import { render, waitFor } from "@testing-library/react";
-import { FavoriteStore } from "../../../stores/favorite-store";
-import { UserStore } from "../../../stores/user-store";
-import { ConfigStore } from "../../../stores/config-store";
-import { ProjectStore } from "../../../stores/project-store";
-import { AuthStore } from "../../../stores/auth-store";
+import { loadFirestoreRules, clearFirestoreData, initializeTestApp } from "@firebase/rules-unit-testing";
 
-const {
-    firestore,
-    refs: [
-        favoritesRef,
-        userRef,
-        clientRef,
-        favoriteGroupRef,
-        projectRef,
-        taskRef,
-    ],
-    clearFirestoreDataAsync
-} = initTestFirestore("favorite-list-test",
-    [
-        "favorites",
-        "users",
-        "clients",
-        "favorite-groups",
-        "projects",
-        "tasks",
-    ]);
+const projectId = "favorites-list-test";
+const app = initializeTestApp({
+    projectId,
+});
 
-beforeEach(() => clearFirestoreDataAsync());
+let store: Store;
 
-afterAll(() => deleteFirebaseAppsAsync());
+beforeAll(async () => {
+    await loadFirestoreRules({
+        projectId,
+        rules: fs.readFileSync(path.resolve(__dirname, "../../../../firestore.rules.test"), "utf8"),
+    })
+});
 
-class TestStore {
-    rootStore = this as unknown as IRootStore;
-    public auth = new AuthStore({
-        firestore,
+beforeEach(() => {
+    store = new Store({
+        firestore: app.firestore(),
     });
+});
 
-    public user = new UserStore(this.rootStore, {
-        firestore,
+afterEach(async () => {
+    store.dispose();
+    await clearFirestoreData({
+        projectId,
     });
-    public favorites = new FavoriteStore(this.rootStore, {
-        firestore,
-    });
+})
 
-    public config = new ConfigStore(this.rootStore, {
-        firestore,
-    });
-
-    public timesheets = {
-        registration: undefined,
-    }
-
-    public projects = new ProjectStore(this.rootStore, {
-        firestore,
-    });
-
-    public dispose = () => {
-        this.projects.dispose();
-        this.favorites.dispose();
-        this.config.dispose();
-        this.user.dispose();
-        this.auth.dispose();
-    }
-
-    public getDivisionId = () => undefined;
-
-}
+afterAll(() => app.delete());
 
 describe("FavoritesList", () => {
 
     it("should render without favorites", () => {
-        const store = new TestStore() as unknown as IRootStore;
 
-        const { asFragment } = render(
+        const { asFragment, unmount, } = render(
             <StoreContext.Provider value={store}>
                 <FavoritesList />
             </StoreContext.Provider>
@@ -89,21 +51,15 @@ describe("FavoritesList", () => {
 
         expect(asFragment()).toMatchSnapshot();
 
-        store.dispose();
+        unmount();
     });
 
     it("should render favorites", async () => {
         const setupAsync = () => {
-            const favoriteCollection = new FavoriteCollection(firestore, favoritesRef);
-            const userCollection = new UserCollection(firestore, userRef);
-            const clientCollection = new TestCollection<IClientData>(firestore, clientRef);
-            const favoriteGroupCollection = new TestCollection<IFavoriteRegistrationGroup>(firestore, favoriteGroupRef);
-            const projectCollection = new TestCollection<IProjectData>(firestore, projectRef);
-            const taskCollection = new TestCollection<ITaskData>(firestore, taskRef);
 
             return Promise.all([
                 // favorites
-                favoriteCollection.addAsync([
+                store.favorites.favoriteCollection.addAsync([
                     {
                         groupId: "group-1",
                         userId: "user-1",
@@ -127,7 +83,7 @@ describe("FavoritesList", () => {
                         time: 2,
                     },
                 ]),
-                userCollection.addAsync(
+                store.user.usersCollection.addAsync(
                     {
                         name: "user 1",
                         uid: "user-1",
@@ -135,32 +91,35 @@ describe("FavoritesList", () => {
                         roles: {
                             user: true,
                         },
+                        divisionId: "",
+                        tasks: new Map(),
+                        recentProjects: [],
                     },
                     "user-1",
                 ),
-                clientCollection.addAsync(
+                store.config.clientsCollection.addAsync(
                     {
-                        name_insensitive: "CLIENT 1",
                         name: "client 1",
                         divisionId: "",
                     },
                     "client-1",
                 ),
-                favoriteGroupCollection.addAsync(
+                store.favorites.addDocument(
                     {
                         name: "group 1",
                         userId: "user-1",
                     },
                     "group-1",
                 ),
-                projectCollection.addAsync(
+                store.projects.addDocument(
                     {
+                        createdBy: "user-1",
                         name: "project 1",
                         divisionId: "",
                     },
                     "project-1",
                 ),
-                taskCollection.addAsync(
+                store.config.tasksCollection.addAsync(
                     {
                         name: "task 1",
                         divisionId: "",
@@ -172,9 +131,6 @@ describe("FavoritesList", () => {
 
         await setupAsync();
 
-        let store: IRootStore;
-
-        store = new TestStore() as unknown as IRootStore;
         store.auth.setUser({
             uid: "user-1",
             displayName: "user 1",
@@ -183,13 +139,10 @@ describe("FavoritesList", () => {
 
         store.favorites.setActiveDocumentId("group-1");
 
-
-        const { getByText, asFragment } = render(
-            // <FirebaseProvider>
+        const { getByText, asFragment, unmount, } = render(
             <StoreContext.Provider value={store}>
                 <FavoritesList />
             </StoreContext.Provider>
-            //</FirebaseProvider>
         );
 
         // FavoritesList will fetch favorites by groupId once it get's rendered
@@ -201,6 +154,6 @@ describe("FavoritesList", () => {
         await waitFor(() => expect(store.config.clientsCollection.isFetched).toBeTruthy());
         await waitFor(() => expect(asFragment()).toMatchSnapshot());
 
-        store.dispose();
+        unmount();
     });
 });

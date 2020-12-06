@@ -1,4 +1,5 @@
 import { observable, computed, action, reaction } from 'mobx';
+import type firebase from "firebase";
 import { Collection, ICollection, RealtimeMode, FetchMode } from "firestorable";
 import { IRootStore } from '../root-store';
 import { IClient, IClientData, ITeam, ITeamData, ITaskData, IConfig, ConfigValue, ITask } from '../../../common/dist';
@@ -17,6 +18,8 @@ export class ConfigStore implements IConfigStore {
     @observable.ref private taskIdField?: string;
     @observable.ref clientId?: string;
     @observable.ref teamId?: string;
+
+    private disposables: (() => void)[] = [];
 
     constructor(
         rootStore: IRootStore,
@@ -80,35 +83,36 @@ export class ConfigStore implements IConfigStore {
             }
         )
 
-        reaction(() => rootStore.user.divisionUser, (user) => {
-            if (!user) {
-                this.teamsCollection.query = null;
-                this.tasksCollection.query = null;
-                this.clientsCollection.query = null;
-            }
-            else {
-                const query = (ref: firebase.firestore.CollectionReference) =>
-                    ref.orderBy("name_insensitive")
-                        .where("divisionId", "==", user.divisionId || "");
-
-                this.teamsCollection.query = query;
-                this.tasksCollection.query = query;
-                this.clientsCollection.query = query;
-
-                if (!this.teamsCollection.isFetched) {
-                    this.teamsCollection.fetchAsync();
+        this.disposables.push(
+            reaction(() => rootStore.user.divisionUser, (user) => {
+                if (!user) {
+                    this.teamsCollection.query = null;
+                    this.tasksCollection.query = null;
+                    this.clientsCollection.query = null;
                 }
+                else {
+                    const query = (ref: firebase.firestore.CollectionReference) =>
+                        ref.orderBy("name_insensitive")
+                            .where("divisionId", "==", user.divisionId || "");
 
-                if (!this.tasksCollection.isFetched) {
-                    this.tasksCollection.fetchAsync();
+                    this.teamsCollection.query = query;
+                    this.tasksCollection.query = query;
+                    this.clientsCollection.query = query;
+
+                    if (!this.teamsCollection.isFetched) {
+                        this.teamsCollection.fetchAsync();
+                    }
+
+                    if (!this.tasksCollection.isFetched) {
+                        this.tasksCollection.fetchAsync();
+                    }
+
+                    if (!this.clientsCollection.isFetched) {
+                        this.clientsCollection.fetchAsync();
+                    }
                 }
-
-                if (!this.clientsCollection.isFetched) {
-                    this.clientsCollection.fetchAsync();
-                }
-            }
-
-        });
+            })
+        );
     }
 
     @computed
@@ -155,6 +159,7 @@ export class ConfigStore implements IConfigStore {
     }
 
     public dispose() {
+        this.disposables.reverse().forEach((d) => d());
         this.clientsCollection.dispose();
         this.teamsCollection.dispose();
         this.tasksCollection.dispose();

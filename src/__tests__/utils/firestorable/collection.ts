@@ -1,4 +1,5 @@
 import { Collection, FetchMode, RealtimeMode, ICollectionOptions } from "firestorable";
+import type firebase from "firebase";
 
 export class TestCollection<T, K = T> extends Collection<T, K> {
     constructor(

@@ -1,5 +1,6 @@
 import { ICollection, Collection, FetchMode, RealtimeMode } from "firestorable";
 import { reaction, computed } from "mobx";
+import type firebase from "firebase";
 
 import { IRootStore } from "../root-store";
 import { IFavoriteRegistrationGroup, IFavoriteRegistration, IFavoriteRegistrationGroupData } from "../../../common/dist";
@@ -17,6 +18,8 @@ export class FavoriteStore extends FirestorableStore<IFavoriteRegistrationGroup,
     public favoriteCollection: ICollection<IFavoriteRegistration>;
     private db: firebase.firestore.Firestore;
     private readonly rootStore: IRootStore;
+
+    private disposables: (() => void)[] = [];
 
     constructor(rootStore: IRootStore, {
         firestore,
@@ -51,9 +54,11 @@ export class FavoriteStore extends FirestorableStore<IFavoriteRegistrationGroup,
             },
         )
 
-        reaction(() => rootStore.user.divisionUser, () => {
-            this.collection.query = createQuery(rootStore.user);
-        });
+        this.disposables.push(
+            reaction(() => rootStore.user.divisionUser, () => {
+                this.collection.query = createQuery(rootStore.user);
+            })
+        );
     }
 
     @computed
@@ -116,5 +121,10 @@ export class FavoriteStore extends FirestorableStore<IFavoriteRegistrationGroup,
         });
 
         return groupId;
+    }
+
+    public dispose() {
+        super.dispose();
+        this.disposables.reverse().forEach(d => d());
     }
 }

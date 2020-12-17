@@ -36,6 +36,7 @@ export const DivisionDetail = (props: Props) => {
                         outlined
                         label="Name"
                         value={name}
+                        className="division-detail__name"
                         onChange={handleNameChanged}
                     />
                 </FormField>

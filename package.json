@@ -17,7 +17,7 @@
     "test": "jest",
     "test:cloudbuild": "firebase emulators:exec --only firestore \"jest --coverage\"",
     "test:watch": "jest --watch",
-    "emulators": "firebase emulators:start --only \"hosting,firestore,functions\"",
+    "emulators": "firebase emulators:start --only \"hosting,firestore\"",
     "emulator:exec": "firebase emulators:exec --only firestore",
     "test:emulator": "firebase emulators:exec --only firestore jest",
     "test:emulator:coverage": "firebase emulators:exec --only firestore \"jest --coverage\""

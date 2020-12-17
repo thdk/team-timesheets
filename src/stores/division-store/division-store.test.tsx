@@ -181,6 +181,9 @@ describe("DivisionStore", () => {
 
             const errorMessage = "You are already in this division";
 
+            await waitFor(() => expect(store.divisions.collection.isFetched).toBeTruthy());
+            await waitFor(() => expect(store.user.divisionUsersCollection.isFetched).toBeTruthy());
+
             await expect(
                 store.divisions.joinDivision("entry-code"),
             ).rejects.toEqual(errorMessage);

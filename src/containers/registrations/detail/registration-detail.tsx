@@ -4,7 +4,7 @@ import { useRegistrationStore } from '../../../contexts/registration-context';
 import { Form, FormField } from "../../../components/layout/form";
 import { FlexGroup } from "../../../components/layout/flex";
 import { TextField } from "@rmwc/textfield";
-import { ProjectSelect } from "../../projects/select";
+import { ProjectSelect } from "../../projects/select/project-select";
 import ClientSelect from "../../clients/select";
 import { TasksChips } from "../../tasks/chips";
 import { useUserStore } from "../../../contexts/user-context";
@@ -66,6 +66,11 @@ export const RegistrationDetail = observer(() => {
             timesheets.activeDocument.client = value;
     }, [timesheets.activeDocument]);
 
+    const onProjectChange = useCallback((value: string) => {
+        if (timesheets.activeDocument)
+            timesheets.activeDocument.project = value;
+    }, [timesheets.activeDocument]);
+
     if (!timesheets.activeDocument || !user.divisionUser) return <></>;
 
     const {
@@ -73,6 +78,7 @@ export const RegistrationDetail = observer(() => {
         time,
         date,
         client,
+        project,
     } = timesheets.activeDocument;
 
     return (
@@ -120,7 +126,10 @@ export const RegistrationDetail = observer(() => {
                 </FlexGroup>
                 <FlexGroup>
                     <FormField>
-                        <ProjectSelect></ProjectSelect>
+                        <ProjectSelect
+                            onChange={onProjectChange}
+                            value={project}
+                        />
                     </FormField>
                     <FormField first={false}>
                         <ClientSelect

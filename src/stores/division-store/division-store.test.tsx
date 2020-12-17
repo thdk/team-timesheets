@@ -35,11 +35,11 @@ const setupAsync = async () => {
             },
             "user-1",
         ),
-    ]).then(() => {
-        store.auth.setUser({
-            uid: "user-1",
-        } as firebase.User);
-    });
+    ]);
+
+    store.auth.setUser({
+        uid: "user-1",
+    } as firebase.User);
 
     return store;
 };
@@ -49,25 +49,20 @@ beforeAll(() => loadFirestoreRules({
     rules: fs.readFileSync(path.resolve(__dirname, "../../../firestore.rules.test"), "utf8"),
 }));
 
-beforeEach(async () => {
-    store = await setupAsync();
-});
+beforeEach(() => setupAsync());
 
-afterEach(() => clearFirestoreData({ projectId }));
+afterEach(async () => {
+    store.dispose();
+    await clearFirestoreData({ projectId });
+});
 
 afterAll(() => app.delete());
 
 describe("DivisionStore", () => {
-    let unsubscribe: () => void;
 
     beforeEach(() => {
-
         // We need to observe something otherwise registrations aren't fetched :)
-        unsubscribe = reaction(() => store.user.divisionUsersCollection, () => { });
-    });
-
-    afterEach(() => {
-        unsubscribe();
+        reaction(() => store.user.divisionUsersCollection, () => { });
     });
 
     describe("userDivisions", () => {

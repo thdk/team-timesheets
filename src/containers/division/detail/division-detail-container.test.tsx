@@ -84,15 +84,17 @@ describe("DivisionDetailContainer", () => {
 
         const {
             getByText,
-            asFragment,
+            container,
             unmount,
         } = render(
             <DivisionDetail />
         );
 
-        await waitFor(() => getByText("Name"));
+        await waitFor(() => getByText("business"));
 
-        expect(asFragment()).toMatchSnapshot();
+        expect(
+            container.querySelector<HTMLInputElement>(".division-detail__name input")?.value
+        ).toBe("Division 1");
 
         unmount();
     });

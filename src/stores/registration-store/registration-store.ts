@@ -1,4 +1,4 @@
-import { Doc, ICollection, RealtimeMode, FetchMode } from "firestorable";
+import { Doc, ICollection, RealtimeMode, FetchMode, CrudStore } from "firestorable";
 import { observable, computed, reaction, when, action, toJS } from 'mobx';
 import moment from 'moment';
 import type firebase from "firebase";
@@ -8,7 +8,6 @@ import * as deserializer from '../../../common/serialization/deserializer';
 import * as serializer from '../../../common/serialization/serializer';
 import { SortOrder } from '../../containers/timesheet/days';
 import { IRegistration, IRegistrationData } from '../../../common/dist';
-import { FirestorableStore } from "../firestorable-store";
 
 export interface IGroupedRegistrations<T> {
     registrations: Doc<IRegistration, IRegistrationData>[];
@@ -75,7 +74,7 @@ const createDefaults = (
         });
 };
 
-export class RegistrationStore extends FirestorableStore<IRegistration, IRegistrationData> implements IRegistrationsStore {
+export class RegistrationStore extends CrudStore<IRegistration, IRegistrationData> implements IRegistrationsStore {
     private rootStore: IRootStore;
     readonly clipboard = observable(new Map<string, IRegistration>());
 

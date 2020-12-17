@@ -1,4 +1,4 @@
-import { RealtimeMode, FetchMode } from "firestorable";
+import { RealtimeMode, FetchMode, CrudStore } from "firestorable";
 import { observable, computed, reaction } from "mobx";
 import type firebase from "firebase";
 
@@ -7,7 +7,6 @@ import { IProject, IProjectData, IUser } from '../../../common/dist';
 
 import * as serializer from '../../../common/serialization/serializer';
 import * as deserializer from '../../../common/serialization/deserializer';
-import { FirestorableStore } from "../firestorable-store";
 
 const createQuery = (user: IUser | undefined) => {
     if (!user) {
@@ -20,7 +19,7 @@ const createQuery = (user: IUser | undefined) => {
     }
 }
 
-export class ProjectStore extends FirestorableStore<IProject, IProjectData> {
+export class ProjectStore extends CrudStore<IProject, IProjectData> {
     private readonly rootStore: IRootStore;
 
     private disposables: (() => void)[] = [];

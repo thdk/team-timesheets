@@ -1,4 +1,4 @@
-import { Collection, ICollection, RealtimeMode, FetchMode, Doc } from "firestorable";
+import { Collection, ICollection, RealtimeMode, FetchMode, Doc, CrudStore } from "firestorable";
 import { observable, reaction, computed, autorun } from "mobx";
 
 import { IRootStore } from '../root-store';
@@ -9,9 +9,8 @@ import { IDivision, IDivisionCode } from "../../../common/interfaces/IOrganisati
 import { IDivisionData } from "../../../common/interfaces/IOrganisationData";
 import { IUserData, IUser } from "../../../common";
 import firebase from "firebase/app";
-import { FirestorableStore } from "../firestorable-store";
 
-export class DivisionStore extends FirestorableStore<IDivision, IDivisionData> {
+export class DivisionStore extends CrudStore<IDivision, IDivisionData> {
     readonly divisionCodesCollection: ICollection<IDivisionCode>;
 
     @observable.ref division: Doc<IDivision> | undefined;

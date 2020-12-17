@@ -1,7 +1,6 @@
 import type firebase from "firebase";
 import { action, transaction, observable } from "mobx";
-import { Doc, Collection } from "firestorable";
-import { FirestorableStore, StoreOptions } from "../firestorable-store";
+import { Doc, Collection, CrudStore, StoreOptions } from "firestorable";
 
 export interface AuthStoreUser {
     name?: string;
@@ -23,7 +22,7 @@ const getLoggedInUserAsync = (auth: firebase.auth.Auth) => {
     });
 }
 
-export class AuthStore<T extends AuthStoreUser, K> extends FirestorableStore<T, K> {
+export class AuthStore<T extends AuthStoreUser, K> extends CrudStore<T, K> {
     @observable.ref
     isAuthInitialised = false;
 

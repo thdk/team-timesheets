@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`DivisionDetail should render without data 1`] = `
+exports[`DivisionDetailContainer should display data of active division 1`] = `
 <DocumentFragment>
   <div
     class="form"
@@ -20,10 +20,11 @@ exports[`DivisionDetail should render without data 1`] = `
           />
           <input
             class="mdc-text-field__input"
-            value=""
+            value="Division 1"
           />
           <div
             class="mdc-notched-outline mdc-notched-outline--upgraded"
+            notch="0"
           >
             <div
               class="mdc-notched-outline__leading"
@@ -32,7 +33,7 @@ exports[`DivisionDetail should render without data 1`] = `
               class="mdc-notched-outline__notch"
             >
               <span
-                class="mdc-floating-label"
+                class="mdc-floating-label mdc-floating-label--float-above"
                 id="textfield-Name-label"
                 style="transition-duration: 0s;"
               >
@@ -50,17 +51,23 @@ exports[`DivisionDetail should render without data 1`] = `
       >
         <label
           aria-labelledby="textfield-Icon-label"
-          class="mdc-text-field mdc-text-field--upgraded mdc-text-field--outlined mdc-text-field--with-trailing-icon"
+          class="mdc-text-field mdc-text-field--upgraded mdc-text-field--outlined mdc-text-field--with-leading-icon mdc-text-field--with-trailing-icon"
         >
+          <i
+            class="rmwc-icon rmwc-icon--ligature material-icons mdc-text-field__icon mdc-text-field__icon--leading"
+          >
+            business
+          </i>
           <span
             class="mdc-text-field__ripple"
           />
           <input
             class="mdc-text-field__input"
-            value=""
+            value="business"
           />
           <div
             class="mdc-notched-outline mdc-notched-outline--upgraded"
+            notch="0"
           >
             <div
               class="mdc-notched-outline__leading"
@@ -69,7 +76,7 @@ exports[`DivisionDetail should render without data 1`] = `
               class="mdc-notched-outline__notch"
             >
               <span
-                class="mdc-floating-label"
+                class="mdc-floating-label mdc-floating-label--float-above"
                 id="textfield-Icon-label"
                 style="transition-duration: 0s;"
               >
@@ -92,3 +99,5 @@ exports[`DivisionDetail should render without data 1`] = `
   </div>
 </DocumentFragment>
 `;
+
+exports[`DivisionDetailContainer should not render when there is no active division 1`] = `<DocumentFragment />`;

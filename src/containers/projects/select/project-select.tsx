@@ -5,27 +5,27 @@ import { Select } from '@rmwc/select';
 import { IProject } from '../../../../common/dist';
 import { useUserStore } from "../../../contexts/user-context";
 import { useProjectStore } from "../../../contexts/project-context";
-import { useRegistrationStore } from '../../../contexts/registration-context';
 
-
-export const ProjectSelect = observer(() => {
+export const ProjectSelect = observer(({
+    value,
+    onChange,
+}: {
+    value: string | undefined,
+    onChange(value: string): void,
+}) => {
     const { divisionUser } = useUserStore();
-    const { activeProjects, archivedProjects } = useProjectStore();
-    const { activeDocument } = useRegistrationStore();
+    const projectStore = useProjectStore();
 
     const onProjectChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
         const value = event.currentTarget.value;
-
-        if (activeDocument && activeDocument)
-            activeDocument.project = value;
+        onChange(value);
     }
-
-    let project = activeDocument ? activeDocument.project : "";
 
     const userRecentProjects = divisionUser ? divisionUser.recentProjects : [];
 
+
     const recentProjects = userRecentProjects.slice(0, 5).reduce((p, c) => {
-        const projectData = activeProjects.find(p => p.id === c);
+        const projectData = projectStore.activeProjects.find(p => p.id === c);
         if (projectData) {
             p.push(projectData);
         } else {
@@ -34,26 +34,27 @@ export const ProjectSelect = observer(() => {
         return p;
     }, new Array<IProject & { id: string }>());
 
+
     const recentProjectItems = recentProjects.length
         ? ["\/ Recent projects \/", ...recentProjects, "", "\/ More projects \/"]
         : [""];
 
-    const otherProjectItems = activeProjects
+    const otherProjectItems = projectStore.activeProjects
         .filter(p => !recentProjects.some(rp => rp.id === p.id));
 
     const allProjects = [...recentProjectItems, ...otherProjectItems];
 
     let isCurrentProjectArchived = false;
     // Maybe project is archived? Add it and disable change of project!
-    if (project && !allProjects.some(p => typeof p !== "string" && p.id === project)) {
-        const archivedProject = archivedProjects.find(p => p.id === project);
+    if (value && !allProjects.some(p => typeof p !== "string" && p.id === value)) {
+        const archivedProject = projectStore.archivedProjects.find(p => p.id === value);
         if (archivedProject) {
             isCurrentProjectArchived = true;
             allProjects.unshift(archivedProject);
         }
         else {
             console.log("Project of registration not found");
-            project = undefined;
+            value = undefined;
         }
     }
 
@@ -76,7 +77,7 @@ export const ProjectSelect = observer(() => {
     return (
         <Select
             disabled={isCurrentProjectArchived}
-            value={project || ""}
+            value={value || ""}
             outlined={true}
             label="Project"
             onChange={onProjectChange}>

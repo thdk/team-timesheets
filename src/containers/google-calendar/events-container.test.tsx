@@ -9,9 +9,11 @@ import { events } from "./events.test";
 import { IntlProvider } from "react-intl";
 import { goToNewRegistration } from "../../routes/registrations/detail";
 import { useGapi } from "../../hooks/use-gapi";
-import { StoreContext } from "../../contexts/store-context";
 import { initializeTestApp, clearFirestoreData, loadFirestoreRules } from "@firebase/rules-unit-testing";
+import { useStore } from "../../contexts/store-context";
 
+
+jest.mock("../../contexts/store-context");
 jest.mock("../../hooks/use-gapi");
 jest.mock("../configs/use-google-config", () => ({
     useGoogleConfig: jest.fn(),
@@ -80,7 +82,10 @@ beforeAll(async () => {
 });
 
 
-beforeEach(() => setupAsync());
+beforeEach(async () => {
+    await setupAsync();
+    (useStore as jest.Mock<ReturnType<typeof useStore>>).mockReturnValue(store);
+});
 
 afterEach(async () => {
     store.dispose();
@@ -99,9 +104,7 @@ describe("GoogleCalendarEventsContainer", () => {
             },
         });
         const { asFragment, unmount } = render(
-            <StoreContext.Provider value={store}>
-                <GoogleCalendarEvents />
-            </StoreContext.Provider>
+            <GoogleCalendarEvents />
         );
 
         await waitFor(() => expect(asFragment()).toMatchSnapshot());
@@ -117,9 +120,7 @@ describe("GoogleCalendarEventsContainer", () => {
             });
 
         const { asFragment, unmount } = render(
-            <StoreContext.Provider value={store}>
-                <GoogleCalendarEvents />
-            </StoreContext.Provider>
+            <GoogleCalendarEvents />
         );
 
         await waitFor(() => expect(asFragment()).toMatchSnapshot());
@@ -140,9 +141,7 @@ describe("GoogleCalendarEventsContainer", () => {
             });
 
         const { asFragment, unmount } = render(
-            <StoreContext.Provider value={store}>
-                <GoogleCalendarEvents />
-            </StoreContext.Provider>
+            <GoogleCalendarEvents />
         );
 
         await waitFor(() => expect(asFragment()).toMatchSnapshot());
@@ -164,13 +163,11 @@ describe("GoogleCalendarEventsContainer", () => {
         });
 
         const { asFragment, unmount } = render(
-            <StoreContext.Provider value={store}>
-                <IntlProvider
-                    locale={"en-US"}
-                    timeZone={"Europe/Brussels"}
-                ><GoogleCalendarEvents />
-                </IntlProvider>
-            </StoreContext.Provider>
+            <IntlProvider
+                locale={"en-US"}
+                timeZone={"Europe/Brussels"}
+            ><GoogleCalendarEvents />
+            </IntlProvider>
         );
 
         await waitFor(() => expect(asFragment()).toMatchSnapshot());
@@ -187,13 +184,11 @@ describe("GoogleCalendarEventsContainer", () => {
         });
 
         const { findByText, unmount } = render(
-            <StoreContext.Provider value={store}>
-                <IntlProvider
-                    locale={"en-US"}
-                    timeZone={"Europe/Brussels"}
-                ><GoogleCalendarEvents />
-                </IntlProvider>
-            </StoreContext.Provider>
+            <IntlProvider
+                locale={"en-US"}
+                timeZone={"Europe/Brussels"}
+            ><GoogleCalendarEvents />
+            </IntlProvider>
         );
 
         const eventItem1 = await findByText("Summary 1");

@@ -18,7 +18,7 @@ const login = new Route({
     },
     title: "Login",
     beforeEnter: (_route: LoginRoute, _params: any, s: IRootStore) => {
-        return s.auth.getLoggedInUserAsync().then(() => {
+        return s.auth.getLoggedInUser().then(() => {
             // TODO: detect requested page so we can redirect to that page when authenticated
             goToOverview(s);
             return false;

@@ -1,4 +1,4 @@
-import { ICollection, Collection, FetchMode, RealtimeMode } from "firestorable";
+import { ICollection, Collection, FetchMode, RealtimeMode, CrudStore } from "firestorable";
 import { reaction, computed } from "mobx";
 import type firebase from "firebase";
 
@@ -6,7 +6,6 @@ import { IRootStore } from "../root-store";
 import { IFavoriteRegistrationGroup, IFavoriteRegistration, IFavoriteRegistrationGroupData } from "../../../common/dist";
 import * as serializer from '../../../common/serialization/serializer';
 import * as deserializer from '../../../common/serialization/deserializer';
-import { FirestorableStore } from "../firestorable-store";
 import { IUserStore } from "../user-store";
 
 const createQuery = (userStore: IUserStore) =>
@@ -14,7 +13,7 @@ const createQuery = (userStore: IUserStore) =>
         ? (ref: firebase.firestore.CollectionReference) => ref.where("userId", "==", userStore.divisionUser?.id).orderBy("name")
         : null;
 
-export class FavoriteStore extends FirestorableStore<IFavoriteRegistrationGroup, IFavoriteRegistrationGroupData> {
+export class FavoriteStore extends CrudStore<IFavoriteRegistrationGroup, IFavoriteRegistrationGroupData> {
     public favoriteCollection: ICollection<IFavoriteRegistration>;
     private db: firebase.firestore.Firestore;
     private readonly rootStore: IRootStore;

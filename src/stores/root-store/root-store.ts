@@ -10,11 +10,10 @@ import { DashboardStore, IDashboardStore } from "../dashboard-store";
 import { ProjectStore } from "../project-store";
 import { FavoriteStore } from "../favorite-store";
 import { DivisionStore } from "../division-store/division-store";
-import { AuthStore } from "../auth-store";
 import { IUserData, IUser } from "../../../common";
 import * as deserializer from "../../../common/serialization/deserializer";
 import * as serializer from "../../../common/serialization/serializer";
-import { FetchMode, RealtimeMode } from "firestorable";
+import { FetchMode, RealtimeMode, AuthStore } from "firestorable";
 
 export interface IRootStore extends Store { };
 

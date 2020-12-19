@@ -79,7 +79,7 @@ describe("DivisionDetailContainer", () => {
     });
 
     it("should display data of active division", async () => {
-
+        await waitFor(() => expect(store.divisions.collection.isFetched).toBe(true));
         await store.divisions.setActiveDocumentId("div-1");
 
         const {
@@ -100,6 +100,7 @@ describe("DivisionDetailContainer", () => {
     });
 
     it("should update name of active document when name is changed", async () => {
+        await waitFor(() => expect(store.divisions.collection.isFetched).toBe(true));
         await store.divisions.setActiveDocumentId("div-1");
 
         const {

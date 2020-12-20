@@ -1,8 +1,8 @@
-import { observable, computed, action, reaction } from 'mobx';
+import { observable, computed, reaction } from 'mobx';
 import type firebase from "firebase";
 import { Collection, ICollection, RealtimeMode, FetchMode } from "firestorable";
 import { IRootStore } from '../root-store';
-import { IClient, IClientData, ITeam, ITeamData, ITaskData, IConfig, ConfigValue, ITask } from '../../../common/dist';
+import { IClient, IClientData, ITeam, ITeamData, IConfig, ConfigValue } from '../../../common/dist';
 
 import * as serializer from '../../../common/serialization/serializer';
 import * as deserializer from '../../../common/serialization/deserializer';
@@ -10,12 +10,10 @@ import * as deserializer from '../../../common/serialization/deserializer';
 export interface IConfigStore extends ConfigStore { };
 
 export class ConfigStore implements IConfigStore {
-    readonly tasksCollection: ICollection<ITask, ITaskData>;
     readonly clientsCollection: ICollection<IClient>;
     readonly teamsCollection: ICollection<ITeam, ITeamData>;
     readonly configsCollection: Collection<IConfig>;
 
-    @observable.ref private taskIdField?: string;
     @observable.ref clientId?: string;
     @observable.ref teamId?: string;
 
@@ -33,18 +31,6 @@ export class ConfigStore implements IConfigStore {
         const deps = {
             // logger: console.log
         };
-
-        this.tasksCollection = new Collection<ITask, ITaskData>(
-            firestore,
-            "tasks",
-            {
-                realtimeMode: RealtimeMode.on,
-                fetchMode: FetchMode.manual,
-                serialize: serializer.convertTask,
-                deserialize: deserializer.convertTask,
-            },
-            deps,
-        );
 
         this.clientsCollection =
             new Collection<IClient, IClientData>(
@@ -87,7 +73,6 @@ export class ConfigStore implements IConfigStore {
             reaction(() => rootStore.user.divisionUser, (user) => {
                 if (!user) {
                     this.teamsCollection.query = null;
-                    this.tasksCollection.query = null;
                     this.clientsCollection.query = null;
                 }
                 else {
@@ -96,15 +81,10 @@ export class ConfigStore implements IConfigStore {
                             .where("divisionId", "==", user.divisionId || "");
 
                     this.teamsCollection.query = query;
-                    this.tasksCollection.query = query;
                     this.clientsCollection.query = query;
 
                     if (!this.teamsCollection.isFetched) {
                         this.teamsCollection.fetchAsync();
-                    }
-
-                    if (!this.tasksCollection.isFetched) {
-                        this.tasksCollection.fetchAsync();
                     }
 
                     if (!this.clientsCollection.isFetched) {
@@ -127,22 +107,6 @@ export class ConfigStore implements IConfigStore {
             .map(doc => ({ ...doc.data!, id: doc.id, isSelected: doc.id === this.teamId }));
     }
 
-    @computed
-    public get tasks() {
-        return Array.from(this.tasksCollection.docs.values())
-            .map(doc => ({ ...doc.data!, id: doc.id }));
-    }
-
-    @computed
-    public get taskId() {
-        return this.taskIdField;
-    }
-
-    @action
-    public setTaskId(id: string | undefined) {
-        this.taskIdField = id;
-    }
-
     // To investigate: does getConfigValue needs mobx @computed attribute?
     public getConfigValue<T = string>(key: string): T;
     public getConfigValue<T = string>(key: string, isRequired: true): T;
@@ -162,7 +126,6 @@ export class ConfigStore implements IConfigStore {
         this.disposables.reverse().forEach((d) => d());
         this.clientsCollection.dispose();
         this.teamsCollection.dispose();
-        this.tasksCollection.dispose();
         this.configsCollection.dispose();
     }
 }

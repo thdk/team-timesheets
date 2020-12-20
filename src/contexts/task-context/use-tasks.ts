@@ -1,14 +1,14 @@
-import { useConfigStore } from "../../stores/config-store/use-config-store";
 import { useObserver } from "mobx-react-lite";
+import { useStore } from "../store-context";
 
 export const useTasks = () => {
-    const configStore = useConfigStore();
+    const store = useStore();
 
     return useObserver(() => ({
-        tasks: configStore.tasks,
-        addAsync: configStore.tasksCollection.addAsync.bind(configStore.tasksCollection),
-        taskId: configStore.taskId,
-        setTaskId: configStore.setTaskId.bind(configStore),
-        get: configStore.tasksCollection.get.bind(configStore.tasksCollection),
+        tasks: store.tasks.tasks,
+        addAsync: store.tasks.collection.addAsync.bind(store.tasks.collection),
+        taskId: store.tasks.activeDocumentId,
+        setTaskId: store.tasks.setActiveDocumentId.bind(store.tasks),
+        get: store.tasks.collection.get.bind(store.tasks.collection),
     }));
-}
+};

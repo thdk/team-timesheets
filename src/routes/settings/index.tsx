@@ -24,7 +24,12 @@ const setActions = (tab: SettingsTab, store: IRootStore) => {
                 const deleteAction: IViewAction | undefined = canDeleteTask(store.user.divisionUser)
                     ? {
                         action: () => {
-                            store.view.selection.size && store.config.tasksCollection.deleteAsync(...store.view.selection.keys());
+                            store.view.selection.size && store.tasks.deleteDocuments(
+                                {
+                                    useFlag: false,
+                                },
+                                ...store.view.selection.keys()
+                            );
                             store.view.selection.clear();
                         },
                         icon: { label: "Delete", content: "delete" },
@@ -90,7 +95,7 @@ const routes = {
         },
         onParamsChange: (_route: SettingsRoute, _params, s: IRootStore, queryParams: SettingsRouteQueryParams) => {
             transaction(() => {
-                s.config.setTaskId(undefined);
+                s.tasks.setActiveDocumentId(undefined);
                 s.config.clientId = undefined;
                 s.view.selection.clear();
             });
@@ -99,7 +104,7 @@ const routes = {
         title: "Settings",
         beforeExit: (_route: SettingsRoute, _param, s: IRootStore) => {
             transaction(() => {
-                s.config.setTaskId(undefined);
+                s.tasks.setActiveDocumentId(undefined);
                 s.config.clientId = undefined;
                 s.view.selection.clear();
             });

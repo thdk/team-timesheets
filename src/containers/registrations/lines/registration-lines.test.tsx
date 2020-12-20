@@ -40,7 +40,7 @@ const setupAsync = async () => {
         uid: "user-1",
     }, "user-1");
 
-    taskIds = await store.config.tasksCollection.addAsync([
+    taskIds = await store.tasks.addDocuments([
         {
             name: "Task 1",
             icon: "people",

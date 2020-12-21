@@ -22,6 +22,7 @@ module.exports = {
         publicPath: '/',
     },
     externals: {
+        "firebase": "root firebase",
         "firebase/app": "root firebase",
         "firebase/firestore": "root firebase",
         "firebase/auth": "root firebase",

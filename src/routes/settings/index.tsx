@@ -7,6 +7,7 @@ import { canDeleteTask, canDeleteClient, canManageTeams } from "../../rules";
 import { App } from "../../internal";
 import SettingsPage from "../../pages/settings/settings-page-container";
 import { setNavigationContent } from "../actions";
+import { goToNewTask } from "../tasks/detail";
 
 export type SettingsRouteQueryParams = { tab: SettingsTab };
 type SettingsRoute = Route<IRootStore, {}, SettingsRouteQueryParams>;
@@ -41,6 +42,18 @@ const setActions = (tab: SettingsTab, store: IRootStore) => {
 
                 store.view.setActions([deleteAction].filter(a => a !== undefined) as IViewAction[]);
 
+                store.view.setFabs([
+                    {
+                        action: () => goToNewTask(store.router),
+                        icon: {
+                            content: "add",
+                            label: "New task",
+                        },
+                        shortKey: {
+                            key: "a",
+                        },
+                    }
+                ])
                 break;
             }
             case "clients": {
@@ -88,7 +101,7 @@ const path = '/settings'
 const routes = {
     preferences: new Route<IRootStore, {}, SettingsRouteQueryParams>({
         path,
-        component: <App><SettingsPage></SettingsPage></App>,
+        component: <App><SettingsPage /></App>,
         onEnter: (route: SettingsRoute, _params, s: IRootStore, queryParams: SettingsRouteQueryParams) => {
             setActions(queryParams.tab, s);
             setNavigationContent(s, route, false);

@@ -10,5 +10,6 @@ export const useTasks = () => {
         taskId: store.tasks.activeDocumentId,
         setTaskId: store.tasks.setActiveDocumentId.bind(store.tasks),
         get: store.tasks.collection.get.bind(store.tasks.collection),
+        store: store.tasks,
     }));
 };

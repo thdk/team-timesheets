@@ -128,6 +128,7 @@ describe("ReportDownloadLink", () => {
     // });
 
     it("should not crash when report is deleted in database", async () => {
+        await waitFor(() => expect(store.auth.activeDocumentId).toBeDefined());
         const { findByText, unmount } = render(
             <StoreContext.Provider value={store}>
                 <ReportDownloadLink />

@@ -20,6 +20,16 @@ export const TaskDetailPage = withAuthentication(
             const view = useViewStore();
 
             const tasks = useTasks().store;
+
+            useEffect(() => {
+                if (router.params?.id) {
+                    tasks.setActiveDocumentId(router.params.id.toString());
+                }
+                else {
+                    tasks.createNewDocument();
+                }
+            }, [router.params, tasks]);
+
             useEffect(
                 () => {
                     const save = () => {
@@ -36,7 +46,11 @@ export const TaskDetailPage = withAuthentication(
 
                     const deleteAction: IViewAction = {
                         action: () => {
-                            tasks.activeDocumentId && tasks.deleteDocument(tasks.activeDocumentId);
+                            try {
+                                tasks.activeDocumentId && tasks.deleteDocument(tasks.activeDocumentId);
+                            } catch {
+                                console.warn("couldn't delete the document");
+                            }
                             goToTasks(router);
                         },
                         icon: { label: "Delete", content: "delete" },
@@ -50,13 +64,6 @@ export const TaskDetailPage = withAuthentication(
                         },
                         icon: { label: "Save", content: "save" },
                         shortKey: { key: "s", ctrlKey: true }
-                    }
-
-                    if (router.params?.id && !tasks.activeDocumentId) {
-                        tasks.setActiveDocumentId(router.params.id.toString());
-                    }
-                    else if (!router.params?.id) {
-                        tasks.createNewDocument();
                     }
 
                     transaction(() => {
@@ -77,8 +84,12 @@ export const TaskDetailPage = withAuthentication(
                             ? "Task detail"
                             : "New task";
                     });
+
+                    return () => {
+                        view.setActions([]);
+                    };
                 },
-                [view, router, tasks, router.params?.id, goToTasks, tasks.activeDocumentId],
+                [view, tasks, goToTasks, tasks.activeDocumentId, router],
             );
 
             return (

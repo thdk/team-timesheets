@@ -167,6 +167,6 @@ export class Store implements IRootStore {
         this.divisions.dispose();
         this.timesheets.dispose();
         this.user.dispose();
-        // this.view.dispose();
+        this.view.dispose();
     }
 };

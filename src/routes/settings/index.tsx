@@ -3,11 +3,10 @@ import * as React from 'react';
 import { transaction, when } from "mobx";
 import { IRootStore } from "../../stores/root-store";
 import { IViewAction } from '../../stores/view-store';
-import { canDeleteTask, canDeleteClient, canManageTeams } from "../../rules";
+import { canDeleteClient, canManageTeams } from "../../rules";
 import { App } from "../../internal";
 import SettingsPage from "../../pages/settings/settings-page-container";
 import { setNavigationContent } from "../actions";
-import { goToNewTask } from "../tasks/detail";
 
 export type SettingsRouteQueryParams = { tab: SettingsTab };
 type SettingsRoute = Route<IRootStore, {}, SettingsRouteQueryParams>;
@@ -22,38 +21,6 @@ const setActions = (tab: SettingsTab, store: IRootStore) => {
     when(() => store.user.divisionUser !== undefined, () => {
         switch (tab) {
             case "tasks": {
-                const deleteAction: IViewAction | undefined = canDeleteTask(store.user.divisionUser)
-                    ? {
-                        action: () => {
-                            store.view.selection.size && store.tasks.deleteDocuments(
-                                {
-                                    useFlag: false,
-                                },
-                                ...store.view.selection.keys()
-                            );
-                            store.view.selection.clear();
-                        },
-                        icon: { label: "Delete", content: "delete" },
-                        shortKey: { key: "Delete", ctrlKey: true },
-                        contextual: true,
-                        selection: store.view.selection,
-                    }
-                    : undefined;
-
-                store.view.setActions([deleteAction].filter(a => a !== undefined) as IViewAction[]);
-
-                store.view.setFabs([
-                    {
-                        action: () => goToNewTask(store.router),
-                        icon: {
-                            content: "add",
-                            label: "New task",
-                        },
-                        shortKey: {
-                            key: "a",
-                        },
-                    }
-                ])
                 break;
             }
             case "clients": {

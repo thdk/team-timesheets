@@ -34,6 +34,7 @@ export const TaskDetail = ({
                         label="Name"
                         value={name}
                         onChange={handleNameChanged}
+                        autoFocus
                     />
                 </FormField>
                 <FormField first={false}>

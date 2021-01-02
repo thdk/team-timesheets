@@ -46,11 +46,7 @@ export const TaskDetailPage = withAuthentication(
 
                     const deleteAction: IViewAction = {
                         action: () => {
-                            try {
-                                tasks.activeDocumentId && tasks.deleteDocument(tasks.activeDocumentId);
-                            } catch {
-                                console.warn("couldn't delete the document");
-                            }
+                            tasks.activeDocumentId && tasks.deleteDocument(tasks.activeDocumentId);
                             goToTasks(router);
                         },
                         icon: { label: "Delete", content: "delete" },

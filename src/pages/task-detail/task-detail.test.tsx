@@ -3,15 +3,14 @@ import type firebase from "firebase";
 import fs from "fs";
 import path from "path";
 import { clearFirestoreData, loadFirestoreRules, initializeTestApp } from "@firebase/rules-unit-testing";
-import { Store, IRootStore } from "../../stores/root-store";
+import { Store } from "../../stores/root-store";
 import { render, waitFor } from "@testing-library/react";
 import { TaskDetailPage } from ".";
 import { useStore } from "../../contexts/store-context";
-import { useRouterStore } from "../../stores/router-store";
-import { RouterStore } from "mobx-router";
+import taskRoutes from "../../routes/tasks";
+import { Router } from "../../containers/router";
 
 jest.mock("../../contexts/store-context");
-jest.mock("../../stores/router-store");
 
 const projectId = "task-detail-test";
 const app = initializeTestApp({
@@ -70,9 +69,6 @@ beforeEach(async () => {
     await setupAsync();
 
     (useStore as jest.Mock<ReturnType<typeof useStore>>).mockReturnValue(store);
-    (useRouterStore as jest.Mock<ReturnType<typeof useRouterStore>>).mockReturnValue({
-        params: undefined,
-    } as unknown as RouterStore<IRootStore>);
 });
 
 afterEach(async () => {
@@ -83,23 +79,12 @@ afterEach(async () => {
 afterAll(() => app.delete());
 
 describe("TaskDetailPage", () => {
-    it("should render", async () => {
-        await waitFor(() => expect(store.auth.activeDocument).toBeTruthy());
-
-        const {
-            asFragment,
-            unmount,
-        } = render(
-            <TaskDetailPage />
-        );
-
-        expect(asFragment()).toMatchSnapshot();
-
-        unmount();
-    });
-
     it("should set view actions when rendered", async () => {
         expect(store.view.actions.length).toBe(0);
+
+        store.router.goTo(taskRoutes.taskDetail, {
+            id: "task-1",
+        });
 
         const {
             unmount,
@@ -117,18 +102,15 @@ describe("TaskDetailPage", () => {
     it("should display data when there is an active task", async () => {
         await waitFor(() => expect(store.auth.activeDocument).toBeTruthy());
 
-        (useRouterStore as jest.Mock<ReturnType<typeof useRouterStore>>).mockReturnValue({
-            params: {
-                id: "task-1",
-            },
-        } as unknown as RouterStore<IRootStore>);
-
+        store.router.goTo(taskRoutes.taskDetail, {
+            id: "task-1",
+        });
 
         const {
             container,
             unmount,
         } = render(
-            <TaskDetailPage />
+            <Router />
         );
 
         await waitFor(() => expect(container.querySelector("input[value='Task 1']")).toBeDefined());
@@ -138,38 +120,82 @@ describe("TaskDetailPage", () => {
         unmount();
     });
 
-    // describe("view actions: Delete", () => {
-    //     it("should delete the active document", async () => {
-    //         (useRouterStore as jest.Mock<ReturnType<typeof useRouterStore>>).mockReturnValue({
-    //             params: {
-    //                 id: "task-1",
-    //             },
-    //         } as unknown as RouterStore<IRootStore>);
+    describe("view actions: Delete", () => {
+        it("should delete the active document", async () => {
 
-    //         const {
-    //             unmount,
-    //         } = render(
-    //             <TaskDetailPage />
-    //         );
+            const {
+                unmount,
+            } = render(
+                <Router />
+            );
 
-    //         // https://github.com/testing-library/user-event/issues/506
-    //         // userEvent.type(container, "{ctrl}{del}");
+            store.router.goTo(
+                taskRoutes.taskDetail,
+                {
+                    id: "task-1",
+                },
+            );
 
-    //         await waitFor(() => {
-    //             const deleteAction = store.view.actions.find(a => a.icon.label === "Delete");
-    //             expect(deleteAction).toBeDefined();
-    //             deleteAction?.action();
-    //         });
+            // https://github.com/testing-library/user-event/issues/506
+            // userEvent.type(container, "{ctrl}{del}");
 
-    //         console.warn("OK");
+            await waitFor(() => {
+                const deleteAction = store.view.actions.find(a => a.icon.label === "Delete");
+                expect(deleteAction).toBeDefined();
+                deleteAction?.action();
+            });
 
-    //         await expect(() => app.firestore().collection("tasks").doc("task-1").get()).resolves.toEqual(
-    //             expect.objectContaining({
-    //                 exists: false,
-    //             }),
-    //         );
+            await expect(app.firestore().collection("tasks").doc("task-1").get()).resolves.toEqual(
+                expect.objectContaining({
+                    exists: false,
+                }),
+            );
 
-    //         unmount();
-    //     });
-    // })
+            unmount();
+        });
+    });
+
+    describe("view actions: Save", () => {
+        it("should delete the active document", async () => {
+
+            const {
+                unmount,
+            } = render(
+                <Router />
+            );
+
+            store.router.goTo(
+                taskRoutes.taskDetail,
+                {
+                    id: "task-1",
+                },
+            );
+
+            // https://github.com/testing-library/user-event/issues/506
+            // userEvent.type(container, "{ctrl}{del}");
+
+            await waitFor(() => {
+                if (store.tasks.activeDocument) {
+                    store.tasks.activeDocument.name = "Foo";
+                }
+
+                const saveAction = store.view.actions.find(a => a.icon.label === "Save");
+                expect(saveAction).toBeDefined();
+                saveAction?.action();
+            });
+
+            await waitFor(async () => {
+                const doc = store.tasks.collection.getAsync("task-1");
+            });
+            
+            (expect().resolves.toEqual(
+                expect.objectContaining({
+                    data: expect.objectContaining({
+                        name: "Foo",
+                    }),
+                })
+            );
+            unmount();
+        });
+    });
 });

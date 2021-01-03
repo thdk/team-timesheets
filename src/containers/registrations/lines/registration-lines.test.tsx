@@ -37,10 +37,10 @@ const setupAsync = async () => {
             user: true,
         },
         tasks: new Map(),
-        uid: "user-1",
-    }, "user-1");
+        uid: userId,
+    }, userId);
 
-    taskIds = await store.config.tasksCollection.addAsync([
+    taskIds = await store.tasks.addDocuments([
         {
             name: "Task 1",
             icon: "people",
@@ -96,7 +96,7 @@ describe("RegistrationLines", () => {
     const getRegistrations = () => [
         {
             data: {
-                userId: "user-1",
+                userId: userId,
                 client: clientIds[0],
                 project: projectIds[0],
                 task: taskIds[0],
@@ -107,7 +107,7 @@ describe("RegistrationLines", () => {
         },
         {
             data: {
-                userId: "user-1",
+                userId: userId,
                 client: clientIds[0],
                 project: projectIds[0],
                 task: taskIds[2],

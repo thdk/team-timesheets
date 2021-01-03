@@ -68,7 +68,7 @@ const setupAsync = async () => {
         email: "email@email.com",
     } as firebase.User);
 
-    await store.config.tasksCollection.addAsync({
+    await store.tasks.addDocument({
         name: "Meeting",
         icon: "people",
     });

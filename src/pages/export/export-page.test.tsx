@@ -100,21 +100,26 @@ beforeEach(async () => {
 
 afterEach(async () => {
     await store.dispose();
-    await clearFirestoreData({projectId});
+    await clearFirestoreData({ projectId });
 });
 
 afterAll(() => app.delete());
 
 describe("Export Page", () => {
-    it("should render without registrations", () => {
+    it("should render without registrations", async () => {
         store.view.setViewDate({
             year: 2020,
             month: 9,
         });
 
-        const { asFragment, unmount, } = render(<ExportPage />);
+        const { container, getByText, unmount, } = render(<ExportPage />);
 
-        expect(asFragment()).toMatchSnapshot();
+        await waitFor(() => expect(getByText("Total in September")));
+
+        const items = container.querySelectorAll(".grouped-registration-header-date");
+        expect(
+            items.length
+        ).toBe(0);
 
         unmount();
     });
@@ -150,7 +155,7 @@ describe("Export Page", () => {
                 "March 2nd",
                 "March 24th",
             ]);
-        
+
         unmount();
     });
 });

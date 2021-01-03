@@ -51,7 +51,7 @@ const createDefaults = (
 
             const {
                 recentProjects = [],
-                defaultTask: task = rootStore.config.tasks.length ? rootStore.config.tasks[0].id : undefined,
+                defaultTask: task = rootStore.tasks.tasks.length ? rootStore.tasks.tasks[0].id : undefined,
                 defaultClient: client = undefined,
             } = rootStore.user.divisionUser || {};
 

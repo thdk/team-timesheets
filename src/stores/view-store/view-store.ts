@@ -55,6 +55,7 @@ export class ViewStore implements IViewStore {
   @observable year?: number;
 
   public track?: boolean;
+  private disposables: (() => void)[] = [];
 
   constructor(rootStore: IRootStore, testDate?: Date) {
     this.rootStore = rootStore;
@@ -73,9 +74,12 @@ export class ViewStore implements IViewStore {
 
   private init() {
     // listen for keyboard event which can fire viewactions
-    document.addEventListener("keydown", ev => {
+    const onKeyDown = (ev: KeyboardEvent) => {
       // Exit 'contextual mode' of top app bar
       // by clearing the selection when escape key pressed
+      if (!this.selection) {
+        throw new Error("Foo");
+      }
       if (this.selection.size && ev.key === "Escape") {
         this.selection.clear();
         return;
@@ -97,7 +101,7 @@ export class ViewStore implements IViewStore {
 
       if (action) {
         if (isActionWithSelection(action)) {
-          if (action.selection.size) {
+          if (action.selection && action.selection.size) {
             ev.preventDefault();
             ev.stopPropagation();
             action.action(action.selection);
@@ -109,7 +113,13 @@ export class ViewStore implements IViewStore {
           action.action();
         }
       }
-    });
+    }
+
+    document.addEventListener("keydown", onKeyDown);
+
+    this.disposables.push(
+      () => document.removeEventListener("keydown", onKeyDown),
+    );
   }
 
   @action
@@ -181,5 +191,14 @@ export class ViewStore implements IViewStore {
     this.selection.has(id)
       ? this.selection.delete(id)
       : this.selection.set(id, true);
+  }
+
+  public dispose() {
+    this.disposables.reverse().forEach(d => d());
+    transaction(() => {
+      this.selection.clear();
+      this.actions.clear();
+      this.fabs.clear();
+    });
   }
 }

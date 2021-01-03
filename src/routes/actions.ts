@@ -1,9 +1,9 @@
+import React from 'react';
 import { Route, QueryParams, RouteParams } from "mobx-router";
 import { DateObject } from './registrations/overview';
 import { IRootStore } from "../stores/root-store";
 import { setBackToOverview } from "../internal";
-import React from 'react';
-import { StoreContext } from "../contexts/store-context";
+import { useStore } from "../contexts/store-context";
 
 export const goToRouteWithDate = (route: Route<
     IRootStore,
@@ -52,8 +52,12 @@ export const setTitleForRoute = (
     store.view.title = route.title || "";
 }
 
-export function Redirect<T extends RouteParams, K extends QueryParams>({ route, params, queryParams }: { route: Route<IRootStore, T, K>, params?: T, queryParams?: K }) {
-    const store = React.useContext(StoreContext);
+export function Redirect<T extends RouteParams, K extends QueryParams>({ 
+    route, 
+    params, 
+    queryParams 
+}: { route: Route<IRootStore, T, K>, params?: T, queryParams?: K }) {
+    const store = useStore();
 
     React.useEffect(() => {
         store.router.goTo(route, params, queryParams);

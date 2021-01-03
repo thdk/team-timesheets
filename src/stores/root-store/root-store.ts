@@ -14,6 +14,7 @@ import { IUserData, IUser } from "../../../common";
 import * as deserializer from "../../../common/serialization/deserializer";
 import * as serializer from "../../../common/serialization/serializer";
 import { FetchMode, RealtimeMode, AuthStore } from "firestorable";
+import { TaskStore } from "../task-store";
 
 export interface IRootStore extends Store { };
 
@@ -29,6 +30,7 @@ export class Store implements IRootStore {
     public readonly projects: ProjectStore;
     public readonly favorites: FavoriteStore;
     public readonly divisions: DivisionStore;
+    public readonly tasks: TaskStore;
 
     constructor({
         auth,
@@ -146,6 +148,13 @@ export class Store implements IRootStore {
             },
         );
         this.router = new RouterStore<IRootStore>(this);
+
+        this.tasks = new TaskStore(
+            this,
+            {
+                firestore,
+            },
+        );
     }
 
     public dispose() {
@@ -153,10 +162,11 @@ export class Store implements IRootStore {
         // this.dashboard.dispose();
         this.favorites.dispose();
         this.projects.dispose();
+        this.tasks.dispose();
         // this.reports.dispose();
         this.divisions.dispose();
         this.timesheets.dispose();
         this.user.dispose();
-        // this.view.dispose();
+        this.view.dispose();
     }
 };

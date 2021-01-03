@@ -18,8 +18,6 @@
   "license": "ISC",
   "dependencies": {},
   "devDependencies": {
-    "@firebase/app-types": "^0.3.4",
-    "@firebase/firestore-types": "^1.0.2",
     "typescript": "^3.8.2"
   }
 }

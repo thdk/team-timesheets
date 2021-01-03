@@ -92,7 +92,7 @@ export const DashboardPage = withAuthentication(
             const taskChartProps: IRegistrationsChartProps<ITask> = {
                 title: "Time / task",
                 data: store.dashboard.registrationsGroupedByTask,
-                labelCollection: store.config.tasksCollection,
+                labelCollection: store.tasks.collection,
                 getLabel: task => task.name,
                 chart: ChartType.Doughnut
             };

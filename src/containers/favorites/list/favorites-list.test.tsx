@@ -119,7 +119,7 @@ describe("FavoritesList", () => {
                     },
                     "project-1",
                 ),
-                store.config.tasksCollection.addAsync(
+                store.tasks.addDocument(
                     {
                         name: "task 1",
                         divisionId: "",

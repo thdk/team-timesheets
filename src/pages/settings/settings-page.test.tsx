@@ -1,29 +1,59 @@
 import React from "react";
+import path from "path";
+import fs from "fs";
+
 import { SettingsPage } from "./settings-page";
 import { render } from "@testing-library/react";
+import { initializeTestApp, loadFirestoreRules } from "@firebase/rules-unit-testing";
+import { IRootStore, Store } from "../../stores/root-store";
+import { clearFirestoreData } from "firestorable/lib/utils";
+import { useStore } from "../../contexts/store-context";
 
-jest.mock("../../contexts/user-context", () => ({
-    useUserStore: () => ({
-        divisionUser: {
-            id: "user-1",
-            roles: {},
-        },
-    }),
-}));
+import type firebase from "firebase";
 
-jest.mock("../../contexts/store-context", () => ({
-    useStore: () => ({
-        config: {
-            tasks: [],
-        },
-    }),
-}));
+jest.mock("../../contexts/store-context");
 
-jest.mock('../../stores/router-store', () => ({
-    useRouterStore: () => ({
-        queryParams: {},
-    }),
-}));
+const projectId = "settings-page";
+const app = initializeTestApp({
+    projectId,
+});
+
+let store: IRootStore;
+beforeAll(async () => {
+    await loadFirestoreRules({
+        projectId,
+        rules: fs.readFileSync(path.resolve(__dirname, "../../../firestore.rules.test"), "utf8"),
+    });
+});
+
+beforeEach(async () => {
+    store = new Store({
+        firestore: app.firestore(),
+    });
+
+    await store.auth.addDocument({
+        uid: "user-1",
+        divisionId: "",
+        name: "User 1",
+        recentProjects: [],
+        roles: { user: true },
+        tasks: new Map(),
+        email: "user@timesheets.com",
+    }, "user-1");
+
+    store.auth.setUser({
+        uid: "user-1",
+    } as firebase.User);
+
+    (useStore as jest.Mock<ReturnType<typeof useStore>>).mockReturnValue(store);
+});
+
+afterEach(async () => {
+    store.dispose();
+    await clearFirestoreData(projectId);
+});
+
+afterAll(() => app.delete());
 
 jest.mock('../../containers/tasks/list', () => ({
     TaskList: () => <>Tasks-Content</>,

@@ -13,6 +13,7 @@ import {
     ITask,
     IClient,
     IClientData,
+    IUserData,
 } from '../interfaces';
 import { INameWithIconData, INameWithIcon } from '../interfaces/base';
 import { IDivision } from '../interfaces/IOrganisation';
@@ -132,7 +133,7 @@ export const convertUser = (appData: Partial<IUser> | null) => {
         if (!user.email) delete user.email;
     }
 
-    return user;
+    return user as IUserData;
 }
 
 export function convertTeam(appData: Partial<ITeam> | null): Partial<ITeamData> {

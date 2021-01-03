@@ -9,15 +9,13 @@ import { TaskDetailPage } from ".";
 import { useStore } from "../../contexts/store-context";
 import taskRoutes from "../../routes/tasks";
 import { Router } from "../../containers/router";
+import { IViewAction } from "../../stores/view-store";
 
 jest.mock("../../contexts/store-context");
 
 const projectId = "task-detail-test";
 const app = initializeTestApp({
     projectId,
-    auth: {
-        uid: "user-1",
-    },
 });
 
 let store: Store;
@@ -47,7 +45,7 @@ const setupAsync = async () => {
                 name: "Task 1",
                 icon: "code",
             },
-            "task-1",
+            "task1",
         ),
     ]);
 
@@ -83,7 +81,7 @@ describe("TaskDetailPage", () => {
         expect(store.view.actions.length).toBe(0);
 
         store.router.goTo(taskRoutes.taskDetail, {
-            id: "task-1",
+            id: "task1",
         });
 
         const {
@@ -103,7 +101,7 @@ describe("TaskDetailPage", () => {
         await waitFor(() => expect(store.auth.activeDocument).toBeTruthy());
 
         store.router.goTo(taskRoutes.taskDetail, {
-            id: "task-1",
+            id: "task1",
         });
 
         const {
@@ -132,34 +130,43 @@ describe("TaskDetailPage", () => {
             store.router.goTo(
                 taskRoutes.taskDetail,
                 {
-                    id: "task-1",
+                    id: "task1",
                 },
             );
 
             // https://github.com/testing-library/user-event/issues/506
             // userEvent.type(container, "{ctrl}{del}");
 
+            let deleteAction: IViewAction<any> | undefined;
             await waitFor(() => {
-                const deleteAction = store.view.actions.find(a => a.icon.label === "Delete");
+                deleteAction = store.view.actions.find(a => a.icon.label === "Delete");
                 expect(deleteAction).toBeDefined();
-                deleteAction?.action();
             });
 
-            await expect(app.firestore().collection("tasks").doc("task-1").get()).resolves.toEqual(
+            unmount();
+
+            await waitFor(() => {
+                expect(store.view.actions.length).toBe(0);
+            });
+
+            deleteAction?.action();
+
+            await expect(app.firestore().collection("tasks").doc("task1").get({
+                source: "server",
+            })).resolves.toEqual(
                 expect.objectContaining({
                     exists: false,
                 }),
             );
-
-            unmount();
         });
     });
 
     describe("view actions: Save", () => {
-        it("should delete the active document", async () => {
+        it("should save the active document", async () => {
 
             const {
                 unmount,
+                container,
             } = render(
                 <Router />
             );
@@ -167,35 +174,33 @@ describe("TaskDetailPage", () => {
             store.router.goTo(
                 taskRoutes.taskDetail,
                 {
-                    id: "task-1",
+                    id: "task1",
                 },
             );
 
             // https://github.com/testing-library/user-event/issues/506
             // userEvent.type(container, "{ctrl}{del}");
+            await waitFor(() => {
+                expect(store.tasks.activeDocument).toBeDefined();
+            });
+
+            store.tasks.activeDocument!.name = "Foo";
+
+            let saveAction: IViewAction<any> | undefined;
+            await waitFor(() => {
+                saveAction = store.view.actions.find(a => a.icon.label === "Save");
+                expect(saveAction).toBeDefined();
+            });
+
+            saveAction?.action();
+
+            await waitFor(() => expect(container.querySelector("input[value='Foo']")).toBeDefined());
+
+            unmount();
 
             await waitFor(() => {
-                if (store.tasks.activeDocument) {
-                    store.tasks.activeDocument.name = "Foo";
-                }
-
-                const saveAction = store.view.actions.find(a => a.icon.label === "Save");
-                expect(saveAction).toBeDefined();
-                saveAction?.action();
+                expect(store.view.actions.length).toBe(0);
             });
-
-            await waitFor(async () => {
-                const doc = store.tasks.collection.getAsync("task-1");
-            });
-            
-            (expect().resolves.toEqual(
-                expect.objectContaining({
-                    data: expect.objectContaining({
-                        name: "Foo",
-                    }),
-                })
-            );
-            unmount();
         });
     });
 });

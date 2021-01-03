@@ -7,7 +7,7 @@ import { useTasks } from "../../../contexts/task-context";
 export const TaskDetailContainer = observer(() => {
     const tasks = useTasks();
 
-    const task = tasks.store.activeDocument;
+    const task = tasks.activeDocument;
 
     const handleIconChanged = useCallback((icon: string) => {
         if (task)

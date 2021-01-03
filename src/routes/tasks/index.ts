@@ -1,3 +1,3 @@
-import projectDetail from './detail';
+import taskDetail from './detail';
 
-export default { ...projectDetail };
+export default { ...taskDetail };

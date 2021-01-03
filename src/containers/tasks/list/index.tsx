@@ -10,7 +10,7 @@ import { goToTask } from '../../../routes/tasks/detail';
 import { useRouterStore } from '../../../stores/router-store';
 
 export const TaskList = observer((props: React.HTMLProps<HTMLDivElement>) => {
-    const { tasks } = useTasks();
+    const tasks = useTasks();
     const view = useViewStore();
     const user = useUserStore();
     const router = useRouterStore();
@@ -24,7 +24,7 @@ export const TaskList = observer((props: React.HTMLProps<HTMLDivElement>) => {
     return (
         <SettingsList {...props}
             readonly={!canManageTasks(user.divisionUser)}
-            items={tasks}
+            items={tasks.tasks}
             onToggleSelection={id => view.toggleSelection(id)}
             onItemClick={handleItemClick}
             selection={view.selection}

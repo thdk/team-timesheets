@@ -2,6 +2,15 @@ import React from "react";
 import { render } from "@testing-library/react";
 import { DateSelect } from "./";
 
+beforeAll(() => {
+    jest.useFakeTimers('modern');
+    jest.setSystemTime(new Date(2020, 3, 1));
+});
+
+afterAll(() => {
+    jest.useRealTimers();
+});
+
 describe("DateSelect", () => {
     it("should render", () => {
         const onMonthChange = jest.fn();
@@ -15,10 +24,11 @@ describe("DateSelect", () => {
         );
 
         expect(asFragment()).toMatchSnapshot();
+
     });
 
     it("should render with given year and month selected", () => {
-        const yearValue = (new Date()).getFullYear() - 1;
+        const yearValue = 2019;
         const monthValue = 3;
 
         const { container } = render(

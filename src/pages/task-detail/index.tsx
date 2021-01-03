@@ -19,7 +19,7 @@ export const TaskDetailPage = withAuthentication(
             const router = useRouterStore();
             const view = useViewStore();
 
-            const tasks = useTasks().store;
+            const tasks = useTasks();
 
             useEffect(() => {
                 if (router.params?.id) {
@@ -46,8 +46,11 @@ export const TaskDetailPage = withAuthentication(
 
                     const deleteAction: IViewAction = {
                         action: () => {
-                            tasks.activeDocumentId && tasks.deleteDocument(tasks.activeDocumentId);
                             goToTasks(router);
+                            const taskId = tasks.activeDocumentId;
+                            tasks.setActiveDocumentId(undefined);
+
+                            taskId && tasks.deleteDocument(taskId);
                         },
                         icon: { label: "Delete", content: "delete" },
                         shortKey: { key: "Delete", ctrlKey: true }
@@ -82,7 +85,10 @@ export const TaskDetailPage = withAuthentication(
                     });
 
                     return () => {
-                        view.setActions([]);
+                        transaction(() => {
+                            view.setActions([]);
+                            // tasks.setActiveDocumentId(undefined);
+                        });
                     };
                 },
                 [view, tasks, goToTasks, tasks.activeDocumentId, router],

@@ -16,6 +16,7 @@ import { useViewStore } from '../../contexts/view-context';
 import { goToNewTask } from '../../routes/tasks/detail';
 import { IViewAction } from '../../stores/view-store';
 import { useTasks } from '../../contexts/task-context';
+import { transaction } from 'mobx';
 
 const TasksTab = () => {
     const view = useViewStore();
@@ -28,7 +29,7 @@ const TasksTab = () => {
             const deleteAction: IViewAction | undefined = canDeleteTask(user.divisionUser)
                 ? {
                     action: () => {
-                        view.selection.size && tasks.store.deleteDocuments(
+                        view.selection.size && tasks.deleteDocuments(
                             {
                                 useFlag: false,
                             },
@@ -58,7 +59,12 @@ const TasksTab = () => {
                 }
             ]);
 
-            return () => view.setFabs([]);
+            return () => {
+                transaction(() => {
+                    view.setFabs([]);
+                    view.setActions([]);
+                });
+            };
         },
         [view],
     );

@@ -6,8 +6,7 @@ import { Store } from "../../stores/root-store";
 import { waitFor, render } from "@testing-library/react";
 import { RegistrationsListTotal } from "./registrations-list-total";
 import { StoreProvider } from "../../contexts/store-context";
-import { initializeTestApp, loadFirestoreRules } from "@firebase/rules-unit-testing";
-import { clearFirestoreData } from "firestorable/lib/utils";
+import { initializeTestApp, loadFirestoreRules, clearFirestoreData } from "@firebase/rules-unit-testing";
 
 const projectId = "registrations-list-total-test";
 const app = initializeTestApp({
@@ -114,7 +113,7 @@ beforeEach(async () => {
 
 afterEach(async () => {
     store.dispose();
-    await clearFirestoreData(projectId);
+    await clearFirestoreData({ projectId });
 });
 
 afterAll(() => app.delete());

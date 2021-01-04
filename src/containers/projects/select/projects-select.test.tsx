@@ -4,9 +4,8 @@ import path from "path";
 import type firebase from "firebase";
 import { ProjectSelect } from "./";
 import { render, waitFor } from "@testing-library/react";
-import { loadFirestoreRules, initializeTestApp } from "@firebase/rules-unit-testing";
+import { loadFirestoreRules, initializeTestApp, clearFirestoreData } from "@firebase/rules-unit-testing";
 import { Store } from "../../../stores/root-store";
-import { clearFirestoreData } from "firestorable/lib/utils";
 import { useStore } from "../../../contexts/store-context";
 import userEvent from "@testing-library/user-event";
 
@@ -56,7 +55,7 @@ beforeEach(async () => {
 
 afterEach(async () => {
     store.dispose();
-    await clearFirestoreData(projectId);
+    await clearFirestoreData({projectId});
 });
 
 afterAll(() => app.delete());

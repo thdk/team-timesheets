@@ -1,6 +1,0 @@
-Dockerfile
-node_modules
-/screenshots
-/build-containers
-coverage
-README.md

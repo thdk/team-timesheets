@@ -1,9 +1,10 @@
 import * as React from 'react';
 import { TextField, TextFieldProps } from '@rmwc/textfield';
+import { useCallback } from 'react';
 
 export interface IEditableTextFieldProps {
-    readonly edit: TextFieldProps & { 
-        onCancel?: () => void; 
+    readonly edit: TextFieldProps & {
+        onCancel?: () => void;
         onChange: (value: string) => void;
     },
     readonly read?: React.HTMLProps<HTMLDivElement>,
@@ -16,7 +17,17 @@ const EditableTextField = React.forwardRef((props: IEditableTextFieldProps, ref?
 
     const onInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         setTextFieldValue(event.currentTarget.value);
-    };    
+    };
+
+    const onKeyDown = useCallback(
+        (event) => {
+            if (!((String.fromCharCode(event.which).toLowerCase() === 's' || event.keyCode === 13) && event.ctrlKey) && !(event.which === 19)) return true;
+            onChange && onChange((event.currentTarget as HTMLInputElement).value);
+            event.preventDefault();
+            return false;
+        },
+        [],
+    );
 
     const onKeyPress = (e: React.KeyboardEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         switch (e.key) {
@@ -46,11 +57,12 @@ const EditableTextField = React.forwardRef((props: IEditableTextFieldProps, ref?
             autoFocus={true}
             type={type}
             onKeyPress={onKeyPress}
+            onKeyDown={onKeyDown}
             onChange={onInputChange}
             ref={ref}
             value={textFieldValue}
             step={0.5}
-            />
+        />
         : <>{value}</>;
 
     return jsx;

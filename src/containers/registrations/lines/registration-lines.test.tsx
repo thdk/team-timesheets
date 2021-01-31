@@ -150,7 +150,7 @@ describe("RegistrationLines", () => {
         );
 
         expect(asFragment()).toMatchSnapshot();
-        
+
         unmount();
     });
 
@@ -198,6 +198,39 @@ describe("RegistrationLines", () => {
         userEvent.click(getByText("Client 1 - Registration 2"));
 
         expect(registrationClick).toBeCalledWith("reg-2");
+
+        unmount();
+    });
+
+    it("should not call registration click during an inline edit of a registration", async () => {
+        const registrationToggleSelect = jest.fn();
+        const registrationClick = jest.fn();
+
+        await waitFor(() => expect(store.auth.activeDocument).toBeDefined());
+
+        const { container, getByText, unmount, } = render(
+            <RegistrationLines
+                registrations={getRegistrations()}
+                registrationToggleSelect={registrationToggleSelect}
+                registrationClick={registrationClick}
+            />
+        );
+
+        await waitFor(() => getByText("Client 1 - Registration 2"));
+
+        const timeEl = container.querySelectorAll<HTMLDivElement>(".registration-line__time")[0];
+
+        expect(timeEl).toBeDefined();
+
+        if (timeEl) {
+            userEvent.click(timeEl);
+        }
+
+        await waitFor(() => expect(timeEl?.querySelector("input[type=text]")).toBeDefined());
+
+        userEvent.click(getByText("Client 1 - Registration 2"));
+
+        expect(registrationClick).not.toBeCalledWith("reg-2");
 
         unmount();
     });

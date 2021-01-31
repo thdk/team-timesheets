@@ -11,6 +11,7 @@ import { useViewStore } from '../../../contexts/view-context';
 import { DataRow, DataRowColumn, DataRowLine1, DataRowLine2 } from '../../../components/data-row';
 
 import "./registration-line.scss";
+import { transaction } from 'mobx';
 
 export interface IRegistrationLineProps extends React.HTMLProps<HTMLDivElement> {
     readonly line1: string;
@@ -36,11 +37,12 @@ export const RegistrationLine = observer(({
     const view = useViewStore();
 
     const onTimeChange = (value: string) => {
-        if (timesheets.activeDocument) {
-            timesheets.activeDocument.time = +value;
-            timesheets.saveSelectedRegistration();
-            timesheets.setActiveDocumentId(undefined);
-        }
+        transaction(() => {
+            if (timesheets.activeDocument) {
+                timesheets.activeDocument.time = +value;
+                timesheets.saveSelectedRegistration();
+            }
+        });
     }
 
     const onCancel = () => {

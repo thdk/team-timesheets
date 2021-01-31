@@ -6,6 +6,7 @@ import { RegistrationLine } from "../line";
 import { useProjectStore } from "../../../stores/project-store";
 import { useTasks } from "../../../contexts/task-context";
 import { useClients } from "../../../contexts/client-context";
+import { useRegistrationStore } from "../../../contexts/registration-context";
 
 export interface IRegistrationLinesProps extends React.HTMLProps<HTMLElement> {
     readonly registrations: Doc<Omit<IRegistration, "date" | "isPersisted">, Omit<IRegistrationData, "date">>[];
@@ -17,6 +18,7 @@ export const RegistrationLines = observer((props: IRegistrationLinesProps) => {
     const projects = useProjectStore();
     const tasks = useTasks();
     const clients = useClients();
+    const timesheets = useRegistrationStore();
 
     const { registrations, registrationToggleSelect, registrationClick } = props;
 
@@ -50,7 +52,7 @@ export const RegistrationLines = observer((props: IRegistrationLinesProps) => {
                 line2={line2}
                 time={time}
                 onClick={
-                    registrationClick
+                    registrationClick && !timesheets.activeDocumentId
                         ? () => registrationClick(id)
                         : undefined
                 }

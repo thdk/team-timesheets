@@ -28,9 +28,8 @@ export const App = observer(
 
                 <DrawerAppContent>
                     <TopBar />
-
                     <main className="main-content" id="main-content">
-                        <div style={{ paddingBottom: "100px" }} className="mdc-top-app-bar--fixed-adjust">
+                        <div style={{ paddingBottom: "100px" }}>
                             {props.children}
                             <Fabs></Fabs>
                         </div>

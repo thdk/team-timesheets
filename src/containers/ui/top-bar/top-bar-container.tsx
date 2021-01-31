@@ -2,9 +2,11 @@ import * as React from 'react';
 
 import { observer } from 'mobx-react-lite';
 
-import { TopAppBar, TopAppBarRow, TopAppBarSection, TopAppBarNavigationIcon, TopAppBarTitle } from '@rmwc/top-app-bar';
+import { TopAppBar, TopAppBarRow, TopAppBarSection, TopAppBarNavigationIcon, TopAppBarTitle, TopAppBarFixedAdjust } from '@rmwc/top-app-bar';
 import { TopBarActions } from './top-bar-actions-container';
 import { useViewStore } from '../../../contexts/view-context';
+
+import '@rmwc/top-app-bar/styles';
 
 export const TopBar = observer(() => {
     const view = useViewStore();
@@ -19,7 +21,7 @@ export const TopBar = observer(() => {
         const action = view.navigationAction;
         action.action();
     }
-    const { navigationAction: { icon: navigationIcon }} = view;
+    const { navigationAction: { icon: navigationIcon } } = view;
     const selectionLength = Array.from(view.selection.keys()).length;
     const contextual = !!selectionLength;
 
@@ -28,20 +30,23 @@ export const TopBar = observer(() => {
         : <TopAppBarNavigationIcon icon="close" onClick={onLeaveContextualMode} />
 
     const titleText = selectionLength
-     ? `${selectionLength} selected`
-     : view.title;
+        ? `${selectionLength} selected`
+        : view.title;
 
     return (
-        <TopAppBar className={contextual ? "contextual" : undefined}>
-            <TopAppBarRow>
-                <TopAppBarSection alignStart>
-                    {primaryAction}
-                    <TopAppBarTitle>{titleText}</TopAppBarTitle>
-                </TopAppBarSection>
-                <TopAppBarSection alignEnd>
-                    <TopBarActions/>
-                </TopAppBarSection>
-            </TopAppBarRow>
-        </TopAppBar>
+        <>
+            <TopAppBar className={contextual ? "contextual" : undefined}>
+                <TopAppBarRow>
+                    <TopAppBarSection alignStart>
+                        {primaryAction}
+                        <TopAppBarTitle>{titleText}</TopAppBarTitle>
+                    </TopAppBarSection>
+                    <TopAppBarSection alignEnd>
+                        <TopBarActions />
+                    </TopAppBarSection>
+                </TopAppBarRow>
+            </TopAppBar>
+            <TopAppBarFixedAdjust />
+        </>
     );
 });

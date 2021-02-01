@@ -42,4 +42,11 @@ body {
 
   .main-content {
     overflow: auto;
+    height: calc(100% - 48px);
+  }
+
+  @media (min-width: 600px) {
+    .main-content {
+      height: calc(100% - 64px);
+    }
   }

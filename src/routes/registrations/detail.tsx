@@ -65,7 +65,9 @@ const onEnter = (route: RegistrationsDetailRoute, params: RouteParams, s: IRootS
     const deleteAction: IViewAction = {
         action: () => {
             s.timesheets.activeDocumentId && s.timesheets.deleteDocuments(
-                undefined,
+                {
+                    useFlag: true,
+                },
                 s.timesheets.activeDocumentId,
             );
             goToOverview(s);

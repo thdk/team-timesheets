@@ -82,7 +82,9 @@ const setActions = (s: IRootStore, alowInserts = false) => {
             action: selection => {
                 if (!selection) return;
 
-                s.timesheets.deleteDocuments(undefined, ...Array.from(selection.keys()));
+                s.timesheets.deleteDocuments({
+                    useFlag: true,
+                }, ...Array.from(selection.keys()));
                 s.view.selection.clear();
             },
             icon: { content: "delete", label: "Delete" },

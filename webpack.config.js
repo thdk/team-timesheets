@@ -1,4 +1,4 @@
-function buildConfig(env) {
+function buildConfig(env = 'dev') {
     if (env === 'dev' || env === 'prod') {
         return require(`./webpack.config.${env}.js`)
     } else {

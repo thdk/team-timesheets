@@ -28,11 +28,6 @@ const beforeEnter = (_route: FavoriteDetailRoute, params: RouteParams, s: IRootS
 }
 
 const onEnter = (route: FavoriteDetailRoute, _params: RouteParams, s: IRootStore) => {
-    const save = () => {
-        if (s.favorites.activeDocument && s.favorites.activeDocumentId) {
-            s.favorites.updateDocument(s.favorites.activeDocument, s.favorites.activeDocumentId);
-        }
-    };
     const deleteAction: IViewAction = {
         action: () => {
             if (s.favorites.activeDocumentId) {
@@ -51,7 +46,7 @@ const onEnter = (route: FavoriteDetailRoute, _params: RouteParams, s: IRootStore
 
     const saveAction: IViewAction = {
         action: () => {
-            save();
+            s.favorites.saveFavoriteGroup();
             goToFavorites(s.router);
         },
         icon: { label: "Save", content: "save" },
@@ -66,7 +61,7 @@ const onEnter = (route: FavoriteDetailRoute, _params: RouteParams, s: IRootStore
 
         s.view.setNavigation({
             action: () => {
-                save();
+                s.favorites.saveFavoriteGroup();
                 goToFavorites(s.router);
             },
             icon: { label: "Back", content: "arrow_back" }

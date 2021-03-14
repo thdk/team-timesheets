@@ -315,30 +315,4 @@ describe("FavoriteStore", () => {
             });
         });
     });
-
-    // describe("addDocument", () => {
-    //     it("should add a project", async () => {
-    //         await waitFor(() => expect(store.user.divisionUser).toBeDefined());
-    //         await waitFor(() => expect(store.projects.activeProjects.length).toBe(0));
-    //         store.projects.addDocument(
-    //             {
-    //                 name: "New project 1",
-    //                 createdBy: "user-1",
-    //                 divisionId: "",
-    //             },
-    //             "new-project-1",
-    //         );
-
-    //         await waitFor(() => expect(store.projects.activeProjects.length).toBe(1));
-
-    //         store.projects.deleteDocuments(
-    //             {
-    //                 useFlag: false,
-    //             },
-    //             "new-project-1",
-    //         );
-
-    //         await waitFor(() => expect(store.projects.activeProjects.length).toBe(0));
-    //     });
-    // });
 });

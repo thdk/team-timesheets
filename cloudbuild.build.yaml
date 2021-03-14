@@ -1,4 +1,5 @@
 steps:
+  - timeout: 900s
   - name: node:10.18.0
     entrypoint: npm
     args: ["ci"]

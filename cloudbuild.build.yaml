@@ -1,5 +1,4 @@
 steps:
-  - timeout: 900s
   - name: node:10.18.0
     entrypoint: npm
     args: ["ci"]
@@ -33,3 +32,4 @@ steps:
     entrypoint: npm
     dir: "functions"
     args: ["run", "build"]
+timeout: 900s

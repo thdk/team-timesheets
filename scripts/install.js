@@ -9,8 +9,8 @@ const cwd = path.resolve(__dirname, "../");
 const key = ".gcs.service-account.json";
 
 execSync(
-    // `npx cloud-build-cache install --no-cache --key ${key} --bucket ${bucket} --cwd ${cwd}`,
-    `npx cloud-build-cache install --bucket ${bucket} --cwd ${cwd}`,
+    // `npx n-cache-r install --no-cache --key ${key} --bucket ${bucket} --cwd ${cwd}`,
+    `npx n-cache-r install --bucket ${bucket} --cwd ${cwd}`,
     {
         stdio: 'inherit',
     },

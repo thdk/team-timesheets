@@ -32,5 +32,3 @@ steps:
     dir: "functions"
     args: ["run", "build"]
 timeout: 900s
-options:
-  machineType: N2

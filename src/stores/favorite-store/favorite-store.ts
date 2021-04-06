@@ -84,17 +84,13 @@ export class FavoriteStore extends CrudStore<IFavoriteRegistrationGroup, IFavori
                 && group.id !== this.activeDocumentId
             ));
             if (existingGroup) {
-                console.log({
-                    existingGroup,
-                })
                 // delete the existing favorite registration group
                 this.deleteDocument(existingGroup.id);
                 // delete existing favorite registrations in this group
                 this.getFavoritesByGroupIdAsync(existingGroup.id)
                     .then((favorites) => this.favoriteCollection.deleteAsync(
                         ...favorites.map((favorite) => favorite.id),
-                    ),
-                    )
+                    ))
             }
 
             this.updateDocument(

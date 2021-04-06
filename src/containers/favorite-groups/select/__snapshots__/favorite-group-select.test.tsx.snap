@@ -1,0 +1,57 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`FavoriteGroupSelect should render without favorite groups 1`] = `
+<DocumentFragment>
+  <div
+    class="mdc-select mdc-select--outlined"
+    role="listbox"
+  >
+    <div
+      class="mdc-select__anchor"
+    >
+      <i
+        class="mdc-select__dropdown-icon"
+      />
+      <div
+        aria-disabled="false"
+        aria-haspopup="listbox"
+        class="mdc-select__selected-text"
+        role="button"
+        tabindex="-1"
+      >
+         
+      </div>
+      <div
+        class="mdc-notched-outline mdc-notched-outline--upgraded"
+      >
+        <div
+          class="mdc-notched-outline__leading"
+        />
+        <div
+          class="mdc-notched-outline__notch"
+        >
+          <span
+            class="mdc-floating-label"
+            for="select-Favorite group"
+            style="transition-duration: 0s;"
+          >
+            Favorite group
+          </span>
+        </div>
+        <div
+          class="mdc-notched-outline__trailing"
+        />
+      </div>
+      <select
+        class="rmwc-select__native-control "
+        tabindex="0"
+      >
+        <option
+          disabled=""
+          value=""
+        />
+      </select>
+    </div>
+  </div>
+</DocumentFragment>
+`;

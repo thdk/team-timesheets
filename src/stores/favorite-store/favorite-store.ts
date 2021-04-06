@@ -90,8 +90,7 @@ export class FavoriteStore extends CrudStore<IFavoriteRegistrationGroup, IFavori
                 this.getFavoritesByGroupIdAsync(existingGroup.id)
                     .then((favorites) => this.favoriteCollection.deleteAsync(
                         ...favorites.map((favorite) => favorite.id),
-                    ),
-                    )
+                    ))
             }
 
             this.updateDocument(

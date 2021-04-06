@@ -17,7 +17,7 @@ export function withFavoriteGroups<T extends Props = Props>(
 
         return store.favorites.collection.isFetched
             ? <WrappedComponent
-                groups={store.favorites.collection.docs.map(doc => ({ ...doc.data!, id: doc.id }))}
+                groups={store.favorites.groups}
                 {...(props as T)}
             />
             : <></>;

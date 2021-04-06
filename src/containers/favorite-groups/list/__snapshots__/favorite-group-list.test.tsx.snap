@@ -1,0 +1,31 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`FavoriteGroupList when there are no favorite groups should render an empty list 1`] = `
+<DocumentFragment>
+  <div
+    class="box"
+  >
+    <p>
+      You don't have any favorites yet. Start adding registrations as favorite from your timesheet.
+    </p>
+    <p>
+      Select registrations with the checkbox and click the favorite icon in the top action bar.
+    </p>
+  </div>
+</DocumentFragment>
+`;
+
+exports[`FavoriteGroupList when there are no favorite groups should rerender the list when favorite groups are added in the database in the background 1`] = `
+<DocumentFragment>
+  <div
+    class="box"
+  >
+    <p>
+      You don't have any favorites yet. Start adding registrations as favorite from your timesheet.
+    </p>
+    <p>
+      Select registrations with the checkbox and click the favorite icon in the top action bar.
+    </p>
+  </div>
+</DocumentFragment>
+`;

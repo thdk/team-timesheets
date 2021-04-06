@@ -140,7 +140,7 @@ describe("FavoriteGroupSelect", () => {
                 unmount,
             } = render(
                 <FavoriteGroupSelect
-                    value={groupIds[3]}
+                    value={groupIds[2]}
                     onChange={jest.fn()}
                 />
             );
@@ -148,7 +148,7 @@ describe("FavoriteGroupSelect", () => {
             await waitFor(
                 () => expect(
                     container.querySelector("select")?.value
-                ).toBe(groupIds[3]),
+                ).toBe(groupIds[2]),
             );
 
             unmount();

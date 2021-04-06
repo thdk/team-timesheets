@@ -116,7 +116,7 @@ const setActions = (s: IRootStore, alowInserts = false) => {
                     s.view.selection.clear();
                 });
 
-                groupId && goToFavorite(s, groupId);
+                groupId && goToFavorite(s.router, groupId);
             },
             icon: { content: "favorite", label: "Favorite" },
             shortKey: { ctrlKey: false, key: "f" },

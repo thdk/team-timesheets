@@ -23,7 +23,7 @@ const FavoriteGroupList = observer((props: FavoriteGroupListProps) => {
         if (store.view.selection.size) {
             store.view.toggleSelection(id);
         } else {
-            goToFavorite(store, id);
+            goToFavorite(store.router, id);
         }
     };
 

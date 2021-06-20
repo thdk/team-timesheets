@@ -20,6 +20,125 @@ exports[`Preferences should display client preferences 1`] = `
     class="box"
   >
     TaskPreferencesClientPreferences
+    <h3
+      class="mdc-typography--subtitle1"
+    >
+      Select number of recent projects
+    </h3>
+    <div
+      class="formField"
+    >
+      <div
+        class="mdc-select mdc-select--outlined"
+        role="listbox"
+      >
+        <div
+          class="mdc-select__anchor"
+        >
+          <i
+            class="mdc-select__dropdown-icon"
+          />
+          <div
+            aria-disabled="false"
+            aria-haspopup="listbox"
+            class="mdc-select__selected-text"
+            role="button"
+            tabindex="-1"
+          >
+            5
+          </div>
+          <div
+            class="mdc-notched-outline mdc-notched-outline--upgraded"
+            notch="0"
+          >
+            <div
+              class="mdc-notched-outline__leading"
+            />
+            <div
+              class="mdc-notched-outline__notch"
+            >
+              <span
+                class="mdc-floating-label mdc-floating-label--float-above"
+                for="select-# of recent projects"
+                style="transition-duration: 0s;"
+              >
+                # of recent projects
+              </span>
+            </div>
+            <div
+              class="mdc-notched-outline__trailing"
+            />
+          </div>
+          <select
+            class="rmwc-select__native-control "
+            name="recentProjects"
+            role="combobox"
+            tabindex="0"
+          >
+            <option
+              value="1"
+            >
+              1
+            </option>
+            <option
+              value="2"
+            >
+              2
+            </option>
+            <option
+              value="3"
+            >
+              3
+            </option>
+            <option
+              value="4"
+            >
+              4
+            </option>
+            <option
+              value="5"
+            >
+              5
+            </option>
+            <option
+              value="6"
+            >
+              6
+            </option>
+            <option
+              value="7"
+            >
+              7
+            </option>
+            <option
+              value="8"
+            >
+              8
+            </option>
+            <option
+              value="9"
+            >
+              9
+            </option>
+            <option
+              value="10"
+            >
+              10
+            </option>
+            <option
+              value="11"
+            >
+              11
+            </option>
+            <option
+              value="12"
+            >
+              12
+            </option>
+          </select>
+        </div>
+      </div>
+    </div>
   </div>
 </DocumentFragment>
 `;
@@ -30,6 +149,125 @@ exports[`Preferences should display task preferences 1`] = `
     class="box"
   >
     TaskPreferencesClientPreferences
+    <h3
+      class="mdc-typography--subtitle1"
+    >
+      Select number of recent projects
+    </h3>
+    <div
+      class="formField"
+    >
+      <div
+        class="mdc-select mdc-select--outlined"
+        role="listbox"
+      >
+        <div
+          class="mdc-select__anchor"
+        >
+          <i
+            class="mdc-select__dropdown-icon"
+          />
+          <div
+            aria-disabled="false"
+            aria-haspopup="listbox"
+            class="mdc-select__selected-text"
+            role="button"
+            tabindex="-1"
+          >
+            5
+          </div>
+          <div
+            class="mdc-notched-outline mdc-notched-outline--upgraded"
+            notch="0"
+          >
+            <div
+              class="mdc-notched-outline__leading"
+            />
+            <div
+              class="mdc-notched-outline__notch"
+            >
+              <span
+                class="mdc-floating-label mdc-floating-label--float-above"
+                for="select-# of recent projects"
+                style="transition-duration: 0s;"
+              >
+                # of recent projects
+              </span>
+            </div>
+            <div
+              class="mdc-notched-outline__trailing"
+            />
+          </div>
+          <select
+            class="rmwc-select__native-control "
+            name="recentProjects"
+            role="combobox"
+            tabindex="0"
+          >
+            <option
+              value="1"
+            >
+              1
+            </option>
+            <option
+              value="2"
+            >
+              2
+            </option>
+            <option
+              value="3"
+            >
+              3
+            </option>
+            <option
+              value="4"
+            >
+              4
+            </option>
+            <option
+              value="5"
+            >
+              5
+            </option>
+            <option
+              value="6"
+            >
+              6
+            </option>
+            <option
+              value="7"
+            >
+              7
+            </option>
+            <option
+              value="8"
+            >
+              8
+            </option>
+            <option
+              value="9"
+            >
+              9
+            </option>
+            <option
+              value="10"
+            >
+              10
+            </option>
+            <option
+              value="11"
+            >
+              11
+            </option>
+            <option
+              value="12"
+            >
+              12
+            </option>
+          </select>
+        </div>
+      </div>
+    </div>
   </div>
 </DocumentFragment>
 `;

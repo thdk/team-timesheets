@@ -51,6 +51,7 @@ export const convertUser = (firestoreData: IUserData) => {
         divisionUserId: firestoreData.divisionUserId || undefined,
         team: firestoreData.team || undefined,
         created: firestoreData.created ? firestoreData.created.toDate() : undefined,
+        numberOfRecentProjects: firestoreData.numberOfRecentProjects || 5,
     };
 
     return user;
@@ -99,7 +100,7 @@ export const convertNameWithIcon = (firestoreData: INameWithIconData) => {
         name: firestoreData.name,
         icon: firestoreData.icon || "",
         created: firestoreData.created ? firestoreData.created.toDate() : undefined,
-        deleted: firestoreData.deleted || false,        
+        deleted: firestoreData.deleted || false,
     };
 
     return data;

@@ -24,7 +24,10 @@ export const ProjectSelect = observer(({
     const userRecentProjects = divisionUser ? divisionUser.recentProjects : [];
 
 
-    const recentProjects = userRecentProjects.slice(0, 5).reduce((p, c) => {
+    const recentProjects = userRecentProjects.slice(
+        0,
+        divisionUser?.numberOfRecentProjects || 5,
+    ).reduce((p, c) => {
         const projectData = projectStore.activeProjects.find(p => p.id === c);
         if (projectData) {
             p.push(projectData);

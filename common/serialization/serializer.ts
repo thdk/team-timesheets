@@ -119,6 +119,7 @@ export const convertUser = (appData: Partial<IUser> | null) => {
             divisionId: appData.divisionId || "",
             divisionUserId: appData.divisionUserId || firebase.firestore.FieldValue.delete(),
             deleted: false,
+            numberOfRecentProjects: appData.numberOfRecentProjects
         }
 
         // Todo: automatically remove undefined values for all keys
@@ -131,6 +132,7 @@ export const convertUser = (appData: Partial<IUser> | null) => {
         if (user.defaultClient === undefined) delete user.defaultClient;
         if (user.team === undefined) delete user.team;
         if (!user.email) delete user.email;
+        if (user.numberOfRecentProjects === undefined) delete user.numberOfRecentProjects;
     }
 
     return user as IUserData;

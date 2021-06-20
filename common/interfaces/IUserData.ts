@@ -13,6 +13,7 @@ export interface IUserData extends IPersistedEntity {
     uid?: string;
     divisionId?: string;
     divisionUserId?: string;
+    numberOfRecentProjects?: number;
 }
 
 export interface IDivisionUserData extends IUserData {

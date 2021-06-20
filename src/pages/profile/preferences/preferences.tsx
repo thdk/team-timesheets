@@ -8,6 +8,7 @@ import { TaskPreferences } from './task-preferences';
 import { ClientPreferences } from './client-preferences';
 import { useTasks } from '../../../contexts/task-context';
 import { useClients } from '../../../contexts/client-context';
+import { ProjectPreferences } from './project-preferences';
 
 
 export const Preferences = observer(() => {
@@ -34,6 +35,7 @@ export const Preferences = observer(() => {
             <Box>
                 <TaskPreferences />
                 <ClientPreferences />
+                <ProjectPreferences />
             </Box>
         </>
     );

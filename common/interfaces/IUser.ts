@@ -20,4 +20,5 @@ export interface IUser {
     uid: string;
     divisionId: string;
     divisionUserId?: string;
+    numberOfRecentProjects?: number;
 }

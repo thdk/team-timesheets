@@ -1,7 +1,7 @@
 steps:
   - name: node:10.18.0
     entrypoint: npm
-    args: ["ci"]
+    args: ["ci", "--prefer-offline", "--no-audit"]
   - name: node:10.18.0
     entrypoint: npm
     args: ["run", "build:refs"]
@@ -14,7 +14,7 @@ steps:
   - name: node:10.18.0
     entrypoint: npm
     dir: "functions"
-    args: ["ci"]
+    args: ["ci", "--prefer-offline", "--no-audit"]
   - name: "gcr.io/$PROJECT_ID/firebase"
     args: ["deploy", "--project", "$_FIREBASE_PROJECT_ID", "--token", "$_FIREBASE_TOKEN"]
 timeout: 900s

@@ -1,17 +1,17 @@
 steps:
-  - name: node:10.18.0
+  - name: node:14
     entrypoint: npm
     args: ["ci"]
-  - name: node:10.18.0
+  - name: node:14
     entrypoint: npm
     args: ["run", "build:refs"]
   - name: "gcr.io/$PROJECT_ID/firebase"
     entrypoint: npm
     args: ["run", "test:emulator"]
-  - name: node:10.18.0
+  - name: node:14
     entrypoint: npm
     args: ["run", "build:production"]
-  - name: node:10.18.0
+  - name: node:14
     entrypoint: npm
     dir: "functions"
     args: ["ci"]

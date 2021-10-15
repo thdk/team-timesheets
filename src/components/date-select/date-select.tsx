@@ -6,8 +6,8 @@ import { FlexGroup } from '../layout/flex';
 import { FormField } from '../layout/form';
 
 export interface IDateSelectProps extends React.HTMLProps<HTMLDivElement> {
-    year?: number;
-    month?: number;
+    year: number | null;
+    month: number | null;
     onMonthChange: (month: number) => void;
     onYearChange: (year: number) => void;
 }

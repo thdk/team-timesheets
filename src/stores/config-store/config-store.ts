@@ -1,21 +1,23 @@
-import { observable, computed, reaction } from 'mobx';
-import type firebase from "firebase";
+import { observable, computed, reaction, makeObservable } from 'mobx';
 import { Collection, ICollection, RealtimeMode, FetchMode } from "firestorable";
 import { IRootStore } from '../root-store';
-import { IClient, IClientData, ITeam, ITeamData, IConfig, ConfigValue } from '../../../common/dist';
+import { IClient, IClientData, ITeam, ITeamData, IConfig, ConfigValue, INameWithIconData } from '../../../common/dist';
 
 import * as serializer from '../../../common/serialization/serializer';
 import * as deserializer from '../../../common/serialization/deserializer';
+import { CollectionReference, Firestore, orderBy } from '@firebase/firestore';
+import { query, where } from 'firebase/firestore';
+import { IWithDivision } from '../../../common/interfaces/IWithDivision';
 
 export interface IConfigStore extends ConfigStore { };
 
 export class ConfigStore implements IConfigStore {
-    readonly clientsCollection: ICollection<IClient>;
+    readonly clientsCollection: ICollection<IClient, IClientData>;
     readonly teamsCollection: ICollection<ITeam, ITeamData>;
     readonly configsCollection: Collection<IConfig>;
 
-    @observable.ref clientId?: string;
-    @observable.ref teamId?: string;
+    clientId?: string;
+    teamId?: string;
 
     private disposables: (() => void)[] = [];
 
@@ -24,9 +26,16 @@ export class ConfigStore implements IConfigStore {
         {
             firestore,
         }: {
-            firestore: firebase.firestore.Firestore,
+            firestore: Firestore,
         }
     ) {
+        makeObservable(this, {
+            clientId: observable.ref,
+            teamId: observable.ref,
+            clients: computed,
+            teams: computed
+        });
+
         // this._rootStore = rootStore;
         const deps = {
             // logger: console.log
@@ -76,12 +85,12 @@ export class ConfigStore implements IConfigStore {
                     this.clientsCollection.query = null;
                 }
                 else {
-                    const query = (ref: firebase.firestore.CollectionReference) =>
-                        ref.orderBy("name_insensitive")
-                            .where("divisionId", "==", user.divisionId || "");
+                    const q = (ref: CollectionReference<INameWithIconData & IWithDivision>) =>
+                        query(ref, orderBy("name_insensitive"),
+                            where("divisionId", "==", user.divisionId || ""));
 
-                    this.teamsCollection.query = query;
-                    this.clientsCollection.query = query;
+                    this.teamsCollection.query = q;
+                    this.clientsCollection.query = q;
 
                     if (!this.teamsCollection.isFetched) {
                         this.teamsCollection.fetchAsync();
@@ -95,13 +104,11 @@ export class ConfigStore implements IConfigStore {
         );
     }
 
-    @computed
     public get clients() {
         return Array.from(this.clientsCollection.docs.values())
             .map(doc => ({ ...doc.data!, id: doc.id }));
     }
 
-    @computed
     public get teams() {
         return Array.from(this.teamsCollection.docs.values())
             .map(doc => ({ ...doc.data!, id: doc.id, isSelected: doc.id === this.teamId }));

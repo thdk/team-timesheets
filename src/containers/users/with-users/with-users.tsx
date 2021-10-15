@@ -17,8 +17,7 @@ export function withUsers<T extends Props = Props>(
 
         return store.user.usersCollection.isFetched
             ? <WrappedComponent
-                users={store.user.users}
-                {...(props as T)}
+                {...({users: store.user.users, ...props} as T)}
             />
             : <></>;
     }

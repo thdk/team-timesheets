@@ -14,7 +14,7 @@ import { Box } from '../../components/layout/box';
 import { FormField } from '../../components/layout/form';
 import { canReadUsers } from '../../rules';
 import { TimePeriodSelect, TimePeriod } from '../../components/time-period-select';
-import { IProject, ITask } from '../../../common/dist';
+import { IProject, IProjectData, ITask, ITaskData } from '../../../common/dist';
 import { withAuthentication } from '../../containers/users/with-authentication';
 import { RedirectToLogin } from '../../internal';
 import { useStore } from '../../contexts/store-context';
@@ -81,7 +81,7 @@ export const DashboardPage = withAuthentication(
                 chart: ChartType.Bar
             };
 
-            const projectChartProps: IRegistrationsChartProps<IProject> = {
+            const projectChartProps: IRegistrationsChartProps<IProject, IProjectData> = {
                 title: "Time / project",
                 data: store.dashboard.registrationsGroupedByProject,
                 labelCollection: store.projects.collection,
@@ -89,7 +89,7 @@ export const DashboardPage = withAuthentication(
                 chart: ChartType.Doughnut
             };
 
-            const taskChartProps: IRegistrationsChartProps<ITask> = {
+            const taskChartProps: IRegistrationsChartProps<ITask, ITaskData> = {
                 title: "Time / task",
                 data: store.dashboard.registrationsGroupedByTask,
                 labelCollection: store.tasks.collection,

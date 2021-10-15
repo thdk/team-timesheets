@@ -1,13 +1,13 @@
 import { Doc, ICollection, RealtimeMode, FetchMode, CrudStore } from "firestorable";
-import { observable, computed, reaction, when, action, toJS } from 'mobx';
+import { observable, computed, reaction, when, action, toJS, makeObservable } from 'mobx';
 import moment from 'moment';
-import type firebase from "firebase";
 
 import { IRootStore } from '../root-store';
 import * as deserializer from '../../../common/serialization/deserializer';
 import * as serializer from '../../../common/serialization/serializer';
 import { SortOrder } from '../../containers/timesheet/days';
 import { IRegistration, IRegistrationData } from '../../../common/dist';
+import { CollectionReference, Firestore, query, where } from "firebase/firestore";
 
 export interface IGroupedRegistrations<T> {
     registrations: Doc<IRegistration, IRegistrationData>[];
@@ -25,13 +25,15 @@ const createQuery = (
     if (userId) {
         const endDate = moment.clone().endOf("month").toDate();
         const startDate = moment.clone().startOf("month").toDate();
-        const queryFn = (ref: firebase.firestore.CollectionReference) => {
-            let query = ref
-                .where("date", ">=", startDate)
-                .where("date", "<=", endDate)
-                .where("userId", "==", userId.toString());
+        const queryFn = (ref: CollectionReference<IRegistrationData>) => {
+            let q = query(
+                ref,
+                where("date", ">=", startDate),
+                where("date", "<=", endDate),
+                where("userId", "==", userId.toString(),
+            ));
 
-            return query;
+            return q;
         }
 
         return queryFn;
@@ -78,12 +80,9 @@ export class RegistrationStore extends CrudStore<IRegistration, IRegistrationDat
     private rootStore: IRootStore;
     readonly clipboard = observable(new Map<string, IRegistration>());
 
-    @observable
     public selectedRegistrationDays = observable([] as string[]);
 
-    @observable
     private registrationsGroupedByDaySortOrderField = SortOrder.Descending;
-    @observable
     public areGroupedRegistrationsCollapsed = true;
 
     private reactionDisposeFns: (() => void)[];
@@ -93,7 +92,7 @@ export class RegistrationStore extends CrudStore<IRegistration, IRegistrationDat
         {
             firestore,
         }: {
-            firestore: firebase.firestore.Firestore,
+            firestore: Firestore,
         },
     ) {
         super(
@@ -115,6 +114,17 @@ export class RegistrationStore extends CrudStore<IRegistration, IRegistrationDat
                 firestore,
             },
         );
+
+        makeObservable<RegistrationStore, "registrationsGroupedByDaySortOrderField">(this, {
+            selectedRegistrationDays: observable,
+            registrationsGroupedByDaySortOrderField: observable,
+            areGroupedRegistrationsCollapsed: observable,
+            registrationsGroupedByDaySortOrder: computed,
+            registrationsTotalTime: computed,
+            setRegistrationsGroupedByDaySortOrder: action,
+            registrationsGroupedByDayReversed: computed,
+            registrationsGroupedByDay: computed
+        });
 
         this.rootStore = rootStore;
 
@@ -153,26 +163,23 @@ export class RegistrationStore extends CrudStore<IRegistration, IRegistrationDat
         ];
     }
 
-    @computed
     public get registrationsGroupedByDaySortOrder() {
         return this.registrationsGroupedByDaySortOrderField;
     }
 
-    @computed
     public get registrationsTotalTime() {
         return this.registrationsGroupedByDay.reduce((p, c) => p + (c.totalTime || 0), 0);
     }
 
-    @action
     public setRegistrationsGroupedByDaySortOrder(sortOrder: SortOrder) {
         this.registrationsGroupedByDaySortOrderField = sortOrder;
     }
 
-    @computed get registrationsGroupedByDayReversed() {
+    get registrationsGroupedByDayReversed() {
         return this.getGroupedRegistrations(this.collection, SortOrder.Descending);
     }
 
-    @computed get registrationsGroupedByDay() {
+    get registrationsGroupedByDay() {
         return this.getGroupedRegistrations(this.collection);
     }
 

@@ -1,5 +1,5 @@
 import { Collection, ICollection, RealtimeMode, FetchMode, Doc, CrudStore } from "firestorable";
-import { observable, reaction, computed, autorun } from "mobx";
+import { observable, reaction, computed, autorun, makeObservable } from "mobx";
 
 import { IRootStore } from '../root-store';
 
@@ -8,14 +8,15 @@ import * as deserializer from '../../../common/serialization/deserializer';
 import { IDivision, IDivisionCode } from "../../../common/interfaces/IOrganisation";
 import { IDivisionData } from "../../../common/interfaces/IOrganisationData";
 import { IUserData, IUser } from "../../../common";
-import firebase from "firebase/app";
+import { CollectionReference, Firestore, query, where } from "firebase/firestore";
+import { HttpsCallable } from "firebase/functions";
 
 export class DivisionStore extends CrudStore<IDivision, IDivisionData> {
     readonly divisionCodesCollection: ICollection<IDivisionCode>;
 
-    @observable.ref division: Doc<IDivision> | undefined;
+    division: Doc<IDivision> | null = null;
 
-    private readonly httpsCallable?: (name: string) => firebase.functions.HttpsCallable;
+    private readonly httpsCallable?: (name: string) => HttpsCallable<string, string >;
 
     private disposables: (() => void)[] = [];
 
@@ -26,8 +27,8 @@ export class DivisionStore extends CrudStore<IDivision, IDivisionData> {
             firestore,
             httpsCallable,
         }: {
-            firestore: firebase.firestore.Firestore,
-            httpsCallable?: (name: string) => firebase.functions.HttpsCallable,
+            firestore: Firestore,
+            httpsCallable?: (name: string) => HttpsCallable<string, string>,
         }
     ) {
         super(
@@ -45,11 +46,17 @@ export class DivisionStore extends CrudStore<IDivision, IDivisionData> {
             },
         );
 
+        makeObservable(this, {
+            division: observable.ref,
+            divisionId: computed,
+            userDivisions: computed
+        });
+
         this.httpsCallable = httpsCallable
 
         this.rootStore = rootStore;
 
-        const createQuery = (ref: firebase.firestore.CollectionReference, docs: Doc<IUser, IUserData>[]) => {
+        const createQuery = (ref: CollectionReference<IDivisionData>, docs: Doc<IUser, IUserData>[]) => {
             if (docs.length) {
                 const ids = docs
                     .reduce((p, c) => {
@@ -59,10 +66,11 @@ export class DivisionStore extends CrudStore<IDivision, IDivisionData> {
                         return p;
                     }, [] as string[]);
 
-                return ref.where(
+                return query(ref, where(
                     "id",
                     "in",
-                    ids.slice(0, ids.length < 10 ? ids.length : 10),
+                    ids.slice(0, ids.length < 10 ? ids.length : 10)
+                ),
                 );
             }
             return ref;
@@ -91,18 +99,17 @@ export class DivisionStore extends CrudStore<IDivision, IDivisionData> {
 
         this.disposables.push(
             autorun(() => {
-                const division = this.divisionId ? this.collection.get(this.divisionId) : undefined;
+                const division = this.divisionId ? this.collection.get(this.divisionId) : null;
 
-                this.division = division;
+                this.division = division || null;
             })
         );
     }
 
-    @computed get divisionId() {
+    get divisionId() {
         return this.rootStore.user.divisionUser?.divisionId;
     }
 
-    @computed
     public get userDivisions() {
 
         return this.rootStore.user.divisionUsersCollection.docs

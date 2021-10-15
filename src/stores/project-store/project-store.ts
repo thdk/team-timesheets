@@ -1,21 +1,24 @@
 import { RealtimeMode, FetchMode, CrudStore } from "firestorable";
-import { observable, computed, reaction } from "mobx";
-import type firebase from "firebase";
+import { observable, computed, reaction, makeObservable } from "mobx";
 
 import { IRootStore } from '../root-store';
 import { IProject, IProjectData, IUser } from '../../../common/dist';
 
 import * as serializer from '../../../common/serialization/serializer';
 import * as deserializer from '../../../common/serialization/deserializer';
+import { CollectionReference, Firestore, orderBy, query, where } from "firebase/firestore";
 
 const createQuery = (user: IUser | undefined) => {
     if (!user) {
         return null;
     }
     else {
-        return (ref: firebase.firestore.CollectionReference) =>
-            ref.orderBy("name_insensitive")
-                .where("divisionId", "==", user.divisionId || "");
+        return (ref: CollectionReference<IProjectData>) =>
+            query(
+                ref,
+                orderBy("name_insensitive"),
+                where("divisionId", "==", user.divisionId || ""),
+            );
     }
 }
 
@@ -28,7 +31,7 @@ export class ProjectStore extends CrudStore<IProject, IProjectData> {
         {
             firestore,
         }: {
-            firestore: firebase.firestore.Firestore,
+            firestore: Firestore,
         }
     ) {
         super(
@@ -50,6 +53,12 @@ export class ProjectStore extends CrudStore<IProject, IProjectData> {
                 firestore,
             },
         );
+
+        makeObservable(this, {
+            activeProjects: computed,
+            archivedProjects: computed
+        });
+
         this.rootStore = rootStore;
 
         this.disposables.push(
@@ -85,14 +94,12 @@ export class ProjectStore extends CrudStore<IProject, IProjectData> {
         return super.addDocument(project, id);
     }
 
-    @computed
     public get activeProjects() {
         return observable(Array.from(this.collection.docs.values())
             .map(doc => ({ ...doc.data!, id: doc.id }))
             .filter(p => !p.isArchived && !p.deleted));
     }
 
-    @computed
     public get archivedProjects() {
         return observable(Array.from(this.collection.docs.values())
             .map(doc => ({ ...doc.data!, id: doc.id }))

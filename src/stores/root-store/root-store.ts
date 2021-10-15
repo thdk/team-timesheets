@@ -1,5 +1,4 @@
 import { RouterStore } from "mobx-router";
-import type firebase from "firebase";
 
 import { IRegistrationsStore, RegistrationStore } from "../registration-store/registration-store";
 import { IConfigStore, ConfigStore } from "../config-store";
@@ -15,6 +14,9 @@ import * as deserializer from "../../../common/serialization/deserializer";
 import * as serializer from "../../../common/serialization/serializer";
 import { FetchMode, RealtimeMode, AuthStore } from "firestorable";
 import { TaskStore } from "../task-store";
+import { Firestore } from "firebase/firestore";
+import { Auth } from "firebase/auth";
+import { HttpsCallable } from "firebase/functions";
 
 export interface IRootStore extends Store { };
 
@@ -37,9 +39,9 @@ export class Store implements IRootStore {
         firestore,
         httpsCallable,
     }: {
-        firestore: firebase.firestore.Firestore,
-        httpsCallable?: (name: string) => firebase.functions.HttpsCallable,
-        auth?: firebase.auth.Auth,
+        firestore: Firestore,
+        httpsCallable?: (name: string) => HttpsCallable<string, string>,
+        auth?: Auth,
     }) {
         this.auth = new AuthStore(
             {

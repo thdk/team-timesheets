@@ -15,10 +15,10 @@ import divisionRoutes from './divisions';
 import { IRootStore } from '../stores/root-store';
 
 const root = {
-  root: new Route<IRootStore>({
+  root: new Route<IRootStore, Record<any, never>>({
     path: '/',
     component: <App></App>,
-    onEnter: (_route: Route<IRootStore>, _params: {}, s: IRootStore) => {
+    onEnter: (_route: Route<IRootStore, Record<any, never>>, _params: Record<any, never>, s: IRootStore) => {
       goToOverview(s);
     },
     title: "Root"

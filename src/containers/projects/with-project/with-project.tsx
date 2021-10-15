@@ -20,8 +20,7 @@ export function withProject<T extends Props = Props>(
 
         return project
             ? <WrappedComponent
-                project={project}
-                {...(props as T)}
+                {...({project, ...props} as T)}
             />
             : <></>;
     }

@@ -1,11 +1,10 @@
 import fs from "fs";
 import path from "path";
-
-import firebase from "firebase/app";
 import { waitFor } from "@testing-library/react";
 import { reaction, transaction } from "mobx";
 import { Store } from "../root-store";
 import { clearFirestoreData, initializeTestApp, loadFirestoreRules } from "@firebase/rules-unit-testing";
+import { User } from "firebase/auth";
 
 const projectId = "reports-store-test";
 const app = initializeTestApp({
@@ -62,7 +61,7 @@ describe("ReportStore", () => {
         transaction(() => {
             store.auth.setUser({
                 uid: "user-1",                
-            } as firebase.User);
+            } as User);
             store.view.setViewDate({
                 year: 2020,
                 month: 4,

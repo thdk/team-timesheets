@@ -1,4 +1,4 @@
 export interface IFavoriteRegistrationGroupData  {
-    name: string;
+    name?: string;
     userId: string;
 };

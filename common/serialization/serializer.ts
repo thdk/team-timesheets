@@ -1,4 +1,3 @@
-import firebase from 'firebase/app';
 import {
     IRegistration,
     IRegistrationData,
@@ -19,11 +18,13 @@ import { INameWithIconData, INameWithIcon } from '../interfaces/base';
 import { IDivision } from '../interfaces/IOrganisation';
 import { IDivisionData } from '../interfaces/IOrganisationData';
 
+import { deleteField, FieldValue, Timestamp } from "firebase/firestore";
+
 export const convertRegistration = (appData: Partial<IRegistration> | null) => {
     let registration: Partial<IRegistrationData>;
     const now = new Date();
     if (appData === null) {
-        registration = { deleted: true, modified: firebase.firestore.Timestamp.fromDate(now) };
+        registration = { deleted: true, modified: Timestamp.fromDate(now) };
     }
     else {
 
@@ -35,7 +36,7 @@ export const convertRegistration = (appData: Partial<IRegistration> | null) => {
 
         const description = (appData.description || "").trim();
         registration = {
-            date: firebase.firestore.Timestamp.fromDate(appData.date),
+            date: Timestamp.fromDate(appData.date),
             description,
             project: appData.project,
             task: appData.task,
@@ -43,8 +44,8 @@ export const convertRegistration = (appData: Partial<IRegistration> | null) => {
             userId: appData.userId,
             client: appData.client,
             deleted: false,
-            modified: firebase.firestore.Timestamp.fromDate(now),
-            created: firebase.firestore.Timestamp.fromDate(appData.created || now),
+            modified: Timestamp.fromDate(now),
+            created: Timestamp.fromDate(appData.created || now),
             source: appData.source,
             sourceId: appData.sourceId,
         };
@@ -97,12 +98,12 @@ export const convertFavoriteRegistration = (appData: Partial<IFavoriteRegistrati
 export const convertUser = (appData: Partial<IUser> | null) => {
     let user: Partial<Omit<IDivisionUserData, "divisionId" | "divisionUserId">>
         & Partial<{
-            divisionId: string | firebase.firestore.FieldValue;
-            divisionUserId: string | firebase.firestore.FieldValue;
+            divisionId: string | FieldValue;
+            divisionUserId: string | FieldValue;
         }>;
     const now = new Date();
     if (appData === null) {
-        user = { deleted: true, modified: firebase.firestore.Timestamp.fromDate(now) };
+        user = { deleted: true, modified: Timestamp.fromDate(now) };
     } else {
         user = {
             tasks: appData.tasks ? Array.from(appData.tasks.keys()) : undefined,
@@ -112,12 +113,12 @@ export const convertUser = (appData: Partial<IUser> | null) => {
             recentProjects: appData.recentProjects,
             defaultClient: appData.defaultClient,
             team: appData.team,
-            modified: firebase.firestore.Timestamp.fromDate(now),
-            created: firebase.firestore.Timestamp.fromDate(appData.created || now),
+            modified: Timestamp.fromDate(now),
+            created: Timestamp.fromDate(appData.created || now),
             uid: appData.uid,
             email: appData.email,
             divisionId: appData.divisionId || "",
-            divisionUserId: appData.divisionUserId || firebase.firestore.FieldValue.delete(),
+            divisionUserId: appData.divisionUserId || deleteField(),
             deleted: false,
             numberOfRecentProjects: appData.numberOfRecentProjects
         }
@@ -170,7 +171,7 @@ export function convertDivision(appData: Partial<IDivision> | null): Partial<IDi
 
     if (appData === null) {
         const now = new Date();
-        data = { deleted: true, modified: firebase.firestore.Timestamp.fromDate(now) };
+        data = { deleted: true, modified: Timestamp.fromDate(now) };
     }
     else {
         data = {
@@ -188,7 +189,7 @@ export function convertProject(appData: Partial<IProject> | null): Partial<IProj
 
     if (appData === null) {
         const now = new Date();
-        data = { deleted: true, modified: firebase.firestore.Timestamp.fromDate(now) };
+        data = { deleted: true, modified: Timestamp.fromDate(now) };
     }
     else {
         data = {
@@ -211,15 +212,15 @@ export function convertNameWithIcon(appData: Partial<INameWithIcon> | null): Par
 
     if (appData === null) {
         const now = new Date();
-        data = { deleted: true, modified: firebase.firestore.Timestamp.fromDate(now) };
+        data = { deleted: true, modified: Timestamp.fromDate(now) };
     }
     else {
         const name = (appData.name || "").trim();
         data = {
             name,
             name_insensitive: name.toUpperCase(),
-            created: firebase.firestore.Timestamp.fromDate(appData.created || now),
-            modified: firebase.firestore.Timestamp.fromDate(now),
+            created: Timestamp.fromDate(appData.created || now),
+            modified: Timestamp.fromDate(now),
         };
 
         if (appData.icon) {

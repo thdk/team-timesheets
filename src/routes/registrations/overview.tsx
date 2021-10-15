@@ -50,7 +50,7 @@ const routeChanged = (route: RegistrationsOverviewRoute, params: DateObject, s: 
     transaction(() => {
         s.view.year = +params.year;
         s.view.month = +params.month;
-        s.view.day = params.day ? +params.day : undefined;
+        s.view.day = params.day ? +params.day : null;
     });
 };
 

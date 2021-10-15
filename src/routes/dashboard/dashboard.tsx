@@ -11,17 +11,17 @@ export const goToDashboard = (router: RouterStore<IRootStore>) => {
     router.goTo(routes.dashboard);
 }
 
-const routeChanged = (route: DashboardRoute, _params: {}, s: IRootStore) => {
+const routeChanged = (route: DashboardRoute, _params: Record<any, never>, s: IRootStore) => {
     setNavigationContent(s, route, false);
 };
 
-type DashboardRoute = Route<IRootStore>;
+type DashboardRoute = Route<IRootStore, Record<any, never>>;
 
 const routes = {
     dashboard: new Route({
         path: path,
         component: <App><DashboardPage /></App>,
-        onEnter: (route: DashboardRoute, params: {}, s: IRootStore) => {
+        onEnter: (route: DashboardRoute, params: Record<any, never>, s: IRootStore) => {
             routeChanged(route, params, s);
         },
         onParamsChange: routeChanged,

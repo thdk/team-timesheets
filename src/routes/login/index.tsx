@@ -2,7 +2,7 @@ import * as React from 'react';
 import { Route, RouterStore } from 'mobx-router';
 import { IRootStore } from '../../stores/root-store';
 import { App, goToOverview } from '../../internal';
-import Login from '../../containers/login';
+import { Login } from '../../containers/login';
 import { when } from 'mobx';
 import { setNavigationContent, Redirect } from '../actions';
 

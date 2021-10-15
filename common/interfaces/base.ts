@@ -1,5 +1,4 @@
-import type firebase from "firebase";
-
+import { FieldValue, Timestamp } from "firebase/firestore";
 export interface INameWithIcon {
     name: string;
     icon?: string;
@@ -15,11 +14,11 @@ export interface INameWithIconData extends IPersistedEntity {
 }
 
 export interface IPersistedEntity {
-    created?: firebase.firestore.Timestamp;
-    modified?: firebase.firestore.Timestamp;
+    created?: Timestamp;
+    modified?: Timestamp;
 }
 
 export interface IFlaggedForDeletion {
     deleted: boolean;
-    modified: firebase.firestore.FieldValue;
+    modified: FieldValue;
 }

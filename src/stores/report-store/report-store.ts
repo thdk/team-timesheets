@@ -1,9 +1,9 @@
 import { ICollection, Collection, Doc, RealtimeMode, FetchMode } from "firestorable";
 import { IRootStore } from "../root-store";
-import { reaction, computed, observable, action } from "mobx";
+import { reaction, computed, observable, action, makeObservable } from "mobx";
 
-import firebase from "firebase";
 import { IReport } from "../../../common/dist";
+import { serverTimestamp, Firestore, limit, orderBy, query, where } from "firebase/firestore";
 
 export interface IReportStore {
     requestReport: (userId: string, year: number, month: number) => void;
@@ -16,16 +16,22 @@ export class ReportStore implements IReportStore {
     // private rootStore: IRootStore;
     public readonly reports: ICollection<IReport>;
 
-    @observable.ref reportUrl?: string;
+    reportUrl?: string;
 
     constructor(
         rootStore: IRootStore,
         {
             firestore,
         }: {
-            firestore: firebase.firestore.Firestore,
+            firestore: Firestore,
         },
     ) {
+        makeObservable(this, {
+            reportUrl: observable.ref,
+            requestReport: action,
+            report: computed
+        });
+
         // this.rootStore = rootStore;
         this.reports = new Collection(
             firestore,
@@ -41,12 +47,14 @@ export class ReportStore implements IReportStore {
         const updateReportsQuery = () => {
             const { month, year } = rootStore.view;
             if (!!rootStore.user.divisionUser && month && year) {
-                this.reports.query = ref => ref
-                    .where("userId", "==", rootStore.user.divisionUser?.id)
-                    .where("month", "==", month)
-                    .where("year", "==", year)
-                    .limit(1)
-                    .orderBy("created", "desc");
+                this.reports.query = ref => query(
+                    ref,
+                    where("userId", "==", rootStore.user.divisionUser?.id),
+                    where("month", "==", month),
+                    where("year", "==", year),
+                    limit(1),
+                    orderBy("created", "desc"),
+                );
             };
         };
 
@@ -54,7 +62,6 @@ export class ReportStore implements IReportStore {
         reaction(() => rootStore.user.divisionUser, updateReportsQuery);
     }
 
-    @action
     requestReport(userId: string, year: number, month: number) {
         this.reportUrl = undefined;
         this.reports.addAsync({
@@ -62,11 +69,10 @@ export class ReportStore implements IReportStore {
             userId,
             year,
             month,
-            created: firebase.firestore.FieldValue.serverTimestamp()
+            created: serverTimestamp()
         } as IReport);
     }
 
-    @computed
     public get report() {
         return this.reports.docs[0];
     }

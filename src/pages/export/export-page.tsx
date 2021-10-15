@@ -58,7 +58,7 @@ export const ExportPage = withAuthentication(
                             style={{ margin: "1em" }}
                             onMonthChange={onChangeMonthClick}
                             onYearChange={onChangeYearClick}
-                            month={month ? month - 1 : undefined}
+                            month={month ? month - 1 : null}
                             year={year} />
                         <Button
                             onClick={onExportClick}

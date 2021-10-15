@@ -20,8 +20,10 @@ export function withFavoriteGroup<T extends Props = Props>(
         const group = store.favorites.activeDocument;
         return group
             ? <WrappedComponent
-                group={group}
-                {...(props as T)}
+                {...({
+                    group,
+                    ...props,
+                } as T)}
             />
             : <></>;
     }

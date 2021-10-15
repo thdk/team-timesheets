@@ -78,3 +78,5 @@ functions/lib
 coverage/
 
 *.service-account.json
+
+.env

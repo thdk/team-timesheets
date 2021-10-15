@@ -1,22 +1,21 @@
-import { observable, action, computed, reaction, IObservableValue } from "mobx";
-import type firebase from "firebase";
-import { ICollection, Collection, Doc, RealtimeMode, FetchMode, CollectionReference } from "firestorable";
+import { observable, action, computed, reaction, IObservableValue, makeObservable } from "mobx";
+
+import { ICollection, Collection, Doc, RealtimeMode, FetchMode } from "firestorable";
 import { IRootStore } from "../root-store";
 import * as deserializer from "../../../common/serialization/deserializer";
 import * as serializer from "../../../common/serialization/serializer";
 import { IUser, IUserData } from "../../../common/dist";
 import { canReadUsers } from "../../rules";
+import { CollectionReference, Firestore, orderBy, Query, query, where } from "firebase/firestore";
 
 export interface IUserStore extends UserStore { }
 
 export class UserStore implements IUserStore {
 
-    @observable
     private _divisionUser: IObservableValue<Doc<IUser, IUserData> | undefined> = observable.box(undefined);
 
     private readonly _selectedUser = observable.box<IUser | undefined>();
 
-    @observable.ref
     private _selectedUserId: string | undefined = undefined;
 
     public readonly usersCollection: ICollection<IUser, IUserData>;
@@ -31,17 +30,33 @@ export class UserStore implements IUserStore {
         {
             firestore,
         }: {
-            firestore: firebase.firestore.Firestore,
+            firestore: Firestore,
         }
     ) {
+        makeObservable<UserStore, "_divisionUser" | "_selectedUserId" | "setSelectedUser" | "setSelectedUserObservable" | "setDivisionUser" | "setDivisionUserSuccess">(this, {
+            _divisionUser: observable,
+            _selectedUserId: observable.ref,
+            setSelectedUser: action,
+            users: computed,
+            setSelectedUserObservable: action.bound,
+            selectedUser: computed,
+            setSelectedUserId: action,
+            selectedUserId: computed,
+            authenticatedUser: computed,
+            authenticatedUserId: computed,
+            divisionUser: computed,
+            setDivisionUser: action,
+            setDivisionUserSuccess: action.bound
+        });
+
         this.rootStore = rootStore;
 
         const createQuery = (user?: IUser) => {
-            const query = (ref: CollectionReference) =>
-                ref.orderBy("name", "asc");
+            const q = (ref: CollectionReference) =>
+                query(ref, orderBy("name")) as Query<IUserData>;
 
             return canReadUsers(user)
-                ? query
+                ? q
                 : null;
         };
 
@@ -88,9 +103,10 @@ export class UserStore implements IUserStore {
                 fetchMode: FetchMode.auto,
                 serialize: serializer.convertUser,
                 deserialize: deserializer.convertUser,
-                query: (ref) => ref
-                    .where("divisionId", "==", (this.divisionUser?.divisionId || ""))
-                    .where("deleted", "==", false),
+                query: (ref) => query(ref,
+                    where("divisionId", "==", (this.divisionUser?.divisionId || "")),
+                    where("deleted", "==", false)
+                ),
             },
             {
                 // logger: console.log
@@ -115,10 +131,11 @@ export class UserStore implements IUserStore {
 
             reaction(() => this.authenticatedUserId, id => {
                 if (id) {
-                    this.divisionUsersCollection.query = ref => ref
-                        .where("uid", "==", id)
-                        .where("deleted", "==", false)
-                        .orderBy("created");
+                    this.divisionUsersCollection.query = ref => query(ref,
+                        where("uid", "==", id),
+                        where("deleted", "==", false),
+                        orderBy("created"),
+                    );
                 } else {
                     this.divisionUsersCollection.query = null;
                 }
@@ -139,7 +156,6 @@ export class UserStore implements IUserStore {
         reaction(() => this._selectedUserId, id => this.setSelectedUser(id));
     }
 
-    @action
     private setSelectedUser(id: string | undefined): void {
         const collection = this.divisionUser?.divisionId
             ? this.divisionUsersAllCollection
@@ -171,7 +187,6 @@ export class UserStore implements IUserStore {
         if (this.selectedUserId && this.selectedUser) { collection.updateAsync(this.selectedUser, this.selectedUserId || ""); }
     }
 
-    @computed
     public get users() {
         const divisionId = this.divisionUser?.divisionId;
 
@@ -189,27 +204,22 @@ export class UserStore implements IUserStore {
             });;
     }
 
-    @action.bound
     private setSelectedUserObservable(userDoc: Doc<IUser, IUserData> | undefined): void {
         this._selectedUser.set(userDoc && userDoc.data ? { ...userDoc.data } : undefined);
     }
 
-    @computed
     public get selectedUser(): IUser | undefined {
         return this._selectedUser.get();
     }
 
-    @action
     public setSelectedUserId(id: string | undefined): void {
         this._selectedUserId = id;
     }
 
-    @computed
     public get selectedUserId(): string | undefined {
         return this._selectedUserId;
     }
 
-    @computed
     public get authenticatedUser(): (IUser & { id: string }) | undefined {
         if (!this.rootStore.auth.activeDocumentId) {
             return undefined;
@@ -219,12 +229,10 @@ export class UserStore implements IUserStore {
         return user ? { ...user!, id: user.uid } : user;
     }
 
-    @computed
     get authenticatedUserId(): string | undefined {
         return this.authenticatedUser?.id;
     }
 
-    @computed
     public get divisionUser(): (IUser & { id: string }) | undefined {
         const divisionUser = this._divisionUser.get();
 
@@ -233,7 +241,6 @@ export class UserStore implements IUserStore {
             : this.authenticatedUser ? { ...this.authenticatedUser } : undefined;
     }
 
-    @action
     private setDivisionUser(id: string | undefined) {
         if (!id) {
             this._divisionUser.set(undefined);
@@ -246,7 +253,6 @@ export class UserStore implements IUserStore {
         }
     }
 
-    @action.bound
     private setDivisionUserSuccess(result: Doc<IUser> | undefined) {
         this._divisionUser.set(result);
     }

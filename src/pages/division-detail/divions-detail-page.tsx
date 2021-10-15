@@ -17,6 +17,7 @@ import { transaction } from "mobx";
 import { setChildNavigation, setTitleForRoute } from "../../internal";
 import { IViewAction } from "../../stores/view-store";
 import { observer } from "mobx-react-lite";
+import { query, where } from "firebase/firestore";
 
 export const DivisionDetailPage = withAuthentication(
     observer(
@@ -110,7 +111,10 @@ export const DivisionDetailPage = withAuthentication(
                                         label: "Get division entry code",
                                     },
                                     action: () => {
-                                        divisionStore.divisionCodesCollection.query = ref => ref.where("divisionId", "==", divisionId);
+                                        divisionStore.divisionCodesCollection.query = ref => query(
+                                            ref,
+                                            where("divisionId", "==", divisionId),
+                                        );
                                         divisionStore.divisionCodesCollection.fetchAsync()
                                             .then(() => {
                                                 divisionStore.divisionCodesCollection.docs.forEach(d => {

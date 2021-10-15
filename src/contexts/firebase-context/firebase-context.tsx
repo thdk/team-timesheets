@@ -1,43 +1,23 @@
-import React, { createContext, useState } from 'react';
-import firebase from "firebase/app";
-import { useEffect } from 'react';
+import React, { createContext } from 'react';
+import { getApp, initializeApp } from "firebase/app";
 
+import type { FirebaseApp } from "firebase/app";
 
-export const FirebaseContext = createContext<firebase.app.App>({} as firebase.app.App);
-export const FirebaseProvider = ({ children, projectId }: React.PropsWithChildren<{
-    projectId?: string
-}>) => {
-    const [isLoaded, setIsLoaded] = useState(false);
-    useEffect(() => {
+const firebaseConfig = {
+    apiKey: process.env.FIREBASE_API_KEY,
+    authDomain: process.env.FIREBASE_AUTH_DOMAIN,
+    projectId: process.env.FIREBASE_PROJECT_ID,
+};
 
-        fetch('/__/firebase/init.json').then(async response => {
-            const config = await response.json();
+export const FirebaseContext = createContext<FirebaseApp>({} as FirebaseApp);
+export const FirebaseProvider = ({ children }: React.PropsWithChildren<unknown>) => {
+    initializeApp(firebaseConfig);
 
-            firebase.initializeApp(config);
-            if (window.location.hostname === 'localhost'
-                && window.location.search.indexOf("emulator") !== -1) {
-                console.log("testing locally -- hitting local functions and firestore emulators");
-                firebase.firestore().settings({
-                    host: 'localhost:8080',
-                    ssl: false
-                });
-
-                firebase.functions().useFunctionsEmulator('http://localhost:5001')
-            }
-
-            setIsLoaded(true);
-        });
-
-
-    }, []);
-
-    return isLoaded ?
-        (
-            <FirebaseContext.Provider value={firebase.app(projectId)}>
-                {children}
-            </FirebaseContext.Provider>
-        )
-        : null;
+    return (
+        <FirebaseContext.Provider value={getApp()}>
+            {children}
+        </FirebaseContext.Provider>
+    );
 }
 
 export const useFirebase = () => React.useContext(FirebaseContext);

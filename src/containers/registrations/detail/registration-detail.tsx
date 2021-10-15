@@ -134,8 +134,8 @@ export const RegistrationDetail = observer(() => {
                     <FormField first={false}>
                         <ClientSelect
                             onChange={onClientChange}
-                            value={client}>
-                        </ClientSelect>
+                            value={client}
+                        />
                     </FormField>
                 </FlexGroup>
                 <FlexGroup extraCssClass="row">

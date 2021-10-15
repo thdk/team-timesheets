@@ -1,6 +1,5 @@
-import { observable, reaction, computed, action } from "mobx";
+import { observable, reaction, computed, action, makeObservable } from "mobx";
 import { ICollection, Collection, RealtimeMode } from "firestorable";
-import type firebase from "firebase";
 
 import moment from 'moment';
 
@@ -10,6 +9,7 @@ import * as deserializer from '../../common/serialization/deserializer';
 import * as serializer from '../../common/serialization/serializer';
 import { TimePeriod } from "../components/time-period-select";
 import { IRegistration, IRegistrationData } from "../../common/dist";
+import { Firestore, query, Query, where } from "firebase/firestore";
 
 export interface IDashboardStore {
     readonly setProjectFilter: (projectId: string | undefined) => void;
@@ -31,19 +31,40 @@ export interface IDashboardStore {
 export class DashboardStore implements IDashboardStore {
     private readonly registrationsField: ICollection<IRegistration, IRegistrationData>;
 
-    @observable.ref private userFilterValueField: string | undefined = undefined;
-    @observable.ref private taskFilterValueField: string | undefined = undefined;
-    @observable.ref private projectFilterValueField: string | undefined = undefined;
-    @observable.ref private timePeriodFilterField: TimePeriod | undefined = undefined;
+    private userFilterValueField: string | undefined = undefined;
+    private taskFilterValueField: string | undefined = undefined;
+    private projectFilterValueField: string | undefined = undefined;
+    private timePeriodFilterField: TimePeriod | undefined = undefined;
 
     constructor(
         rootStore: IRootStore,
         {
             firestore,
         }: {
-            firestore: firebase.firestore.Firestore,
+            firestore: Firestore,
         },
     ) {
+        makeObservable<DashboardStore, "userFilterValueField" | "taskFilterValueField" | "projectFilterValueField" | "timePeriodFilterField" | "startDateFilter" | "endDateFilter" | "userIdFilter" | "projectIdFilter" | "startDate" | "endDate" | "registrations">(this, {
+            userFilterValueField: observable.ref,
+            taskFilterValueField: observable.ref,
+            projectFilterValueField: observable.ref,
+            timePeriodFilterField: observable.ref,
+            startDateFilter: computed,
+            endDateFilter: computed,
+            userIdFilter: computed,
+            projectIdFilter: computed,
+            registrationsGroupedByUser: computed,
+            registrationsGroupedByProject: computed,
+            registrationsGroupedByTask: computed,
+            startDate: computed,
+            endDate: computed,
+            registrations: computed,
+            setProjectFilter: action,
+            setTaskFilter: action,
+            setUserFilter: action,
+            setTimePeriodFilter: action
+        });
+
         this.registrationsField = new Collection<IRegistration, IRegistrationData>(
             firestore,
             "registrations",
@@ -67,11 +88,11 @@ export class DashboardStore implements IDashboardStore {
                         this.projectIdFilter(
                             this.endDateFilter(
                                 this.startDateFilter(
-                                    ref.where("deleted", "==", false)
+                                    query(ref, where("deleted", "==", false))
                                 )
                             )
                         )
-                    );
+                    ) as Query<IRegistrationData>;
             }
         };
 
@@ -84,32 +105,27 @@ export class DashboardStore implements IDashboardStore {
         reaction(() => rootStore.user.divisionUser, updateRegistrationQuery);
     }
 
-    @computed
     private get startDateFilter() {
         const startDate = this.startDate;
-        return (query: firebase.firestore.Query) => startDate ? query.where("date", ">=", startDate) : query;
+        return (q: Query) => startDate ? query(q, where("date", ">=", startDate)) : q;
     }
 
-    @computed
     private get endDateFilter() {
         const endDate = this.endDate;
-        return (query: firebase.firestore.Query) => endDate ? query.where("date", "<=", endDate) : query;
+        return (q: Query) => endDate ? query(q, where("date", "<=", endDate)) : q;
     }
 
-    @computed
     private get userIdFilter() {
         const userId = this.userFilterValue;
-        return (query: firebase.firestore.Query) => userId ? query.where("userId", "==", userId) : query;
+        return (q: Query) => userId ? query(q, where("userId", "==", userId)) : q;
     }
 
-    @computed
     private get projectIdFilter() {
-        return (query: firebase.firestore.Query) => this.projectFilterValue
-            ? query.where("project", "==", this.projectFilterValue)
-            : query;
+        return (q: Query) => this.projectFilterValue
+            ? query(q, where("project", "==", this.projectFilterValue))
+            : q;
     }
 
-    @computed
     get registrationsGroupedByUser() {
         // no need to group when userId is included in the filter
         if (this.registrations.length === 0) return [];
@@ -119,7 +135,6 @@ export class DashboardStore implements IDashboardStore {
         return registrationsPerUser;
     }
 
-    @computed
     get registrationsGroupedByProject() {
         if (this.registrations.length === 0) return [];
 
@@ -127,7 +142,6 @@ export class DashboardStore implements IDashboardStore {
             .sort((a, b) => b.totalTime - a.totalTime);;
     }
 
-    @computed
     get registrationsGroupedByTask() {
         if (this.registrations.length === 0) return [];
 
@@ -135,7 +149,6 @@ export class DashboardStore implements IDashboardStore {
             .sort((a, b) => b.totalTime - a.totalTime);
     }
 
-    @computed
     private get startDate() {
         const today = moment(new Date());
         switch (this.timePeriodFilterField) {
@@ -154,7 +167,6 @@ export class DashboardStore implements IDashboardStore {
         }
     }
 
-    @computed
     private get endDate() {
         const today = moment(new Date());
         switch (this.timePeriodFilterField) {
@@ -189,28 +201,24 @@ export class DashboardStore implements IDashboardStore {
         return this.timePeriodFilterField;
     }
 
-    @computed
     private get registrations() {
         return this.registrationsField.docs
             .filter(doc => doc.data!.isPersisted) // don't display drafts (TODO: move to collection.ts?)
     }
 
-    @action
     public setProjectFilter(projectId: string | undefined) {
         this.projectFilterValueField = projectId;
     }
 
-    @action
     public setTaskFilter(taskId: string | undefined) {
         this.taskFilterValueField = taskId;
     }
 
-    @action
     public setUserFilter(userId: string | undefined) {
         this.userFilterValueField = userId;
     }
 
-    @action setTimePeriodFilter(timePeriod: TimePeriod) {
+    setTimePeriodFilter(timePeriod: TimePeriod) {
         this.timePeriodFilterField = timePeriod;
     }
 

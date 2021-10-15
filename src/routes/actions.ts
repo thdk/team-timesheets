@@ -23,7 +23,7 @@ export const routeWithDateChanged = (_route: Route<IRootStore, any, any>, params
     s.view.setViewDate({
         year: params.year,
         month: params.month,
-        day: params.day || undefined,
+        day: params.day || null,
     });
 }
 

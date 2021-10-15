@@ -17,8 +17,7 @@ export function withFavoriteGroups<T extends Props = Props>(
 
         return store.favorites.collection.isFetched
             ? <WrappedComponent
-                groups={store.favorites.groups}
-                {...(props as T)}
+                {...({groups: store.favorites.groups,...props} as T)}
             />
             : <></>;
     }

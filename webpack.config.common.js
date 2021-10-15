@@ -1,5 +1,6 @@
 const webpack = require('webpack');
 const path = require('path');
+const Dotenv = require('dotenv-webpack');
 
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
@@ -21,13 +22,6 @@ module.exports = {
         path: path.resolve(__dirname, './dist'),
         filename: '[name].[contenthash].js',
         publicPath: '/',
-    },
-    externals: {
-        "firebase": "root firebase",
-        "firebase/app": "root firebase",
-        "firebase/firestore": "root firebase",
-        "firebase/auth": "root firebase",
-        "firebase/functions": "root firebase",
     },
     devServer: {
         contentBase: path.join(__dirname, 'dist'),
@@ -84,6 +78,7 @@ module.exports = {
                 template: 'src/index.html',
             }
         ),
+        new Dotenv(),
         new CopyPlugin([
             {
                 from: path.resolve(__dirname, 'src/images'),

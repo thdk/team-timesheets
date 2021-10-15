@@ -1,4 +1,4 @@
-import { observable, action, computed, transaction, ObservableMap } from "mobx";
+import { observable, action, computed, transaction, ObservableMap, makeObservable } from "mobx";
 import moment from 'moment';
 import { IRootStore } from "../root-store";
 
@@ -47,17 +47,36 @@ export class ViewStore implements IViewStore {
   readonly fabs = observable<IFab>([]);
   readonly rootStore: IRootStore;
 
-  @observable navigationAction: INavigationViewAction = {} as INavigationViewAction;
-  @observable title = "";
-  @observable isDrawerOpenField = window.innerWidth > 600;
-  @observable day?: number;
-  @observable month?: number;
-  @observable year?: number;
+  navigationAction: INavigationViewAction = {} as INavigationViewAction;
+  title = "";
+  isDrawerOpenField = window.innerWidth > 600;
+  day: number | null = null;
+  month: number | null = null;
+  year: number | null = null;
 
   public track?: boolean;
   private disposables: (() => void)[] = [];
 
   constructor(rootStore: IRootStore, testDate?: Date) {
+    makeObservable(this, {
+      navigationAction: observable,
+      title: observable,
+      isDrawerOpenField: observable,
+      day: observable,
+      month: observable,
+      year: observable,
+      setViewDate: action,
+      setNavigation: action,
+      setIsDrawerOpen: action,
+      isDrawerOpen: computed,
+      moment: computed,
+      monthMoment: computed,
+      setActions: action,
+      setFabs: action,
+      removeAction: action,
+      toggleSelection: action
+    });
+
     this.rootStore = rootStore;
 
     const date = testDate || new Date();
@@ -122,16 +141,17 @@ export class ViewStore implements IViewStore {
     );
   }
 
-  @action
-  public setViewDate({
-    year,
-    month,
-    day,
-  }: {
-    year: number,
-    month: number,
-    day?: number | undefined,
-  }) {
+  public setViewDate(
+    {
+      year,
+      month,
+      day,
+    }: {
+      year: number,
+      month: number,
+      day: number | null,
+    }
+  ) {
     transaction(() => {
       this.day = day;
       this.month = month;
@@ -139,7 +159,6 @@ export class ViewStore implements IViewStore {
     })
   }
 
-  @action
   public setNavigation(action: INavigationViewAction | "default") {
     this.navigationAction = action === "default"
       ? {
@@ -151,12 +170,10 @@ export class ViewStore implements IViewStore {
       : action;
   }
 
-  @action
   setIsDrawerOpen(isOpen: boolean) {
     this.isDrawerOpenField = isOpen;
   }
 
-  @computed
   public get isDrawerOpen() {
     return !!(
       this.rootStore.auth.activeDocumentId
@@ -164,30 +181,30 @@ export class ViewStore implements IViewStore {
     );
   }
 
-  @computed get moment() {
+  get moment() {
     if (this.day)
       return moment(`${this.year}-${this.month}-${this.day}`, 'YYYY-MM-DD');
     else
       return this.monthMoment;
   }
 
-  @computed get monthMoment() {
+  get monthMoment() {
     return moment(`${this.year}-${this.month}`, 'YYYY-MM');
   }
 
-  @action setActions(actions: IViewAction[]) {
+  setActions(actions: IViewAction[]) {
     this.actions.replace(actions);
   }
 
-  @action setFabs(fabs: IFab[]) {
+  setFabs(fabs: IFab[]) {
     this.fabs.replace(fabs);
   }
 
-  @action removeAction(action: IViewAction) {
+  removeAction(action: IViewAction) {
     this.actions.remove(action);
   }
 
-  @action toggleSelection(id: string) {
+  toggleSelection(id: string) {
     this.selection.has(id)
       ? this.selection.delete(id)
       : this.selection.set(id, true);

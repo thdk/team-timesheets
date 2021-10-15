@@ -27,6 +27,16 @@ import { Router } from './containers/router';
 import { ThemeProvider } from "@rmwc/theme";
 import { IntlProvider } from 'react-intl';
 
+import { configure } from "mobx"
+
+configure({
+    enforceActions: "never",
+    computedRequiresReaction: false,
+    reactionRequiresObservable: false,
+    observableRequiresReaction: false,
+    disableErrorBoundaries: false
+})
+
 render(
     <IntlProvider
         locale={"en-US"}

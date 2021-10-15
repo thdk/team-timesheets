@@ -2,7 +2,7 @@ import fs from "fs";
 import path from "path";
 
 import { IRegistration, IUser } from "../../../common";
-import firebase from "firebase/app";
+
 import { waitFor } from "@testing-library/react";
 import { reaction, transaction } from "mobx";
 import { Store } from "../root-store";

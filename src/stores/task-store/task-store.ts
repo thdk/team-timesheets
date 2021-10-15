@@ -1,12 +1,12 @@
 import { RealtimeMode, FetchMode, CrudStore } from "firestorable";
-import { reaction, computed } from "mobx";
-import type firebase from "firebase";
+import { reaction, computed, makeObservable } from "mobx";
 
 import { IRootStore } from '../root-store';
 import { ITask, ITaskData } from '../../../common/dist';
 
 import * as serializer from '../../../common/serialization/serializer';
 import * as deserializer from '../../../common/serialization/deserializer';
+import { CollectionReference, Firestore, orderBy, query, where } from "firebase/firestore";
 
 export class TaskStore extends CrudStore<ITask, ITaskData> {
     private readonly rootStore: IRootStore;
@@ -17,7 +17,7 @@ export class TaskStore extends CrudStore<ITask, ITaskData> {
         {
             firestore,
         }: {
-            firestore: firebase.firestore.Firestore,
+            firestore: Firestore,
         }
     ) {
         super(
@@ -38,6 +38,11 @@ export class TaskStore extends CrudStore<ITask, ITaskData> {
                 firestore,
             },
         );
+
+        makeObservable(this, {
+            tasks: computed
+        });
+
         this.rootStore = rootStore;
 
         this.disposables.push(
@@ -46,11 +51,14 @@ export class TaskStore extends CrudStore<ITask, ITaskData> {
                     this.collection.query = null;
                 }
                 else {
-                    const query = (ref: firebase.firestore.CollectionReference) =>
-                        ref.orderBy("name_insensitive")
-                            .where("divisionId", "==", user.divisionId || "");
+                    const q = (ref: CollectionReference<ITaskData>) =>
+                        query(
+                            ref,
+                            orderBy("name_insensitive"),
+                            where("divisionId", "==", user.divisionId || ""),
+                        );
 
-                    this.collection.query = query;
+                    this.collection.query = q;
 
                     if (!this.collection.isFetched) {
                         this.collection.fetchAsync();
@@ -60,7 +68,6 @@ export class TaskStore extends CrudStore<ITask, ITaskData> {
         );
     }
 
-    @computed
     public get tasks() {
         return Array.from(this.collection.docs.values())
             .map(doc => ({ ...doc.data!, id: doc.id }));

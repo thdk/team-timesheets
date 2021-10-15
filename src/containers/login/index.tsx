@@ -1,81 +1,44 @@
-import * as React from 'react';
+import { getAuth, GoogleAuthProvider, signInWithPopup } from 'firebase/auth';
 
-import firebase from 'firebase/app';
-import * as firebaseui from 'firebaseui';
+import React, { useCallback } from 'react';
 
-import { LoginProvider } from '../../firebase/types';
-import { withConfigValues } from '../configs/with-config-values';
-import { useFirebase } from '../../contexts/firebase-context/firebase-context';
+export const Login = () => {
+  const auth = getAuth();
+  const onClick = useCallback(() => {
+    const provider = new GoogleAuthProvider();
+    signInWithPopup(auth, provider).catch(() => {
+      // Handle Errors here.
+      // const errorCode = error.code;
+      // const errorMessage = error.message;
+      // // The email of the user's account used.
+      // const { email } = error;
+      // // The AuthCredential type that was used.
+      // const credential = GoogleAuthProvider.credentialFromError(error);
+      // ...
+    });
+  }, [
+    auth,
+  ]);
 
-const getFirebaseAuthProvider = (provider: LoginProvider) => {
-    switch (provider) {
-        case LoginProvider.Google:
-            return {
-                provider: firebase.auth.GoogleAuthProvider.PROVIDER_ID,
-                scopes: [
-                    "email",
-                ],
-            };
-        case LoginProvider.Facebook:
-            return firebase.auth.FacebookAuthProvider.PROVIDER_ID;
-        case LoginProvider.Email:
-            return firebase.auth.EmailAuthProvider.PROVIDER_ID;
-        case LoginProvider.Guest:
-            return firebaseui.auth.AnonymousAuthProvider.PROVIDER_ID;
-    }
-}
+  return (
+    <div
+      style={{
+        display: 'flex',
+        height: '100vh',
+        justifyContent: 'center',
+        alignItems: 'center',
+      }}
+    >
+      <button
+        type="button"
+        onClick={onClick}
+        style={{
+          height: '30px',
+        }}
+      >
+        Login
 
-type Props = { configs: { loginProviders: LoginProvider[] } };
-
-export const Login = ({ configs }: Props) => {
-
-    const firebase = useFirebase();
-
-    React.useEffect(() => {
-        firebase.auth().signOut();
-        const { loginProviders } = configs;
-
-        const loginUiConfig = {
-            callbacks: {
-                signInSuccessWithAuthResult: (_authResult: firebase.auth.UserCredential, _redirectUrl: string) => {
-                    // authResult.user?.getIdToken()
-                    return false;
-                }
-            },
-            signInOptions: loginProviders.map(getFirebaseAuthProvider),
-            // tosUrl and privacyPolicyUrl accept either url string or a callback
-            // function.
-            // Terms of service url/callback.
-            // tosUrl,
-            // Privacy policy url/callback.
-            // privacyPolicyUrl,
-            // privacyPolicyUrl: function () {
-            //
-            // },
-            signInFlow: 'popup',
-            credentialHelper: firebaseui.auth.CredentialHelper.NONE
-        };
-
-        // Initialize the FirebaseUI Widget using Firebase.
-        const loginUi = new firebaseui.auth.AuthUI(firebase.auth());
-        // The start method will wait until the DOM is loaded.
-        loginUi.start('#firebaseui-auth-container', loginUiConfig);
-
-        return () => {
-            loginUi.delete();
-        };
-    }, []);
-
-    return (
-        <div>
-            <div id="firebaseui-auth-container"></div>
-        </div>
-    );
-}
-
-export default withConfigValues(Login, [
-    {
-        key: "loginProviders",
-        defaultValue: [LoginProvider.Google],
-    },
-]);
+      </button>
+    </div>
+  );
+};

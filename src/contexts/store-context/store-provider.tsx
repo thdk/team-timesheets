@@ -2,6 +2,11 @@ import React from "react";
 import { useFirebase } from "../firebase-context/firebase-context";
 import { StoreContext } from "./store-context";
 import { Store, IRootStore } from "../../stores/root-store";
+import { getAuth } from "firebase/auth";
+import { getFirestore } from "firebase/firestore";
+import {getFunctions, httpsCallable} from "firebase/functions";
+
+
 
 export const StoreProvider = ({ children, testStore }: React.PropsWithChildren<{ testStore?: IRootStore }>) => {
 
@@ -15,14 +20,14 @@ export const StoreProvider = ({ children, testStore }: React.PropsWithChildren<{
         );
     }
 
-    const auth = firebase.auth();
-    const firestore = firebase.firestore();
-    const functions = firebase.functions();
+    const auth = getAuth(firebase);
+    const firestore = getFirestore(firebase);
+    const functions = getFunctions(firebase);
 
     const store = (window as any)["store"] = testStore || new Store({
         auth,
         firestore,
-        httpsCallable: functions.httpsCallable.bind(functions),
+        httpsCallable: (name) => httpsCallable(functions, name),
     });
 
     return (

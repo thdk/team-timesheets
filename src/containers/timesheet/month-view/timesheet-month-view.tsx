@@ -45,8 +45,7 @@ export const TimesheetMonthView = observer(({
                 registrationToggleSelect={registrationToggleSelect}
                 sortOrder={sortOrder}
                 isMonthView={!view.day}
-            >
-            </TimesheetDays>
+            />
         </FlexGroup>
     );
 });

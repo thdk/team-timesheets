@@ -56,7 +56,7 @@
     "**/*.ts"
   ],
   "exclude": [
-    "node_modules/",
+    "node_modules",
     "dist"
   ],
   "references": []  // * Any project that is referenced must itself have a `references` array (which may be empty).

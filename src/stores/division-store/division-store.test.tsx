@@ -1,22 +1,20 @@
-import type firebase from "firebase";
+
 import fs from "fs";
 import path from "path";
 
 import { Store } from "../root-store";
 import { reaction } from "mobx";
 import { waitFor } from "@testing-library/react";
-import { loadFirestoreRules, initializeTestApp, clearFirestoreData, } from "@firebase/rules-unit-testing";
+import { initializeTestEnvironment, RulesTestEnvironment, } from "@firebase/rules-unit-testing";
+import { User } from "firebase/auth";
 const projectId = "division-store-test";
-const app = initializeTestApp({
-    projectId,
-});
 
 const getDivisionByEntryCode = jest.fn().mockRejectedValue("error");
 const httpsCallable = jest.fn(() => getDivisionByEntryCode);
 let store: Store;
 const setupAsync = async () => {
     store = new Store({
-        firestore: app.firestore(),
+        firestore,
         httpsCallable,
     });
 
@@ -39,24 +37,32 @@ const setupAsync = async () => {
 
     store.auth.setUser({
         uid: "user-1",
-    } as firebase.User);
+    } as User);
 
     return store;
 };
 
-beforeAll(() => loadFirestoreRules({
-    projectId,
-    rules: fs.readFileSync(path.resolve(__dirname, "../../../firestore.rules.test"), "utf8"),
-}));
+let testEnv: RulesTestEnvironment;
+let firestore: any;
 
+beforeAll(async () => {
+    testEnv = await initializeTestEnvironment({
+        projectId,
+        firestore: {
+            rules: fs.readFileSync(path.resolve(__dirname, "../../../firestore.rules.test"), "utf8"),
+        }
+    });
+
+    firestore = testEnv.unauthenticatedContext().firestore();
+});
 beforeEach(() => setupAsync());
 
 afterEach(async () => {
     store.dispose();
-    await clearFirestoreData({ projectId });
+    await testEnv.clearFirestore();
 });
 
-afterAll(() => app.delete());
+afterAll(() => testEnv.cleanup());
 
 describe("DivisionStore", () => {
 
@@ -93,8 +99,8 @@ describe("DivisionStore", () => {
                                 id: "div-2"
                             },
                             "div-2",
-                        )]).then(async () => {
-                            await store.user.divisionUsersCollection.addAsync([
+                        )]).then(async () => Promise.all([
+                                store.user.divisionUsersCollection.addAsync(
                                 {
                                     name: "User 1",
                                     divisionId: "div-1",
@@ -103,6 +109,8 @@ describe("DivisionStore", () => {
                                     uid: "user-1",
                                     roles: {}
                                 },
+                                ),
+                                store.user.divisionUsersCollection.addAsync(
                                 {
                                     name: "User 1",
                                     divisionId: "div-2",
@@ -111,8 +119,8 @@ describe("DivisionStore", () => {
                                     uid: "user-1",
                                     roles: {}
                                 },
-                            ])
-                        });
+                                )
+                            ]));
 
             });
 

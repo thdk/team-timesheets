@@ -69,27 +69,27 @@ export class ProjectStore extends CrudStore<IProject, IProjectData> {
     }
 
     public archiveProjects(...projectIds: string[]) {
-        projectIds.length && this.collection.updateAsync({ isArchived: true }, ...projectIds)
+        projectIds.length && Promise.all(projectIds.map((projectId) => this.collection.updateAsync({ isArchived: true }, projectId)))
             .then(() => {
                 this.setActiveDocumentId(undefined);
             });
     }
 
     public unarchiveProjects(...projectIds: string[]) {
-        projectIds.length && this.collection.updateAsync({ isArchived: false }, ...projectIds)
+        projectIds.length && Promise.all(projectIds.map((projectId) => this.collection.updateAsync({ isArchived: false }, projectId)))
             .then(() => {
                 this.setActiveDocumentId(undefined);
             });
     }
 
-    public deleteProjects(...ids: string[]) {
-        ids.length && this.collection.updateAsync(null, ...ids);
+    public async deleteProjects(...ids: string[]) {
+        ids.length && await Promise.all(ids.map((id) => this.collection.updateAsync(null, id)));
     }
 
     public addDocument(project: IProject, id?: string) {
-        if (!project.createdBy) {
-            throw new Error("The current authenticed user must be set on project when adding a new project.");
-        }
+        // if (!project.createdBy) {
+        //     throw new Error("The current authenticed user must be set on project when adding a new project.");
+        // }
 
         return super.addDocument(project, id);
     }

@@ -6,17 +6,16 @@ import { IRegistration, IUser } from "../../../common";
 import { waitFor } from "@testing-library/react";
 import { reaction, transaction } from "mobx";
 import { Store } from "../root-store";
-import { initializeTestApp, loadFirestoreRules, clearFirestoreData } from "@firebase/rules-unit-testing";
+import { RulesTestEnvironment, initializeTestEnvironment } from "@firebase/rules-unit-testing";
+import { User } from "firebase/auth";
 
 const projectId = "registration-store-test";
-const app = initializeTestApp({
-    projectId,
-});
+
 
 let store: Store;
 const setupAsync = async () => {
     store = new Store({
-        firestore: app.firestore(),
+        firestore,
     });
 
     await Promise.all([
@@ -32,35 +31,34 @@ const setupAsync = async () => {
             } as IUser,
             "user-1",
         ),
-        store.timesheets.addDocuments([
+        store.timesheets.addDocument(
             {
                 userId: "user-1",
                 description: "desc 0",
                 date: new Date(2020, 3, 1),
                 time: 1,
                 created: new Date(2020, 3, 1, 15, 50, 0),
-            },
-            {
-                userId: "user-1",
-                description: "desc 1",
-                date: new Date(2020, 3, 4),
-                time: 3,
-                created: new Date(2020, 3, 4, 7, 50, 0),
-            },
-            {
-                userId: "user-1",
-                description: "desc 2",
-                date: new Date(2020, 3, 4),
-                time: 2.5,
-                created: new Date(2020, 3, 4, 7, 51, 0),
-            },
-            {
-                userId: "user-1",
-                description: "desc 3",
-                date: new Date(2020, 3, 7),
-                time: 2.5,
-            },
-        ] as IRegistration[]),
+            } as IRegistration),
+        store.timesheets.addDocument({
+            userId: "user-1",
+            description: "desc 1",
+            date: new Date(2020, 3, 4),
+            time: 3,
+            created: new Date(2020, 3, 4, 7, 50, 0),
+        } as IRegistration),
+        store.timesheets.addDocument({
+            userId: "user-1",
+            description: "desc 2",
+            date: new Date(2020, 3, 4),
+            time: 2.5,
+            created: new Date(2020, 3, 4, 7, 51, 0),
+        } as IRegistration),
+        store.timesheets.addDocument({
+            userId: "user-1",
+            description: "desc 3",
+            date: new Date(2020, 3, 7),
+            time: 2.5,
+        } as IRegistration),
         store.timesheets.addDocument(
             {
                 userId: "user-1",
@@ -88,7 +86,7 @@ const setupAsync = async () => {
             uid: "user-1",
             displayName: "user 1",
             email: "email@email.com",
-        } as firebase.User);
+        } as User);
         store.view.setViewDate({
             year: 2020,
             month: 4,
@@ -97,23 +95,28 @@ const setupAsync = async () => {
     });
 };
 
+let testEnv: RulesTestEnvironment;
+let firestore: any;
+
 beforeAll(async () => {
-    await loadFirestoreRules({
+    testEnv = await initializeTestEnvironment({
         projectId,
-        rules: fs.readFileSync(path.resolve(__dirname, "../../../firestore.rules.test"), "utf8"),
+        firestore: {
+            rules: fs.readFileSync(path.resolve(__dirname, "../../../firestore.rules.test"), "utf8"),
+        }
     });
+
+    firestore = testEnv.unauthenticatedContext().firestore();
 });
 
 beforeEach(() => setupAsync());
 
 afterEach(async () => {
     store.dispose();
-    await clearFirestoreData({
-        projectId,
-    });
+    await testEnv.clearFirestore();
 });
 
-afterAll(() => app.delete());
+afterAll(() => testEnv.cleanup());
 
 describe("RegistrationStore", () => {
     let unsubscribe: () => void;
@@ -217,7 +220,7 @@ describe("RegistrationStore", () => {
                     uid: "user-2",
                     displayName: "user 2",
                     email: "email2@email.com",
-                } as firebase.User)
+                } as User)
 
                 await waitFor(
                     () => expect(store.timesheets.registrationsGroupedByDay.length)

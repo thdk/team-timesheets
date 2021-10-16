@@ -1,7 +1,7 @@
 import React from "react";
 import fs from "fs";
 import path from "path";
-import type firebase from "firebase";
+
 
 import { Store } from "../../../stores/root-store";
 import { render, waitFor, fireEvent } from "@testing-library/react";
@@ -9,8 +9,9 @@ import { TimesheetDays, SortOrder } from ".";
 import { Timesheet } from "..";
 import { goToNewRegistration } from "../../../routes/registrations/detail";
 import { useStore } from "../../../contexts/store-context";
-import { initializeTestApp, loadFirestoreRules, clearFirestoreData } from "@firebase/rules-unit-testing";
+import { initializeTestEnvironment, RulesTestEnvironment, } from "@firebase/rules-unit-testing";
 import { act } from "react-dom/test-utils";
+import { User } from "firebase/auth";
 
 jest.mock("../../google-calendar");
 
@@ -20,15 +21,12 @@ jest.mock("../../../routes/registrations/detail");
 jest.mock("../../../contexts/store-context");
 
 const projectId = "timesheet-test";
-const app = initializeTestApp({
-    projectId,
-});
 
 let store: Store;
 
 const setupAsync = async () => {
     store = new Store({
-        firestore: app.firestore(),
+        firestore,
     });
     await store.user.usersCollection.addAsync(
         {
@@ -45,16 +43,23 @@ const setupAsync = async () => {
         "user-1",
     );
 
-    store.auth.setUser({ uid: "user-1" } as firebase.User);
+    store.auth.setUser({ uid: "user-1" } as User);
 
     return store;
 };
 
+let testEnv: RulesTestEnvironment;
+let firestore: any;
+
 beforeAll(async () => {
-    await loadFirestoreRules({
+    testEnv = await initializeTestEnvironment({
         projectId,
-        rules: fs.readFileSync(path.resolve(__dirname, "../../../../firestore.rules.test"), "utf8"),
+        firestore: {
+            rules: fs.readFileSync(path.resolve(__dirname, "../../../../firestore.rules.test"), "utf8"),
+        }
     });
+
+    firestore = testEnv.unauthenticatedContext().firestore();
 });
 
 beforeEach(async () => {
@@ -64,12 +69,10 @@ beforeEach(async () => {
 
 afterEach(async () => {
     store.dispose();
-    await clearFirestoreData({
-        projectId,
-    });
+    await testEnv.clearFirestore();
 });
 
-afterAll(() => app.delete());
+afterAll(() => testEnv.cleanup());
 
 const registrations = [
     {
@@ -144,9 +147,11 @@ describe("TimesheetDays", () => {
         store.view.setViewDate({
             year: 2020,
             month: 3,
-        });        
+        });
 
-        await store.timesheets.addDocuments(registrations);
+        await Promise.all(
+            registrations.map(registration => store.timesheets.addDocument(registration))
+        );
         await waitFor(() => expect(store.user.divisionUser?.id).toBeDefined());
 
         const {
@@ -189,11 +194,13 @@ describe("TimesheetDays", () => {
             day: 24,
         });
 
-        store.auth.setUser({ uid: "user-1" } as firebase.User);
+        store.auth.setUser({ uid: "user-1" } as User);
 
         await waitFor(() => expect(store.user.divisionUser).toBeDefined());
 
-        await store.timesheets.addDocuments(registrations);
+        await Promise.all(
+            registrations.map(registration => store.timesheets.addDocument(registration))
+        );
 
         const {
             getByText,
@@ -221,11 +228,14 @@ describe("TimesheetDays", () => {
             month: 3,
         });
 
-        store.auth.setUser({ uid: "user-1" } as firebase.User);
+        store.auth.setUser({ uid: "user-1" } as User);
 
         await waitFor(() => expect(store.user.divisionUser?.id).toBeDefined());
 
-        await store.timesheets.addDocuments(registrations);
+        await Promise.all(
+            registrations.map(registration => store.timesheets.addDocument(registration))
+        );
+
         const {
             getByText,
             container,
@@ -254,9 +264,11 @@ describe("TimesheetDays", () => {
             month: 3,
         });
 
-        store.auth.setUser({ uid: "user-1" } as firebase.User);
+        store.auth.setUser({ uid: "user-1" } as User);
 
-        await store.timesheets.addDocuments(registrations);
+        await Promise.all(
+            registrations.map(registration => store.timesheets.addDocument(registration))
+        );
 
         const {
             getByText,

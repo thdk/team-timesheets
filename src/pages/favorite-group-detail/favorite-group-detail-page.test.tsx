@@ -3,15 +3,16 @@ import fs from "fs";
 import path from "path";
 
 import { useStore } from "../../contexts/store-context";
-import { clearFirestoreData, loadFirestoreRules, initializeTestApp } from "@firebase/rules-unit-testing";
 
-import type firebase from "firebase";
+
 import { Store } from "../../stores/root-store";
 import { render, waitFor, fireEvent } from "@testing-library/react";
 import { FavoriteGroupPage } from "./favorite-group-detail-page";
 import { useRouterStore } from "../../stores/router-store";
 import routes from "../../routes/favorites/detail";
 import userEvent from "@testing-library/user-event";
+import { RulesTestEnvironment, initializeTestEnvironment } from "@firebase/rules-unit-testing";
+import { User } from "firebase/auth";
 
 jest.mock("../../contexts/store-context");
 jest.mock("../../stores/router-store", () => ({
@@ -20,17 +21,13 @@ jest.mock("../../stores/router-store", () => ({
 
 const projectId = "favorite-group-detail-page";
 
-const app = initializeTestApp({
-    projectId,
-});
-
 let store: Store;
 const userId = "user-1";
 let favoriteGroupIds: string[] = ["fav-1", "fav-2", "fav-3"];
 
 const setupAsync = async () => {
     store = new Store({
-        firestore: app.firestore(),
+        firestore,
     });
 
     await store.auth.addDocument({
@@ -69,31 +66,38 @@ const setupAsync = async () => {
             ),
         ]);
 
-    await store.favorites.favoriteCollection.addAsync([
+    await store.favorites.favoriteCollection.addAsync(
         {
             groupId: favoriteGroupIds[1],
             userId,
             description: "fav reg 1",
             time: 3,
-        },
-        {
-            groupId: favoriteGroupIds[1],
-            userId,
-            description: "fav reg 2",
-            time: 1,
-        },
-    ]);
+        });
+
+    await store.favorites.favoriteCollection.addAsync({
+        groupId: favoriteGroupIds[1],
+        userId,
+        description: "fav reg 2",
+        time: 1,
+    });
 
     store.auth.setUser({
         uid: userId,
-    } as firebase.User);
+    } as User);
 };
 
+let testEnv: RulesTestEnvironment;
+let firestore: any;
+
 beforeAll(async () => {
-    await loadFirestoreRules({
+    testEnv = await initializeTestEnvironment({
         projectId,
-        rules: fs.readFileSync(path.resolve(__dirname, "../../../firestore.rules.test"), "utf8"),
+        firestore: {
+            rules: fs.readFileSync(path.resolve(__dirname, "../../../firestore.rules.test"), "utf8"),
+        }
     });
+
+    firestore = testEnv.unauthenticatedContext().firestore();
 });
 
 beforeEach(async () => {
@@ -103,12 +107,10 @@ beforeEach(async () => {
 
 afterEach(async () => {
     store.dispose();
-    await clearFirestoreData({
-        projectId,
-    });
+    await testEnv.clearFirestore();
 });
 
-afterAll(() => app.delete());
+afterAll(() => testEnv.cleanup());
 describe("favoriteGroupDetailPage", () => {
 
     describe("when an favorite group id is requested from the url", () => {
@@ -167,7 +169,7 @@ describe("favoriteGroupDetailPage", () => {
                 if (nameInputEl)
                     await userEvent.type(nameInputEl, "fav 3");
 
-                store.favorites.saveFavoriteGroup();
+                await store.favorites.saveFavoriteGroup();
 
                 await waitFor(() => {
                     expect(store.favorites.activeDocument).toBeDefined();
@@ -229,14 +231,15 @@ describe("favoriteGroupDetailPage", () => {
                 });
 
                 if (dropDownEl) {
-                    fireEvent.change(dropDownEl, { 
+                    fireEvent.change(dropDownEl, {
                         target: { value: favoriteGroupIds[2] },
                         currentTarget: { value: favoriteGroupIds[2] },
                     });
                 }
 
+                await waitFor(() => expect(store.favorites.activeDocument).toBeTruthy());
                 if (store.favorites.activeDocument) {
-                    store.favorites.saveFavoriteGroup();
+                    await store.favorites.saveFavoriteGroup();
                 }
 
                 await waitFor(() => expect(store.favorites.groups.length).toBe(2));

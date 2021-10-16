@@ -5,7 +5,7 @@ import { IFavoriteRegistrationGroup, IFavoriteRegistration, IFavoriteRegistratio
 import * as serializer from '../../../common/serialization/serializer';
 import * as deserializer from '../../../common/serialization/deserializer';
 import { IUserStore } from "../user-store";
-import { CollectionReference, Firestore, orderBy, query, runTransaction, where } from "firebase/firestore";
+import { CollectionReference, Firestore, orderBy, query, where } from "firebase/firestore";
 
 const createQuery = (userStore: IUserStore) =>
     userStore.divisionUser
@@ -79,7 +79,7 @@ export class FavoriteStore extends CrudStore<IFavoriteRegistrationGroup, IFavori
             );
     }
 
-    public saveFavoriteGroup() {
+    public async saveFavoriteGroup() {
         if (this.activeDocument && this.activeDocumentId) {
             const existingGroup = this.groups.find((group) => (
                 group.name === this.activeDocument?.name
@@ -89,13 +89,15 @@ export class FavoriteStore extends CrudStore<IFavoriteRegistrationGroup, IFavori
                 // delete the existing favorite registration group
                 this.deleteDocument(existingGroup.id);
                 // delete existing favorite registrations in this group
-                this.getFavoritesByGroupIdAsync(existingGroup.id)
-                    .then((favorites) => this.favoriteCollection.deleteAsync(
-                        ...favorites.map((favorite) => favorite.id),
-                    ))
+                await this.getFavoritesByGroupIdAsync(existingGroup.id)
+                    .then((favorites) => Promise.all(
+                        favorites.map(
+                            (favorite) => this.favoriteCollection.deleteAsync(favorite.id),
+                        )
+                    ));
             }
 
-            this.updateDocument(
+            await this.updateDocument(
                 this.activeDocument,
                 this.activeDocumentId,
             );
@@ -122,17 +124,14 @@ export class FavoriteStore extends CrudStore<IFavoriteRegistrationGroup, IFavori
             });
     }
 
-    public addFavorites(
+    public async addFavorites(
         favorites: Omit<IFavoriteRegistration, "groupId">[],
         group: { name: string },
     ) {
         const groupId = this.collection.newId();
 
-        runTransaction(this.db, () => {
-            if (!this.rootStore.user.divisionUser)
-                return Promise.reject("Unauthenticated");
-
-            return Promise.all<string[] | string | undefined>(
+        if (this.rootStore.user.divisionUser) {
+            await Promise.all<string[] | string | undefined>(
                 [
                     this.collection.addAsync(
                         {
@@ -141,11 +140,12 @@ export class FavoriteStore extends CrudStore<IFavoriteRegistrationGroup, IFavori
                         },
                         groupId,
                     ),
-                    this.favoriteCollection.addAsync(
-                        favorites.map(f => ({ ...f, groupId }))
+                    ...favorites.map((f) => this.favoriteCollection.addAsync(
+                        { ...f, groupId }
                     ),
+                    )
                 ]);
-        });
+        }
 
         return groupId;
     }

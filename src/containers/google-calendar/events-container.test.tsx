@@ -1,5 +1,5 @@
 import React from "react";
-import type firebase from "firebase";
+
 import path from "path";
 import fs from "fs";
 import { render, waitFor, fireEvent, act } from "@testing-library/react";
@@ -9,8 +9,9 @@ import { events } from "./events.test";
 import { IntlProvider } from "react-intl";
 import { goToNewRegistration } from "../../routes/registrations/detail";
 import { useGapi } from "../../hooks/use-gapi";
-import { initializeTestApp, clearFirestoreData, loadFirestoreRules } from "@firebase/rules-unit-testing";
+import { initializeTestEnvironment, RulesTestEnvironment } from "@firebase/rules-unit-testing";
 import { useStore } from "../../contexts/store-context";
+import { User } from "firebase/auth";
 
 
 jest.mock("../../contexts/store-context");
@@ -37,14 +38,10 @@ beforeAll(() => {
 
 const projectId = "events-container";
 
-const app = initializeTestApp({
-    projectId,
-});
-
 let store: Store;
 const setupAsync = async () => {
     store = new Store({
-        firestore: app.firestore(),
+        firestore,
     });
 
     await store.user.usersCollection.addAsync(
@@ -66,7 +63,7 @@ const setupAsync = async () => {
         uid: "user-1",
         displayName: "user 1",
         email: "email@email.com",
-    } as firebase.User);
+    } as User);
 
     await store.tasks.addDocument({
         name: "Meeting",
@@ -74,11 +71,18 @@ const setupAsync = async () => {
     });
 };
 
+let testEnv: RulesTestEnvironment;
+let firestore: any;
+
 beforeAll(async () => {
-    await loadFirestoreRules({
+    testEnv = await initializeTestEnvironment({
         projectId,
-        rules: fs.readFileSync(path.resolve(__dirname, "../../../firestore.rules.test"), "utf8"),
+        firestore: {
+            rules: fs.readFileSync(path.resolve(__dirname, "../../../firestore.rules.test"), "utf8"),
+        }
     });
+
+    firestore = testEnv.unauthenticatedContext().firestore();
 });
 
 
@@ -89,12 +93,10 @@ beforeEach(async () => {
 
 afterEach(async () => {
     store.dispose();
-    await clearFirestoreData({
-        projectId,
-    });
+    await testEnv.clearFirestore();
 });
 
-afterAll(() => app.delete());
+afterAll(() => testEnv.cleanup());
 
 describe("GoogleCalendarEventsContainer", () => {
     it("should render without google calendar events", async () => {

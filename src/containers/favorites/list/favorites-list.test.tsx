@@ -1,5 +1,5 @@
 import React from "react";
-import type firebase from "firebase";
+
 
 import path from "path";
 import fs from "fs";
@@ -8,36 +8,37 @@ import { FavoritesList } from ".";
 import { StoreContext } from "../../../contexts/store-context";
 import { Store } from "../../../stores/root-store";
 import { render, waitFor } from "@testing-library/react";
-import { loadFirestoreRules, clearFirestoreData, initializeTestApp } from "@firebase/rules-unit-testing";
+import { initializeTestEnvironment, RulesTestEnvironment } from "@firebase/rules-unit-testing";
+import { User } from "firebase/auth";
 
 const projectId = "favorites-list-test";
-const app = initializeTestApp({
-    projectId,
-});
-
 let store: Store;
+let testEnv: RulesTestEnvironment;
+let firestore: any;
 
 beforeAll(async () => {
-    await loadFirestoreRules({
+    testEnv = await initializeTestEnvironment({
         projectId,
-        rules: fs.readFileSync(path.resolve(__dirname, "../../../../firestore.rules.test"), "utf8"),
-    })
+        firestore: {
+            rules: fs.readFileSync(path.resolve(__dirname, "../../../../firestore.rules.test"), "utf8"),
+        }
+    });
+
+    firestore = testEnv.unauthenticatedContext().firestore();
 });
 
 beforeEach(() => {
     store = new Store({
-        firestore: app.firestore(),
+        firestore,
     });
 });
 
 afterEach(async () => {
     store.dispose();
-    await clearFirestoreData({
-        projectId,
-    });
+    await testEnv.clearFirestore();
 })
 
-afterAll(() => app.delete());
+afterAll(() => testEnv.cleanup());
 
 describe("FavoritesList", () => {
 
@@ -59,7 +60,7 @@ describe("FavoritesList", () => {
 
             return Promise.all([
                 // favorites
-                store.favorites.favoriteCollection.addAsync([
+                store.favorites.favoriteCollection.addAsync(
                     {
                         groupId: "group-1",
                         userId: "user-1",
@@ -67,22 +68,23 @@ describe("FavoritesList", () => {
                         client: "client-1",
                         time: 3,
                     },
-                    {
-                        groupId: "group-1",
-                        userId: "user-1",
-                        description: "Favorite desc 2",
-                        task: "task-1",
-                        time: 2,
-                    },
-                    {
-                        groupId: "group-1",
-                        userId: "user-1",
-                        description: "Favorite desc 3",
-                        task: "task-1",
-                        project: "project-1",
-                        time: 2,
-                    },
-                ]),
+                ),
+                store.favorites.favoriteCollection.addAsync({
+                    groupId: "group-1",
+                    userId: "user-1",
+                    description: "Favorite desc 2",
+                    task: "task-1",
+                    time: 2,
+                },
+                ),
+                store.favorites.favoriteCollection.addAsync({
+                    groupId: "group-1",
+                    userId: "user-1",
+                    description: "Favorite desc 3",
+                    task: "task-1",
+                    project: "project-1",
+                    time: 2,
+                }),
                 store.user.usersCollection.addAsync(
                     {
                         name: "user 1",
@@ -135,7 +137,7 @@ describe("FavoritesList", () => {
             uid: "user-1",
             displayName: "user 1",
             email: "email@email.com",
-        } as firebase.User);
+        } as User);
 
         store.favorites.setActiveDocumentId("group-1");
 

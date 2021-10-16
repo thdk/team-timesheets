@@ -2,12 +2,13 @@ import fs from "fs";
 import path from "path";
 
 import React from "react";
-import type firebase from "firebase";
+
 import { Store } from "../../stores/root-store";
 import { waitFor, render } from "@testing-library/react";
 import { ReportDownloadLink } from "./report-download-link";
 import { StoreContext } from "../../contexts/store-context";
-import { initializeTestApp, clearFirestoreData, loadFirestoreRules } from "@firebase/rules-unit-testing";
+import { initializeTestEnvironment, RulesTestEnvironment } from "@firebase/rules-unit-testing";
+import { User } from "firebase/auth";
 
 jest.mock("../../contexts/firebase-context", () => ({
     useFirebase: () => ({
@@ -24,17 +25,11 @@ jest.mock("../../contexts/firebase-context", () => ({
 }));
 
 const projectId = "report-download-link-test";
-const app = initializeTestApp({
-    projectId,
-    auth: {
-        uid: "user-1",
-    },
-});
 
 let store: Store;
 const setupAsync = async () => {
     store = new Store({
-        firestore: app.firestore(),
+        firestore,
     });
 
     await Promise.all([
@@ -59,7 +54,7 @@ const setupAsync = async () => {
         uid: "user-1",
         displayName: "user 1",
         email: "email@email.com",
-    } as firebase.User);
+    } as User);
     store.view.setViewDate({
         year: 2020,
         month: 4,
@@ -67,20 +62,27 @@ const setupAsync = async () => {
     });
 };
 
+let testEnv: RulesTestEnvironment;
+let firestore: any;
+
 beforeAll(async () => {
-    await loadFirestoreRules({
+    testEnv = await initializeTestEnvironment({
         projectId,
-        rules: fs.readFileSync(path.resolve(__dirname, "../../../firestore.rules.test"), "utf8"),
+        firestore: {
+            rules: fs.readFileSync(path.resolve(__dirname, "../../../firestore.rules.test"), "utf8"),
+        }
     });
+
+    firestore = testEnv.authenticatedContext("user-1").firestore();
 });
 
 beforeEach(() => setupAsync());
 afterEach(async () => {
     store.dispose();
-    await clearFirestoreData({ projectId });
+    await testEnv.clearFirestore();
 });
 
-afterAll(() => app.delete());
+afterAll(() => testEnv.cleanup());
 
 describe("ReportDownloadLink", () => {
 

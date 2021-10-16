@@ -6,7 +6,7 @@ import { ITask, ITaskData } from '../../../common/dist';
 
 import * as serializer from '../../../common/serialization/serializer';
 import * as deserializer from '../../../common/serialization/deserializer';
-import { CollectionReference, Firestore, orderBy, query, where } from "firebase/firestore";
+import { collection, CollectionReference, Firestore, orderBy, query, where } from "firebase/firestore";
 
 export class TaskStore extends CrudStore<ITask, ITaskData> {
     private readonly rootStore: IRootStore;
@@ -22,7 +22,7 @@ export class TaskStore extends CrudStore<ITask, ITaskData> {
     ) {
         super(
             {
-                collection: "tasks",
+                collection: collection(firestore, "tasks") as CollectionReference<ITaskData>,
                 collectionOptions: {
                     realtimeMode: RealtimeMode.on,
                     fetchMode: FetchMode.manual,

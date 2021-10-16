@@ -4,30 +4,29 @@ import fs from "fs";
 
 import { SettingsPage } from "./settings-page";
 import { render } from "@testing-library/react";
-import { initializeTestApp, loadFirestoreRules, clearFirestoreData } from "@firebase/rules-unit-testing";
+import { initializeTestEnvironment, RulesTestEnvironment,  } from "@firebase/rules-unit-testing";
 import { IRootStore, Store } from "../../stores/root-store";
 import { useStore } from "../../contexts/store-context";
-
-import type firebase from "firebase";
+import { User } from "firebase/auth";
 
 jest.mock("../../contexts/store-context");
 
-const projectId = "settings-page";
-const app = initializeTestApp({
-    projectId,
-});
+let testEnv: RulesTestEnvironment;
 
 let store: IRootStore;
 beforeAll(async () => {
-    await loadFirestoreRules({
+    const projectId = "settings-page";
+    testEnv = await initializeTestEnvironment({
         projectId,
-        rules: fs.readFileSync(path.resolve(__dirname, "../../../firestore.rules.test"), "utf8"),
+        firestore: {
+            rules: fs.readFileSync(path.resolve(__dirname, "../../../firestore.rules.test"), "utf8"),
+        }
     });
 });
 
 beforeEach(async () => {
     store = new Store({
-        firestore: app.firestore(),
+        firestore: testEnv.unauthenticatedContext().firestore() as any,
     });
 
     await store.auth.addDocument({
@@ -42,19 +41,17 @@ beforeEach(async () => {
 
     store.auth.setUser({
         uid: "user-1",
-    } as firebase.User);
+    } as User);
 
     (useStore as jest.Mock<ReturnType<typeof useStore>>).mockReturnValue(store);
 });
 
 afterEach(async () => {
     store.dispose();
-    await clearFirestoreData({
-        projectId,
-    });
+    await testEnv.unauthenticatedContext();
 });
 
-afterAll(() => app.delete());
+afterAll(() => testEnv.cleanup());
 
 jest.mock('../../containers/tasks/list', () => ({
     TaskList: () => <>Tasks-Content</>,

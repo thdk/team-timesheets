@@ -1,35 +1,54 @@
 import {
     initTestFirestore,
-    deleteFirebaseAppsAsync,
 } from "../utils/firebase";
 import {
     assertFails,
     assertSucceeds,
 } from "@firebase/rules-unit-testing";
 
-const {
-    refs: [
-        teamsRef,
-        usersRef,
-    ],
-    refsTest: [
-        teamsRefTest,
-    ]
-} = initTestFirestore(
-    "teams-rules-test",
-    ["teams", "users"],
-    { uid: "alice", email: "alice@example.com" },
-    "../../../firestore.rules",
-);
+import type Firebase from "firebase/compat";
 
-beforeAll(async () => {
-    await usersRef.doc("alice").set({ uid: "alice", roles: { user: true } });
-    await teamsRef.doc("team-1").set({ name: "team-1"});
-});
+xdescribe("Firestore rules", () => {
 
-afterAll(deleteFirebaseAppsAsync);
+    let teamsRefTest: Firebase.firestore.CollectionReference;
+    let usersRef: Firebase.firestore.CollectionReference;
+    let cleanup: () => Promise<[void, void]>;
 
-describe("Firestore rules", () => {
+    beforeAll(async () => {
+        try {
+
+            const {
+                cleanup: cleanupTemp,
+                refs: [
+                    teamsRef,
+                    usersRefTemp,
+                ],
+                refsTest: [
+                    teamsRefTestTemp,
+                ]
+            } = await initTestFirestore(
+                "teams-rules-test",
+                ["teams", "users"],
+                { uid: "alice", email: "alice@example.com" },
+                "../../../firestore.rules",
+            ).catch((e) => {
+                console.error(e);
+                throw e;
+            });
+            await usersRefTemp.doc("alice").set({ uid: "alice", roles: { user: true } });
+            await teamsRef.doc("team-1").set({ name: "team-1" });
+
+            teamsRefTest = teamsRefTestTemp;
+            cleanup = cleanupTemp;
+            usersRef = usersRefTemp;
+        } catch (error) {
+            console.error(error);
+            throw error;
+        }
+    });
+
+    afterAll(() => cleanup());
+
     describe("teams collection", () => {
         test("if user can read teams collection", async () => {
             await assertSucceeds(teamsRefTest.doc("team-1").get());

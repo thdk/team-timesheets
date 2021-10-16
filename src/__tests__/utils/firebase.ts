@@ -1,39 +1,38 @@
-import {
-    apps,
-    initializeAdminApp,
-    initializeTestApp,
-    loadFirestoreRules,
-} from "@firebase/rules-unit-testing";
-
 const fs = require("fs");
 import path from "path";
 
-export const initTestFirestore = (
+import { initializeTestEnvironment } from "@firebase/rules-unit-testing";
+
+export const initTestFirestore = async (
     projectId: string,
-    collectionNames?: string[],
-    auth?: { uid: string, email: string },
-    pathToRules?: string,
-) => {
-    if (pathToRules) {
-        loadFirestoreRules({
-            projectId,
-            rules: fs.readFileSync(path.resolve(__dirname, pathToRules), "utf8")
-        });
-    }
-
-    const testApp = auth
-        ? initializeTestApp({
-            projectId,
-            auth,
-        })
-        : undefined;
-
-    const adminApp = initializeAdminApp({
+    collectionNames: string[],
+    auth: { uid: string, email: string },
+    pathToRules: string,
+) => {    
+    const testEnv = await initializeTestEnvironment({
         projectId,
+        firestore: {
+            rules: fs.readFileSync(path.resolve(__dirname, pathToRules), "utf8")
+        }
+    }).catch(e => {
+        console.error(e);
+        throw e;
     });
 
+    const adminTestEnv = await initializeTestEnvironment({
+        projectId,
+        firestore: {
+            rules: fs.readFileSync(path.resolve(__dirname, pathToRules), "utf8")
+        }
+    }).catch(e => {
+        console.error(e);
+        throw e;
+    });
+    
+    const adminApp = adminTestEnv.unauthenticatedContext();
+
     const firestore = adminApp.firestore();
-    const firestoreTest = testApp?.firestore();
+    const firestoreTest = testEnv.authenticatedContext(auth.uid).firestore();
 
     return {
         refs: collectionNames
@@ -44,10 +43,9 @@ export const initTestFirestore = (
             : [],
         firestore,
         firestoreTest: firestoreTest,
-        testApp,
+        cleanup: () => Promise.all([
+            testEnv.cleanup(),
+            adminTestEnv.cleanup(),
+        ]),
     };
-};
-
-export const deleteFirebaseAppsAsync = () => {
-    return Promise.all(apps().map(app => app.delete()));
 };

@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { observer } from "mobx-react-lite";
 
-// import { useGapi } from "../../hooks/use-gapi";
+import { useGapi } from "../../hooks/use-gapi";
 import { useViewStore } from "../../contexts/view-context";
-// import { useGoogleConfig } from "../configs/use-google-config";
+import { useGoogleConfig } from "../configs/use-google-config";
 
 import { GoogleCalendarEvents as PureGoogleCalendarEvents } from "./events";
 import { useRegistrationStore } from "../../contexts/registration-context";
@@ -21,7 +21,7 @@ export const GoogleCalendarEvents =
 
         const view = useViewStore();
 
-        // const config = useGoogleConfig();
+        const config = useGoogleConfig();
 
         const tasks = useTasks();
 
@@ -46,10 +46,7 @@ export const GoogleCalendarEvents =
         const {
             user,
             isGapiLoaded,
-        } = {
-            user: undefined,
-            isGapiLoaded: false,
-        }// useGapi(config);
+        } = useGapi(config);
 
         useEffect(() => {
             if (isGapiLoaded && user) {

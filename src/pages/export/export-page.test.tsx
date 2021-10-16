@@ -2,21 +2,22 @@ import fs from "fs";
 import path from "path";
 
 import React from "react";
-import type firebase from "firebase";
+
 
 import { Store } from "../../stores/root-store";
 import { render, waitFor } from "@testing-library/react";
 import { ExportPage } from ".";
-import { initializeTestApp, clearFirestoreData, loadFirestoreRules } from "@firebase/rules-unit-testing";
 import { useStore } from "../../contexts/store-context";
+import { RulesTestEnvironment, initializeTestEnvironment } from "@firebase/rules-unit-testing";
+import { User } from "firebase/auth";
+import { IRegistration } from "../../../common/lib";
 
 const projectId = "export-page-test";
 let store: Store;
-const app = initializeTestApp({ projectId });
 
 const setupAsync = async () => {
     store = new Store({
-        firestore: app.firestore(),
+        firestore,
     });
 
     return store;
@@ -84,14 +85,23 @@ const registrations = [
         isPersisted: true,
         description: "Another month"
     },
-];
+] as IRegistration[];
 
 jest.mock("../../contexts/store-context");
 
-beforeAll(() => loadFirestoreRules({
-    projectId,
-    rules: fs.readFileSync(path.resolve(__dirname, "../../../firestore.rules.test"), "utf8"),
-}));
+let testEnv: RulesTestEnvironment;
+let firestore: any;
+
+beforeAll(async () => {
+    testEnv = await initializeTestEnvironment({
+        projectId,
+        firestore: {
+            rules: fs.readFileSync(path.resolve(__dirname, "../../../firestore.rules.test"), "utf8"),
+        }
+    });
+
+    firestore = testEnv.unauthenticatedContext().firestore();
+});
 
 beforeEach(async () => {
     store = await setupAsync();
@@ -100,10 +110,10 @@ beforeEach(async () => {
 
 afterEach(async () => {
     await store.dispose();
-    await clearFirestoreData({ projectId });
+    await testEnv.clearFirestore();
 });
 
-afterAll(() => app.delete());
+afterAll(() => testEnv.cleanup());
 
 describe("Export Page", () => {
     it("should render without registrations", async () => {
@@ -130,7 +140,7 @@ describe("Export Page", () => {
             month: 3,
         });
 
-        store.auth.setUser({ uid: "user-1" } as firebase.User);
+        store.auth.setUser({ uid: "user-1" } as User);
 
         const {
             getByText,
@@ -140,7 +150,7 @@ describe("Export Page", () => {
 
         await waitFor(() => expect(getByText("April")));
 
-        await store.timesheets.addDocuments(registrations);
+        await Promise.all(registrations.map((registration) => store.timesheets.addDocument(registration)));
 
         await waitFor(() => expect(getByText("Foobar 5")));
 

@@ -62,8 +62,6 @@
   ],
   "exclude": [
     "**/__mocks__/*",
-    "**/*.test.tsx",
-    "**/*.test.ts"
   ],
   "references": [
     {

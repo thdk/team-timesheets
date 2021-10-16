@@ -91,7 +91,7 @@ export const TaskDetailPage = withAuthentication(
                         });
                     };
                 },
-                [view, tasks, goToTasks, tasks.activeDocumentId, router],
+                [view, tasks, goToTasks, tasks.activeDocumentId, tasks.activeDocument, router],
             );
 
             return (

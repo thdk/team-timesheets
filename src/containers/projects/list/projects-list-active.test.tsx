@@ -2,7 +2,7 @@ import fs from "fs";
 import path from "path";
 
 import React from "react";
-import type firebase from "firebase";
+
 
 import { Store } from "../../../stores/root-store";
 import { ActiveProjectList } from ".";
@@ -10,7 +10,8 @@ import { render, waitFor, fireEvent } from "@testing-library/react";
 import { canEditProject } from "../../../rules";
 import { act } from "react-dom/test-utils";
 import { StoreContext } from "../../../contexts/store-context";
-import { initializeTestApp, clearFirestoreData, loadFirestoreRules } from "@firebase/rules-unit-testing";
+import { initializeTestEnvironment, RulesTestEnvironment } from "@firebase/rules-unit-testing";
+import { User } from "firebase/auth";
 
 jest.mock("../../../internal", () => ({
     GoToProject: () => "GoToProject",
@@ -19,14 +20,11 @@ jest.mock("../../../internal", () => ({
 jest.mock("../../../rules");
 
 const projectId = "project-list-active-test";
-const app = initializeTestApp({
-    projectId,
-});
 
 let store: Store;
 const setupAsync = async () => {
     store = new Store({
-        firestore: app.firestore(),
+        firestore,
     });
     await Promise.all([
         store.user.usersCollection.addAsync(
@@ -47,26 +45,31 @@ const setupAsync = async () => {
 
     store.auth.setUser({
         uid: "user-1",
-    } as firebase.User);
+    } as User);
 };
 
+let testEnv: RulesTestEnvironment;
+let firestore: any;
+
 beforeAll(async () => {
-    await loadFirestoreRules({
+    testEnv = await initializeTestEnvironment({
         projectId,
-        rules: fs.readFileSync(path.resolve(__dirname, "../../../../firestore.rules.test"), "utf8"),
-    })
-})
+        firestore: {
+            rules: fs.readFileSync(path.resolve(__dirname, "../../../../firestore.rules.test"), "utf8"),
+        }
+    });
+
+    firestore = testEnv.unauthenticatedContext().firestore();
+});
 
 beforeEach(() => setupAsync());
 
 afterEach(async () => {
     store.dispose();
-    await clearFirestoreData({
-        projectId,
-    });
+    await testEnv.clearFirestore();
 });
 
-afterAll(() => app.delete());
+afterAll(() => testEnv.cleanup());
 
 describe("ProjectListActive", () => {
 
@@ -83,56 +86,52 @@ describe("ProjectListActive", () => {
     });
 
     it("displays active projects", async () => {
-        const projectIds = await store.projects.addDocuments([
+        const projectId = await store.projects.addDocument(
             {
                 name: "Project 1",
                 icon: "people",
                 createdBy: "user-1",
                 divisionId: "",
             },
-        ]);
+        );
 
-        const { getByText, queryByText, unmount, } = render(
+        const { getByText, queryByText, } = render(
             <StoreContext.Provider value={store}>
                 <ActiveProjectList />
             </StoreContext.Provider>
         );
+        await waitFor(() => expect(store.projects.collection.isFetched).toBeTruthy());
         await waitFor(() => getByText("Project 1"));
 
         await act(async () => {
             await store.projects.collection.updateAsync({
                 isArchived: true,
-            }, ...projectIds);
+            }, projectId);
         });
 
         await waitFor(() => expect(queryByText("Project 1")).toBeNull());
-
-        await act(async () => {
-            await store.projects.collection.updateAsync({
-                isArchived: false,
-            }, ...projectIds);
-        });
-
-        await waitFor(() => getByText("Project 1"));
-
-        unmount();
     });
 
     it("allow to select multiple projects", async () => {
-        const projectIds = await store.projects.addDocuments([
+        const projectId1 = await store.projects.addDocument(
             {
                 name: "Project 1",
                 icon: "people",
                 createdBy: "user-1",
                 divisionId: "",
-            },
+            }
+        );
+
+        const projectId2 = await store.projects.addDocument(
             {
                 name: "Project 2",
                 icon: "favorite",
                 createdBy: "user-1",
                 divisionId: "",
             },
-        ]);
+        );
+
+        const projectIds = [projectId1, projectId2];
 
         const { container, unmount, } = render(
             <StoreContext.Provider value={store}>
@@ -184,16 +183,16 @@ describe("ProjectListActive", () => {
     });
 
     it("redirects to project detail on project click", async () => {
-        const projectIds = await store.projects.addDocuments([
+        await store.projects.addDocument(
             {
                 name: "Project 1",
                 icon: "people",
                 createdBy: "user-1",
                 divisionId: "",
             },
-        ]);
+        );
 
-        const { getByText, container, unmount, } = render(
+        const { getByText, container, } = render(
             <StoreContext.Provider value={store}>
                 <ActiveProjectList />
             </StoreContext.Provider>
@@ -210,36 +209,22 @@ describe("ProjectListActive", () => {
         });
 
         await waitFor(() => expect(getByText("GoToProject")));
-
-        act(() => {
-            store.projects.deleteProjects(...projectIds);
-        });
-
-        await waitFor(() => expect(store.projects.activeProjects.length).toBe(0));
-
-        await waitFor(
-            () => expect(
-                container.querySelector(".settings-list-item")
-            ).toBeNull()
-        );
-
-        unmount();
     });
 
     it("does not allow unauthorised users to edit project", async () => {
         (canEditProject as any)
             .mockReturnValueOnce(false);
 
-        const projectIds = await store.projects.addDocuments([
+        await store.projects.addDocument(
             {
                 name: "Project 1",
                 icon: "people",
                 createdBy: "user-1",
                 divisionId: "",
             },
-        ]);
+        );
 
-        const { queryByText, container, unmount } = render(
+        const { queryByText, container } = render(
             <StoreContext.Provider value={store}>
                 <ActiveProjectList />
             </StoreContext.Provider>
@@ -256,19 +241,5 @@ describe("ProjectListActive", () => {
         });
 
         await waitFor(() => expect(queryByText("GoToProject")).toBeNull());
-
-        act(() => {
-            store.projects.deleteProjects(...projectIds);
-        });
-
-        await waitFor(() => expect(store.projects.activeProjects.length).toBe(0));
-
-        await waitFor(
-            () => expect(
-                container.querySelectorAll(".settings-list-item").length
-            ).toBe(0)
-        );
-
-        unmount();
     })
 });

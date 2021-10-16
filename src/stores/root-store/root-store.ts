@@ -14,7 +14,7 @@ import * as deserializer from "../../../common/serialization/deserializer";
 import * as serializer from "../../../common/serialization/serializer";
 import { FetchMode, RealtimeMode, AuthStore } from "firestorable";
 import { TaskStore } from "../task-store";
-import { Firestore } from "firebase/firestore";
+import { collection, CollectionReference, Firestore } from "firebase/firestore";
 import { Auth } from "firebase/auth";
 import { HttpsCallable } from "firebase/functions";
 
@@ -43,13 +43,14 @@ export class Store implements IRootStore {
         httpsCallable?: (name: string) => HttpsCallable<string, string>,
         auth?: Auth,
     }) {
+        if (!firestore) throw new Error(" NO FIRESTOREEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE")
         this.auth = new AuthStore(
             {
                 firestore,
                 auth,
             },
             {
-                collection: "users",
+                collection: collection(firestore, "users") as CollectionReference<IUserData>,
                 collectionOptions: {
                     deserialize: deserializer.convertUser,
                     serialize: serializer.convertUser,

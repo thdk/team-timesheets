@@ -149,11 +149,11 @@ export class ViewStore implements IViewStore {
     }: {
       year: number,
       month: number,
-      day: number | null,
+      day?: number | null,
     }
   ) {
     transaction(() => {
-      this.day = day;
+      this.day = day || null;
       this.month = month;
       this.year = year;
     })

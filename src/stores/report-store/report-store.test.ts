@@ -3,18 +3,16 @@ import path from "path";
 import { waitFor } from "@testing-library/react";
 import { reaction, transaction } from "mobx";
 import { Store } from "../root-store";
-import { clearFirestoreData, initializeTestApp, loadFirestoreRules } from "@firebase/rules-unit-testing";
+
 import { User } from "firebase/auth";
+import { initializeTestEnvironment, RulesTestEnvironment } from "@firebase/rules-unit-testing";
 
 const projectId = "reports-store-test";
-const app = initializeTestApp({
-    projectId,
-});
 
 let store: Store;
 const setupAsync = () => {
     store = new Store({
-        firestore: app.firestore(),
+        firestore,
     });
 
     return Promise.all([
@@ -36,23 +34,28 @@ const setupAsync = () => {
     ]);
 };
 
+let testEnv: RulesTestEnvironment;
+let firestore: any;
+
 beforeAll(async () => {
-    await loadFirestoreRules({
+    testEnv = await initializeTestEnvironment({
         projectId,
-        rules: fs.readFileSync(path.resolve(__dirname, "../../../firestore.rules.test"), "utf8"),
-    })
+        firestore: {
+            rules: fs.readFileSync(path.resolve(__dirname, "../../../firestore.rules.test"), "utf8"),
+        }
+    });
+
+    firestore = testEnv.unauthenticatedContext().firestore();
 });
 
 beforeEach(() => setupAsync());
 
 afterEach(async () => {
     store.dispose();
-    await clearFirestoreData({
-        projectId,
-    });
+    await testEnv.clearFirestore();
 });
 
-afterAll(() => app.delete());
+afterAll(() => testEnv.cleanup());
 
 describe("ReportStore", () => {
     let unsubscribe: () => void;

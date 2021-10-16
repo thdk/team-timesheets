@@ -1,5 +1,5 @@
 import React from "react";
-import type firebase from "firebase";
+
 
 import fs from "fs";
 import path from "path";
@@ -10,19 +10,17 @@ import { render, waitFor, fireEvent } from "@testing-library/react";
 import { canManageProjects } from "../../../rules";
 import { act } from "react-dom/test-utils";
 import { StoreContext } from "../../../contexts/store-context";
-import { initializeTestApp, loadFirestoreRules, clearFirestoreData } from "@firebase/rules-unit-testing";
+import { RulesTestEnvironment, initializeTestEnvironment } from "@firebase/rules-unit-testing";
+import { User } from "firebase/auth";
 
 jest.mock("../../../rules");
 
 const projectId = "project-list-active-test";
-const app = initializeTestApp({
-    projectId,
-});
 
 let store: Store;
 const setupAsync = async () => {
     store = new Store({
-        firestore: app.firestore(),
+        firestore,
     });
 
     await Promise.all([
@@ -44,14 +42,21 @@ const setupAsync = async () => {
 
     store.auth.setUser({
         uid: "user-1",
-    } as firebase.User);
+    } as User);
 };
 
+let testEnv: RulesTestEnvironment;
+let firestore: any;
+
 beforeAll(async () => {
-    await loadFirestoreRules({
+    testEnv = await initializeTestEnvironment({
         projectId,
-        rules: fs.readFileSync(path.resolve(__dirname, "../../../../firestore.rules.test"), "utf8"),
+        firestore: {
+            rules: fs.readFileSync(path.resolve(__dirname, "../../../../firestore.rules.test"), "utf8"),
+        }
     });
+
+    firestore = testEnv.unauthenticatedContext().firestore();
 });
 
 beforeEach(async () => {
@@ -60,12 +65,10 @@ beforeEach(async () => {
 
 afterEach(async () => {
     store.dispose();
-    await clearFirestoreData({
-        projectId,
-    });
+    await testEnv.clearFirestore();
 });
 
-afterAll(() => app.delete());
+afterAll(() => testEnv.cleanup());
 
 describe("ProjectListArchived", () => {
     it("renders without projects", () => {
@@ -115,21 +118,25 @@ describe("ProjectListArchived", () => {
     });
 
     it("allow to select multiple projects", async () => {
-        await store.projects.addDocuments([
-            {
-                name: "Project 1",
-                icon: "people",
-                createdBy: "user-1",
-                isArchived: true,
-                divisionId: "",
-            },
-            {
-                name: "Project 2",
-                icon: "favorite",
-                createdBy: "user-1",
-                isArchived: true,
-                divisionId: "",
-            },
+        await Promise.all([
+            store.projects.addDocument(
+                {
+                    name: "Project 1",
+                    icon: "people",
+                    createdBy: "user-1",
+                    isArchived: true,
+                    divisionId: "",
+                },
+            ),
+            store.projects.addDocument(
+                {
+                    name: "Project 2",
+                    icon: "favorite",
+                    createdBy: "user-1",
+                    isArchived: true,
+                    divisionId: "",
+                },
+            ),
         ]);
 
         const { container, unmount } = render(
@@ -170,7 +177,7 @@ describe("ProjectListArchived", () => {
         (canManageProjects as any)
             .mockReturnValue(false);
 
-        await store.projects.addDocuments([
+        await store.projects.addDocument(
             {
                 name: "Project 1",
                 icon: "people",
@@ -178,7 +185,7 @@ describe("ProjectListArchived", () => {
                 isArchived: true,
                 divisionId: "",
             },
-        ]);
+        );
 
         const { container, unmount } = render(
             <StoreContext.Provider value={store}>
@@ -197,7 +204,7 @@ describe("ProjectListArchived", () => {
         });
 
         await waitFor(() => expect(store.view.selection.size).toBe(0));
-        
+
         unmount();
     });
 });

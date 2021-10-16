@@ -8,19 +8,17 @@ import { StoreContext } from "../../../contexts/store-context";
 import { Store } from "../../../stores/root-store";
 import { UserList } from ".";
 
-import type firebase from "firebase";
-import { loadFirestoreRules, initializeTestApp, clearFirestoreData, } from "@firebase/rules-unit-testing";
+
+import { initializeTestEnvironment, RulesTestEnvironment, } from "@firebase/rules-unit-testing";
+import { User } from "firebase/auth";
 
 const projectId = "user-list-container-test";
-const app = initializeTestApp({
-    projectId,
-});
 
 let store: Store;
 
 const setupAsync = () => {
     store = new Store({
-        firestore: app.firestore(),
+        firestore,
     });
 
     return Promise.all([
@@ -90,23 +88,28 @@ const setupAsync = () => {
     ]);
 };
 
+let testEnv: RulesTestEnvironment;
+let firestore: any;
+
 beforeAll(async () => {
-    await loadFirestoreRules({
+    testEnv = await initializeTestEnvironment({
         projectId,
-        rules: fs.readFileSync(path.resolve(__dirname, "../../../../firestore.rules.test"), "utf8"),
-    })
-})
+        firestore: {
+            rules: fs.readFileSync(path.resolve(__dirname, "../../../../firestore.rules.test"), "utf8"),
+        }
+    });
+
+    firestore = testEnv.unauthenticatedContext().firestore();
+});
 
 beforeEach(() => setupAsync());
 
 afterEach(async () => {
     store.dispose();
-    await clearFirestoreData({
-        projectId,
-    });
+    await testEnv.clearFirestore();
 });
 
-afterAll(() => app.delete());
+afterAll(() => testEnv.cleanup());
 
 
 describe("UserListContainer", () => {
@@ -130,7 +133,7 @@ describe("UserListContainer", () => {
             store.auth.setUser({
                 uid: "admin-1",
                 displayName: "admin 1",
-            } as firebase.User);
+            } as User);
 
             return waitFor(() => !!store.auth.activeDocument?.roles?.admin);
         });

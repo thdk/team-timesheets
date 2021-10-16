@@ -1,33 +1,38 @@
 import React from "react";
 import fs from "fs";
 import path from "path";
-import type firebase from "firebase";
+
 import { render, waitFor } from "@testing-library/react";
-import { loadFirestoreRules, initializeTestApp, clearFirestoreData } from "@firebase/rules-unit-testing";
 import { Store } from "../../../stores/root-store";
 import { useStore } from "../../../contexts/store-context";
 import userEvent from "@testing-library/user-event";
 import { FavoriteGroupSelect } from "./favorite-group-select";
+import { RulesTestEnvironment, initializeTestEnvironment } from "@firebase/rules-unit-testing";
+import { User } from "firebase/auth";
 
 jest.mock("../../../contexts/store-context");
 
 const projectId = "project-select-test";
-const app = initializeTestApp({
-    projectId,
-});
+
+let testEnv: RulesTestEnvironment;
+let firestore: any;
 
 beforeAll(async () => {
-    await loadFirestoreRules({
+    testEnv = await initializeTestEnvironment({
         projectId,
-        rules: fs.readFileSync(path.resolve(__dirname, "../../../../firestore.rules.test"), "utf8"),
+        firestore: {
+            rules: fs.readFileSync(path.resolve(__dirname, "../../../../firestore.rules.test"), "utf8"),
+        }
     });
+
+    firestore = testEnv.unauthenticatedContext().firestore();
 });
 
 const userId = "user-1";
 let store: Store;
 beforeEach(async () => {
     store = new Store({
-        firestore: app.firestore(),
+        firestore,
     });
 
     await Promise.all([
@@ -49,17 +54,17 @@ beforeEach(async () => {
 
     store.auth.setUser({
         uid: "user-1",
-    } as firebase.User);
+    } as User);
 
     (useStore as jest.Mock<ReturnType<typeof useStore>>).mockReturnValue(store);
 });
 
 afterEach(async () => {
     store.dispose();
-    await clearFirestoreData({ projectId });
+    await testEnv.clearFirestore();
 });
 
-afterAll(() => app.delete());
+afterAll(() => testEnv.cleanup());
 
 describe("FavoriteGroupSelect", () => {
     it("should render without favorite groups", () => {
@@ -78,19 +83,25 @@ describe("FavoriteGroupSelect", () => {
     describe("when there are favorite groups", () => {
         let groupIds: string[];
         beforeEach(async () => {
-            groupIds = await store.favorites.addDocuments([
-                {
-                    name: "favorite group 1",
-                    userId,
-                },
-                {
-                    name: "favorite group 2",
-                    userId,
-                },
-                {
-                    name: "favorite group 3",
-                    userId,
-                },
+            groupIds = await Promise.all([
+                store.favorites.addDocument(
+                    {
+                        name: "favorite group 1",
+                        userId,
+                    },
+                ),
+                store.favorites.addDocument(
+                    {
+                        name: "favorite group 2",
+                        userId,
+                    },
+                ),
+                store.favorites.addDocument(
+                    {
+                        name: "favorite group 3",
+                        userId,
+                    },
+                ),
             ]);
         });
 

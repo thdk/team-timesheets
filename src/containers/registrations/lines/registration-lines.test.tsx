@@ -1,5 +1,5 @@
 import React from "react";
-import type firebase from "firebase";
+
 
 import fs from "fs";
 import path from "path";
@@ -10,23 +10,19 @@ import { render, waitFor } from "@testing-library/react";
 import { Doc } from "firestorable";
 import { IRegistration } from "../../../../common";
 import userEvent from "@testing-library/user-event";
-import { initializeTestApp, loadFirestoreRules, clearFirestoreData, } from "@firebase/rules-unit-testing";
+import { initializeTestEnvironment, RulesTestEnvironment, } from "@firebase/rules-unit-testing";
 import { useStore } from "../../../contexts/store-context";
-
-const projectId = "registrations-line-test";
-
-const app = initializeTestApp({
-    projectId,
-});
+import { User } from "firebase/auth";
 
 let store: Store;
-let clientIds: string[];
+let clientId: string;
 let taskIds: string[];
-let projectIds: string[];
+let projectId: string;
 const userId = "user-1";
+
 const setupAsync = async () => {
     store = new Store({
-        firestore: app.firestore(),
+        firestore,
     });
 
     await store.auth.addDocument({
@@ -40,40 +36,51 @@ const setupAsync = async () => {
         uid: userId,
     }, userId);
 
-    taskIds = await store.tasks.addDocuments([
-        {
-            name: "Task 1",
-            icon: "people",
-        },
-        {
-            name: "Task 2",
-        },
+    taskIds = await Promise.all([
+        store.tasks.addDocument(
+            {
+                name: "Task 1",
+                icon: "people",
+            },
+        ),
+        store.tasks.addDocument(
+            {
+                name: "Task 2",
+            },
+        )
     ]);
-    clientIds = await store.config.clientsCollection.addAsync([
+    clientId = await store.config.clientsCollection.addAsync(
         {
             name: "Client 1",
         },
-    ]);
+    );
 
-    projectIds = await store.projects.addDocuments([
+    projectId = await store.projects.addDocument(
         {
             name: "Project 1",
             icon: "people",
         },
-    ]);
+    );
 
     store.auth.setUser({
         uid: userId,
         displayName: "user 1",
         email: "email@email.com",
-    } as firebase.User);
+    } as User);
 };
 
+let testEnv: RulesTestEnvironment;
+let firestore: any;
+
 beforeAll(async () => {
-    await loadFirestoreRules({
-        projectId,
-        rules: fs.readFileSync(path.resolve(__dirname, "../../../../firestore.rules.test"), "utf8"),
+    testEnv = await initializeTestEnvironment({
+        projectId: "registrations-line-test",
+        firestore: {
+            rules: fs.readFileSync(path.resolve(__dirname, "../../../../firestore.rules.test"), "utf8"),
+        }
     });
+
+    firestore = testEnv.unauthenticatedContext().firestore();
 });
 
 beforeEach(async () => {
@@ -83,12 +90,10 @@ beforeEach(async () => {
 
 afterEach(async () => {
     store.dispose();
-    await clearFirestoreData({
-        projectId,
-    });
+    await testEnv.clearFirestore();
 });
 
-afterAll(() => app.delete());
+afterAll(() => testEnv.cleanup());
 
 jest.mock("../../../contexts/store-context");
 
@@ -97,8 +102,8 @@ describe("RegistrationLines", () => {
         {
             data: {
                 userId: userId,
-                client: clientIds[0],
-                project: projectIds[0],
+                client: clientId,
+                project: projectId,
                 task: taskIds[0],
                 description: "Registration 1",
                 date: new Date(2020, 2, 22),
@@ -108,8 +113,8 @@ describe("RegistrationLines", () => {
         {
             data: {
                 userId: userId,
-                client: clientIds[0],
-                project: projectIds[0],
+                client: clientId,
+                project: projectId,
                 task: taskIds[2],
                 description: "Registration 2",
                 date: new Date(2020, 2, 22),
@@ -140,16 +145,17 @@ describe("RegistrationLines", () => {
     });
 
     it("should render registrations", async () => {
-        await waitFor(() => expect(store.auth.activeDocument).toBeDefined());
+        await waitFor(() => expect(store.auth.activeDocument).toBeTruthy());
 
         await waitFor(() => expect(store.config.clientsCollection.isFetched).toBeTruthy());
+        await waitFor(() => expect(store.tasks.collection.isFetched).toBeTruthy());
         const { asFragment, unmount, } = render(
             <RegistrationLines
                 registrations={getRegistrations()}
             />
         );
 
-        expect(asFragment()).toMatchSnapshot();
+        await waitFor(() => expect(asFragment()).toMatchSnapshot());
 
         unmount();
     });

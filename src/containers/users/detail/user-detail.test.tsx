@@ -5,21 +5,18 @@ import path from "path";
 import { Store } from "../../../stores/root-store";
 import { UserDetail } from "./user-detail";
 import { render, waitFor } from "@testing-library/react";
-import { initializeTestApp, loadFirestoreRules, clearFirestoreData } from "@firebase/rules-unit-testing";
+import { initializeTestEnvironment, RulesTestEnvironment } from "@firebase/rules-unit-testing";
 import { useStore } from "../../../contexts/store-context";
 
 jest.mock("../../../contexts/store-context");
 jest.mock("../../../rules");
 
 const projectId = "user-detail-test";
-const app = initializeTestApp({
-    projectId,
-});
 
 let store: Store;
 const setupAsync = async () => {
     store = new Store({
-        firestore: app.firestore(),
+        firestore,
     });
 
     await Promise.all([
@@ -39,27 +36,32 @@ const setupAsync = async () => {
     ]);
 };
 
+let testEnv: RulesTestEnvironment;
+let firestore: any;
+
 beforeAll(async () => {
-    await loadFirestoreRules({
+    testEnv = await initializeTestEnvironment({
         projectId,
-        rules: fs.readFileSync(path.resolve(__dirname, "../../../../", "firestore.rules.test"), "utf8"),
+        firestore: {
+            rules: fs.readFileSync(path.resolve(__dirname, "../../../../firestore.rules.test"), "utf8"),
+        }
     });
-})
+
+    firestore = testEnv.unauthenticatedContext().firestore();
+});
 
 beforeEach(async () => {
-   await setupAsync();
+    await setupAsync();
 
-   (useStore as jest.Mock<ReturnType<typeof useStore>>).mockReturnValue(store);
+    (useStore as jest.Mock<ReturnType<typeof useStore>>).mockReturnValue(store);
 })
 
 afterEach(async () => {
     store.dispose();
-    await clearFirestoreData({
-        projectId,
-    });
+    await testEnv.clearFirestore();
 });
 
-afterAll(() => app.delete());
+afterAll(() => testEnv.cleanup());
 
 
 describe("UserDetail", () => {

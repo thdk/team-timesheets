@@ -2,21 +2,18 @@ import React from "react";
 import fs from "fs";
 import path from "path";
 
-import { clearFirestoreData, loadFirestoreRules, initializeTestApp } from "@firebase/rules-unit-testing";
+import { initializeTestEnvironment, RulesTestEnvironment } from "@firebase/rules-unit-testing";
 
-import type firebase from "firebase";
+
 import { render, waitFor } from "@testing-library/react";
 import { Store } from "../../../stores/root-store";
 import { useStore } from "../../../contexts/store-context";
 import FavoriteGroupList from ".";
+import { User } from "firebase/auth";
 
 jest.mock("../../../contexts/store-context");
 
 const projectId = "favorite-group-detail-page";
-
-const app = initializeTestApp({
-    projectId,
-});
 
 let store: Store;
 const userId = "user-1";
@@ -24,7 +21,7 @@ let favoriteGroupIds: string[] = ["fav-1", "fav-2", "fav-3"];
 
 const setupAsync = async () => {
     store = new Store({
-        firestore: app.firestore(),
+        firestore,
     });
 
     await store.auth.addDocument({
@@ -39,14 +36,21 @@ const setupAsync = async () => {
 
     store.auth.setUser({
         uid: userId,
-    } as firebase.User);
+    } as User);
 };
 
+let testEnv: RulesTestEnvironment;
+let firestore: any;
+
 beforeAll(async () => {
-    await loadFirestoreRules({
+    testEnv = await initializeTestEnvironment({
         projectId,
-        rules: fs.readFileSync(path.resolve(__dirname, "../../../../firestore.rules.test"), "utf8"),
+        firestore: {
+            rules: fs.readFileSync(path.resolve(__dirname, "../../../../firestore.rules.test"), "utf8"),
+        }
     });
+
+    firestore = testEnv.unauthenticatedContext().firestore();
 });
 
 beforeEach(async () => {
@@ -56,12 +60,10 @@ beforeEach(async () => {
 
 afterEach(async () => {
     store.dispose();
-    await clearFirestoreData({
-        projectId,
-    });
+    await testEnv.clearFirestore();
 });
 
-afterAll(() => app.delete());
+afterAll(() => testEnv.cleanup());
 describe("FavoriteGroupList", () => {
     describe("when there are no favorite groups", () => {
         it("should render an empty list", async () => {
@@ -92,12 +94,12 @@ describe("FavoriteGroupList", () => {
 
             expect(asFragment()).toMatchSnapshot();
 
-            await store.favorites.addDocuments([
+            await store.favorites.addDocument(
                 {
                     name: "new fav group 1",
                     userId,
                 },
-            ]);
+            );
 
             await waitFor(() => getByText("new fav group 1"));
 
@@ -132,19 +134,21 @@ describe("FavoriteGroupList", () => {
                     ),
                 ]);
 
-            await store.favorites.favoriteCollection.addAsync([
+            await Promise.all([
+                store.favorites.favoriteCollection.addAsync(
                 {
                     groupId: favoriteGroupIds[1],
                     userId,
                     description: "fav reg 1",
                     time: 3,
                 },
-                {
+                ),
+                store.favorites.favoriteCollection.addAsync({
                     groupId: favoriteGroupIds[1],
                     userId,
                     description: "fav reg 2",
                     time: 1,
-                },
+                }),
             ]);
         });
 

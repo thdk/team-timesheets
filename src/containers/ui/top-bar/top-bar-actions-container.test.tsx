@@ -1,31 +1,36 @@
 import path from "path";
 import fs from "fs";
 import React from "react";
-import { deleteFirebaseAppsAsync } from "../../../__tests__/utils/firebase";
 import { Store } from "../../../stores/root-store";
 import { render, fireEvent } from "@testing-library/react";
 import { TopBarActions } from "./top-bar-actions-container";
 import { ObservableMap } from "mobx";
-import { initializeTestApp, loadFirestoreRules, clearFirestoreData } from "@firebase/rules-unit-testing";
 import { StoreContext } from "../../../contexts/store-context";
 import { act } from "react-dom/test-utils";
+import { initializeTestEnvironment, RulesTestEnvironment } from "@firebase/rules-unit-testing";
 
 const projectId = "top-bar-actions-test";
-const app = initializeTestApp({
-    projectId,
-});
 
 let store: Store;
 const setupAsync = async () => {
     store = new Store({
-        firestore: app.firestore(),
+        firestore,
     });
 };
 
-beforeAll(() => loadFirestoreRules({
-    projectId,
-    rules: fs.readFileSync(path.resolve(__dirname, "../../../../firestore.rules.test"), "utf8"),
-}));
+let testEnv: RulesTestEnvironment;
+let firestore: any;
+
+beforeAll(async () => {
+    testEnv = await initializeTestEnvironment({
+        projectId,
+        firestore: {
+            rules: fs.readFileSync(path.resolve(__dirname, "../../../../firestore.rules.test"), "utf8"),
+        }
+    });
+
+    firestore = testEnv.unauthenticatedContext().firestore();
+});
 
 beforeEach(async () => {
     await setupAsync();
@@ -33,10 +38,10 @@ beforeEach(async () => {
 
 afterEach(async () => {
     store.dispose();
-    await clearFirestoreData({ projectId });
+    await testEnv.clearFirestore();
 });
 
-afterAll(deleteFirebaseAppsAsync);
+afterAll(() => testEnv.cleanup());
 
 describe("TopBarActionsContainer", () => {
     it("should render when there are no actions", () => {

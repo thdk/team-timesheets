@@ -93,11 +93,11 @@ const setActions = (s: IRootStore, alowInserts = false) => {
             contextual: true
         } as IViewAction<IRegistration>,
         {
-            action: selection => {
+            action: async selection => {
                 if (!selection) return;
                 let groupId: string | undefined;
-                transaction(() => {
-                    groupId = s.favorites.addFavorites(
+                await transaction(async () => {
+                    groupId = await s.favorites.addFavorites(
                         // registrations
                         Array.from(selection.keys())
                             .reduce((registrations, id) => {

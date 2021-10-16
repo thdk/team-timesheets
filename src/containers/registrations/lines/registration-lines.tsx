@@ -33,7 +33,7 @@ export const RegistrationLines = observer((props: IRegistrationLinesProps) => {
         const taskData = task ? tasks.collection.get(task) : null;
         const { data: { icon = undefined, name: taskName = "" } = {} } = taskData || {};
 
-        const clientData = client ? clients.get(client) : null;
+        const clientData = client ? clients.clientsCollection.get(client) : null;
         const { data: { name: clientName = undefined } = {} } = clientData || {};
 
         const line1 = projectName;

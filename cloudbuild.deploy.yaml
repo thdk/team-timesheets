@@ -11,6 +11,10 @@ steps:
   - name: node:10.18.0
     entrypoint: npm
     args: ["run", "build:production"]
+    env:
+      - 'FIREBASE_API_KEY=${_FIREBASE_API_KEY}'
+      - 'FIREBASE_AUTH_DOMAIN=${_FIREBASE_AUTH_DOMAIN}'
+      - 'FIREBASE_PROJECT_ID=${_FIREBASE_PROJECT_ID}'
   - name: node:10.18.0
     entrypoint: npm
     dir: "functions"

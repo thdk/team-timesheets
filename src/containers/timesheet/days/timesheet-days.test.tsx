@@ -152,7 +152,7 @@ describe("TimesheetDays", () => {
         await Promise.all(
             registrations.map(registration => store.timesheets.addDocument(registration))
         );
-        await waitFor(() => expect(store.user.divisionUser?.id).toBeDefined());
+        await waitFor(() => expect(store.user.divisionUser?.id).toBeTruthy());
 
         const {
             getByText,

@@ -1,7 +1,7 @@
 import { ICollection, Collection, FetchMode, RealtimeMode, CrudStore } from "firestorable";
 import { reaction, computed, makeObservable } from "mobx";
 import { IRootStore } from "../root-store";
-import { IFavoriteRegistrationGroup, IFavoriteRegistration, IFavoriteRegistrationGroupData } from "../../../common/dist";
+import { IFavoriteRegistrationGroup, IFavoriteRegistration, IFavoriteRegistrationGroupData } from "../../../common";
 import * as serializer from '../../../common/serialization/serializer';
 import * as deserializer from '../../../common/serialization/deserializer';
 import { IUserStore } from "../user-store";

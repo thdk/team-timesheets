@@ -10,7 +10,7 @@ import { ExportPage } from ".";
 import { useStore } from "../../contexts/store-context";
 import { RulesTestEnvironment, initializeTestEnvironment } from "@firebase/rules-unit-testing";
 import { User } from "firebase/auth";
-import { IRegistration } from "../../../common/lib";
+import { IRegistration } from "../../../common";
 
 const projectId = "export-page-test";
 let store: Store;

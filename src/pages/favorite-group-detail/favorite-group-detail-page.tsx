@@ -14,12 +14,12 @@ import { observer } from "mobx-react-lite";
 export const FavoriteGroupPage = observer(
     () => {
 
-    const favoriteStore = useFavoriteGroupStore();
-    const routerStore = useRouterStore();
-    const viewStore = useViewStore();
+        const favoriteStore = useFavoriteGroupStore();
+        const routerStore = useRouterStore();
+        const viewStore = useViewStore();
 
-    React.useEffect(
-        () => {
+        React.useEffect(
+            () => {
                 if (!routerStore.params) {
                     return;
                 }
@@ -30,90 +30,90 @@ export const FavoriteGroupPage = observer(
                 else {
                     throw new Error("favorite id is missing in querystring");
                 }
-        },
-    )
+            },
+        )
 
-    React.useEffect(
-        () => {
-            const deleteAction: IViewAction = {
-                action: () => {
-                    if (favoriteStore.activeDocumentId) {
-                        favoriteStore.deleteDocuments(
-                            {
-                                useFlag: false,
-                            },
-                            favoriteStore.activeDocumentId,
-                        );
-                    }
-                    goToFavorites(routerStore);
-                },
-                icon: { label: "Delete", content: "delete" },
-                shortKey: { key: "Delete", ctrlKey: true }
-            }
-        
-            const saveAction: IViewAction = {
-                action: () => {
-                    favoriteStore.saveFavoriteGroup();
-                    goToFavorites(routerStore);
-                },
-                icon: { label: "Save", content: "save" },
-                shortKey: { key: "s", ctrlKey: true }
-            }
-        
-            transaction(() => {
-                viewStore.setActions([
-                    saveAction,
-                    deleteAction
-                ]);
-        
-                viewStore.setNavigation({
+        React.useEffect(
+            () => {
+                const deleteAction: IViewAction = {
+                    action: () => {
+                        if (favoriteStore.activeDocumentId) {
+                            favoriteStore.deleteDocument(
+                                favoriteStore.activeDocumentId,
+                                {
+                                    useFlag: false,
+                                },
+                            );
+                        }
+                        goToFavorites(routerStore);
+                    },
+                    icon: { label: "Delete", content: "delete" },
+                    shortKey: { key: "Delete", ctrlKey: true }
+                }
+
+                const saveAction: IViewAction = {
                     action: () => {
                         favoriteStore.saveFavoriteGroup();
                         goToFavorites(routerStore);
                     },
-                    icon: { label: "Back", content: "arrow_back" }
-                });
-        
-                if (routerStore.currentRoute) {
-                    setTitleForRoute({view: viewStore}, routerStore.currentRoute);
+                    icon: { label: "Save", content: "save" },
+                    shortKey: { key: "s", ctrlKey: true }
                 }
-            });
 
-            return () => {
                 transaction(() => {
-                    favoriteStore.setActiveDocumentId(undefined);
-                    viewStore.setNavigation("default");
-                    viewStore.setActions([]);
+                    viewStore.setActions([
+                        saveAction,
+                        deleteAction
+                    ]);
+
+                    viewStore.setNavigation({
+                        action: () => {
+                            favoriteStore.saveFavoriteGroup();
+                            goToFavorites(routerStore);
+                        },
+                        icon: { label: "Back", content: "arrow_back" }
+                    });
+
+                    if (routerStore.currentRoute) {
+                        setTitleForRoute({ view: viewStore }, routerStore.currentRoute);
+                    }
                 });
-            };
-        },
-        [
-            favoriteStore,
-            routerStore,
-            viewStore,
-        ]
-    );
 
-    return (
-        <>
-            <div style={{ paddingLeft: "2em", paddingTop: "1em" }}>
-                <h3 className="mdc-typography--subtitle1">
-                    Favorite group details
-            </h3>
-            </div>
+                return () => {
+                    transaction(() => {
+                        favoriteStore.setActiveDocumentId(undefined);
+                        viewStore.setNavigation("default");
+                        viewStore.setActions([]);
+                    });
+                };
+            },
+            [
+                favoriteStore,
+                routerStore,
+                viewStore,
+            ]
+        );
 
-            <FavoriteGroupDetailForm />
+        return (
+            <>
+                <div style={{ paddingLeft: "2em", paddingTop: "1em" }}>
+                    <h3 className="mdc-typography--subtitle1">
+                        Favorite group details
+                    </h3>
+                </div>
 
-            <div style={{ paddingLeft: "2em" }}>
-                <h3 className="mdc-typography--subtitle1">
-                    Included registrations
-            </h3>
-            </div>
-            <hr className="mdc-list-divider" />
+                <FavoriteGroupDetailForm />
 
-            <FavoritesList />
+                <div style={{ paddingLeft: "2em" }}>
+                    <h3 className="mdc-typography--subtitle1">
+                        Included registrations
+                    </h3>
+                </div>
+                <hr className="mdc-list-divider" />
 
-            <hr className="mdc-list-divider" />
-        </>
-    );
-});
+                <FavoritesList />
+
+                <hr className="mdc-list-divider" />
+            </>
+        );
+    });

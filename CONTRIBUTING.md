@@ -8,7 +8,7 @@ These instructions will get you a copy of the project up and running on your loc
 
 #### Node
 
-Supported node version: 10 (I'm using 10.18.0)
+Supported node version: 14
 
 #### Firebase tools
 

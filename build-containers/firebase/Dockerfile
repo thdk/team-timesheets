@@ -1,4 +1,4 @@
-FROM node:10.18.0 AS node_base
+FROM node:14 AS node_base
 
 RUN echo "NODE Version:" && node --version
 RUN echo "NPM Version:" && npm --version

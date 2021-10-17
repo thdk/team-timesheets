@@ -120,6 +120,9 @@ describe("ProjectsSelect", () => {
                     projectId3,
                     projectId4,
                 ];
+                console.log({
+                    projectIds
+                })
             } catch (e) {
                 console.error(e);
                 throw e;

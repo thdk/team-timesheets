@@ -110,6 +110,7 @@
     "react-chartjs-2": "^2.7.4",
     "react-dom": "^16.8.6",
     "react-intl": "^5.8.0",
+    "react-social-login-buttons": "^3.6.0",
     "react-use": "^15.3.4",
     "throttle-debounce": "^2.1.0",
     "uuid": "^8.3.0"

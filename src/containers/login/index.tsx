@@ -1,6 +1,7 @@
 import { getAuth, GoogleAuthProvider, signInWithPopup } from 'firebase/auth';
 
 import React, { useCallback } from 'react';
+import { GoogleLoginButton } from 'react-social-login-buttons';
 
 export const Login = () => {
   const auth = getAuth();
@@ -26,19 +27,15 @@ export const Login = () => {
         display: 'flex',
         height: '100vh',
         justifyContent: 'center',
-        alignItems: 'center',
+        paddingTop: '1em'
       }}
     >
-      <button
-        type="button"
+      <GoogleLoginButton
         onClick={onClick}
         style={{
-          height: '30px',
+          width: '220px',
         }}
-      >
-        Login
-
-      </button>
+      />
     </div>
   );
 };

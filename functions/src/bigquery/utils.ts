@@ -63,7 +63,7 @@ type InsertOptions = {
         field: string;
     };
 }
-export function insertRowsAsync<T>(options: BigQueryConfig, rows: ReadonlyArray<T>, bigqueryClient?: BigQuery) {
+export function insertRowsAsync<T>(options: BigQueryConfig, rows: ReadonlyArray<T>, bigqueryClient?: BigQuery): Promise<void> {
     const { dataSetId, tableId, tableIdPrefix = "", schemes, timePartitioningField } = options;
 
     console.log(`Inserting ${rows.length} rows into ${tableId}`);

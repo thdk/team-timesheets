@@ -21,7 +21,7 @@ export const watchImportSessions = functions.firestore
             const importData = snapshot.data();
             if (!importData) {
                 console.log("No data found to import");
-                return new Promise(resolve => resolve());
+                return new Promise<void>(resolve => resolve());
             }
 
             const { bucket, file, collection } = importData as { bucket: string, file: string, collection: string };
@@ -202,6 +202,7 @@ export const watchImportSessions = functions.firestore
                 .then(insertFuncAsync)
                 .then(() => {
                     return snapshot.ref.update({ state: "Import finished" })
-                });
+                })
+                .then(() => { /** voidify */ });
         });
     });

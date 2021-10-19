@@ -23,7 +23,7 @@ export const createCSV = functions.firestore
 
         const reportData = snapshot.data();
 
-        if (!reportData) return new Promise(resolve => resolve());
+        if (!reportData) return new Promise<void>(resolve => resolve());
 
         const { year, month, userId } = reportData;
 

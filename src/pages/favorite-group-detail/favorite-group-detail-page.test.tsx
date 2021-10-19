@@ -84,6 +84,8 @@ const setupAsync = async () => {
     store.auth.setUser({
         uid: userId,
     } as User);
+
+    await waitFor(() => expect(store.auth.activeDocument).toBeTruthy());
 };
 
 let testEnv: RulesTestEnvironment;

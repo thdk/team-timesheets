@@ -86,6 +86,8 @@ describe("FavoriteStore", () => {
         store.auth.setUser({
             uid: "user-1",
         } as User);
+
+        await waitFor(() => expect(store.auth.activeDocument).toBeTruthy());
     };
 
     let testEnv: RulesTestEnvironment | undefined;

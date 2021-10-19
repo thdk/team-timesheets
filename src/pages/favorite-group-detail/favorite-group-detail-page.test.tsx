@@ -129,7 +129,6 @@ describe("favoriteGroupDetailPage", () => {
                 const {
                     container,
                     getByText,
-                    unmount,
                 } = render(
                     <FavoriteGroupPage />
                 );
@@ -139,8 +138,6 @@ describe("favoriteGroupDetailPage", () => {
                     expect(getByText("fav reg 1"));
                     expect(getByText("fav reg 2"));
                 });
-
-                unmount();
             },
         );
 
@@ -156,7 +153,6 @@ describe("favoriteGroupDetailPage", () => {
 
                 const {
                     container,
-                    unmount,
                 } = render(
                     <FavoriteGroupPage />
                 );
@@ -188,8 +184,6 @@ describe("favoriteGroupDetailPage", () => {
                 //         })
                 //     );
                 // });
-
-                unmount();
             },
         );
 
@@ -206,7 +200,6 @@ describe("favoriteGroupDetailPage", () => {
                 const {
                     container,
                     getByText,
-                    unmount,
                 } = render(
                     <FavoriteGroupPage />
                 );
@@ -245,8 +238,6 @@ describe("favoriteGroupDetailPage", () => {
                 }
 
                 await waitFor(() => expect(store.favorites.groups.length).toBe(2));
-
-                unmount();
             },
         );
     });

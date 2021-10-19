@@ -61,6 +61,7 @@ beforeAll(async () => {
 
 beforeEach(async () => {
     await setupAsync();
+    await waitFor(() => expect(store.auth.activeDocument).toBeTruthy());
 });
 
 afterEach(async () => {

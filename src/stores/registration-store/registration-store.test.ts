@@ -4,7 +4,7 @@ import path from "path";
 import { IRegistration, IUser } from "../../../common";
 
 import { waitFor } from "@testing-library/react";
-import { reaction, transaction } from "mobx";
+import { reaction } from "mobx";
 import { Store } from "../root-store";
 import { RulesTestEnvironment, initializeTestEnvironment } from "@firebase/rules-unit-testing";
 import { User } from "firebase/auth";
@@ -81,17 +81,15 @@ const setupAsync = async () => {
         ),
     ]);
 
-    transaction(() => {
-        store.auth.setUser({
-            uid: "user-1",
-            displayName: "user 1",
-            email: "email@email.com",
-        } as User);
-        store.view.setViewDate({
-            year: 2020,
-            month: 4,
-            day: 1,
-        });
+    store.auth.setUser({
+        uid: "user-1",
+        displayName: "user 1",
+        email: "email@email.com",
+    } as User);
+    store.view.setViewDate({
+        year: 2020,
+        month: 4,
+        day: 1,
     });
 
     await waitFor(() => expect(store.auth.activeDocument).toBeTruthy());

@@ -1,7 +1,7 @@
 import fs from "fs";
 import path from "path";
 import { waitFor } from "@testing-library/react";
-import { reaction, transaction } from "mobx";
+import { reaction } from "mobx";
 import { Store } from "../root-store";
 
 import { User } from "firebase/auth";
@@ -60,18 +60,18 @@ afterAll(() => testEnv.cleanup());
 describe("ReportStore", () => {
     let unsubscribe: () => void;
 
-    beforeEach(() => {
-        transaction(() => {
-            store.auth.setUser({
-                uid: "user-1",                
-            } as User);
-            store.view.setViewDate({
-                year: 2020,
-                month: 4,
-                day: 1,
-            });
+    beforeEach(async () => {
+        store.auth.setUser({
+            uid: "user-1",
+        } as User);
+        store.view.setViewDate({
+            year: 2020,
+            month: 4,
+            day: 1,
         });
-        unsubscribe = reaction(() => store.reports.report, () => { })
+        unsubscribe = reaction(() => store.reports.report, () => { });
+
+        await waitFor(() => expect(store.auth.activeDocument).toBeTruthy());
     });
 
     afterEach(() => unsubscribe());

@@ -93,6 +93,8 @@ const setupAsync = async () => {
             day: 1,
         });
     });
+
+    await waitFor(() => expect(store.auth.activeDocument).toBeTruthy());
 };
 
 let testEnv: RulesTestEnvironment;

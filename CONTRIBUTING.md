@@ -39,6 +39,19 @@ Once you have setup your firebase project, continue below.
 
 When your project was succesfully selected, it will be stored in the file called: *.firebasesrc*
 
+#### Add your firebase secrets to .env file
+
+Create a file `.env` in the root this project with the following content:
+
+```
+FIREBASE_API_KEY=xxxxxxxxxxxx-xxxxxxxxxxxxxxxxxxxx
+FIREBASE_AUTH_DOMAIN=xxxxxxxx.firebaseapp.com
+FIREBASE_PROJECT_ID=xxxxxxxxxxxx
+FIREBASE_STORAGE_BUCKET=xxxxxxxx.appspot.com
+```
+
+(The values for these secrets can be found on your firebase console)
+
 ### Installing
 
 Install dependencies
@@ -61,7 +74,7 @@ Start development server (open `http://localhost:5000/`)
 Before you can run tests, you must start the firestore emulator.
 
 ```shell
-npm run emulator
+npm run emulators
 ```
 Keep the emulator running in one terminal window while running tests in another terminal.
 
@@ -80,8 +93,8 @@ This will start the emulator, run the tests and finally also stop the firebase e
 
 A google cloud build trigger has been setup for CI/CD purposes for this repo.
 
-For pull requests, google cloud build will use `cloudbuild.build.yaml`.
+For pull requests, and commits on master branch, google cloud build will use `cloudbuild.build.yaml`.
 
-Commits on the `develop` branch will trigger a build using `cloudbuild.deploy.yaml` and deploy the project.
+Each time a release tag `v0.0` is pushed to the repository, a build will start using `cloudbuild.deploy.yaml` and deploy the project.
 
 See these files for information of the build steps.

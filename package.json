@@ -17,7 +17,8 @@
     "emulators": "firebase emulators:start --only \"hosting,firestore\"",
     "emulator:exec": "firebase emulators:exec --only firestore",
     "test:emulator": "firebase emulators:exec --only firestore jest",
-    "test:emulator:coverage": "firebase emulators:exec --only firestore \"jest --coverage\""
+    "test:emulator:coverage": "firebase emulators:exec --only firestore \"jest --coverage\"",
+    "version": "auto-changelog && git add CHANGELOG.md"
   },
   "repository": {
     "type": "git",
@@ -43,6 +44,7 @@
     "@types/react": "^16.8.23",
     "@types/react-dom": "^16.8.4",
     "@types/uuid": "^8.3.0",
+    "auto-changelog": "^2.3.0",
     "autoprefixer": "^9.4.2",
     "clean-webpack-plugin": "^3.0.0",
     "copy-webpack-plugin": "^5.1.1",

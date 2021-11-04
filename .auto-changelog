@@ -1,0 +1,6 @@
+{
+    "startingVersion": "v1.2.20",
+    "hideCredit": true,
+    "template": "keepachangelog",
+    "package": true
+}

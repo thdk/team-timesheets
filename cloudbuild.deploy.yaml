@@ -10,11 +10,14 @@ steps:
     args: ["run", "test:emulator"]
   - name: node:14
     entrypoint: npm
-    args: ["run", "build:production"]
+    args: ["run", "create-env"]
     env:
       - 'FIREBASE_API_KEY=${_FIREBASE_API_KEY}'
       - 'FIREBASE_AUTH_DOMAIN=${_FIREBASE_AUTH_DOMAIN}'
       - 'FIREBASE_PROJECT_ID=${_FIREBASE_PROJECT_ID}'
+  - name: node:14
+    entrypoint: npm
+    args: ["run", "build:production"]
   - name: node:14
     entrypoint: npm
     dir: "functions"

@@ -18,7 +18,8 @@
     "emulator:exec": "firebase emulators:exec --only firestore",
     "test:emulator": "firebase emulators:exec --only firestore jest",
     "test:emulator:coverage": "firebase emulators:exec --only firestore \"jest --coverage\"",
-    "version": "auto-changelog && git add CHANGELOG.md"
+    "version": "auto-changelog && git add CHANGELOG.md",
+    "create-env": "printenv > .env"
   },
   "repository": {
     "type": "git",

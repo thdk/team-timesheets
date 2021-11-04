@@ -5,7 +5,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [v2.0.0](https://github.com/thdk/team-timesheets/compare/v2.0.0...v2.0.0)
+## [v2.0.1](https://github.com/thdk/team-timesheets/compare/v2.0.0...v2.0.1)
+
+### Commits
+
+- chore: configure auto-changelog [`cbe65de`](https://github.com/thdk/team-timesheets/commit/cbe65de6bd4b1c026bd04834b545fa58e1394883)
+- ci: create .env file with container env variables [`261368a`](https://github.com/thdk/team-timesheets/commit/261368aa621ac8046c8328e920db5cbbe42336ef)
 
 ## [v2.0.0](https://github.com/thdk/team-timesheets/compare/v1.4.0...v2.0.0) - 2021-11-04
 

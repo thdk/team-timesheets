@@ -102,7 +102,7 @@
     "copy-text-to-clipboard": "^2.2.0",
     "crypto-random-string": "^3.3.0",
     "firebase": "^9.1.2",
-    "firestorable": "^2.1.1",
+    "firestorable": "^2.2.0",
     "md5": "^2.3.0",
     "mobx": "^6.3.3",
     "mobx-react-lite": "^3.2.1",

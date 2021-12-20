@@ -20,8 +20,12 @@ export interface IViewAction<T = any> {
   readonly isActive?: boolean | (() => boolean);
   readonly action: (selection?: Map<string, T>) => void;
   readonly shortKey?: IShortKey;
+
   readonly contextual?: boolean;
+
   readonly selection?: ObservableMap<string, any>;
+  readonly selectionLimit?: number;
+  readonly condition?: (keys: string[]) => boolean;
 }
 
 interface IIconData {
@@ -42,7 +46,7 @@ export interface INavigationViewAction extends IViewAction {
 export interface IViewStore extends ViewStore { };
 
 export class ViewStore implements IViewStore {
-  readonly actions = observable<IViewAction>([]);
+  private readonly _actions = observable<IViewAction>([]);
   readonly selection = observable(new Map<string, true>());
   readonly fabs = observable<IFab>([]);
   readonly rootStore: IRootStore;
@@ -72,6 +76,7 @@ export class ViewStore implements IViewStore {
       moment: computed,
       monthMoment: computed,
       setActions: action,
+      actions: computed,
       setFabs: action,
       removeAction: action,
       toggleSelection: action
@@ -118,19 +123,22 @@ export class ViewStore implements IViewStore {
 
       const action = filterByShortKey([...this.fabs, ...this.actions]);
 
-      if (action) {
-        if (isActionWithSelection(action)) {
-          if (action.selection && action.selection.size) {
-            ev.preventDefault();
-            ev.stopPropagation();
-            action.action(action.selection);
-          }
-        }
-        else {
+      if (!action) {
+        return;
+      }
+
+
+      if (isActionWithSelection(action)) {
+        if (0 < action.selection.size && action.selection.size <= (action.selectionLimit ?? Infinity)) {
           ev.preventDefault();
           ev.stopPropagation();
-          action.action();
+          action.action(action.selection);
         }
+      }
+      else {
+        ev.preventDefault();
+        ev.stopPropagation();
+        action.action();
       }
     }
 
@@ -139,6 +147,19 @@ export class ViewStore implements IViewStore {
     this.disposables.push(
       () => document.removeEventListener("keydown", onKeyDown),
     );
+  }
+
+  public get actions() {
+    const contextual = !!Array.from(this.selection.keys()).length;
+
+    const actions = this._actions.filter(a => (
+      !!a.contextual === contextual
+    ) && (
+        (a.selection ?? this.selection).size <= (a.selectionLimit || Infinity)
+      )
+    );
+
+     return actions;
   }
 
   public setViewDate(
@@ -193,7 +214,7 @@ export class ViewStore implements IViewStore {
   }
 
   setActions(actions: IViewAction[]) {
-    this.actions.replace(actions);
+    this._actions.replace(actions);
   }
 
   setFabs(fabs: IFab[]) {
@@ -201,7 +222,7 @@ export class ViewStore implements IViewStore {
   }
 
   removeAction(action: IViewAction) {
-    this.actions.remove(action);
+    this._actions.remove(action);
   }
 
   toggleSelection(id: string) {
@@ -214,7 +235,7 @@ export class ViewStore implements IViewStore {
     this.disposables.reverse().forEach(d => d());
     transaction(() => {
       this.selection.clear();
-      this.actions.clear();
+      this._actions.clear();
       this.fabs.clear();
     });
   }

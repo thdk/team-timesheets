@@ -7,9 +7,5 @@ import { useViewStore } from "../../../contexts/view-context";
 export const TopBarActions = observer(() => {
     const view = useViewStore();
 
-    const contextual = !!Array.from(view.selection.keys()).length;
-
-    const actions = view.actions.filter(a => !!a.contextual === contextual);
-
-    return <PureTopBarActions actions={actions} />;
+    return <PureTopBarActions actions={view.actions} />;
 });

@@ -11,4 +11,9 @@ module.exports = {
     },
     testEnvironment: "<rootDir>/src/__test-utils__/custom-jest-environment.js",
     setupFiles: ['<rootDir>/src/__test-utils__/setup.js'],
+    globals: {
+        'ts-jest': {
+            isolatedModules: true
+        }
+    }
 }

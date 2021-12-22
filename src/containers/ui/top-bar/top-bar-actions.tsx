@@ -33,7 +33,7 @@ export const TopBarActions = ({
                                 onClick={() => onClick(a)}
                             />
                         )
-                    : <div key={i}></div>;
+                    : <div key={i} />;
             })}
     </>;
 };

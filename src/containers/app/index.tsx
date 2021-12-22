@@ -20,7 +20,7 @@ export const App = observer(
         const store = useStore();
 
         // Wait for user initialization
-        if (!store.auth.isAuthInitialised) return <></>;
+        if (!store.auth.isAuthInitialised) return null;
 
         return (
             <div className="body-wrapper">
@@ -31,7 +31,7 @@ export const App = observer(
                     <main className="main-content" id="main-content">
                         <div style={{ paddingBottom: "100px" }}>
                             {props.children}
-                            <Fabs></Fabs>
+                            <Fabs />
                         </div>
                     </main>
                 </DrawerAppContent>

@@ -6,14 +6,16 @@ import { useStore } from "../../contexts/store-context";
 
 
 import { Store } from "../../stores/root-store";
-import { render, waitFor, fireEvent } from "@testing-library/react";
+import { render, waitFor, fireEvent, screen } from "@testing-library/react";
 import { FavoriteGroupPage } from "./favorite-group-detail-page";
 import { useRouterStore } from "../../stores/router-store";
 import routes from "../../routes/favorites/detail";
 import userEvent from "@testing-library/user-event";
 import { RulesTestEnvironment, initializeTestEnvironment } from "@firebase/rules-unit-testing";
 import { User } from "firebase/auth";
+import { App, goToFavorites } from "../../internal";
 
+jest.mock("../../routes/favorites/list.tsx");
 jest.mock("../../contexts/store-context");
 jest.mock("../../stores/router-store", () => ({
     useRouterStore: jest.fn(),
@@ -109,11 +111,17 @@ beforeEach(async () => {
 
 afterEach(async () => {
     store.dispose();
+    jest.clearAllMocks();
     await testEnv.clearFirestore();
 });
 
 afterAll(() => testEnv.cleanup());
 describe("favoriteGroupDetailPage", () => {
+    const goToFavoritesMock = jest.fn();
+
+    beforeEach(() => {
+        (goToFavorites as jest.Mock<ReturnType<typeof goToFavorites>>).mockImplementationOnce(goToFavoritesMock);
+    })
 
     describe("when an favorite group id is requested from the url", () => {
         it(
@@ -145,6 +153,7 @@ describe("favoriteGroupDetailPage", () => {
             "should allow to edit the favorite group name",
             async () => {
                 (useRouterStore as jest.Mock<Partial<ReturnType<typeof useRouterStore>>>).mockReturnValue({
+                    ...jest.requireActual("../../stores/router-store").useRouterStore(),
                     params: {
                         id: favoriteGroupIds[1],
                     },
@@ -154,7 +163,9 @@ describe("favoriteGroupDetailPage", () => {
                 const {
                     container,
                 } = render(
-                    <FavoriteGroupPage />
+                    <App>
+                        <FavoriteGroupPage />
+                    </App>
                 );
 
                 let nameInputEl;
@@ -167,23 +178,11 @@ describe("favoriteGroupDetailPage", () => {
                 if (nameInputEl)
                     await userEvent.type(nameInputEl, "fav 3");
 
-                await store.favorites.saveFavoriteGroup();
+                screen.getByText("save").click();
 
                 await waitFor(() => {
-                    expect(store.favorites.activeDocument).toBeDefined();
-                    nameInputEl = container.querySelector("input[value='fav 2fav 3']");
-                    expect(nameInputEl).not.toBeNull();
+                    expect(goToFavoritesMock).toHaveBeenCalled();
                 });
-
-                // await waitFor(() => {
-                //     expect(store.favorites.collection.getAsync(favoriteGroupIds[1])).resolves.toEqual(
-                //         expect.objectContaining({
-                //             data: expect.objectContaining({
-                //                 name: "fav 2fav 3"
-                //             })
-                //         })
-                //     );
-                // });
             },
         );
 
@@ -191,19 +190,29 @@ describe("favoriteGroupDetailPage", () => {
             "should allow to overwrite an existing favorite group",
             async () => {
                 (useRouterStore as jest.Mock<Partial<ReturnType<typeof useRouterStore>>>).mockReturnValue({
+                    ...jest.requireActual("../../stores/router-store").useRouterStore(),
                     params: {
                         id: favoriteGroupIds[0],
                     },
                     currentRoute: routes.favoriteDetail,
+                    
                 });
 
                 const {
                     container,
                     getByText,
                 } = render(
-                    <FavoriteGroupPage />
+                    <App>
+                        <FavoriteGroupPage />
+                    </App>
                 );
 
+                await waitFor(() => {
+                    expect(store.favorites.activeDocumentId).toBeTruthy();
+                });
+                await waitFor(() => {
+                    expect(store.favorites.activeDocument).toBeTruthy();
+                })
                 await waitFor(() => {
                     const nameInputEl = container.querySelector("input[value='fav 1']");
                     expect(nameInputEl).not.toBeNull();
@@ -232,12 +241,14 @@ describe("favoriteGroupDetailPage", () => {
                     });
                 }
 
-                await waitFor(() => expect(store.favorites.activeDocument).toBeTruthy());
-                if (store.favorites.activeDocument) {
-                    await store.favorites.saveFavoriteGroup();
-                }
+                await waitFor(() => expect(store.favorites.setActiveDocumentId).toBeTruthy());
+                screen.getByText("save").click();
 
                 await waitFor(() => expect(store.favorites.groups.length).toBe(2));
+
+                await waitFor(() => {
+                    expect(goToFavoritesMock).toHaveBeenCalled();
+                })
             },
         );
     });

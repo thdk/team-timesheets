@@ -4,12 +4,13 @@ import { FavoriteGroupDetailForm } from "../../containers/favorite-groups/detail
 
 import { FavoritesList } from "../../containers/favorites/list";
 import { IViewAction } from "../../stores/view-store";
-import { goToFavorites, setTitleForRoute } from "../../internal";
+import { goToFavorites } from "../../routes/favorites/list";
 import { useFavoriteGroupStore } from "../../contexts/favorite-context";
 import { useRouterStore } from "../../stores/router-store";
 import { useViewStore } from "../../contexts/view-context";
 import { transaction } from "mobx";
 import { observer } from "mobx-react-lite";
+import { setTitleForRoute } from "../../internal";
 
 export const FavoriteGroupPage = observer(
     () => {
@@ -52,8 +53,8 @@ export const FavoriteGroupPage = observer(
                 }
 
                 const saveAction: IViewAction = {
-                    action: () => {
-                        favoriteStore.saveFavoriteGroup();
+                    action: async () => {
+                        await favoriteStore.saveFavoriteGroup();
                         goToFavorites(routerStore);
                     },
                     icon: { label: "Save", content: "save" },
@@ -67,8 +68,8 @@ export const FavoriteGroupPage = observer(
                     ]);
 
                     viewStore.setNavigation({
-                        action: () => {
-                            favoriteStore.saveFavoriteGroup();
+                        action: async () => {
+                            await favoriteStore.saveFavoriteGroup();
                             goToFavorites(routerStore);
                         },
                         icon: { label: "Back", content: "arrow_back" }

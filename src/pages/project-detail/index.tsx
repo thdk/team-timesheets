@@ -8,7 +8,7 @@ import { IRootStore } from "../../stores/root-store";
 import { IProject } from "../../../common";
 import { goToProjects, setTitleForRoute } from "../../internal";
 import { transaction } from "mobx";
-import routes from "../../routes/projects/detail";
+import { projectDetailRoute } from "../../routes/projects";
 import { limit, where } from "firebase/firestore";
 import { IViewAction } from "../../stores/view-store";
 import { useStore } from "../../contexts/store-context";
@@ -68,25 +68,24 @@ function setHeaderActions(s: IRootStore) {
         transaction(() => {
             s.view.setActions([
                 saveAction,
-            ]);
-
-
-            s.view.setNavigation({
-                action: () => {
-                    save();
-                    goToProjects(s.router);
-                },
-                icon: { label: "Back", content: "arrow_back" }
-            });
-
-            setTitleForRoute(
-                s,
-                s.projects.activeDocumentId
-                    ? routes.projectDetail
-                    : routes.newProject
-            );
+            ]);            
         });
     }
+
+    s.view.setNavigation({
+        action: () => {
+            save();
+            goToProjects(s.router);
+        },
+        icon: { label: "Back", content: "arrow_back" }
+    });
+
+    setTitleForRoute(
+        s,
+        s.projects.activeDocumentId
+            ? projectDetailRoute.projectDetail
+            : projectDetailRoute.newProject
+    );
 }
 
 const ProjectDetailPage = observer(() => {

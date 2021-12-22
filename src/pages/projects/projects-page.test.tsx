@@ -8,8 +8,19 @@ import { initializeTestEnvironment, RulesTestEnvironment, } from "@firebase/rule
 import { IRootStore, Store } from "../../stores/root-store";
 import { useStore } from "../../contexts/store-context";
 import { User } from "firebase/auth";
+import { App, goToNewProject, goToProjects } from "../../internal";
+import { useRegistrationStore } from "../../contexts/registration-context";
+import { IRegistration } from "../../../common";
+import { IRegistrationsStore } from "../../stores/registration-store";
+import { useProjectStore } from "../../stores/project-store";
+import { useRouterStore } from "../../stores/router-store";
 
 jest.mock("../../contexts/store-context");
+jest.mock("../../contexts/registration-context");
+jest.mock('../../routes/projects/list');
+jest.mock('../../stores/project-store');
+jest.mock("../../stores/router-store");
+jest.mock("../..//routes/projects/detail");
 
 let testEnv: RulesTestEnvironment;
 
@@ -48,24 +59,34 @@ beforeEach(async () => {
 
 afterEach(async () => {
     store.dispose();
-    //jest.clearAllMocks();
+    jest.clearAllMocks();
     await testEnv.unauthenticatedContext();
 });
 
 afterAll(() => testEnv.cleanup());
 
-
 jest.mock('../../containers/projects/list', () => ({
-    ArchivedProjectList: () => <>Archived projects list</>,
-    ActiveProjectList: () => <>Active projects list</>,
+    ArchivedProjectList: () => (
+        <>Archived projects list</>
+    ),
+    ActiveProjectList: () => (
+        <>Active projects list</>
+    ),
 }));
 
 
 describe("ProjectsPage", () => {
+    const goToProjectsMock = jest.fn();
+    beforeAll(() => {
+        (goToProjects as jest.Mock<typeof goToProjects>).mockImplementation(goToProjectsMock);
+    })
+
     it("should show tabs for active and archived projects", async () => {
         await waitFor(() => !!store.user.authenticatedUser);
         render(
-            <ProjectsPage />
+            <App>
+                <ProjectsPage />
+            </App>
         );
 
         await waitFor(() => {
@@ -78,7 +99,9 @@ describe("ProjectsPage", () => {
     it("should show active projects by default", async () => {
         await waitFor(() => !!store.user.authenticatedUser);
         render(
-            <ProjectsPage />
+            <App>
+                <ProjectsPage />
+            </App>
         );
 
         await waitFor(() => {
@@ -88,10 +111,12 @@ describe("ProjectsPage", () => {
         expect(screen.queryByText("Archived projects list")).toBeNull();
     });
 
-    it("should show the content for selected tab", async () => {
+    it("should redirect to update ui when archived tab is clicked", async () => {
         await waitFor(() => !!store.user.authenticatedUser);
         render(
-            <ProjectsPage />
+            <App>
+                <ProjectsPage />
+            </App>
         );
 
         await waitFor(() => {
@@ -100,9 +125,11 @@ describe("ProjectsPage", () => {
 
         screen.getByText("Archived projects").click();
 
-        await waitFor(() => {
-            screen.getByText("Archived projects list");
-        });
+        expect(goToProjectsMock).toHaveBeenCalledWith(
+            expect.anything(),
+            "archived",
+            expect.anything(),
+        );
     });
 
     it("should toggle actions when projects are selected and deselected", async () => {
@@ -110,22 +137,164 @@ describe("ProjectsPage", () => {
 
         expect(store.view.actions.length).toBe(0);
         render(
-            <ProjectsPage />
+            <App>
+                <ProjectsPage />
+            </App>
         );
-
-        expect(store.view.actions.length).toBe(0);
 
         store.view.toggleSelection("project-id-1");
 
         await waitFor(() => {
-            expect(store.view.actions.length).toBe(2);
-        });
+            screen.getByText("delete");
+            screen.getByText("archive");
+        })
 
         store.view.toggleSelection("project-id-1");
-
 
         await waitFor(() => {
             expect(store.view.actions.length).toBe(0);
         });
+    });
+
+    it("should not allow to delete used projects", async () => {
+        const queryAsync = jest.fn().mockResolvedValue([
+            1,
+            2,
+        ] as unknown as IRegistration[]);
+
+        (useRegistrationStore as jest.Mock<ReturnType<typeof useRegistrationStore>>).mockReturnValue({
+            collection: {
+                queryAsync,
+            },
+            registrationsGroupedByDay: [],
+        } as unknown as IRegistrationsStore);
+
+        const deleteProjects = jest.fn();
+        (useProjectStore as jest.Mock<ReturnType<typeof useProjectStore>>).mockReturnValue(({
+            deleteProjects,
+        } as any))
+
+        await waitFor(() => !!store.user.authenticatedUser);
+
+        render(
+            <App>
+                <ProjectsPage />
+            </App>
+        );
+
+        store.view.toggleSelection("project-id-1");
+
+        const deleteIcon = await screen.findByText("delete");
+        deleteIcon.click();
+
+        await waitFor(() => {
+            expect(queryAsync).toHaveBeenCalled();
+        });
+
+
+        expect(deleteProjects).not.toHaveBeenCalled();
+    });
+
+    it("should allow to delete unused projects", async () => {
+        const queryAsync = jest.fn().mockResolvedValue([] as IRegistration[]);
+
+        (useRegistrationStore as jest.Mock<ReturnType<typeof useRegistrationStore>>).mockReturnValue({
+            collection: {
+                queryAsync,
+            },
+            registrationsGroupedByDay: [],
+        } as unknown as IRegistrationsStore);
+
+        const deleteProjects = jest.fn();
+        (useProjectStore as jest.Mock<ReturnType<typeof useProjectStore>>).mockReturnValue(({
+            deleteProjects,
+        } as any))
+
+        await waitFor(() => !!store.user.authenticatedUser);
+
+        expect(store.view.actions.length).toBe(0);
+        render(
+            <App>
+                <ProjectsPage />
+            </App>
+        );
+
+        store.view.toggleSelection("project-id-1");
+
+        const deleteIcon = await screen.findByText("delete");
+        deleteIcon.click();
+
+        await waitFor(() => {
+            expect(queryAsync).toHaveBeenCalled();
+        });
+
+        expect(deleteProjects).toHaveBeenCalled();
+    });
+
+    it("should allow to archive projects", async () => {
+        const archiveProjects = jest.fn();
+        (useProjectStore as jest.Mock<ReturnType<typeof useProjectStore>>).mockReturnValue(({
+            archiveProjects,
+        } as any))
+
+        await waitFor(() => !!store.user.authenticatedUser);
+
+        render(
+            <App>
+                <ProjectsPage />
+            </App>
+        );
+
+        store.view.toggleSelection("project-id-1");
+
+        const archiveIcon = await screen.findByText("archive");
+        archiveIcon.click();
+
+        expect(archiveProjects).toHaveBeenCalled();
+    });
+
+    it("should allow to unarchive projects", async () => {
+        const unarchiveProjects = jest.fn();
+        (useProjectStore as jest.Mock<ReturnType<typeof useProjectStore>>).mockReturnValue(({
+            unarchiveProjects,
+        } as any));
+
+        (useRouterStore as jest.Mock<Partial<ReturnType<typeof useRouterStore>>>).mockReturnValue({
+            queryParams: {
+                tab: "archived",
+            },
+            
+        });
+
+        await waitFor(() => !!store.user.authenticatedUser);
+
+        render(
+            <App>
+                <ProjectsPage />
+            </App>
+        );
+
+        store.view.toggleSelection("project-id-1");
+
+        const archiveIcon = await screen.findByText("unarchive");
+        archiveIcon.click();
+
+        expect(unarchiveProjects).toHaveBeenCalled();
+    });
+
+    it("should show a fab to create a new project", async () => {
+
+        await waitFor(() => !!store.user.authenticatedUser);
+
+        render(
+            <App>
+                <ProjectsPage />
+            </App>
+        );
+
+        const fab = await screen.findByText("New project");
+        fab.click();
+
+        expect(goToNewProject).toHaveBeenCalled();
     });
 });

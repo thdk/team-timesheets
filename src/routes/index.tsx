@@ -6,7 +6,7 @@ import timesheetsRoutes from './registrations';
 import settingsRoutes from './settings';
 import reportRoutes from './reports';
 import userRoutes from './users';
-import projectRoutes from './projects';
+import * as projectRoutes from './projects';
 import taskRoutes from './tasks';
 import dashboardRoutes from './dashboard';
 import loginRoutes from './login';
@@ -32,7 +32,8 @@ export const routes = {
   ...settingsRoutes,
   ...reportRoutes,
   ...userRoutes,
-  ...projectRoutes,
+  ...projectRoutes.projectDetailRoute,
+  ...projectRoutes.projectListRoute,
   ...dashboardRoutes,
   ...favoriteRoutes,
   ...divisionRoutes,

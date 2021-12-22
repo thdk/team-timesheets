@@ -2,14 +2,13 @@ import * as React from 'react'
 import { observer } from 'mobx-react-lite';
 import { Tab, TabBar } from "@rmwc/tabs";
 
-import { ProjectsTab, goToProjects, ProjectRouteQueryParams } from '../../routes/projects/list';
 import { ActiveProjectList, ArchivedProjectList } from '../../containers/projects/list';
 import { useRouterStore } from '../../stores/router-store';
 import { where, limit } from 'firebase/firestore';
 import { transaction } from 'mobx';
 import { IRootStore } from '../../stores/root-store';
 import { IViewAction } from '../../stores/view-store';
-import routes from '../../routes/projects/detail';
+import { goToNewProject, goToProjects, ProjectRouteQueryParams, ProjectsTab} from '../../internal';
 import { useEffect } from 'react';
 import { useProjectStore } from '../../stores/project-store';
 import { useRegistrationStore } from '../../contexts/registration-context';
@@ -140,7 +139,7 @@ export const ProjectsPage = observer(() => {
                     );
                     viewStore.setFabs([{
                         action: () => {
-                            router.goTo(routes.newProject, {});
+                            goToNewProject(router);
                         },
                         icon: {
                             content: "add",

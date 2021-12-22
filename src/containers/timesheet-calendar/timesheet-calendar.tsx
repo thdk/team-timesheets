@@ -39,7 +39,6 @@ export const TimesheetCalendar = withAuthorisation(
         }
 
         return <Calendar
-            key={timesheets.registrationsGroupedByDay.toString()}
             tileClassName={getTileClassName}
             value={view.moment.toDate()}
             onChange={dateChanged} />;

@@ -7,7 +7,7 @@ import { IRootStore } from "../../stores/root-store";
 import { ProjectsPage } from "../../pages/projects";
 
 export const goToProjects = (router: RouterStore<IRootStore>, tab: ProjectsTab = "active") => {
-    router.goTo(routes.projects, {}, { tab });
+    router.goTo(projectListRoute.projects, {}, { tab });
 }
 
 export type ProjectsTab = "active" | "archived";
@@ -18,10 +18,10 @@ const path = '/projects'
 export type ProjectRouteQueryParams = { tab: ProjectsTab };
 type ProjectRoute = Route<IRootStore, {}, ProjectRouteQueryParams>;
 
-const routes = {
+export const projectListRoute = {
     projects: new Route({
         path,
-        component: <App><ProjectsPage></ProjectsPage></App>,
+        component: <App><ProjectsPage /></App>,
         onEnter: (route: ProjectRoute, _params, s: IRootStore) => {
             // setActions(queryParams.tab, s);
             setNavigationContent(s, route, false);
@@ -44,5 +44,3 @@ const routes = {
         }
     })
 };
-
-export default routes;

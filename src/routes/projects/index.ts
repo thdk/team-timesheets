@@ -1,4 +1,2 @@
-import projectlist from './list';
-import projectDetail from './detail';
-
-export default { ...projectlist, ...projectDetail };
+export * from './list';
+export * from './detail';

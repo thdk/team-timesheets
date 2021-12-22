@@ -1,5 +1,5 @@
 import { transaction } from 'mobx';
-import { Route } from 'mobx-router';
+import { Route, RouterStore } from 'mobx-router';
 import * as React from 'react';
 
 import { IRootStore } from '../../stores/root-store';
@@ -22,14 +22,14 @@ export const GoToProject = ({
     const router = useRouterStore();
 
     useEffect(() => {
-        router.goTo(id ? routes.projectDetail : routes.newProject, { id });
+        router.goTo(id ? projectDetailRoute.projectDetail : projectDetailRoute.newProject, { id });
     }, []);
 
     return <></>;
 };
 
-export const goToNewProject = (store: IRootStore) => {
-    store.router.goTo(routes.newProject, { id: undefined });
+export const goToNewProject = (router: RouterStore<IRootStore>) => {
+    router.goTo(projectDetailRoute.newProject, { id: undefined });
 };
 
 const beforeEnter = (_route: ProjectDetailRoute, params: Params, s: IRootStore) => {
@@ -50,7 +50,7 @@ const beforeExit = (_route: ProjectDetailRoute, _params: Params, s: IRootStore) 
     });
 };
 
-const routes = {
+export const projectDetailRoute = {
     newProject: new Route({
         path,
         component: <App><ProjectDetailPage/></App>,
@@ -66,6 +66,4 @@ const routes = {
         beforeEnter,
     })
 };
-
-export default routes;
 

@@ -5,7 +5,18 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [v2.0.2](https://github.com/thdk/team-timesheets/compare/v2.0.1...v2.0.2)
+## [v2.1.0](https://github.com/thdk/team-timesheets/compare/v2.0.2...v2.1.0)
+
+### Fixed
+
+- feat: prevent deletion of used projects [`#78`](https://github.com/thdk/team-timesheets/issues/78)
+
+### Commits
+
+- test: add tests for projects page [`07e8a37`](https://github.com/thdk/team-timesheets/commit/07e8a37a93fd65e4bfe2d14853dc01896158674a)
+- test: fix warning in favorite detail tests [`12cc6ae`](https://github.com/thdk/team-timesheets/commit/12cc6aef1bec739af2c3b93808c24793bd95a589)
+
+## [v2.0.2](https://github.com/thdk/team-timesheets/compare/v2.0.1...v2.0.2) - 2021-11-04
 
 ### Commits
 

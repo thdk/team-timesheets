@@ -14,7 +14,6 @@ import { events } from "./google-calendar/events.test";
 import { RegistrationSuggestions } from ".";
 import { createQueryClientWrapper } from "../../__test-utils__/query-client-provider";
 import { Octokit } from "@octokit/rest";
-import { useUserStore } from "../../contexts/user-context/__mocks__";
 
 jest.mock("../../contexts/store-context");
 jest.mock("../../hooks/use-gapi");

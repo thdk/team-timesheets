@@ -120,7 +120,10 @@ export const convertUser = (appData: Partial<IUser> | null) => {
             divisionId: appData.divisionId || "",
             divisionUserId: appData.divisionUserId || deleteField(),
             deleted: false,
-            numberOfRecentProjects: appData.numberOfRecentProjects
+            numberOfRecentProjects: appData.numberOfRecentProjects,
+            githubRepos: appData.githubRepos || [],
+            githubUsername: appData.githubUsername,
+            githubToken: appData.githubToken,
         }
 
         // Todo: automatically remove undefined values for all keys
@@ -134,6 +137,9 @@ export const convertUser = (appData: Partial<IUser> | null) => {
         if (user.team === undefined) delete user.team;
         if (!user.email) delete user.email;
         if (user.numberOfRecentProjects === undefined) delete user.numberOfRecentProjects;
+        if (user.githubRepos === undefined) delete user.githubRepos;
+        if (user.githubUsername === undefined) delete user.githubUsername;
+        if (user.githubToken === undefined) delete user.githubToken;
     }
 
     return user as IUserData;

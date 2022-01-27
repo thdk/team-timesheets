@@ -52,6 +52,9 @@ export const convertUser = (firestoreData: IUserData) => {
         team: firestoreData.team || undefined,
         created: firestoreData.created ? firestoreData.created.toDate() : undefined,
         numberOfRecentProjects: firestoreData.numberOfRecentProjects || 5,
+        githubRepos: firestoreData.githubRepos || [],
+        githubUsername: firestoreData.githubUsername,
+        githubToken: firestoreData.githubToken,
     };
 
     return user;

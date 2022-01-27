@@ -12,8 +12,7 @@ import { useStore } from "../../../contexts/store-context";
 import { initializeTestEnvironment, RulesTestEnvironment, } from "@firebase/rules-unit-testing";
 import { act } from "react-dom/test-utils";
 import { User } from "firebase/auth";
-
-jest.mock("../../google-calendar");
+import { createQueryClientWrapper } from "../../../__test-utils__/query-client-provider";
 
 jest.mock("../../../rules");
 jest.mock("../../../routes/registrations/detail");
@@ -39,6 +38,7 @@ const setupAsync = async () => {
             divisionId: "",
             recentProjects: [],
             tasks: new Map(),
+            githubRepos: [],
         },
         "user-1",
     );
@@ -133,10 +133,15 @@ const registrations = [
 
 describe("TimesheetDays", () => {
     it("should render without registrations", () => {
-        const { asFragment, unmount } = render(<TimesheetDays
-            isMonthView={false}
-            registrationClick={jest.fn()}
-        />);
+        const { asFragment, unmount } = render(
+            <TimesheetDays
+                isMonthView={false}
+                registrationClick={jest.fn()}
+            />,
+            {
+                wrapper: createQueryClientWrapper()
+            }
+        );
 
         expect(asFragment()).toMatchSnapshot();
 
@@ -206,7 +211,12 @@ describe("TimesheetDays", () => {
             getByText,
             container,
             unmount,
-        } = render(<Timesheet />);
+        } = render(
+            <Timesheet />,
+            {
+                wrapper: createQueryClientWrapper()
+            }
+        );
 
         await waitFor(() => expect(getByText("Foobar 5")));
 
@@ -240,7 +250,11 @@ describe("TimesheetDays", () => {
             getByText,
             container,
             unmount,
-        } = render(<Timesheet />);
+        } = render(<Timesheet />,
+            {
+                wrapper: createQueryClientWrapper()
+            }
+        );
 
         await waitFor(() => expect(getByText("Foobar 5")));
 

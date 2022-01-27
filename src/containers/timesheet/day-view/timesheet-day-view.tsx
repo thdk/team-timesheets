@@ -5,8 +5,8 @@ import { useViewStore } from "../../../contexts/view-context";
 import { FlexGroup } from "../../../components/layout/flex";
 import { Day } from "../day";
 import { useRegistrationStore } from "../../../contexts/registration-context";
-import { GoogleCalendarEvents } from "../../google-calendar";
 import { observer } from "mobx-react-lite";
+import { RegistrationSuggestions } from "../../registration-suggestions";
 
 export const TimesheetDayView = observer(({
     registrationClick,
@@ -54,11 +54,11 @@ export const TimesheetDayView = observer(({
                 />
             </FlexGroup>
             <FlexGroup direction="vertical">
-                <GoogleCalendarEvents
+                <RegistrationSuggestions
                     excludedIds={group.registrations
                         .reduce((p, c) => {
-                            if (c.data!.source === "google-calendar") {
-                                p.push(c.data!.sourceId!)
+                            if (c.data?.sourceId) {
+                                p.push(c.data.sourceId)
                             }
                             return p;
                         }, [] as string[])

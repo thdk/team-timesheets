@@ -34,6 +34,7 @@ const setupAsync = async () => {
         },
         tasks: new Map(),
         uid: userId,
+        githubRepos: [],
     }, userId);
 
     taskIds = await Promise.all([

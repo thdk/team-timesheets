@@ -12,6 +12,7 @@ import { Router } from "../../containers/router";
 import { IViewAction } from "../../stores/view-store";
 import { User } from "firebase/auth";
 import { collection, doc, getDoc } from "firebase/firestore";
+import { createQueryClientWrapper } from "../../__test-utils__/query-client-provider";
 
 jest.mock("../../contexts/store-context");
 
@@ -36,6 +37,7 @@ const setupAsync = async () => {
                 divisionId: "",
                 recentProjects: [],
                 tasks: new Map(),
+                githubRepos: [],
             },
             "user-1",
         ),
@@ -93,7 +95,10 @@ describe("TaskDetailPage", () => {
         const {
             unmount,
         } = render(
-            <TaskDetailPage />
+            <TaskDetailPage />,
+            {
+                wrapper: createQueryClientWrapper()
+            }
         );
 
         await waitFor(() => expect(store.view.actions.length).toBe(2));
@@ -114,7 +119,10 @@ describe("TaskDetailPage", () => {
             container,
             unmount,
         } = render(
-            <Router />
+            <Router />,
+            {
+                wrapper: createQueryClientWrapper()
+            }
         );
 
         await waitFor(() => expect(container.querySelector("input[value='Task 1']")).toBeDefined());

@@ -37,6 +37,7 @@ describe("FavoriteStore", () => {
                     divisionId: "",
                     recentProjects: [],
                     tasks: new Map(),
+                    githubRepos: [],
                 },
                 "user-1",
             ),
@@ -65,7 +66,8 @@ describe("FavoriteStore", () => {
                 tasks: new Map<string, true>(),
                 recentProjects: [] as string[],
                 uid: "user-1",
-                roles: {}
+                roles: {},
+                githubRepos: [],
             }
         );
 
@@ -76,7 +78,8 @@ describe("FavoriteStore", () => {
                 tasks: new Map<string, true>(),
                 recentProjects: [] as string[],
                 uid: "user-1",
-                roles: {}
+                roles: {},
+                githubRepos: [],
             },
         );
 

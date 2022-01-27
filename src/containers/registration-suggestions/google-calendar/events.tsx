@@ -1,8 +1,7 @@
 import React from "react"
 import { FormattedTime } from "react-intl";
-import { ListDivider } from "@rmwc/list";
 
-import { DataRow, DataRowColumn, DataRowLine1, DataRowLine2 } from "../../components/data-row";
+import { DataRow, DataRowColumn, DataRowLine1, DataRowLine2 } from "../../../components/data-row";
 
 import "./events.scss";
 import { Icon } from "@rmwc/icon";
@@ -19,8 +18,7 @@ export const GoogleCalendarEvents = ({
     }
 
     return (
-        <div>
-            <ListDivider />
+        <>            
             {events.map((event) => {
                 return (
                     <DataRow
@@ -59,7 +57,6 @@ export const GoogleCalendarEvents = ({
                     </DataRow>
                 );
             })}
-            <ListDivider />
-        </div>
+        </>
     );
 };

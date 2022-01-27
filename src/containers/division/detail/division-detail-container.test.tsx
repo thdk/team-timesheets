@@ -44,6 +44,7 @@ beforeEach(async () => {
             recentProjects: [],
             tasks: new Map(),
             uid: "user-1",
+            githubRepos: [],
         },
         "user-1",
     );

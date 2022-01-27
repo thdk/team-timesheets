@@ -26,6 +26,7 @@ import { FirebaseProvider } from './contexts/firebase-context/firebase-context';
 import { Router } from './containers/router';
 import { ThemeProvider } from "@rmwc/theme";
 import { IntlProvider } from 'react-intl';
+import { QueryClient, QueryClientProvider } from 'react-query';
 
 import { configure } from "mobx"
 
@@ -36,6 +37,9 @@ configure({
     observableRequiresReaction: false,
     disableErrorBoundaries: false
 })
+
+
+const queryClient = new QueryClient()
 
 render(
     <IntlProvider
@@ -49,11 +53,13 @@ render(
                 onSecondary: '#ffffff'
             }}
         >
-            <FirebaseProvider>
-                <StoreProvider>
-                    <Router />
-                </StoreProvider>
-            </FirebaseProvider>
+            <QueryClientProvider client={queryClient}>
+                <FirebaseProvider>
+                    <StoreProvider>
+                        <Router />
+                    </StoreProvider>
+                </FirebaseProvider>
+            </QueryClientProvider>
         </ThemeProvider>
     </IntlProvider>,
     document.getElementById("root")

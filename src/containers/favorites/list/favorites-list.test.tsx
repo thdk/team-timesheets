@@ -96,6 +96,7 @@ describe("FavoritesList", () => {
                         divisionId: "",
                         tasks: new Map(),
                         recentProjects: [],
+                        githubRepos: [],
                     },
                     "user-1",
                 ),

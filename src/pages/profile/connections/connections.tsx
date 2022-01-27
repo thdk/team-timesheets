@@ -82,7 +82,7 @@ export const Connections = () => {
             />
             <h3 className="mdc-typography--subtitle1">Github</h3>
 
-            <p>Easily add time registrations based on what you have commited on Github.</p>
+            <p>Easily add time registrations based on what you have committed on Github.</p>
             <Form>
                 <FlexGroup extraCssClass="row">
                     <FormField>

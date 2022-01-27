@@ -69,23 +69,29 @@ export const RegistrationSuggestions = observer(({
         isGapiLoaded,
     } = useGapi(config);
 
-    const eventsQuery = useQuery(
+    const eventsQuery = useQuery<Awaited<ReturnType<typeof gapi.client.calendar.events.list>>>(
         [
             "events",
             view.startOfDay?.toISOString(),
         ],
-        () => gapi.client.calendar.events.list({
-            'calendarId': 'primary',
-            'timeMin': view.startOfDay?.toISOString(),
-            'timeMax': view.endOfDay?.toISOString(),
-            'showDeleted': false,
-            'maxResults': 10,
-            'singleEvents': true,
-            'orderBy': 'startTime',
-        }),
-        {
-            enabled: user && isGapiLoaded && !!view.startOfDay,
-        }
+        () => {
+            if (user && isGapiLoaded && !!view.startOfDay) {
+                return gapi.client.calendar.events.list({
+                    'calendarId': 'primary',
+                    'timeMin': view.startOfDay?.toISOString(),
+                    'timeMax': view.endOfDay?.toISOString(),
+                    'showDeleted': false,
+                    'maxResults': 10,
+                    'singleEvents': true,
+                    'orderBy': 'startTime',
+                });
+            }
+
+            return {
+                result: [],
+                body: "",
+            } as Awaited<ReturnType<typeof gapi.client.calendar.events.list>>;
+        },
     )
 
     const repoName = userStore.divisionUser?.githubRepos
@@ -96,6 +102,7 @@ export const RegistrationSuggestions = observer(({
     const repoParts = repoName?.split("/");
     const owner = repoParts && repoParts.length ? repoParts[0] : undefined;
     const repo = repoParts && repoParts.length > 1 ? repoParts[1] : undefined;
+    const author = userStore.divisionUser?.githubUsername;
 
     const commitsQuery = useQuery(
         [
@@ -106,6 +113,9 @@ export const RegistrationSuggestions = observer(({
             repo,
         ],
         async () => {
+            if (!(view.startOfDay && repo && author)) {
+                return undefined;
+            }
 
             const octokit = new Octokit(
                 userStore.divisionUser?.githubToken
@@ -121,14 +131,11 @@ export const RegistrationSuggestions = observer(({
                 repo: repo!,
                 since: view.startOfDay?.toISOString(),
                 until: view.endOfDay?.toISOString(),
-                author: userStore.divisionUser?.githubUsername,
+                author,
             };
 
             return octokit.repos.listCommits(request);
         },
-        {
-            enabled: !!view.startOfDay
-        }
     );
 
     const filteredEvents = eventsQuery.isSuccess

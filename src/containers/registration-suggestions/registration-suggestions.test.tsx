@@ -14,6 +14,7 @@ import { events } from "./google-calendar/events.test";
 import { RegistrationSuggestions } from ".";
 import { createQueryClientWrapper } from "../../__test-utils__/query-client-provider";
 import { Octokit } from "@octokit/rest";
+import { useUserStore } from "../../contexts/user-context/__mocks__";
 
 jest.mock("../../contexts/store-context");
 jest.mock("../../hooks/use-gapi");
@@ -200,7 +201,7 @@ describe("GoogleCalendarEventsContainer", () => {
             },
         });
 
-        const { asFragment, unmount } = render(
+        const { unmount } = render(
             <IntlProvider
                 locale={"en-US"}
                 timeZone={"Europe/Brussels"}
@@ -211,10 +212,38 @@ describe("GoogleCalendarEventsContainer", () => {
                 wrapper: createQueryClientWrapper()
             });
 
-        await waitFor(() => expect(asFragment()).toMatchSnapshot());
+        await screen.findByText("All day event 1");
 
         unmount();
+    });
 
+    it("should not try to get commits when github is not configured", async () => {
+        const useUserStore = jest.fn().mockReturnValue({
+            divisionUser: {
+                githubRepos: [],
+                githubUsername: undefined,
+            },
+        });
+        jest.doMock("../../contexts/user-context", () => ({
+            useUserStore,
+        }));
+
+        const { unmount } = render(
+            <IntlProvider
+                locale={"en-US"}
+                timeZone={"Europe/Brussels"}
+            ><RegistrationSuggestions />
+            </IntlProvider>
+            ,
+            {
+                wrapper: createQueryClientWrapper()
+            });
+
+        await screen.findByText("All day event 1");
+
+        expect(listCommits).not.toHaveBeenCalled();
+
+        unmount();
     });
 
     it("should show github commits as suggestions", async () => {

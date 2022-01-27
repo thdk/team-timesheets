@@ -12,7 +12,7 @@ import { User } from "firebase/auth";
 
 jest.mock("../../../contexts/store-context");
 
-const projectId = "project-select-test";
+const projectId = "favorite-group-select-test";
 
 let testEnv: RulesTestEnvironment;
 let firestore: any;
@@ -47,6 +47,7 @@ beforeEach(async () => {
                 tasks: new Map(),
                 recentProjects: [],
                 divisionId: "",
+                githubRepos: [],
             },
             userId,
         ),

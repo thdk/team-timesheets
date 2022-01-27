@@ -74,6 +74,8 @@ export class ViewStore implements IViewStore {
       setIsDrawerOpen: action,
       isDrawerOpen: computed,
       moment: computed,
+      startOfDay: computed,
+      endOfDay: computed,
       monthMoment: computed,
       setActions: action,
       actions: computed,
@@ -159,7 +161,7 @@ export class ViewStore implements IViewStore {
       )
     );
 
-     return actions;
+    return actions;
   }
 
   public setViewDate(
@@ -207,6 +209,26 @@ export class ViewStore implements IViewStore {
       return moment(`${this.year}-${this.month}-${this.day}`, 'YYYY-MM-DD');
     else
       return this.monthMoment;
+  }
+
+  get startOfDay() {
+    if (this.year === null || this.month === null || this.day === null) {
+      return null;
+    }
+
+    const start = new Date(Date.UTC(this.year, this.month - 1, this.day));
+
+    return start;
+  }
+
+  get endOfDay() {
+    if (!this.startOfDay) {
+      return null;
+    }
+    const end = new Date(this.startOfDay);
+    end.setUTCHours(23, 59, 59, 999);
+
+    return end;
   }
 
   get monthMoment() {

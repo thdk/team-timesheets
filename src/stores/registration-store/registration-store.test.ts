@@ -28,6 +28,7 @@ const setupAsync = async () => {
                 },
                 email: "email@email.com",
                 uid: "user-1",
+                githubRepos: [""] as string[],
             } as IUser,
             "user-1",
         ),

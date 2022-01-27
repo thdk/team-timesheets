@@ -15,5 +15,5 @@ module.exports = {
         'ts-jest': {
             isolatedModules: true
         }
-    }
+    },
 }

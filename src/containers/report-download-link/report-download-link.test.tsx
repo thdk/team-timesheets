@@ -45,6 +45,7 @@ const setupAsync = async () => {
                 divisionId: "",
                 recentProjects: [],
                 tasks: new Map(),
+                githubRepos: [],
             },
             "user-1",
         ),

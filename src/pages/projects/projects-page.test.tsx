@@ -48,6 +48,7 @@ beforeEach(async () => {
         roles: { user: true },
         tasks: new Map(),
         email: "user@timesheets.com",
+        githubRepos: [],
     }, "user-1");
 
     store.auth.setUser({

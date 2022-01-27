@@ -21,4 +21,7 @@ export interface IUser {
     divisionId: string;
     divisionUserId?: string;
     numberOfRecentProjects?: number;
+    githubUsername?: string;
+    githubRepos: string[];
+    githubToken?: string;
 }

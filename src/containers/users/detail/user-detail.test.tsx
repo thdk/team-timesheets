@@ -30,6 +30,7 @@ const setupAsync = async () => {
                 tasks: new Map(),
                 uid: "user-1",
                 divisionId: "",
+                githubRepos: [],
             },
             "user-1",
         ),

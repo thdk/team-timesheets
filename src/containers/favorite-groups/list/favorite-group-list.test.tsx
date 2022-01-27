@@ -32,6 +32,7 @@ const setupAsync = async () => {
         roles: { user: true },
         tasks: new Map(),
         email: "user@timesheets.com",
+        githubRepos: [],
     }, userId);
 
     store.auth.setUser({

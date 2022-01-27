@@ -30,6 +30,7 @@ const setupAsync = async () => {
                 divisionId: "",
                 recentProjects: [],
                 tasks: new Map(),
+                githubRepos: [],
             },
             "user-1",
         ),
@@ -107,7 +108,8 @@ describe("DivisionStore", () => {
                                     tasks: new Map<string, true>(),
                                     recentProjects: [] as string[],
                                     uid: "user-1",
-                                    roles: {}
+                                    roles: {},
+                                    githubRepos: [],
                                 },
                                 ),
                                 store.user.divisionUsersCollection.addAsync(
@@ -117,7 +119,8 @@ describe("DivisionStore", () => {
                                     tasks: new Map<string, true>(),
                                     recentProjects: [] as string[],
                                     uid: "user-1",
-                                    roles: {}
+                                    roles: {},
+                                    githubRepos: [],
                                 },
                                 )
                             ]));
@@ -175,7 +178,8 @@ describe("DivisionStore", () => {
                         tasks: new Map<string, true>(),
                         recentProjects: [] as string[],
                         uid: "user-1",
-                        roles: {}
+                        roles: {},
+                        githubRepos: [],
                     },
                     "div-user-1",
                 );

@@ -73,6 +73,8 @@ export const RegistrationSuggestions = observer(({
         [
             "events",
             view.startOfDay?.toISOString(),
+            user,
+            isGapiLoaded,
         ],
         () => {
             if (user && isGapiLoaded && !!view.startOfDay) {
@@ -87,17 +89,13 @@ export const RegistrationSuggestions = observer(({
                 });
             }
 
-            return {
-                result: [],
-                body: "",
-            } as Awaited<ReturnType<typeof gapi.client.calendar.events.list>>;
+            return Promise.reject();
         },
     )
 
     const repoName = userStore.divisionUser?.githubRepos
         ? userStore.divisionUser?.githubRepos[0]
         : undefined;
-
 
     const repoParts = repoName?.split("/");
     const owner = repoParts && repoParts.length ? repoParts[0] : undefined;
@@ -114,7 +112,7 @@ export const RegistrationSuggestions = observer(({
         ],
         async () => {
             if (!(view.startOfDay && repo && author)) {
-                return undefined;
+                return Promise.reject();
             }
 
             const octokit = new Octokit(
@@ -153,14 +151,7 @@ export const RegistrationSuggestions = observer(({
         }}>
             {
                 (eventsQuery.isLoading || commitsQuery.isLoading)
-                    ? (
-                        <h3
-                            className="mdc-typography--subtitle2"
-                            style={{ fontWeight: 400 }}
-                        >
-                            Loading timesheet suggestions...
-                        </h3>
-                    )
+                    ? null
                     : (filteredCommits.length || filteredEvents.length)
                         ? (
                             <>

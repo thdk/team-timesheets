@@ -5,7 +5,14 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [v2.2.1](https://github.com/thdk/team-timesheets/compare/v2.2.0...v2.2.1)
+## [v2.2.2](https://github.com/thdk/team-timesheets/compare/v2.2.1...v2.2.2)
+
+### Commits
+
+- fix: missing suggestions from google calendar after adding suggested event [`0a3bfe3`](https://github.com/thdk/team-timesheets/commit/0a3bfe3e33cd2dd5974d32c40e842ee580b25487)
+- style: fix typo [`4ba5a10`](https://github.com/thdk/team-timesheets/commit/4ba5a1026258df39943f2712b2613a59503892f6)
+
+## [v2.2.1](https://github.com/thdk/team-timesheets/compare/v2.2.0...v2.2.1) - 2022-01-27
 
 ### Fixed
 
@@ -14,6 +21,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Commits
 
 - fix: don't fetch commits when github is not configured [`f4c2726`](https://github.com/thdk/team-timesheets/commit/f4c27260dda81e9476295ea328b4faee352cc022)
+- style: remove unused import [`3edf2b7`](https://github.com/thdk/team-timesheets/commit/3edf2b796f1dee1e3c0d7967244661e8ec9f3908)
 
 ## [v2.2.0](https://github.com/thdk/team-timesheets/compare/v2.1.0...v2.2.0) - 2022-01-27
 

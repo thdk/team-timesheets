@@ -31,7 +31,7 @@ const createQuery = (
                 where("date", ">=", startDate),
                 where("date", "<=", endDate),
                 where("userId", "==", userId.toString(),
-            ));
+                ));
 
             return q;
         }
@@ -121,6 +121,7 @@ export class RegistrationStore extends CrudStore<IRegistration, IRegistrationDat
             areGroupedRegistrationsCollapsed: observable,
             registrationsGroupedByDaySortOrder: computed,
             registrationsTotalTime: computed,
+            dayRegistrations: computed,
             setRegistrationsGroupedByDaySortOrder: action,
             registrationsGroupedByDayReversed: computed,
             registrationsGroupedByDay: computed
@@ -169,6 +170,18 @@ export class RegistrationStore extends CrudStore<IRegistration, IRegistrationDat
 
     public get registrationsTotalTime() {
         return this.registrationsGroupedByDay.reduce((p, c) => p + (c.totalTime || 0), 0);
+    }
+
+    public get dayRegistrations() {
+        const groups = this.registrationsGroupedByDay.filter(g => g.groupKey === this.rootStore.view.moment.toDate().toDateString());
+        const group = groups[0] ||
+        {
+            groupKey: this.rootStore.view.startOfDay?.toDateString(),
+            totalTime: 0,
+            registrations: [],
+        };
+
+        return group;
     }
 
     public setRegistrationsGroupedByDaySortOrder(sortOrder: SortOrder) {
@@ -284,7 +297,7 @@ export class RegistrationStore extends CrudStore<IRegistration, IRegistrationDat
                     }
                 });
 
-                this.setActiveDocumentId(undefined);
+            this.setActiveDocumentId(undefined);
         }
         else {
             await Promise.reject("No registration selected to save");

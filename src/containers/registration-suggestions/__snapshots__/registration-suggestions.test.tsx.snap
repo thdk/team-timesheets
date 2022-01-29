@@ -68,71 +68,8 @@ exports[`GoogleCalendarEvents should display events 1`] = `
 
 exports[`GoogleCalendarEvents should render without events 1`] = `<DocumentFragment />`;
 
-exports[`GoogleCalendarEventsContainer should render when gapi is loaded but auth user is undefined 1`] = `
-<DocumentFragment>
-  <div
-    style="padding-left: 1em; margin-top: 2em;"
-  >
-    <h3
-      class="mdc-typography--subtitle2"
-      style="font-weight: 400;"
-    >
-      Loading timesheet suggestions...
-    </h3>
-  </div>
-</DocumentFragment>
-`;
+exports[`GoogleCalendarEventsContainer should render when gapi is loaded but auth user is undefined 1`] = `<DocumentFragment />`;
 
-exports[`GoogleCalendarEventsContainer should render when gapi is loaded but auth user is undefined 2`] = `
-<DocumentFragment>
-  <div
-    style="padding-left: 1em; margin-top: 2em;"
-  />
-</DocumentFragment>
-`;
+exports[`GoogleCalendarEventsContainer should render when gapi is not loaded 1`] = `<DocumentFragment />`;
 
-exports[`GoogleCalendarEventsContainer should render when gapi is not loaded 1`] = `
-<DocumentFragment>
-  <div
-    style="padding-left: 1em; margin-top: 2em;"
-  >
-    <h3
-      class="mdc-typography--subtitle2"
-      style="font-weight: 400;"
-    >
-      Loading timesheet suggestions...
-    </h3>
-  </div>
-</DocumentFragment>
-`;
-
-exports[`GoogleCalendarEventsContainer should render when gapi is not loaded 2`] = `
-<DocumentFragment>
-  <div
-    style="padding-left: 1em; margin-top: 2em;"
-  />
-</DocumentFragment>
-`;
-
-exports[`GoogleCalendarEventsContainer should render without google calendar events 1`] = `
-<DocumentFragment>
-  <div
-    style="padding-left: 1em; margin-top: 2em;"
-  >
-    <h3
-      class="mdc-typography--subtitle2"
-      style="font-weight: 400;"
-    >
-      Loading timesheet suggestions...
-    </h3>
-  </div>
-</DocumentFragment>
-`;
-
-exports[`GoogleCalendarEventsContainer should render without google calendar events 2`] = `
-<DocumentFragment>
-  <div
-    style="padding-left: 1em; margin-top: 2em;"
-  />
-</DocumentFragment>
-`;
+exports[`GoogleCalendarEventsContainer should render without google calendar events 1`] = `<DocumentFragment />`;

@@ -13,7 +13,7 @@ import { User } from "firebase/auth";
 
 jest.mock("../../../contexts/store-context");
 
-const projectId = "favorite-group-detail-page";
+const projectId = "favorite-group-list";
 
 let store: Store;
 const userId = "user-1";

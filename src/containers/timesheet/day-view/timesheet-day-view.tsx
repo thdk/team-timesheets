@@ -27,13 +27,7 @@ export const TimesheetDayView = observer(({
         }, { track: false, currentDate: view.track ? view.day! : undefined });
     }
 
-    const groups = timesheets.registrationsGroupedByDay.filter(g => g.groupKey === view.moment.toDate().toDateString());
-    const group = groups[0] ||
-    {
-        groupKey: view.moment.toDate().toDateString(),
-        totalTime: 0,
-        registrations: [],
-    };
+    
 
     return (
         <>
@@ -46,7 +40,7 @@ export const TimesheetDayView = observer(({
 
 
                 <Day
-                    group={group}
+                    group={timesheets.dayRegistrations}
                     registrationClick={registrationClick}
                     registrationToggleSelect={registrationToggleSelect}
                     isCollapsed={false}
@@ -54,16 +48,7 @@ export const TimesheetDayView = observer(({
                 />
             </FlexGroup>
             <FlexGroup direction="vertical">
-                <RegistrationSuggestions
-                    excludedIds={group.registrations
-                        .reduce((p, c) => {
-                            if (c.data?.sourceId) {
-                                p.push(c.data.sourceId)
-                            }
-                            return p;
-                        }, [] as string[])
-                    }
-                />
+                <RegistrationSuggestions />
             </FlexGroup>
         </>
     );

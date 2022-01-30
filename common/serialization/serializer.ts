@@ -106,24 +106,16 @@ export const convertUser = (appData: Partial<IUser> | null) => {
         user = { deleted: true, modified: Timestamp.fromDate(now) };
     } else {
         user = {
+            ...appData,
             tasks: appData.tasks ? Array.from(appData.tasks.keys()) : undefined,
-            name: appData.name,
-            roles: appData.roles,
             defaultTask: appData.defaultTask || "",
             recentProjects: appData.recentProjects,
-            defaultClient: appData.defaultClient,
-            team: appData.team,
             modified: Timestamp.fromDate(now),
             created: Timestamp.fromDate(appData.created || now),
-            uid: appData.uid,
-            email: appData.email,
             divisionId: appData.divisionId || "",
             divisionUserId: appData.divisionUserId || deleteField(),
             deleted: false,
-            numberOfRecentProjects: appData.numberOfRecentProjects,
             githubRepos: appData.githubRepos || [],
-            githubUsername: appData.githubUsername,
-            githubToken: appData.githubToken,
         }
 
         // Todo: automatically remove undefined values for all keys
@@ -140,6 +132,8 @@ export const convertUser = (appData: Partial<IUser> | null) => {
         if (user.githubRepos === undefined) delete user.githubRepos;
         if (user.githubUsername === undefined) delete user.githubUsername;
         if (user.githubToken === undefined) delete user.githubToken;
+        if (user.jiraPassword === undefined) delete user.jiraPassword;
+        if (user.jiraUsername === undefined) delete user.jiraUsername;
     }
 
     return user as IUserData;

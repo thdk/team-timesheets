@@ -24,4 +24,6 @@ export interface IUser {
     githubUsername?: string;
     githubRepos: string[];
     githubToken?: string;
+    jiraUsername?: string;
+    jiraPassword?: string;
 }

@@ -52,22 +52,31 @@ FIREBASE_STORAGE_BUCKET=xxxxxxxx.appspot.com
 
 (The values for these secrets can be found on your firebase console)
 
-### Installing
+### Running locally
 
 Install dependencies
 
+```sh
     npm install
+```
 
-Build everything (outputs will live in `dist/`-directory)
+Start the firebase emulators, they must run in the background.
 
-    npm run build
+```sh
+npm run emulators
+```
 
-    // run build for production (default is development)
-    npm run build:production
+Build common package (only needed once)
+
+```sh
+    npm run build:refs
+```
 
 Start development server (open `http://localhost:5000/`)
 
-    npm run server
+```
+    npm run start
+```
 
 ## Running the tests
 

@@ -33,9 +33,13 @@ Or just look at some screenshots :point_down:
 - **Export to csv** Get csv exports per month for your timesheets.
 - **Bigquery** Can be set up to sync with bigquery for advanced reports.
 
-## Contributing
+## Contributing :tada:
 
-Feel free to [contribute](./CONTRIBUTING.md)!
+Feel free to contribute!
+
+Read the [local development instructions](./CONTRIBUTING.md) and start implementing a feature you are still missing.
+
+Alternatively, see how you can help out by fixing one of the [good first issues](https://github.com/thdk/team-timesheets/issues?q=is%3Aissue+is%3Aopen+label%3A%22good+first+issue%22).
 
 ## Authors
 

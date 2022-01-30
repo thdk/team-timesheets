@@ -1,5 +1,4 @@
 import { useConfigStore } from "../../stores/config-store";
-import { useMemo } from "react";
 
 export const useGoogleConfig = () => {
     const configs = useConfigStore();
@@ -7,12 +6,12 @@ export const useGoogleConfig = () => {
     // TODO: Create scope from user preferences settings
     const scope = "https://www.googleapis.com/auth/calendar.readonly";
 
-    const config = useMemo(() => ({
+    const config = {
         apiKey: configs.getConfigValue("googleAppId", false) || "",
         clientId: configs.getConfigValue("googleClientId", false) || "",
         discoveryDocs: ["https://www.googleapis.com/discovery/v1/apis/calendar/v3/rest"],
         scope,
-    }), [configs]);
+    };
 
     return config;
 };

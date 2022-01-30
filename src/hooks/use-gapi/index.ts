@@ -21,27 +21,56 @@ const removeScript = (d: Document, id: string) => {
     element?.parentNode?.removeChild(element);
 }
 
-export const useGapi = ({
-    onFailure,
+export const useGapi = () => {
+    const [isGapiLoaded, setIsGapiLoaded] = useState(false);
+
+    useEffect(() => {
+        loadScript(
+            document,
+            'script',
+            'google-login',
+            'https://apis.google.com/js/api.js',
+            () => {
+                setIsGapiLoaded(true);
+            });
+
+        return () => {
+            removeScript(document, 'google-login');
+        };
+    }, [
+        loadScript,
+        removeScript,
+    ]);
+
+    return isGapiLoaded;
+};
+
+export const useGapiAuth = ({
+    scope,
+    signInOptions,
     clientId,
     hostedDomain,
     discoveryDocs,
-    scope,
-    signInOptions,
     apiKey,
+    onFailure,
 }: {
-    onFailure?: (error: any) => void,
     clientId: string,
     discoveryDocs?: string[],
-    scope: string,
     hostedDomain?: string,
     apiKey: string,
+    scope: string,
     signInOptions?: gapi.auth2.SigninOptions,
+    onFailure?: (error: any) => void,
 }) => {
+    const isGapiLoaded = useGapi();
 
-    const [user, setUser] = useState<gapi.auth2.GoogleUser | undefined>(undefined);
+    const [user, setUser] = useState<gapi.auth2.GoogleUser | undefined>(
+            isGapiLoaded 
+                ? gapi.auth2?.getAuthInstance()?.currentUser.get()
+                : undefined
+    );
 
-    const [isGapiLoaded, setIsGapiLoaded] = useState(false);
+    const [isInitialized, setIsInitialized] = useState(isGapiLoaded && !!gapi.auth2?.getAuthInstance());
 
     function signIn() {
         const auth = gapi.auth2.getAuthInstance();
@@ -54,58 +83,57 @@ export const useGapi = ({
         );
     }
 
-    useEffect(() => {
-        loadScript(
-            document,
-            'script',
-            'google-login',
-            'https://apis.google.com/js/api.js',
-            () => {
-                const params = {
-                    client_id: clientId,
-                    hosted_domain: hostedDomain,
-                    discoveryDocs,
-                    scope,
-                    apiKey,
-                };
+    useEffect(
+        () => {
+             if (!isGapiLoaded || !clientId) {
+                return;
+            }
 
-                gapi.load('client:auth2', () => {
-                    gapi.client.init(params).then(
-                        () => {
-                            const auth = gapi.auth2.getAuthInstance();
-                            const isSignedIn = auth.isSignedIn.get();
-                            if (isSignedIn) {
-                                setUser({ ...auth.currentUser.get() });
-                                setIsGapiLoaded(true);
-                            } else {
-                                setIsGapiLoaded(true);
-                            }
-
-                            auth.isSignedIn.listen(isSignedIn => {
-                                setUser(isSignedIn ? auth.currentUser.get() : undefined);
-                            });
-                        },
-                        err => {
-                            onFailure && onFailure(err);
-                            setIsGapiLoaded(true);
+            gapi.load('client:auth2', () => {
+                gapi.client.init(
+                    {
+                        client_id: clientId,
+                        hosted_domain: hostedDomain,
+                        discoveryDocs,
+                        scope,
+                        apiKey,
+                    } as any
+                ).then(
+                    () => {
+                        const auth = gapi.auth2.getAuthInstance();
+                        const isSignedIn = auth.isSignedIn.get();
+                        if (isSignedIn) {
+                            setUser({ ...auth.currentUser.get() });
                         }
-                    );
-                });
-            });
+                        
+                        auth.isSignedIn.listen(isSignedIn => {
+                            setUser(isSignedIn ? auth.currentUser.get() : undefined);
+                        });
 
-        return () => {
-            removeScript(document, 'google-login');
-        };
-    }, [loadScript, removeScript]);
+                        setIsInitialized(true);
+                    },
+                    err => {
+                        onFailure && onFailure(err);
+                    }
+                );
+            });
+        },
+        [
+            clientId,
+            isGapiLoaded,
+            hostedDomain,
+        ],
+    );
 
     const signOut = () => {
         gapi.auth2.getAuthInstance().signOut();
     };
 
     return {
+        isInitialized,
         user,
         signIn,
         signOut,
-        isGapiLoaded,
     };
-};
+}
+

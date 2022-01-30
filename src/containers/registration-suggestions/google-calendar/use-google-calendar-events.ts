@@ -1,7 +1,7 @@
 import { useQuery } from "react-query";
 import { useRegistrationStore } from "../../../contexts/registration-context";
 import { useViewStore } from "../../../contexts/view-context";
-import { useGapi } from "../../../hooks/use-gapi";
+import { useGapiAuth } from "../../../hooks/use-gapi";
 import { useGoogleConfig } from "../../configs/use-google-config";
 
 const SOURCE_ID = "google-calendar";
@@ -15,7 +15,7 @@ export function useGoogleCalendarEvents(
 
     const {
         user,
-    } = useGapi(config);
+    } = useGapiAuth(config);
 
     const excludedIds = timesheets.dayRegistrations.registrations
         .reduce<string[]>(

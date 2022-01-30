@@ -1,7 +1,7 @@
 import { Button } from "@rmwc/button";
 import { observer } from "mobx-react-lite";
 import React from "react";
-import { useGapi } from "../../hooks/use-gapi";
+import { useGapiAuth } from "../../hooks/use-gapi";
 import { useGoogleConfig } from "../configs/use-google-config";
 
 const GoogleButton = observer(
@@ -11,9 +11,9 @@ const GoogleButton = observer(
         const {
             signIn,
             signOut,
-            isGapiLoaded,
+            isInitialized: isGapiLoaded,
             user,
-        } = useGapi(config);
+        } = useGapiAuth(config);
 
         if (!isGapiLoaded) {
             return null;

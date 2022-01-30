@@ -6,7 +6,7 @@ import { render, waitFor, fireEvent, act, screen } from "@testing-library/react"
 import { Store } from "../../stores/root-store";
 import { IntlProvider } from "react-intl";
 import { goToNewRegistration } from "../../routes/registrations/detail";
-import { useGapi } from "../../hooks/use-gapi";
+import { useGapiAuth } from "../../hooks/use-gapi";
 import { initializeTestEnvironment, RulesTestEnvironment } from "@firebase/rules-unit-testing";
 import { useStore } from "../../contexts/store-context";
 import { User } from "firebase/auth";
@@ -125,10 +125,10 @@ describe("GoogleCalendarEventsContainer", () => {
             })
         });
 
-        (useGapi as jest.Mock<Partial<ReturnType<typeof useGapi>>>)
+        (useGapiAuth as jest.Mock<Partial<ReturnType<typeof useGapiAuth>>>)
             .mockReturnValue({
                 user: {} as gapi.auth2.GoogleUser,
-                isGapiLoaded: true,
+                isInitialized: true,
             });
     })
 
@@ -151,10 +151,10 @@ describe("GoogleCalendarEventsContainer", () => {
     });
 
     it("should render when gapi is not loaded", async () => {
-        (useGapi as jest.Mock<Partial<ReturnType<typeof useGapi>>>)
+        (useGapiAuth as jest.Mock<Partial<ReturnType<typeof useGapiAuth>>>)
             .mockReturnValue({
                 user: {} as gapi.auth2.GoogleUser,
-                isGapiLoaded: false,
+                isInitialized: false,
             });
 
         const { asFragment, unmount } = render(
@@ -170,9 +170,9 @@ describe("GoogleCalendarEventsContainer", () => {
     });
 
     it("should render when gapi is loaded but auth user is undefined", async () => {
-        (useGapi as jest.Mock<Partial<ReturnType<typeof useGapi>>>)
+        (useGapiAuth as jest.Mock<Partial<ReturnType<typeof useGapiAuth>>>)
             .mockReturnValue({
-                isGapiLoaded: true,
+                isInitialized: true,
             });
 
         const { asFragment, unmount } = render(
@@ -184,10 +184,10 @@ describe("GoogleCalendarEventsContainer", () => {
 
         await waitFor(() => expect(asFragment()).toMatchSnapshot());
 
-        (useGapi as jest.Mock<Partial<ReturnType<typeof useGapi>>>)
+        (useGapiAuth as jest.Mock<Partial<ReturnType<typeof useGapiAuth>>>)
             .mockReturnValue({
                 user: {} as gapi.auth2.GoogleUser,
-                isGapiLoaded: true,
+                isInitialized: true,
             });
 
         unmount();

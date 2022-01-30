@@ -1,6 +1,6 @@
-export const useGapi = jest.fn().mockReturnValue({
+export const useGapiAuth = jest.fn().mockReturnValue({
     signIn: jest.fn(),
     signOut: jest.fn(),
     user: {},
-    isGapiLoaded: true,
+    isInitialized: true,
 });

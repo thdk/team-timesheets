@@ -17,6 +17,8 @@ export interface IUserData extends IPersistedEntity {
     githubRepos?: string[];
     githubUsername?: string;
     githubToken?: string;
+    jiraUsername?: string;
+    jiraPassword?: string;
 }
 
 export interface IDivisionUserData extends IUserData {

@@ -39,10 +39,10 @@ export const convertFavoriteRegistration = (firestoreData: IFavoriteRegistration
 
 export const convertUser = (firestoreData: IUserData) => {
     const user: IUser = {
+        ...firestoreData,
         tasks: firestoreData.tasks ? new Map(firestoreData.tasks.map((t): [string, true] => [t, true])) : new Map<string, true>(),
         roles: firestoreData.roles || {},
         name: firestoreData.name || "Unknown time traveller",
-        defaultTask: firestoreData.defaultTask,
         recentProjects: firestoreData.recentProjects || [],
         defaultClient: firestoreData.defaultClient || undefined,
         email: firestoreData.email || undefined,
@@ -53,8 +53,6 @@ export const convertUser = (firestoreData: IUserData) => {
         created: firestoreData.created ? firestoreData.created.toDate() : undefined,
         numberOfRecentProjects: firestoreData.numberOfRecentProjects || 5,
         githubRepos: firestoreData.githubRepos || [],
-        githubUsername: firestoreData.githubUsername,
-        githubToken: firestoreData.githubToken,
     };
 
     return user;

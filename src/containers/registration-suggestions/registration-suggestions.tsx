@@ -8,27 +8,29 @@ import { useRouterStore } from "../../stores/router-store";
 import { goToNewRegistration } from "../../internal";
 import { useGoogleCalendarEvents } from "./google-calendar/use-google-calendar-events";
 import { GithubCommits, useGithubCommits } from "./github-commits";
+import { JiraIssues, useJiraIssues } from "./jira-issues";
 
 const RegistrationSuggestionsHeader = () => {
-    return true
-        ? (
+    return (
+        <div style={{ paddingLeft: "1em" }}>
             <h3
-                className="mdc-typography--subtitle2"
-                style={{ fontWeight: 400 }}
+                className="mdc-typography--subtitle1"
             >
-                Suggestions for this timesheet:
+                Suggestions for this timesheet
             </h3>
-        )
-        : null
+        </div>
+    )
 }
 
 export const useSuggestionsQuery = () => {
     const { data: eventsData, ...eventsQuery } = useGoogleCalendarEvents();
     const { data: commitsData, ...commitsQuery } = useGithubCommits();
+    const { data: issuesData, ...jiraQuery } = useJiraIssues();
 
     const queries = [
         eventsQuery,
         commitsQuery,
+        jiraQuery
     ];
 
     return {
@@ -36,6 +38,7 @@ export const useSuggestionsQuery = () => {
         hasData: queries.some((q) => q.hasData),
         eventsQuery,
         commitsQuery,
+        jiraQuery,
     };
 }
 
@@ -57,13 +60,15 @@ export const RegistrationSuggestions = observer(() => {
         ? null
         : (
             <div style={{
-                paddingLeft: "1em",
-                marginTop: "2em",
+                marginTop: "1em",
             }}>
                 {
                     <>
                         <RegistrationSuggestionsHeader />
                         <GoogleCalendarEvents
+                            onClick={addRegistration}
+                        />
+                        <JiraIssues
                             onClick={addRegistration}
                         />
                         <GithubCommits

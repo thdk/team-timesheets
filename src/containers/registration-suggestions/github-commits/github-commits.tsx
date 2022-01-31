@@ -53,7 +53,7 @@ export const GithubCommits = observer(({
                             }}
                         >
                             <DataRowLine1>
-                                {subject}
+                                Github: {subject}
                             </DataRowLine1>
                             <DataRowLine2>
                                 {description}

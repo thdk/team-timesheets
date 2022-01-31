@@ -229,7 +229,6 @@ describe("ProjectsSelect", () => {
             it("should display recent projects on top of other projects in select", async () => {
                 const {
                     container,
-                    unmount,
                 } = render(
                     <ProjectSelect
                         onChange={jest.fn()}
@@ -252,8 +251,6 @@ describe("ProjectsSelect", () => {
                     "Project 3",
                 ],
                 ));
-
-                unmount();
             });
         })
     });

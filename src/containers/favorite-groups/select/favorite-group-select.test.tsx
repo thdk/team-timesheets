@@ -107,6 +107,7 @@ describe("FavoriteGroupSelect", () => {
         });
 
         it("should show an option for each favorite group", async () => {
+            await waitFor(() => expect(store.user.divisionUser).toBeDefined());
             const {
                 getByText,
                 unmount,
@@ -141,7 +142,7 @@ describe("FavoriteGroupSelect", () => {
 
             userEvent.selectOptions(container.querySelector("select")!, [groupIds[2]]);
 
-            expect(onChange).toBeCalledWith(groupIds[2]);
+            await waitFor(() => expect(onChange).toBeCalledWith(groupIds[2]));
 
             unmount();
         });

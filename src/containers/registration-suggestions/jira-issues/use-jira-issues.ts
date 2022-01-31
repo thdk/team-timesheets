@@ -1,14 +1,12 @@
 import { useQueries } from "react-query";
 import { encode } from "js-base64";
+import Mustache from "mustache";
 
 import { useRegistrationStore } from "../../../contexts/registration-context";
 import { useUserStore } from "../../../contexts/user-context";
 import { useViewStore } from "../../../contexts/view-context";
-import Mustache from "mustache";
 import { useConfigs } from "../../configs/use-configs";
-import { useCollection } from "react-firebase-hooks/firestore";
-import { collection, getFirestore, query } from "firebase/firestore";
-import { getApp } from "firebase/app";
+import { useJiraQueries } from "./use-jira-queries";
 
 export type JiraIssue = {
     "expand": string;
@@ -34,19 +32,9 @@ export function useJiraIssues() {
     const userStore = useUserStore();
     const view = useViewStore();
     const timesheets = useRegistrationStore();
-    const f = getApp();
-
-    const [values, _loading, error ] = useCollection(
-        query(
-            collection(getFirestore(f), "user-jira-queries")
-        ),
-    );
-
-    if (error) {
-        console.error(error);
-    }
+    const values = useJiraQueries();
     
-    const jiraQueries = (values?.docs || []).map<{
+    const jiraQueries = (values || []).map<{
         jql: string;
         taskId: string;
         id: string;
@@ -54,7 +42,7 @@ export function useJiraIssues() {
         const {
             taskId,
             jql,
-        } = doc.data();
+        } = doc;
         
         return {
             id: doc.id,
@@ -115,8 +103,11 @@ export function useJiraIssues() {
                     body: JSON.stringify({
                         jql,
                     })
-                })
-                    .then((response) => response.json());
+                }).then((response) => response.json())
+                .catch((e) => {
+                    console.error(e);
+                    throw e;
+                });
             },
             enabled: !!(view.startOfDay && host && username && password),
             select: (data: JiraSearchResult) => ({

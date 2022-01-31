@@ -13,3 +13,5 @@ configure({
     observableRequiresReaction: false,
     reactionRequiresObservable: false,
 })
+
+global.fetch = jest.fn().mockResolvedValue();

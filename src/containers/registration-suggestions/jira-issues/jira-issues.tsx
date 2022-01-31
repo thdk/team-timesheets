@@ -1,7 +1,7 @@
 import { Icon } from "@rmwc/icon";
 import { observer } from "mobx-react-lite";
 import React, { useCallback } from "react";
-import { IRegistration } from "../../../../common/lib";
+import { IRegistration } from "../../../../common";
 import { DataRow, DataRowColumn, DataRowLine1 } from "../../../components/data-row";
 import { useRegistrationStore } from "../../../contexts/registration-context";
 import { useTasks } from "../../../contexts/task-context";
@@ -21,8 +21,8 @@ export const JiraIssues = observer(({
 
     const handleIssueClick = useCallback(
         (subject: string, id: string, { taskId }: { taskId?: string }) => {
-            onClick({
-                date: new Date(view.moment.format()),
+            view.startOfDay && onClick({
+                date: view.startOfDay,
                 description: subject,
                 time: 1,
                 task: taskId === undefined ? tasks.tasks.find(t => t.name === "Programming")?.id : taskId,
@@ -30,7 +30,7 @@ export const JiraIssues = observer(({
                 sourceId: id,
             });
         },
-        [tasks, timesheets]
+        [tasks, timesheets],
     );
 
     const issuesQuery = useJiraIssues();

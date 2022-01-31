@@ -14,6 +14,10 @@ import { User } from "firebase/auth";
 import { collection, doc, getDoc } from "firebase/firestore";
 import { createQueryClientWrapper } from "../../__test-utils__/query-client-provider";
 
+jest.mock("../../pages/registrations", () => ({
+    RegistrationsPage: () => <>RegistrationsPage</>,
+}));
+
 jest.mock("../../contexts/store-context");
 
 const projectId = "task-detail-test";

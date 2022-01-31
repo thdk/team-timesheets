@@ -105,6 +105,9 @@ beforeAll(async () => {
         firestore: {
             rules: fs.readFileSync(path.resolve(__dirname, "../../../firestore.rules.test"), "utf8"),
         }
+    }).catch((e) => {
+        console.error(e);
+        throw e;
     });
 
     firestore = testEnv.unauthenticatedContext().firestore();

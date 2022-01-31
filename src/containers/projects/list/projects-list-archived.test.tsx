@@ -15,7 +15,7 @@ import { User } from "firebase/auth";
 
 jest.mock("../../../rules");
 
-const projectId = "project-list-active-test";
+const projectId = "project-list-archived-test";
 
 let store: Store;
 const setupAsync = async () => {

@@ -117,10 +117,14 @@ describe("FavoriteStore", () => {
     });
 
     afterEach(async () => {
-        if (store) {
-            await store.dispose();
+        try {
+            if (store) {
+                await store.dispose();
+            }
+            testEnv && await testEnv.clearFirestore();
+        } catch (e) {
+            console.error(e);
         }
-        testEnv && await testEnv.clearFirestore();
     });
 
     afterAll(() => testEnv && testEnv.cleanup());

@@ -33,7 +33,6 @@ beforeEach(async () => {
     store = new Store({
         firestore,
     });
-    (useStore as jest.Mock<ReturnType<typeof useStore>>).mockReturnValue(store);
 
     await store.user.usersCollection.addAsync(
             {
@@ -55,6 +54,7 @@ beforeEach(async () => {
         uid: "user-1",
     } as User);
 
+    (useStore as jest.Mock<ReturnType<typeof useStore>>).mockReturnValue(store);
 });
 
 afterEach(async () => {

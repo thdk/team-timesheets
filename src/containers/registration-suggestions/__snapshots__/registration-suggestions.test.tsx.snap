@@ -68,8 +68,8 @@ exports[`GoogleCalendarEvents should display events 1`] = `
 
 exports[`GoogleCalendarEvents should render without events 1`] = `<DocumentFragment />`;
 
-exports[`GoogleCalendarEventsContainer should render when gapi is loaded but auth user is undefined 1`] = `<DocumentFragment />`;
+exports[`RegistrationSuggestions should render when gapi is loaded but auth user is undefined 1`] = `<DocumentFragment />`;
 
-exports[`GoogleCalendarEventsContainer should render when gapi is not loaded 1`] = `<DocumentFragment />`;
+exports[`RegistrationSuggestions should render when gapi is not loaded 1`] = `<DocumentFragment />`;
 
-exports[`GoogleCalendarEventsContainer should render without google calendar events 1`] = `<DocumentFragment />`;
+exports[`RegistrationSuggestions should render without google calendar events 1`] = `<DocumentFragment />`;

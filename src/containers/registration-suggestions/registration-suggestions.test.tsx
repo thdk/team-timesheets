@@ -15,6 +15,10 @@ import { RegistrationSuggestions } from ".";
 import { createQueryClientWrapper } from "../../__test-utils__/query-client-provider";
 import { Octokit } from "@octokit/rest";
 
+jest.mock("./jira-issues", () => ({
+    useJiraIssues: jest.fn().mockReturnValue({data: []}),
+    JiraIssues: () => <>JIRA ISSUES</>
+}));
 jest.mock("../../contexts/store-context");
 jest.mock("../../hooks/use-gapi");
 jest.mock("../../contexts/view-context");
@@ -96,7 +100,10 @@ beforeAll(async () => {
 
 
 beforeEach(async () => {
-    await setupAsync();
+    await setupAsync().catch((e) => {
+        console.error(e);
+        throw e;
+    });
     (useStore as jest.Mock<ReturnType<typeof useStore>>).mockReturnValue(store);
 });
 
@@ -109,7 +116,7 @@ afterEach(async () => {
 
 afterAll(() => testEnv.cleanup());
 
-describe("GoogleCalendarEventsContainer", () => {
+describe("RegistrationSuggestions", () => {
     const listCommits = jest.fn().mockResolvedValue({
         success: true,
         isLoading: false,
@@ -317,7 +324,7 @@ describe("GoogleCalendarEventsContainer", () => {
             }
         );
 
-        const commit1 = await screen.findByText("message 1");
+        const commit1 = await screen.findByText((text) => text === "Github message 1");
 
         act(() => {
             fireEvent.click(commit1);
@@ -330,7 +337,7 @@ describe("GoogleCalendarEventsContainer", () => {
 
         expect(goToNewRegistration).toBeCalledTimes(1);
 
-        const commit2 = await screen.findByText("message 2");
+        const commit2 = await screen.findByText((text) => text === "Github message 2");
         fireEvent.click(commit2);
 
         await waitFor(

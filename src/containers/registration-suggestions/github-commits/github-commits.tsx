@@ -1,7 +1,7 @@
 import { Icon } from "@rmwc/icon";
 import { observer } from "mobx-react-lite";
 import React, { useCallback } from "react";
-import { IRegistration } from "../../../../common/lib";
+import { IRegistration } from "../../../../common";
 import { DataRow, DataRowColumn, DataRowLine1, DataRowLine2 } from "../../../components/data-row";
 import { useRegistrationStore } from "../../../contexts/registration-context";
 import { useTasks } from "../../../contexts/task-context";
@@ -53,7 +53,7 @@ export const GithubCommits = observer(({
                             }}
                         >
                             <DataRowLine1>
-                                Github: {subject}
+                                Github {subject}
                             </DataRowLine1>
                             <DataRowLine2>
                                 {description}

@@ -112,6 +112,7 @@ describe("FavoriteStore", () => {
     });
 
     beforeEach(async () => {
+        jest.clearAllMocks();
         await setupAsync().catch(e => { console.log(e); throw e; });
         (useStore as jest.Mock<ReturnType<typeof useStore>>).mockReturnValue(store);
     });
@@ -260,39 +261,6 @@ describe("FavoriteStore", () => {
                     throw e;
                 }
             });
-
-
-        afterEach(
-            async () => {
-                try {
-                    if (!store) return;
-                    store.favorites.deleteDocument(groupId, { useFlag: false });
-
-                    await waitFor(
-                        () => expect(
-                            store.favorites.groups.length
-                        ).toBe(0),
-                    );
-
-                    const registrations = await store.favorites.getFavoritesByGroupIdAsync(groupId);
-
-                    await Promise.all(
-                        registrations.map((doc) => store.favorites.favoriteCollection.deleteAsync(doc.id))
-                    );
-
-                    await store.favorites.favoriteCollection.fetchAsync();
-
-                    await waitFor(
-                        () => expect(
-                            store.favorites.favoriteCollection.docs.length,
-                        ).toBe(0),
-                    );
-                }
-                catch (e) {
-                    console.error(e);
-                }
-            },
-        );
 
         it("can set a new name for the favorite group", async () => {
             expect(store.favorites.activeDocument).toBeTruthy();

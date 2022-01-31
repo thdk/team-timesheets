@@ -12,7 +12,7 @@
     "build:production": "webpack --env=prod",
     "tsc": "tsc -p common && tsc --noEmit",
     "test": "jest",
-    "test:cloudbuild": "firebase emulators:exec --only firestore \"jest --coverage\"",
+    "test:cloudbuild": "firebase emulators:exec --only firestore \"jest --coverage --maxWorkers=1\"",
     "test:watch": "jest --watch",
     "emulators": "firebase emulators:start --only \"hosting,firestore\"",
     "emulator:exec": "firebase emulators:exec --only firestore",

@@ -83,13 +83,9 @@ export function useJiraIssues() {
                 q.id
             ],
             queryFn: async () => {
-                if (!(view.startOfDay && host && username && password)) {
-                    return Promise.reject();
-                }
-
                 const jql =  Mustache.render(q.jql, {
                     username,
-                    date: view.startOfDay.toISOString().split('T')[0]
+                    date: view.startOfDay!.toISOString().split('T')[0]
                 });
 
                 return fetch(`${host}/rest/api/2/search?`, {
@@ -103,11 +99,7 @@ export function useJiraIssues() {
                     body: JSON.stringify({
                         jql,
                     })
-                }).then((response) => response.json())
-                .catch((e) => {
-                    console.error(e);
-                    throw e;
-                });
+                }).then((response) => response.json());
             },
             enabled: !!(view.startOfDay && host && username && password),
             select: (data: JiraSearchResult) => ({

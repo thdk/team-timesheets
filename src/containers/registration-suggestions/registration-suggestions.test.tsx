@@ -108,10 +108,10 @@ beforeEach(async () => {
 });
 
 afterEach(async () => {
+    jest.clearAllMocks();
     store.dispose();
     await testEnv.clearFirestore();
     jest.restoreAllMocks();
-    jest.clearAllMocks();
 });
 
 afterAll(() => testEnv.cleanup());
@@ -230,7 +230,7 @@ describe("RegistrationSuggestions", () => {
                 githubUsername: undefined,
             },
         });
-        jest.doMock("../../contexts/user-context", () => ({
+        jest.mock("../../contexts/user-context", () => ({
             useUserStore,
         }));
 

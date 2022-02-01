@@ -5,15 +5,11 @@ import { useFirebase } from "../../../contexts/firebase-context";
 export function useJiraQueries() {
     const f = useFirebase();
 
-    const [values, _loading, error ] = useCollectionData(
+    const [values] = useCollectionData(
         query(
             collection(getFirestore(f), "user-jira-queries")
         ),
     );
-
-    if (error) {
-        console.error(error);
-    }
 
     return values;
 }

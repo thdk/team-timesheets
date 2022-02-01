@@ -1,7 +1,11 @@
 import { render, screen } from "@testing-library/react";
+import { Doc } from "firestorable";
 import React from "react";
 import { QueryClient, QueryClientProvider } from "react-query";
 import { JiraIssue, JiraIssues } from ".";
+import { IRegistrationData } from "../../../../common";
+import { IRegistration } from "../../../../common";
+import { useRegistrationStore } from "../../../contexts/registration-context";
 import { useTasks } from "../../../contexts/task-context";
 import { useUserStore } from "../../../contexts/user-context";
 import { useJiraQueries } from "./use-jira-queries";
@@ -138,5 +142,65 @@ describe("JiraIssues", () => {
                 time: 1,
             });
         });
+
+        it("does not show suggestions that already have been added to the timesheet", async () => {
+            (useRegistrationStore as jest.Mock<ReturnType<typeof useRegistrationStore>>)
+                .mockReturnValue({
+                    dayRegistrations: {
+                        groupKey: "group-1",
+                        totalTime: 1,
+                        isCollapsed: false,
+                        registrations: [
+                            {
+                                data: {
+                                    sourceId: "2-2",
+                                    description: "My other issue",
+                                    source: "jira-query",
+                                    date: new Date("2020-03-22T00:00:00.000Z"),
+                                    isPersisted: true,
+                                    userId: "user-1",
+                                }
+                            },
+                            {
+                                data: {
+                                    sourceId: "2-2",
+                                    description: "My other issue",
+                                    source: "another-source",
+                                    date: new Date("2020-03-22T00:00:00.000Z"),
+                                    isPersisted: true,
+                                    userId: "user-1",
+                                }
+                            },
+                            {
+                                data: undefined,
+                            }
+                        ] as Doc<IRegistration, IRegistrationData>[]
+                    }
+                } as any);
+
+                render(
+                    <QueryClientProvider client={client}>
+                        <JiraIssues onClick={onClick} />
+                    </QueryClientProvider>,
+                );
+    
+                await screen.findByText(content => content === "Jira: My first issue");
+
+                expect(screen.queryByText(content => content === "Jira: My other issue")).toBeFalsy();
+        });
+
+        it("still shows results when one of the queries has failed", async () => {
+            mockFetch.mockRejectedValueOnce(undefined);
+
+            render(
+                <QueryClientProvider client={client}>
+                    <JiraIssues onClick={onClick} />
+                </QueryClientProvider>,
+            );
+
+            await screen.findByText(content => content === "Jira: My first issue");
+
+            expect(screen.queryByText(content => content === "Jira: My other issue")).toBeFalsy();
+        })
     });
 });

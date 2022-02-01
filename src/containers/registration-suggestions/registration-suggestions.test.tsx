@@ -380,12 +380,7 @@ describe("RegistrationSuggestions", () => {
             fireEvent.click(eventItem1);
         });
 
-        await waitFor(
-            () => expect(
-                store.timesheets.activeDocument?.sourceId).toBe("event-1")
-        );
-
-        expect(goToNewRegistration).toBeCalledTimes(1);
+        await waitFor(() => expect(goToNewRegistration).toBeCalledTimes(1));
 
         const eventItem2 = await screen.findByText("Summary 2");
         fireEvent.click(eventItem2);

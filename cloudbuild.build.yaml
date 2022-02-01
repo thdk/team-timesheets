@@ -1,14 +1,14 @@
 steps:
-  - name: node:14
+  - name: node:16
     entrypoint: npm
     args: ["ci"]
-  - name: node:14
+  - name: node:16
     entrypoint: npm
     args: ["run", "build:refs"]
   - name: "gcr.io/$PROJECT_ID/firebase"
     entrypoint: npm
     args: ["run", "test:cloudbuild"]
-  - name: node:14
+  - name: node:16
     entrypoint: npm
     args: ["run", "build:production"]
   - name: "gcr.io/$PROJECT_ID/builder"
@@ -24,12 +24,14 @@ steps:
       - "VCS_PULL_REQUEST=$_PR_NUMBER"
       - "CI_BUILD_ID=$BUILD_ID"
       - "CODECOV_TOKEN=$_CODECOV_TOKEN"
-  - name: node:14
+  - name: node:16
     entrypoint: npm
     dir: "functions"
     args: ["install"]
-  - name: node:14
+  - name: node:16
     entrypoint: npm
     dir: "functions"
     args: ["run", "build"]
 timeout: 900s
+options:
+  machineType: 'E2_HIGHCPU_8'

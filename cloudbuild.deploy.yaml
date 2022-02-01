@@ -1,24 +1,26 @@
 steps:
-  - name: node:14
+  - name: node:16
     entrypoint: npm
     args: ["ci"]
-  - name: node:14
+  - name: node:16
     entrypoint: npm
     args: ["run", "build:refs"]
-  - name: node:14
+  - name: node:16
     entrypoint: npm
     args: ["run", "create-env"]
     env:
       - 'FIREBASE_API_KEY=${_FIREBASE_API_KEY}'
       - 'FIREBASE_AUTH_DOMAIN=${_FIREBASE_AUTH_DOMAIN}'
       - 'FIREBASE_PROJECT_ID=${_FIREBASE_PROJECT_ID}'
-  - name: node:14
+  - name: node:16
     entrypoint: npm
     args: ["run", "build:production"]
-  - name: node:14
+  - name: node:16
     entrypoint: npm
     dir: "functions"
     args: ["ci"]
   - name: "gcr.io/$PROJECT_ID/firebase"
     args: ["deploy", "--project", "$_FIREBASE_PROJECT_ID", "--token", "$_FIREBASE_TOKEN"]
 timeout: 900s
+options:
+  machineType: 'E2_HIGHCPU_8'

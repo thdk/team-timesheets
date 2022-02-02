@@ -52,20 +52,36 @@ export const initTimestamps = (db: FirebaseFirestore.Firestore) => {
     }));
 };
 
-export interface IChangeProjectOfRegistrationsOptions { from: string, to: string };
+export interface IChangeProjectOfRegistrationsOptions { from: string, to: string, userId?: string };
 
-export const changeProjectOfRegistrations = (db: FirebaseFirestore.Firestore, { from, to }: IChangeProjectOfRegistrationsOptions): Promise<string> => {
+export const changeProjectOfRegistrations = (db: FirebaseFirestore.Firestore, { from, to, userId }: IChangeProjectOfRegistrationsOptions): Promise<string> => {
     if (!from) throw new Error("Missing required option 'from'");
     if (!to) throw new Error("Missing required options: 'to'");
-    const query = db.collection("registrations").where("project", "==", from);
+    const query = userId
+        ? db.collection("registrations")
+            .where("project", "==", from)
+            .where("userId", "==", userId)
+        : db.collection("registrations")
+            .where("project", "==", from);
 
-    return query.limit(500).get().then(snapshot => {
-        if (snapshot.empty) return new Promise<string>(resolve => resolve(`No registrations found with projectId: ${from}`));
+    return query.limit(200).get().then(snapshot => {
+        if (snapshot.empty) return new Promise<string>(resolve => resolve(`No registrations found with projectId: ${from} and userid ${userId}`));
+
+        console.log({
+            size: snapshot.size,
+        });
 
         const batch = db.batch();
-        snapshot.forEach(doc => batch.update(doc.ref, { project: to, modified: admin.firestore.FieldValue.serverTimestamp() }));
+        snapshot.forEach(doc => batch.update(
+            doc.ref,
+            {
+                project: to, modified: admin.firestore.FieldValue.serverTimestamp()
+            }
+            ));
 
-        return batch.commit().then(() => query.get().then(finalSnapshot => `${snapshot.size} registrations updated.\n ${finalSnapshot.size} remaining.`));
+        return batch.commit()
+            .then(() => query.get()
+                .then(finalSnapshot => `${snapshot.size} registrations updated.\n ${finalSnapshot.size} remaining.`));
     });
 };
 

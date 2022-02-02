@@ -17,8 +17,8 @@ admin.initializeApp({ credential: admin.credential.applicationDefault() });
 // Reference report in Firestore
 const db = admin.firestore();
 
-const performChangeProjectOfRegistrations = (from: string, to: string) => changeProjectOfRegistrations(db, { from, to });
-exports.changeProjectOfRegistrations = functions.https.onCall(data => performChangeProjectOfRegistrations(data.from, data.to));
+const performChangeProjectOfRegistrations = (from: string, to: string, userId?: string) => changeProjectOfRegistrations(db, { from, to, userId });
+exports.changeProjectOfRegistrations = functions.https.onCall(data => performChangeProjectOfRegistrations(data.from, data.to, data.userId));
 
 exports.changeProjectOfRegistrationsRequest = functions.https.onRequest((req, res) => {
     return performChangeProjectOfRegistrations(req.query.from, req.query.to).then(result => {

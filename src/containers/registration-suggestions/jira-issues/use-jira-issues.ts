@@ -101,7 +101,7 @@ export function useJiraIssues() {
                     })
                 }).then((response) => response.json());
             },
-            enabled: !!(view.startOfDay && host && username && password),
+            enabled: !!(view.startOfDay && (view.startOfDay.getTime() < Date.now()) && host && username && password),
             select: (data: JiraSearchResult) => ({
                 ...q,
                 issues: data.issues,

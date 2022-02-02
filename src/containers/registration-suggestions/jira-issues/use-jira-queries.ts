@@ -1,15 +1,20 @@
-import { query, collection, getFirestore } from "firebase/firestore";
-import { useCollectionData } from "react-firebase-hooks/firestore";
+import { query, collection, getFirestore, CollectionReference } from "firebase/firestore";
+import { useCollection } from "react-firebase-hooks/firestore";
 import { useFirebase } from "../../../contexts/firebase-context";
+
+export type JiraQuery = {
+    jql: string;
+    taskId: string;
+};
 
 export function useJiraQueries() {
     const f = useFirebase();
 
-    const [values] = useCollectionData(
-        query(
-            collection(getFirestore(f), "user-jira-queries")
+    const [values] = useCollection(
+        query<JiraQuery>(
+            collection(getFirestore(f), "user-jira-queries") as CollectionReference<JiraQuery>
         ),
     );
 
-    return values;
+    return values?.docs.map((doc) => ({ ...doc.data(), id: doc.id })) || [];
 }

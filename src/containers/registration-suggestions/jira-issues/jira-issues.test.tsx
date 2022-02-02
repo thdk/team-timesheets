@@ -8,6 +8,7 @@ import { IRegistration } from "../../../../common";
 import { useRegistrationStore } from "../../../contexts/registration-context";
 import { useTasks } from "../../../contexts/task-context";
 import { useUserStore } from "../../../contexts/user-context";
+import { useViewStore } from "../../../contexts/view-context";
 import { useJiraQueries } from "./use-jira-queries";
 
 jest.mock("../../../contexts/registration-context");
@@ -16,6 +17,8 @@ jest.mock("../../../contexts/view-context");
 jest.mock("../../../contexts/user-context");
 jest.mock("../../configs/use-configs");
 jest.mock("./use-jira-queries");
+
+afterEach(() => jest.clearAllMocks());
 
 describe("JiraIssues", () => {
     const client = new QueryClient();
@@ -178,15 +181,15 @@ describe("JiraIssues", () => {
                     }
                 } as any);
 
-                render(
-                    <QueryClientProvider client={client}>
-                        <JiraIssues onClick={onClick} />
-                    </QueryClientProvider>,
-                );
-    
-                await screen.findByText(content => content === "Jira: My first issue");
+            render(
+                <QueryClientProvider client={client}>
+                    <JiraIssues onClick={onClick} />
+                </QueryClientProvider>,
+            );
 
-                expect(screen.queryByText(content => content === "Jira: My other issue")).toBeFalsy();
+            await screen.findByText(content => content === "Jira: My first issue");
+
+            expect(screen.queryByText(content => content === "Jira: My other issue")).toBeFalsy();
         });
 
         it("still shows results when one of the queries has failed", async () => {
@@ -201,6 +204,37 @@ describe("JiraIssues", () => {
             await screen.findByText(content => content === "Jira: My first issue");
 
             expect(screen.queryByText(content => content === "Jira: My other issue")).toBeFalsy();
-        })
+        });
+
+        it("still shows results when one of the queries has no results", async () => {
+            mockFetch.mockResolvedValueOnce({
+                issues: [],
+            });
+
+            render(
+                <QueryClientProvider client={client}>
+                    <JiraIssues onClick={onClick} />
+                </QueryClientProvider>,
+            );
+
+            await screen.findByText(content => content === "Jira: My first issue");
+
+            expect(screen.queryByText(content => content === "Jira: My other issue")).toBeFalsy();
+        });
+
+        it("does not try to fetch jira issues when requested date is in the future", () => {
+            (useViewStore as jest.Mock<ReturnType<typeof useViewStore>>)
+                .mockReturnValue({
+                    startOfDay: new Date(Date.now() + 100000)
+                } as any);
+
+            render(
+                <QueryClientProvider client={client}>
+                    <JiraIssues onClick={onClick} />
+                </QueryClientProvider>,
+            );
+
+            expect(mockFetch).not.toHaveBeenCalled();
+        });
     });
 });

@@ -5,7 +5,19 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [v2.2.2](https://github.com/thdk/team-timesheets/compare/v2.2.1...v2.2.2)
+## [v2.3.0](https://github.com/thdk/team-timesheets/compare/v2.2.2...v2.3.0)
+
+### Fixed
+
+- feat: show jira updates as timesheet suggestions [`#234`](https://github.com/thdk/team-timesheets/issues/234)
+
+### Commits
+
+- ci: upgrade node version [`e1159e6`](https://github.com/thdk/team-timesheets/commit/e1159e64d3f28afd1187d9205479da8a8f79b230)
+- deps: upgrade node-sass and sass-loader [`9ea63dc`](https://github.com/thdk/team-timesheets/commit/9ea63dc7b3343d23600413b2898e5da04ba1a7af)
+- refactor: create a seperate component and hook for each registration sugestion source [`8f4dae2`](https://github.com/thdk/team-timesheets/commit/8f4dae20181280ce41a576c34ed180d6f78d9cab)
+
+## [v2.2.2](https://github.com/thdk/team-timesheets/compare/v2.2.1...v2.2.2) - 2022-01-28
 
 ### Commits
 

@@ -25,7 +25,7 @@ export const ClientPreferences = observer(() => {
                 <h3 className="mdc-typography--subtitle1">
                     Pick default client
             </h3>
-                <FormField first={false}>
+                <FormField first>
                     <ClientSelect
                         onChange={defaultClientChanged}
                         label="Default client"

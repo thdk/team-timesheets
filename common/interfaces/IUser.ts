@@ -26,4 +26,5 @@ export interface IUser {
     githubToken?: string;
     jiraUsername?: string;
     jiraPassword?: string;
+    defaultProjectId?: string;
 }

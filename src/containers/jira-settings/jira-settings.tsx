@@ -35,7 +35,7 @@ export const JiraSettings = observer(function JiraSettings() {
             <p>Track updates from your Jira board.</p>
             <p>Note: your password is currrently saved as plain text in our database. PR is welcome to fix this.</p>
             <Form>
-                <FlexGroup extraCssClass="row">
+                <FlexGroup className="row">
                     <FormField>
                         <TextField
                             type="string"
@@ -47,7 +47,7 @@ export const JiraSettings = observer(function JiraSettings() {
                         />
                     </FormField>
                 </FlexGroup>
-                <FlexGroup extraCssClass="row">
+                <FlexGroup className="row">
                     <FormField>
                         <TextField
                             type="password"
@@ -59,7 +59,7 @@ export const JiraSettings = observer(function JiraSettings() {
                         />
                     </FormField>
                 </FlexGroup>
-                <FlexGroup extraCssClass="row">
+                <FlexGroup className="row">
                     <Button
                         onClick={handleSaveJira}
                         style={{ margin: "1em" }}

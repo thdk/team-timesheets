@@ -10,7 +10,7 @@ exports[`ClientPreferences should render clients 1`] = `
     Pick default client
   </h3>
   <div
-    class="formField"
+    class="first formField"
   >
     <div
       class="mdc-select mdc-select--outlined"

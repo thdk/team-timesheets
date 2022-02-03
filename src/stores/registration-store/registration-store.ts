@@ -1,5 +1,5 @@
 import { Doc, ICollection, RealtimeMode, FetchMode, CrudStore } from "firestorable";
-import { observable, computed, reaction, when, action, toJS, makeObservable } from 'mobx';
+import { observable, computed, reaction, action, toJS, makeObservable } from 'mobx';
 import moment from 'moment';
 
 import { IRootStore } from '../root-store';
@@ -43,39 +43,6 @@ const createQuery = (
     }
 };
 
-const createDefaults = (
-    overrideDefaultsWith: Partial<IRegistration> | undefined,
-    rootStore: IRootStore,
-) => {
-    return when(() => !!rootStore.user.divisionUser)
-        .then(() => {
-            if (!rootStore.user.divisionUser || !rootStore.user.divisionUser.id) throw new Error("User must be set");
-
-            const {
-                recentProjects = [],
-                defaultTask: task = rootStore.tasks.tasks.length ? rootStore.tasks.tasks[0].id : undefined,
-                defaultClient: client = undefined,
-            } = rootStore.user.divisionUser || {};
-
-            const recentActiveProjects = recentProjects
-                .filter(projectId => rootStore.projects.activeProjects
-                    .some(p => p.id === projectId));
-
-            return {
-                date: rootStore.view.day === undefined
-                    ? moment().startOf("day").toDate()
-                    : rootStore.view.moment.toDate(),
-                task,
-                client,
-                userId: rootStore.user.divisionUser.id,
-                project: recentActiveProjects.length ? recentActiveProjects[0] : undefined,
-                isPersisted: false,
-                description: "",
-                ...overrideDefaultsWith
-            };
-        });
-};
-
 export class RegistrationStore extends CrudStore<IRegistration, IRegistrationData> implements IRegistrationsStore {
     private rootStore: IRootStore;
     readonly clipboard = observable(new Map<string, IRegistration>());
@@ -108,7 +75,9 @@ export class RegistrationStore extends CrudStore<IRegistration, IRegistrationDat
                         rootStore.view.moment,
                     ),
                 },
-                createNewDocumentDefaults: (overrideDefaultsWith) => createDefaults(overrideDefaultsWith, rootStore),
+                createNewDocumentDefaults: (overrideDefaultsWith) => {
+                    return { ...this.defaults, ...overrideDefaultsWith };
+                },
             },
             {
                 firestore,
@@ -122,6 +91,7 @@ export class RegistrationStore extends CrudStore<IRegistration, IRegistrationDat
             registrationsGroupedByDaySortOrder: computed,
             registrationsTotalTime: computed,
             dayRegistrations: computed,
+            defaults: computed,
             setRegistrationsGroupedByDaySortOrder: action,
             registrationsGroupedByDayReversed: computed,
             registrationsGroupedByDay: computed
@@ -164,6 +134,30 @@ export class RegistrationStore extends CrudStore<IRegistration, IRegistrationDat
         ];
     }
 
+    public get defaults() {
+        if (!this.rootStore.user.divisionUser || !this.rootStore.user.divisionUser.id) {
+            return undefined;
+        }
+
+        const {
+            defaultTask: task = this.rootStore.tasks.tasks.length ? this.rootStore.tasks.tasks[0].id : undefined,
+            defaultClient: client = undefined,
+            defaultProjectId: project,
+            id: userId,
+        } = this.rootStore.user.divisionUser || {};
+
+        return {
+            date: this.rootStore.view.day === undefined
+                ? moment().startOf("day").toDate()
+                : this.rootStore.view.moment.toDate(),
+            task,
+            client,
+            userId,
+            project,
+            isPersisted: false,
+            description: "",
+        };
+    }
     public get registrationsGroupedByDaySortOrder() {
         return this.registrationsGroupedByDaySortOrderField;
     }
@@ -238,8 +232,14 @@ export class RegistrationStore extends CrudStore<IRegistration, IRegistrationDat
     public copyRegistrationToDate(source: Omit<IRegistration, "date" | "isPersisted">, newDate: Date) {
         const date = newDate;
 
+        const sourceJs = toJS(source);
+
+        // remove undefined values from source so they will not override our default values
+        Object.keys(sourceJs).
+            forEach((key) => (sourceJs as any)[key] === undefined && delete (sourceJs as any)[key]);
+
         // set created to undefined so a new timestamp will be set when saving it
-        return { ...source, created: undefined, date, isPersisted: true };
+        return { ...this.defaults, ...sourceJs, created: undefined, date, isPersisted: true };
     }
 
     public toggleSelectedRegistrationDay(date: string, force = false) {

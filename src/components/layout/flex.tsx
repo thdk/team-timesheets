@@ -1,16 +1,26 @@
+import classNames from 'classnames';
 import React from 'react';
 
 export interface IFlexGroupProps extends React.HTMLProps<HTMLDivElement> {
-    direction?: "vertical" | "horizontal";
-    extraCssClass?: string;
     center?: boolean;
+    column?: boolean;
 }
 
 export const FlexGroup = (props: IFlexGroupProps) => {
-    const { direction = "horizontal", extraCssClass = "", style, center = false } = props;
+    const { column, className, style, center = false } = props;
+
+    const cssClass = classNames([
+        "flex",
+        className,
+        {
+            horizontal: !column,
+            vertical: column,
+            center: center,
+        }
+    ]);
 
     return (
-        <div style={style} className={`flex ${extraCssClass} ${direction}${center ? " center" : ""}`}>
+        <div style={style} className={cssClass}>
             {props.children}
         </div>
     );

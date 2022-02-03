@@ -3,6 +3,7 @@ import { observer } from 'mobx-react-lite';
 import { Day } from '../day';
 import { useRegistrationStore } from '../../../contexts/registration-context';
 import { ComponentProps } from 'react';
+import { GroupedRegistrationHeader } from '../day-header';
 
 export enum SortOrder {
     Ascending = 1,
@@ -12,8 +13,7 @@ export enum SortOrder {
 export interface IDaysProps
     extends Pick<ComponentProps<typeof Day>,
     "registrationClick" |
-    "registrationToggleSelect" |
-    "isMonthView"
+    "registrationToggleSelect"
     > {
     sortOrder?: SortOrder
     showHeaderAddButton?: boolean;
@@ -34,19 +34,28 @@ export const TimesheetDays = observer((props: IDaysProps) => {
         .map((g, i) => {
             const isCollapsed = !timesheets.selectedRegistrationDays
                 .some(d => d === g.groupKey);
+            return <React.Fragment key={g.groupKey}>
+                <GroupedRegistrationHeader
+                    groupKey={g.groupKey}
+                    totalTime={g.totalTime}
+                    isCollapsed={g.isCollapsed}
+                    isMonthView
+                    isCollapsable
+                    headerClick={e => {
+                        if ((e.target as HTMLElement).closest(".prevent-propagation"))
+                            return;
 
-            return <Day
-                key={`group-${i}`}
-                group={g}
-                isCollapsed={isCollapsed}
-                {...dayProps}
-                headerClick={e => {
-                    if ((e.target as HTMLElement).closest(".prevent-propagation"))
-                        return;
+                        timesheets.toggleSelectedRegistrationDay(g.groupKey);
+                    }}
+                    showAddButton={showHeaderAddButton}
+                />
+                <Day
+                    key={`group-${i}`}
+                    group={g}
+                    isCollapsed={isCollapsed}
+                    {...dayProps}
 
-                    timesheets.toggleSelectedRegistrationDay(g.groupKey);
-                }}
-                showHeaderAddButton={showHeaderAddButton}
-            />
+                />
+            </React.Fragment>
         })}</>;
 });

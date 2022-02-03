@@ -36,7 +36,7 @@ const ProjectDetail = (props: Props) => {
 
     return <>
         <Form>
-            <FlexGroup extraCssClass="row">
+            <FlexGroup className="row">
                 <FormField>
                     <TextField
                         outlined
@@ -53,7 +53,7 @@ const ProjectDetail = (props: Props) => {
                     />
                 </FormField>
             </FlexGroup>
-            <FlexGroup extraCssClass="row">
+            <FlexGroup className="row">
                 <FormField>
                     <UserSelect
                         label={"Project owner"}

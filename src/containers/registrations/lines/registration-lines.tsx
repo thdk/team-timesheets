@@ -3,7 +3,7 @@ import { observer } from 'mobx-react-lite';
 import { Doc } from "firestorable";
 import { IRegistration, IRegistrationData } from '../../../../common';
 import { RegistrationLine } from "../line";
-import { useProjectStore } from "../../../stores/project-store";
+import { useProjectStore } from "../../../contexts/project-context";
 import { useTasks } from "../../../contexts/task-context";
 import { useClients } from "../../../contexts/client-context";
 import { useRegistrationStore } from "../../../contexts/registration-context";

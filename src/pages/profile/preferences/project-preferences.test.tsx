@@ -6,6 +6,7 @@ import { ProjectPreferences } from "./project-preferences";
 
 jest.mock('../../../contexts/user-context');
 jest.mock('../../../contexts/auth-context');
+jest.mock('../../../contexts/project-context');
 
 const resetMocks = () => {
     (useUserStore as jest.Mock<ReturnType<typeof useUserStore>>).mockReturnValue(

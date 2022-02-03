@@ -12,15 +12,15 @@ import { App, goToNewProject, goToProjects } from "../../internal";
 import { useRegistrationStore } from "../../contexts/registration-context";
 import { IRegistration } from "../../../common";
 import { IRegistrationsStore } from "../../stores/registration-store";
-import { useProjectStore } from "../../stores/project-store";
+import { useProjectStore } from "../../contexts/project-context";
 import { useRouterStore } from "../../stores/router-store";
 
 jest.mock("../../contexts/store-context");
 jest.mock("../../contexts/registration-context");
 jest.mock('../../routes/projects/list');
-jest.mock('../../stores/project-store');
+jest.mock('../../contexts/project-context');
 jest.mock("../../stores/router-store");
-jest.mock("../..//routes/projects/detail");
+jest.mock("../../routes/projects/detail");
 
 let testEnv: RulesTestEnvironment;
 

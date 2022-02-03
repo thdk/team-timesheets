@@ -32,7 +32,7 @@ export const FavoriteGroupDetailForm = ({
 
     return (
         <Form style={{ paddingBottom: 0, paddingTop: "1em" }}>
-            <FlexGroup extraCssClass="row">
+            <FlexGroup className="row">
                 <FormField>
                     {groups && overwriteExistingGroup
                         ? (

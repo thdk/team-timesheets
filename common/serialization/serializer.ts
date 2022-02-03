@@ -51,15 +51,8 @@ export const convertRegistration = (appData: Partial<IRegistration> | null) => {
         };
     }
 
-    if (undefined === registration.description) delete registration.description;
-    if (undefined === registration.project) delete registration.project;
-    if (undefined === registration.time) delete registration.time;
-    if (undefined === registration.task) delete registration.task;
-    if (undefined === registration.client) delete registration.client;
-    if (undefined === registration.created) delete registration.created;
-    if (undefined === registration.modified) delete registration.modified;
-    if (undefined === registration.source) delete registration.source;
-    if (undefined === registration.sourceId) delete registration.sourceId;
+    Object.keys(registration).
+        forEach((key) => (registration as any)[key] === undefined && delete (registration as any)[key]);
 
     return registration;
 }
@@ -86,20 +79,18 @@ export const convertFavoriteRegistration = (appData: Partial<IFavoriteRegistrati
         };
     }
 
-    if (undefined === favorite.description) delete favorite.description;
-    if (undefined === favorite.project) delete favorite.project;
-    if (undefined === favorite.time) delete favorite.time;
-    if (undefined === favorite.task) delete favorite.task;
-    if (undefined === favorite.client) delete favorite.client;
+    Object.keys(favorite).
+        forEach((key) => (favorite as any)[key] === undefined && delete (favorite as any)[key]);
 
     return favorite;
 }
 
 export const convertUser = (appData: Partial<IUser> | null) => {
-    let user: Partial<Omit<IDivisionUserData, "divisionId" | "divisionUserId">>
+    let user: Partial<Omit<IDivisionUserData, "divisionId" | "divisionUserId" | "defaultProjectId">>
         & Partial<{
             divisionId: string | FieldValue;
             divisionUserId: string | FieldValue;
+            defaultProjectId: string | FieldValue;
         }>;
     const now = new Date();
     if (appData === null) {
@@ -114,6 +105,7 @@ export const convertUser = (appData: Partial<IUser> | null) => {
             created: Timestamp.fromDate(appData.created || now),
             divisionId: appData.divisionId || "",
             divisionUserId: appData.divisionUserId || deleteField(),
+            defaultProjectId: appData.defaultProjectId || deleteField(),
             deleted: false,
             githubRepos: appData.githubRepos || [],
         }
@@ -125,15 +117,10 @@ export const convertUser = (appData: Partial<IUser> | null) => {
         if (!user.defaultTask) delete user.defaultTask;
         if (!user.tasks) delete user.tasks;
         if (!user.recentProjects) delete user.recentProjects;
-        if (user.defaultClient === undefined) delete user.defaultClient;
-        if (user.team === undefined) delete user.team;
         if (!user.email) delete user.email;
-        if (user.numberOfRecentProjects === undefined) delete user.numberOfRecentProjects;
-        if (user.githubRepos === undefined) delete user.githubRepos;
-        if (user.githubUsername === undefined) delete user.githubUsername;
-        if (user.githubToken === undefined) delete user.githubToken;
-        if (user.jiraPassword === undefined) delete user.jiraPassword;
-        if (user.jiraUsername === undefined) delete user.jiraUsername;
+
+        Object.keys(user).
+            forEach((key) => (user as any)[key] === undefined && delete (user as any)[key]);
     }
 
     return user as IUserData;
@@ -200,8 +187,9 @@ export function convertProject(appData: Partial<IProject> | null): Partial<IProj
         };
     }
 
-    if (data.createdBy === undefined) delete (data.createdBy);
-    if (data.isArchived === undefined) delete (data.isArchived);
+    Object.keys(data).
+            forEach((key) => (data as any)[key] === undefined && delete (data as any)[key]);
+
     return data;
 }
 

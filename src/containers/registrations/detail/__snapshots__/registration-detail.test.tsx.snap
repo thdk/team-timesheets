@@ -148,7 +148,7 @@ exports[`RegistrationDetail should only show user tasks instead of all tasks 1`]
       </div>
     </div>
     <div
-      class="flex  horizontal"
+      class="flex horizontal"
     >
       <div
         class="first formField"
@@ -270,7 +270,7 @@ exports[`RegistrationDetail should only show user tasks instead of all tasks 1`]
       class="flex row horizontal"
     >
       <div
-        class="flex  vertical"
+        class="flex vertical"
       >
         <h3
           class="mdc-typography--subtitle1"
@@ -483,7 +483,7 @@ exports[`RegistrationDetail should render when there is a registration 1`] = `
       </div>
     </div>
     <div
-      class="flex  horizontal"
+      class="flex horizontal"
     >
       <div
         class="first formField"
@@ -605,7 +605,7 @@ exports[`RegistrationDetail should render when there is a registration 1`] = `
       class="flex row horizontal"
     >
       <div
-        class="flex  vertical"
+        class="flex vertical"
       >
         <h3
           class="mdc-typography--subtitle1"

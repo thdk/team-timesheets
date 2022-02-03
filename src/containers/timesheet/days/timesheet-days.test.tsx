@@ -136,7 +136,6 @@ describe("TimesheetDays", () => {
     it("should render without registrations", () => {
         const { asFragment, unmount } = render(
             <TimesheetDays
-                isMonthView={false}
                 registrationClick={jest.fn()}
             />,
             {

@@ -6,21 +6,27 @@ import { Box } from '../../../components/layout/box';
 import { useUserStore } from "../../../contexts/user-context";
 import { TaskPreferences } from './task-preferences';
 import { ClientPreferences } from './client-preferences';
+import { ProjectPreferences } from './project-preferences';
 import { useTasks } from '../../../contexts/task-context';
 import { useClients } from '../../../contexts/client-context';
-import { ProjectPreferences } from './project-preferences';
+import { useProjectStore } from '../../../contexts/project-context';
 
 
 export const Preferences = observer(() => {
     const userStore = useUserStore();
     const tasks = useTasks();
     const clients = useClients();
+    const projects = useProjectStore();
 
     if (!userStore.divisionUser) {
         return <></>;
     }
 
-    if (!tasks.tasks.length && !clients.clients.length) {
+    if (
+        (tasks.collection.isFetched && !tasks.tasks.length)
+        && (clients.clientsCollection.isFetched && !clients.clients.length)
+        && (projects.collection.isFetched && !projects.collection.docs.length)
+    ) {
         return (
             <Box>
                 <h3 className="mdc-typography--subtitle1">

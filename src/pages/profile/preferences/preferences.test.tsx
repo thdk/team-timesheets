@@ -11,6 +11,7 @@ jest.mock('../../../contexts/user-context');
 jest.mock('../../../contexts/auth-context');
 jest.mock('../../../contexts/task-context');
 jest.mock('../../../contexts/client-context');
+jest.mock('../../../contexts/project-context');
 
 jest.mock('./task-preferences', jest.fn().mockReturnValue(({
     TaskPreferences: () => <>TaskPreferences</>
@@ -19,13 +20,23 @@ jest.mock('./client-preferences', jest.fn().mockReturnValue(({
     ClientPreferences: () => <>ClientPreferences</>
 })));
 
+jest.mock('./project-preferences', jest.fn().mockReturnValue(({
+    ProjectPreferences: () => <>ProjectPreferences</>
+})));
+
 const resetMocks = () => {
     (useTasks as jest.Mock<ReturnType<typeof useTasks>>).mockReturnValue({
         tasks: [] as ITask[],
+        collection: {
+            isFetched: true,
+        },
     } as ReturnType<typeof useTasks>);
 
     (useClients as jest.Mock<ReturnType<typeof useClients>>).mockReturnValue({
         clients: [] as IClient[],
+        clientsCollection: {
+            isFetched: true,
+        },
     } as ReturnType<typeof useClients>);
 
     (useUserStore as jest.Mock<ReturnType<typeof useUserStore>>).mockReturnValue(
@@ -63,6 +74,9 @@ describe("Preferences", () => {
                     icon: "code",
                 },
             ],
+            collection: {
+                isFetched: true,
+            }
         } as ReturnType<typeof useTasks>);
 
         const { asFragment } = render(
@@ -77,6 +91,9 @@ describe("Preferences", () => {
             clients: [{
                 id: "client-1",
             }],
+            clientsCollection: {
+                isFetched: true,
+            }
         } as ReturnType<typeof useClients>);
 
         const { asFragment } = render(

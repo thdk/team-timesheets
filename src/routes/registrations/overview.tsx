@@ -208,7 +208,7 @@ const routes = {
     }),
     monthOverview: new Route({
         path: path + '/:year/:month',
-        component: <App><RegistrationsPage></RegistrationsPage></App>,
+        component: <App><RegistrationsPage /></App>,
         onEnter: (route: RegistrationsOverviewRoute, params: DateObject, s: IRootStore) => {
             s.view.track = false;
             routeChanged(route, params, s);

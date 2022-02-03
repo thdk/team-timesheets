@@ -35,7 +35,7 @@ export function GithubSettings() {
             <h3 className="mdc-typography--subtitle1">Github</h3>
             <p>Easily add time registrations based on what you have committed on Github.</p>
             <Form>
-                <FlexGroup extraCssClass="row">
+                <FlexGroup className="row">
                     <FormField>
                         <TextField
                             type="string"
@@ -57,7 +57,7 @@ export function GithubSettings() {
                         />
                     </FormField>
                 </FlexGroup>
-                <FlexGroup extraCssClass="row">
+                <FlexGroup className="row">
                     <FormField>
                         <TextField
                             type="password"
@@ -69,7 +69,7 @@ export function GithubSettings() {
                         />
                     </FormField>
                 </FlexGroup>
-                <FlexGroup extraCssClass="row">
+                <FlexGroup className="row">
                     <Button
                         onClick={handleSaveGithub}
                         style={{ margin: "1em" }}

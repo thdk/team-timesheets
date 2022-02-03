@@ -30,7 +30,7 @@ export const DivisionDetail = (props: Props) => {
 
     return <>
         <Form>
-            <FlexGroup extraCssClass="row">
+            <FlexGroup className="row">
                 <FormField>
                     <TextField
                         outlined

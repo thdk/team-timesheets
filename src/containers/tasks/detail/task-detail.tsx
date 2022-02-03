@@ -27,7 +27,7 @@ export const TaskDetail = ({
 
     return <>
         <Form>
-            <FlexGroup extraCssClass="row">
+            <FlexGroup className="row">
                 <FormField>
                     <TextField
                         outlined

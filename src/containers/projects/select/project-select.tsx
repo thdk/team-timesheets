@@ -9,9 +9,11 @@ import { useProjectStore } from "../../../contexts/project-context";
 export const ProjectSelect = observer(({
     value,
     onChange,
+    label,
 }: {
     value: string | undefined,
     onChange(value: string): void,
+    label?: string,
 }) => {
     const { divisionUser } = useUserStore();
     const projectStore = useProjectStore();
@@ -21,7 +23,7 @@ export const ProjectSelect = observer(({
         onChange(value);
     }
 
-    const userRecentProjects = divisionUser ? divisionUser.recentProjects : [];
+    const userRecentProjects = divisionUser?.recentProjects || [];
 
 
     const recentProjects = userRecentProjects.slice(
@@ -82,7 +84,7 @@ export const ProjectSelect = observer(({
             disabled={isCurrentProjectArchived}
             value={value || ""}
             outlined={true}
-            label="Project"
+            label={label || "Project"}
             onChange={onProjectChange}>
             {projects}
         </Select>

@@ -7,6 +7,9 @@ import { Day } from "../day";
 import { useRegistrationStore } from "../../../contexts/registration-context";
 import { observer } from "mobx-react-lite";
 import { RegistrationSuggestions } from "../../registration-suggestions";
+import { ListDivider } from "@rmwc/list";
+import { GroupedRegistrationHeader } from "../day-header";
+import { TimesheetDefaults } from "../../timesheet-defaults";
 
 export const TimesheetDayView = observer(({
     registrationClick,
@@ -27,27 +30,39 @@ export const TimesheetDayView = observer(({
         }, { track: false, currentDate: view.track ? view.day! : undefined });
     }
 
-    
-
     return (
         <>
-            <FlexGroup direction="vertical">
+            <FlexGroup column>
                 <div style={{ paddingLeft: "1em" }}>
                     <h3 className="mdc-typography--subtitle1">
                         Timesheet <a href="#" onClick={goToMonth}>{view.moment.format('MMMM')}</a> {view.moment.format('D, YYYY')}
                     </h3>
                 </div>
+                <FlexGroup column>
+                    <FlexGroup
+                    style={{
+                        justifyContent: "space-between"
+                    }}
+                    >
+                        <GroupedRegistrationHeader
+                            groupKey={timesheets.dayRegistrations.groupKey}
+                            totalTime={timesheets.dayRegistrations.totalTime}
+                            isCollapsed={false}
+                        />
+                        <TimesheetDefaults />
+                    </FlexGroup>
+                    <ListDivider />
+                    <Day
+                        group={timesheets.dayRegistrations}
+                        registrationClick={registrationClick}
+                        registrationToggleSelect={registrationToggleSelect}
+                        isCollapsed={false}
+                    />
+                </FlexGroup>
 
 
-                <Day
-                    group={timesheets.dayRegistrations}
-                    registrationClick={registrationClick}
-                    registrationToggleSelect={registrationToggleSelect}
-                    isCollapsed={false}
-                    headerClick={() => { }}
-                />
             </FlexGroup>
-            <FlexGroup direction="vertical">
+            <FlexGroup column>
                 <RegistrationSuggestions />
             </FlexGroup>
         </>

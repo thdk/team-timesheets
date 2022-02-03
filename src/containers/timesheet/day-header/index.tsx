@@ -9,121 +9,130 @@ import { useStore } from "../../../contexts/store-context";
 import "./day-header.scss";
 import { useRegistrationStore } from '../../../contexts/registration-context';
 import { useRouterStore } from '../../../stores/router-store';
+import { observer } from 'mobx-react-lite';
 
 export type GroupedRegistrationHeaderProps = {
     readonly groupKey: string;
     readonly totalTime: number;
-    readonly headerClick: (e: React.MouseEvent) => void;
+    readonly headerClick?: (e: React.MouseEvent) => void;
     readonly isCollapsed: boolean;
     readonly isCollapsable?: boolean;
-    readonly isMonthView: boolean;
+    readonly isMonthView?: boolean;
     readonly showAddButton?: boolean;
 }
 
-export const GroupedRegistrationHeader = (props: GroupedRegistrationHeaderProps) => {
-    const store = useStore();
+export const GroupedRegistrationHeader = observer(
+    (props: GroupedRegistrationHeaderProps) => {
+        const store = useStore();
 
-    const timesheets = useRegistrationStore();
-    const router = useRouterStore();
+        const timesheets = useRegistrationStore();
+        const router = useRouterStore();
 
-    const {
-        groupKey,
-        totalTime,
-        headerClick,
-        isCollapsable,
-        isCollapsed,
-        isMonthView,
-        showAddButton = true,
-    } = props;
+        const {
+            groupKey,
+            totalTime,
+            headerClick,
+            isCollapsable,
+            isCollapsed,
+            isMonthView,
+            showAddButton = true,
+        } = props;
 
-    const goToDate = (store: IRootStore, e: React.MouseEvent, date: Date) => {
-        e.preventDefault();
-        goToOverview(store, {
-            year: date.getFullYear(),
-            month: date.getMonth() + 1,
-            day: date.getDate()
-        }, { track: true })
-    };
+        const goToDate = (store: IRootStore, e: React.MouseEvent, date: Date) => {
+            e.preventDefault();
+            goToOverview(store, {
+                year: date.getFullYear(),
+                month: date.getMonth() + 1,
+                day: date.getDate()
+            }, { track: true })
+        };
 
-    const createTotalLabel = (store: IRootStore, date: Date, total?: number) => {
-        const dateMoment = moment(date);
-        const totalJSX = total !== undefined
-            ? <div className="grouped-registration-header-total">
-                {parseFloat(total.toFixed(2))} hours
+        const createTotalLabel = (store: IRootStore, date: Date, total?: number) => {
+            const dateMoment = moment(date);
+            const totalJSX = total !== undefined
+                ? <div className="grouped-registration-header-total">
+                    {parseFloat(total.toFixed(2))} hours
                 </div>
-            : null;
+                : null;
 
 
-        const displayJSX = !isMonthView
-            ? <>
-                <div className="grouped-registration-header-label">
-                    Total time: {parseFloat(totalTime.toFixed(2))} hours
-                </div>
-            </>
-            : <>
-                <a href="#"
-                    onClick={(e: React.MouseEvent) => {
-                        e.preventDefault();
-                        e.stopPropagation();
-                        goToDate(store, e, date);
-                    }}
-                    className="grouped-registration-header-date"
-                >
-                    {dateMoment.format("MMMM Do")}
-                </a>
-                {totalJSX}
-            </>;
+            const displayJSX = !isMonthView
+                ? <>
+                    <div className="grouped-registration-header-label">
+                        Total time: {parseFloat(totalTime.toFixed(2))} hours
+                    </div>
+                </>
+                : <>
+                    <a href="#"
+                        onClick={(e: React.MouseEvent) => {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            goToDate(store, e, date);
+                        }}
+                        className="grouped-registration-header-date"
+                    >
+                        {dateMoment.format("MMMM Do")}
+                    </a>
+                    {totalJSX}
+                </>;
 
-        return showAddButton
-            ? <>
-                {displayJSX}
-                <FavoriteGroupsMenu
-                    onSelect={
-                        id => {
-                            if (!id) {
-                                timesheets.toggleSelectedRegistrationDay(date.toDateString(), true);
-                                timesheets.createNewDocument(date ? { date: moment(date).toDate() } : undefined);
-                                goToNewRegistration(router);
-                            } else {
-                                store.favorites.getFavoritesByGroupIdAsync(id)
-                                    .then(favoriteDocs => {
-                                        timesheets.addDocuments(
-                                            favoriteDocs.map(reg =>
-                                                timesheets.copyRegistrationToDate(reg.data!, date)
-                                            )
-                                        );
-                                    })
+            return showAddButton
+                ? <>
+                    {displayJSX}
+                    <FavoriteGroupsMenu
+                        onSelect={
+                            id => {
+                                if (!id) {
+                                    timesheets.toggleSelectedRegistrationDay(date.toDateString(), true);
+                                    timesheets.createNewDocument(date ? { date: moment(date).toDate() } : undefined);
+                                    goToNewRegistration(router);
+                                } else {
+                                    store.favorites.getFavoritesByGroupIdAsync(id)
+                                        .then(favoriteDocs => {
+                                            timesheets.addDocuments(
+                                                favoriteDocs.map(reg =>
+                                                    timesheets.copyRegistrationToDate(reg.data!, date)
+                                                )
+                                            );
+                                        })
 
+                                }
                             }
                         }
-                    }
-                />
-            </>
-            : <>
-                {displayJSX}
-            </>;
+                    />
+                </>
+                : <>
+                    {displayJSX}
+                </>;
 
-    };
+        };
 
-    const titleJSX = createTotalLabel(store, new Date(groupKey), totalTime);
-    const collapseIconJSX = isCollapsable
-        ? <i
-            className="grouped-registration-header-icon material-icons mdc-icon-button__icon">
-            {isCollapsed ? "chevron_right" : "expand_more"}
-        </i>
-        : null;
+        const titleJSX = createTotalLabel(store, new Date(groupKey), totalTime);
+        const collapseIconJSX = isCollapsable
+            ? <i
+                className="grouped-registration-header-icon material-icons mdc-icon-button__icon">
+                {isCollapsed ? "chevron_right" : "expand_more"}
+            </i>
+            : null;
 
-    const cssClass = classNames([
-        "grouped-registration-header",
-        {
-            "grouped-registration-header--collapsable": isCollapsable
-        }
-    ]);
+        const cssClass = classNames([
+            "grouped-registration-header",
+            {
+                "grouped-registration-header--collapsable": isCollapsable
+            }
+        ]);
 
-    return <div
-        className={cssClass}
-        onClick={headerClick}>
-        {collapseIconJSX}
-        {titleJSX}
-    </div>;
-};
+        return <div
+            style={isMonthView ?
+                undefined
+                : {
+                    alignSelf: "flex-end",
+                    paddingBottom: "1em",
+                    display: "flex"
+                }}
+            className={cssClass}
+            onClick={headerClick}>
+            {collapseIconJSX}
+            {titleJSX}
+        </div>;
+    });

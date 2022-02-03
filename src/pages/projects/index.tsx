@@ -10,7 +10,7 @@ import { IRootStore } from '../../stores/root-store';
 import { IViewAction } from '../../stores/view-store';
 import { goToNewProject, goToProjects, ProjectRouteQueryParams, ProjectsTab} from '../../internal';
 import { useEffect } from 'react';
-import { useProjectStore } from '../../stores/project-store';
+import { useProjectStore } from '../../contexts/project-context';
 import { useRegistrationStore } from '../../contexts/registration-context';
 import { useViewStore } from '../../contexts/view-context';
 

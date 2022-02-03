@@ -52,7 +52,7 @@ export const ExportPage = withAuthentication(
 
         return (
             <>
-                <FlexGroup direction="vertical">
+                <FlexGroup column>
                     <FlexGroup style={{ alignItems: "center", justifyContent: "space-between", width: "100%" }}>
                         <DateSelect
                             style={{ margin: "1em" }}
@@ -70,7 +70,7 @@ export const ExportPage = withAuthentication(
                     </FlexGroup>
 
                     <FlexGroup
-                        direction={"vertical"}
+                        column
                         style={{ paddingRight: "1em", alignItems: "flex-end" }}
                     >
                         <ReportDownloadLink />
@@ -79,7 +79,6 @@ export const ExportPage = withAuthentication(
                     <TimesheetDays
                         sortOrder={SortOrder.Ascending}
                         registrationClick={onRegistrationClick}
-                        isMonthView={true}
                         showHeaderAddButton={false}
                     />
 

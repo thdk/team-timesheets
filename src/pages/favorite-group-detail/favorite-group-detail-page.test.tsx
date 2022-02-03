@@ -17,6 +17,7 @@ import { App, goToFavorites } from "../../internal";
 
 jest.mock("../../routes/favorites/list.tsx");
 jest.mock("../../contexts/store-context");
+jest.mock('../../contexts/project-context');
 jest.mock("../../stores/router-store", () => ({
     useRouterStore: jest.fn(),
 }));

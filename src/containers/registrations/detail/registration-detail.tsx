@@ -32,7 +32,7 @@ const Tasks = observer(() => {
 
     return tasks.length
         ? (
-            <FlexGroup direction="vertical">
+            <FlexGroup column>
                 <h3 className="mdc-typography--subtitle1">Task</h3>
                 <FormField>
                     <TasksChips
@@ -84,7 +84,7 @@ export const RegistrationDetail = observer(() => {
     return (
         <>
             <Form>
-                <FlexGroup extraCssClass="row">
+                <FlexGroup className="row">
                     <FormField>
                         <TextField
                             type="number"
@@ -108,7 +108,7 @@ export const RegistrationDetail = observer(() => {
                             outlined={true} />
                     </FormField>
                 </FlexGroup>
-                <FlexGroup extraCssClass="row">
+                <FlexGroup className="row">
                     <FormField>
                         <TextField
                             textarea
@@ -138,7 +138,7 @@ export const RegistrationDetail = observer(() => {
                         />
                     </FormField>
                 </FlexGroup>
-                <FlexGroup extraCssClass="row">
+                <FlexGroup className="row">
                     <Tasks />
                 </FlexGroup>
             </Form>

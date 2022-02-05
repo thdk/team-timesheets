@@ -7,8 +7,9 @@ import { IRegistration } from "../../../common";
 import { useRouterStore } from "../../stores/router-store";
 import { goToNewRegistration } from "../../internal";
 import { useGoogleCalendarEvents } from "./google-calendar/use-google-calendar-events";
-import { GithubCommits, useGithubCommits } from "./github-commits";
+import { GithubCommits } from "./github-commits";
 import { JiraIssues, useJiraIssues } from "./jira-issues";
+import { useGithubCommits } from "./use-github-commits";
 
 const RegistrationSuggestionsHeader = () => {
     return (

@@ -6,7 +6,7 @@ import { DataRow, DataRowColumn, DataRowLine1, DataRowLine2 } from "../../../com
 import { useRegistrationStore } from "../../../contexts/registration-context";
 import { useTasks } from "../../../contexts/task-context";
 import { useViewStore } from "../../../contexts/view-context";
-import { useGithubCommits } from "./use-github-commits";
+import { useGithubCommits } from "../use-github-commits/use-github-commits";
 
 export const GithubCommits = observer(({
     onClick,

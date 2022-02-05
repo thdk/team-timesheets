@@ -15,10 +15,6 @@ const GoogleButton = observer(
             user,
         } = useGapiAuth(config);
 
-        if (!isGapiLoaded) {
-            return null;
-        }
-
         if (!!user) {
             return (
                 <Button
@@ -31,6 +27,7 @@ const GoogleButton = observer(
             return (
                 <Button
                     onClick={signIn}
+                    disabled={!isGapiLoaded}
                 >
                     Connect with google
                 </Button>

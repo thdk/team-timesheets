@@ -107,6 +107,7 @@
     "firebase": "^9.1.2",
     "firestorable": "^2.2.0",
     "js-base64": "^3.7.2",
+    "js-cookie": "^3.0.1",
     "md5": "^2.3.0",
     "mobx": "^6.3.3",
     "mobx-react-lite": "^3.2.1",

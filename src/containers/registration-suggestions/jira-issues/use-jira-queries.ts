@@ -16,5 +16,5 @@ export function useJiraQueries() {
         ),
     );
 
-    return values?.docs.map((doc) => ({ ...doc.data(), id: doc.id })) || [];
+    return values?.docs.map((doc) => ({ ...doc.data(), id: doc.id }));
 }

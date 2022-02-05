@@ -23,7 +23,6 @@ export interface IUser {
     numberOfRecentProjects?: number;
     githubUsername?: string;
     githubRepos: string[];
-    githubToken?: string;
     jiraUsername?: string;
     jiraPassword?: string;
     defaultProjectId?: string;

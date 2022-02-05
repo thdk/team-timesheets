@@ -60,13 +60,14 @@ export const JiraSettings = observer(function JiraSettings() {
                     </FormField>
                 </FlexGroup>
                 <FlexGroup className="row">
-                    <Button
-                        onClick={handleSaveJira}
-                        style={{ margin: "1em" }}
-                        outlined
-                    >
-                        Save Jira settings
-                    </Button>
+                    <FormField>
+                        <Button
+                            onClick={handleSaveJira}
+                            outlined
+                        >
+                            Save Jira settings
+                        </Button>
+                    </FormField>
                 </FlexGroup>
             </Form>
         </>

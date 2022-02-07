@@ -128,26 +128,25 @@ describe("GithubCommits", () => {
 
         fireEvent.click(eventItem1);
 
-        expect(onClick).toHaveBeenCalledWith({
-            date: new Date("2020-03-21T23:00:00.000Z"),
+        expect(onClick).toHaveBeenCalledWith(expect.objectContaining({
             description: "message 1",
             sourceId: "sha1",
             source: "github-commit",
             task: undefined,
             time: 1,
-        });
+        }));
 
         const eventItem2 = await screen.findByText(text => text === "Github: message 2");
         fireEvent.click(eventItem2);
 
-        expect(onClick).toHaveBeenCalledWith({
-            date: new Date("2020-03-21T23:00:00.000Z"),
-            description: "message 2",
-            sourceId: "sha2",
-            source: "github-commit",
-            task: undefined,
-            time: 1,
-        });
+        expect(onClick).toHaveBeenCalledWith(
+            expect.objectContaining({
+                description: "message 2",
+                sourceId: "sha2",
+                source: "github-commit",
+                task: undefined,
+                time: 1,
+            }));
 
     });
 });

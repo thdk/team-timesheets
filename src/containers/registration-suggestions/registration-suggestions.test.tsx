@@ -13,7 +13,7 @@ import { User } from "firebase/auth";
 import { events } from "./google-calendar/events.test";
 import { RegistrationSuggestions } from ".";
 import { createQueryClientWrapper } from "../../__test-utils__/query-client-provider";
-import { Octokit } from "@octokit/rest";
+
 
 jest.mock("firebase/functions");
 
@@ -123,21 +123,7 @@ afterEach(async () => {
 afterAll(() => testEnv.cleanup());
 
 describe("RegistrationSuggestions", () => {
-    const listCommits = jest.fn().mockResolvedValue({
-        success: true,
-        isLoading: false,
-        data: [],
-    });
-
     beforeEach(() => {
-        (Octokit as any).mockImplementation(() => {
-            return ({
-                repos: {
-                    listCommits,
-                }
-            })
-        });
-
         (useGapiAuth as jest.Mock<Partial<ReturnType<typeof useGapiAuth>>>)
             .mockReturnValue({
                 user: {} as gapi.auth2.GoogleUser,
@@ -227,139 +213,6 @@ describe("RegistrationSuggestions", () => {
         await screen.findByText("All day event 1");
 
         unmount();
-    });
-
-    xit("should not try to get commits when github is not configured", async () => {
-        const useUserStore = jest.fn().mockReturnValue({
-            divisionUser: {
-                githubRepos: [],
-                githubUsername: undefined,
-            },
-        });
-        jest.mock("../../contexts/user-context", () => ({
-            useUserStore,
-        }));
-
-        const { unmount } = render(
-            <IntlProvider
-                locale={"en-US"}
-                timeZone={"Europe/Brussels"}
-            ><RegistrationSuggestions />
-            </IntlProvider>
-            ,
-            {
-                wrapper: createQueryClientWrapper()
-            });
-
-        await screen.findByText("All day event 1");
-
-        expect(listCommits).not.toHaveBeenCalled();
-
-        unmount();
-    });
-
-    xit("should show github commits as suggestions", async () => {
-        listCommits.mockResolvedValue(() => {
-            return {
-                success: true,
-                isLoading: false,
-                data: [
-                    {
-                        sha: "sha1",
-                        commit: {
-                            message: "message 1"
-                        }
-                    },
-                    {
-                        sha: "sha2",
-                        commit: {
-                            message: "message 2\nfixes #1234"
-                        }
-                    },
-                ],
-            }
-        })
-        render(
-            <IntlProvider
-                locale={"en-US"}
-                timeZone={"Europe/Brussels"}
-            ><RegistrationSuggestions />
-            </IntlProvider>
-            ,
-            {
-                wrapper: createQueryClientWrapper()
-            });
-
-        await waitFor(() => {
-            expect(true).toBe(true);
-        });
-
-    });
-
-    xit("should set selected registration with data from selected github commit", async () => {
-        listCommits.mockResolvedValue(() => {
-            return {
-                success: true,
-                isLoading: false,
-                data: [
-                    {
-                        sha: "sha1",
-                        commit: {
-                            message: "message 1"
-                        }
-                    },
-                    {
-                        sha: "sha2",
-                        commit: {
-                            message: "message 2\nfixes #1234"
-                        }
-                    },
-                ],
-            }
-        });
-
-        render(
-            <IntlProvider
-                locale={"en-US"}
-                timeZone={"Europe/Brussels"}
-            >
-                <RegistrationSuggestions />
-            </IntlProvider>,
-            {
-                wrapper: createQueryClientWrapper()
-            }
-        );
-
-        const commit1 = await screen.findByText((text) => text === "Github message 1");
-
-        act(() => {
-            fireEvent.click(commit1);
-        });
-
-        await waitFor(
-            () => expect(
-                store.timesheets.activeDocument?.sourceId).toBe("sha1")
-        );
-
-        expect(goToNewRegistration).toBeCalledTimes(1);
-
-        const commit2 = await screen.findByText((text) => text === "Github message 2");
-        fireEvent.click(commit2);
-
-        await waitFor(
-            () => expect(
-                store.timesheets.activeDocument
-            ).toEqual(
-                expect.objectContaining({
-                    sourceId: "sha2",
-                    time: 1,
-                    description: "message 2",
-                })
-            )
-        );
-
-        expect(goToNewRegistration).toBeCalledTimes(2);
-
     });
 
     it("should set selected registration with data from event on event click", async () => {

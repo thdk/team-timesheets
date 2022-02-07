@@ -35,7 +35,7 @@ export const GithubCommits = observer(({
 
     const commitsQuery = useGithubCommits();
 
-    return (
+     return (
         <>
             {commitsQuery.data.map((commit) => {
                 const message = commit.commit.message.split("\n");
@@ -53,7 +53,7 @@ export const GithubCommits = observer(({
                             }}
                         >
                             <DataRowLine1>
-                                Github {subject}
+                                Github: {subject}
                             </DataRowLine1>
                             <DataRowLine2>
                                 {description}

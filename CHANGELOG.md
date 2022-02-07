@@ -5,7 +5,23 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [v2.3.0](https://github.com/thdk/team-timesheets/compare/v2.2.2...v2.3.0)
+## [v2.4.0](https://github.com/thdk/team-timesheets/compare/v2.3.0...v2.4.0)
+
+### Merged
+
+- feat: implement oauth for authenticating with github [`#239`](https://github.com/thdk/team-timesheets/pull/239)
+
+### Fixed
+
+- feat: implement oauth for authenticating with github (#239) [`#238`](https://github.com/thdk/team-timesheets/issues/238)
+- feat: use default project instead of using last used project [`#236`](https://github.com/thdk/team-timesheets/issues/236)
+
+### Commits
+
+- feat: add parameter userId to changeProjectOfRegistrations function [`e0002e9`](https://github.com/thdk/team-timesheets/commit/e0002e978a0201ae587f81b6fd607a57b3dfaf4d)
+- feat: change sync time from 6 am to midnight CET [`001602e`](https://github.com/thdk/team-timesheets/commit/001602e8f9af7df77977ceb5433876dd327fa741)
+
+## [v2.3.0](https://github.com/thdk/team-timesheets/compare/v2.2.2...v2.3.0) - 2022-02-02
 
 ### Fixed
 

@@ -392,17 +392,15 @@ describe("RegistrationStore", () => {
 
             await store.timesheets.saveSelectedRegistration();
 
-            await waitFor<void>(async () => {
-                const reg = await store.timesheets.collection.getAsync(regId1)
-                    .then(doc => doc.data);
+            const reg = regId1 && await store.timesheets.collection.getAsync(regId1)
+                .then(doc => doc.data);
 
-                return expect(reg).toEqual(
-                    expect.objectContaining({
-                        description: "desc 3 a",
-                        project: "project-1",
-                    })
-                );
-            });
+            expect(reg).toEqual(
+                expect.objectContaining({
+                    description: "desc 3 a",
+                    project: "project-1",
+                })
+            );
 
             // After saving the activeDocumentId and activeDocument should have been reset
             expect(store.timesheets.activeDocumentId).toBeUndefined();

@@ -4,6 +4,7 @@ import { TextField } from "@rmwc/textfield";
 import { Form, FormField } from "../../../components/layout/form";
 import { FlexGroup } from "../../../components/layout/flex";
 import IconPicker from "../../../components/icon-picker";
+import { Box } from "../../../components/layout/box";
 
 
 export const TaskDetail = ({
@@ -25,26 +26,28 @@ export const TaskDetail = ({
         onIconChanged(icon);
     }, [onIconChanged]);
 
-    return <>
-        <Form>
-            <FlexGroup className="row">
-                <FormField>
-                    <TextField
-                        outlined
-                        label="Name"
-                        value={name}
-                        onChange={handleNameChanged}
-                        autoFocus
-                    />
-                </FormField>
-                <FormField first={false}>
-                    <IconPicker
-                        onChange={handleIconChanged}
-                        value={icon}
-                        outlined
-                    />
-                </FormField>
-            </FlexGroup>
-        </Form>
-    </>;
+    return (
+        <Box>
+            <Form>
+                <FlexGroup className="row">
+                    <FormField>
+                        <TextField
+                            outlined
+                            label="Name"
+                            value={name}
+                            onChange={handleNameChanged}
+                            autoFocus
+                        />
+                    </FormField>
+                    <FormField first={false}>
+                        <IconPicker
+                            onChange={handleIconChanged}
+                            value={icon}
+                            outlined
+                        />
+                    </FormField>
+                </FlexGroup>
+            </Form>
+        </Box>
+    );
 };

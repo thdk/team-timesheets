@@ -9,6 +9,7 @@ import ClientSelect from "../../clients/select";
 import { TasksChips } from "../../tasks/chips";
 import { useUserStore } from "../../../contexts/user-context";
 import { useTasks } from "../../../contexts/task-context";
+import { Box } from "../../../components/layout/box";
 
 const Tasks = observer(() => {
     const timesheets = useRegistrationStore();
@@ -82,7 +83,7 @@ export const RegistrationDetail = observer(() => {
     } = timesheets.activeDocument;
 
     return (
-        <>
+        <Box>
             <Form>
                 <FlexGroup className="row">
                     <FormField>
@@ -142,6 +143,6 @@ export const RegistrationDetail = observer(() => {
                     <Tasks />
                 </FlexGroup>
             </Form>
-        </>
+        </Box>
     );
 });

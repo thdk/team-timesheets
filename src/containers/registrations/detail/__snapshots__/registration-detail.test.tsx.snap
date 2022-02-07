@@ -7,173 +7,34 @@ exports[`RegistrationDetail should not render when there is no registration 1`] 
 exports[`RegistrationDetail should only show user tasks instead of all tasks 1`] = `
 <DocumentFragment>
   <div
-    class="form"
+    class="box"
   >
     <div
-      class="flex row horizontal"
+      class="form"
     >
       <div
-        class="first formField"
-      >
-        <label
-          aria-labelledby="time-label"
-          class="mdc-text-field mdc-text-field--upgraded mdc-text-field--outlined mdc-text-field--focused"
-        >
-          <span
-            class="mdc-text-field__ripple"
-          />
-          <input
-            class="mdc-text-field__input"
-            id="time"
-            tabindex="0"
-            type="number"
-            value=""
-          />
-          <div
-            class="mdc-notched-outline mdc-notched-outline--upgraded"
-            notch="0"
-          >
-            <div
-              class="mdc-notched-outline__leading"
-            />
-            <div
-              class="mdc-notched-outline__notch"
-            >
-              <span
-                class="mdc-floating-label mdc-floating-label--float-above"
-                id="time-label"
-                style="transition-duration: 0s;"
-              >
-                Time
-              </span>
-            </div>
-            <div
-              class="mdc-notched-outline__trailing"
-            />
-          </div>
-        </label>
-      </div>
-      <div
-        class="formField"
-      >
-        <label
-          aria-labelledby="date-label"
-          class="mdc-text-field mdc-text-field--upgraded mdc-text-field--outlined mdc-text-field--disabled mdc-text-field--with-leading-icon"
-        >
-          <i
-            class="rmwc-icon rmwc-icon--ligature material-icons mdc-text-field__icon mdc-text-field__icon--leading"
-          >
-            event
-          </i>
-          <span
-            class="mdc-text-field__ripple"
-          />
-          <input
-            class="mdc-text-field__input"
-            disabled=""
-            id="date"
-            tabindex="-1"
-            value="2020-3-1"
-          />
-          <div
-            class="mdc-notched-outline mdc-notched-outline--upgraded"
-            notch="0"
-          >
-            <div
-              class="mdc-notched-outline__leading"
-            />
-            <div
-              class="mdc-notched-outline__notch"
-            >
-              <span
-                class="mdc-floating-label mdc-floating-label--float-above"
-                id="date-label"
-                style="transition-duration: 0s;"
-              >
-                Date
-              </span>
-            </div>
-            <div
-              class="mdc-notched-outline__trailing"
-            />
-          </div>
-        </label>
-      </div>
-    </div>
-    <div
-      class="flex row horizontal"
-    >
-      <div
-        class="first formField"
-      >
-        <label
-          aria-labelledby="description-label"
-          class="mdc-text-field mdc-text-field--upgraded mdc-text-field--textarea mdc-text-field--fullwidth mdc-text-field--outlined"
-        >
-          <span
-            class="mdc-text-field__ripple"
-          />
-          <textarea
-            class="mdc-text-field__input"
-            cols="250"
-            id="description"
-            rows="2"
-            tabindex="0"
-          >
-            Registration 1
-          </textarea>
-          <div
-            class="mdc-notched-outline mdc-notched-outline--upgraded"
-            notch="0"
-          >
-            <div
-              class="mdc-notched-outline__leading"
-            />
-            <div
-              class="mdc-notched-outline__notch"
-            >
-              <span
-                class="mdc-floating-label mdc-floating-label--float-above"
-                id="description-label"
-                style="transition-duration: 0s;"
-              >
-                Description
-              </span>
-            </div>
-            <div
-              class="mdc-notched-outline__trailing"
-            />
-          </div>
-        </label>
-      </div>
-    </div>
-    <div
-      class="flex horizontal"
-    >
-      <div
-        class="first formField"
+        class="flex row horizontal"
       >
         <div
-          class="mdc-select mdc-select--outlined"
-          role="listbox"
+          class="first formField"
         >
-          <div
-            class="mdc-select__anchor"
+          <label
+            aria-labelledby="time-label"
+            class="mdc-text-field mdc-text-field--upgraded mdc-text-field--outlined mdc-text-field--focused"
           >
-            <i
-              class="mdc-select__dropdown-icon"
+            <span
+              class="mdc-text-field__ripple"
+            />
+            <input
+              class="mdc-text-field__input"
+              id="time"
+              tabindex="0"
+              type="number"
+              value=""
             />
             <div
-              aria-disabled="false"
-              aria-haspopup="listbox"
-              class="mdc-select__selected-text"
-              role="button"
-              tabindex="-1"
-            >
-               
-            </div>
-            <div
               class="mdc-notched-outline mdc-notched-outline--upgraded"
+              notch="0"
             >
               <div
                 class="mdc-notched-outline__leading"
@@ -182,57 +43,44 @@ exports[`RegistrationDetail should only show user tasks instead of all tasks 1`]
                 class="mdc-notched-outline__notch"
               >
                 <span
-                  class="mdc-floating-label"
-                  for="select-Project"
+                  class="mdc-floating-label mdc-floating-label--float-above"
+                  id="time-label"
                   style="transition-duration: 0s;"
                 >
-                  Project
+                  Time
                 </span>
               </div>
               <div
                 class="mdc-notched-outline__trailing"
               />
             </div>
-            <select
-              class="rmwc-select__native-control "
-              tabindex="0"
-            >
-              <option
-                disabled=""
-                value=""
-              />
-              <option
-                disabled=""
-                value=""
-              />
-            </select>
-          </div>
+          </label>
         </div>
-      </div>
-      <div
-        class="formField"
-      >
         <div
-          class="mdc-select mdc-select--outlined"
-          role="listbox"
+          class="formField"
         >
-          <div
-            class="mdc-select__anchor"
+          <label
+            aria-labelledby="date-label"
+            class="mdc-text-field mdc-text-field--upgraded mdc-text-field--outlined mdc-text-field--disabled mdc-text-field--with-leading-icon"
           >
             <i
-              class="mdc-select__dropdown-icon"
+              class="rmwc-icon rmwc-icon--ligature material-icons mdc-text-field__icon mdc-text-field__icon--leading"
+            >
+              event
+            </i>
+            <span
+              class="mdc-text-field__ripple"
+            />
+            <input
+              class="mdc-text-field__input"
+              disabled=""
+              id="date"
+              tabindex="-1"
+              value="2020-3-1"
             />
             <div
-              aria-disabled="false"
-              aria-haspopup="listbox"
-              class="mdc-select__selected-text"
-              role="button"
-              tabindex="-1"
-            >
-               
-            </div>
-            <div
               class="mdc-notched-outline mdc-notched-outline--upgraded"
+              notch="0"
             >
               <div
                 class="mdc-notched-outline__leading"
@@ -241,95 +89,251 @@ exports[`RegistrationDetail should only show user tasks instead of all tasks 1`]
                 class="mdc-notched-outline__notch"
               >
                 <span
-                  class="mdc-floating-label"
-                  for="client-collection"
+                  class="mdc-floating-label mdc-floating-label--float-above"
+                  id="date-label"
                   style="transition-duration: 0s;"
                 >
-                  Client
+                  Date
                 </span>
               </div>
               <div
                 class="mdc-notched-outline__trailing"
               />
             </div>
-            <select
-              class="rmwc-select__native-control "
-              id="client-collection"
-              tabindex="0"
-            >
-              <option
-                disabled=""
-                value=""
-              />
-            </select>
-          </div>
+          </label>
         </div>
       </div>
-    </div>
-    <div
-      class="flex row horizontal"
-    >
       <div
-        class="flex vertical"
+        class="flex row horizontal"
       >
-        <h3
-          class="mdc-typography--subtitle1"
+        <div
+          class="first formField"
         >
-          Task
-        </h3>
+          <label
+            aria-labelledby="description-label"
+            class="mdc-text-field mdc-text-field--upgraded mdc-text-field--textarea mdc-text-field--fullwidth mdc-text-field--outlined"
+          >
+            <span
+              class="mdc-text-field__ripple"
+            />
+            <textarea
+              class="mdc-text-field__input"
+              cols="250"
+              id="description"
+              rows="2"
+              tabindex="0"
+            >
+              Registration 1
+            </textarea>
+            <div
+              class="mdc-notched-outline mdc-notched-outline--upgraded"
+              notch="0"
+            >
+              <div
+                class="mdc-notched-outline__leading"
+              />
+              <div
+                class="mdc-notched-outline__notch"
+              >
+                <span
+                  class="mdc-floating-label mdc-floating-label--float-above"
+                  id="description-label"
+                  style="transition-duration: 0s;"
+                >
+                  Description
+                </span>
+              </div>
+              <div
+                class="mdc-notched-outline__trailing"
+              />
+            </div>
+          </label>
+        </div>
+      </div>
+      <div
+        class="flex horizontal"
+      >
         <div
           class="first formField"
         >
           <div
-            class="mdc-chip-set mdc-chip-set--choice"
+            class="mdc-select mdc-select--outlined"
+            role="listbox"
           >
             <div
-              class="mdc-ripple-surface mdc-chip mdc-chip--selected"
-              id="task-1"
-              role="row"
+              class="mdc-select__anchor"
             >
-              <div
-                class="mdc-chip__ripple"
+              <i
+                class="mdc-select__dropdown-icon"
               />
-              <span
-                role="gridcell"
+              <div
+                aria-disabled="false"
+                aria-haspopup="listbox"
+                class="mdc-select__selected-text"
+                role="button"
+                tabindex="-1"
               >
-                <span
-                  class="mdc-chip__text__primary-action"
-                  role="button"
-                  tabindex="0"
+                 
+              </div>
+              <div
+                class="mdc-notched-outline mdc-notched-outline--upgraded"
+              >
+                <div
+                  class="mdc-notched-outline__leading"
+                />
+                <div
+                  class="mdc-notched-outline__notch"
                 >
                   <span
-                    class="mdc-chip__text"
+                    class="mdc-floating-label"
+                    for="select-Project"
+                    style="transition-duration: 0s;"
                   >
-                    Task 1
+                    Project
                   </span>
-                </span>
-              </span>
+                </div>
+                <div
+                  class="mdc-notched-outline__trailing"
+                />
+              </div>
+              <select
+                class="rmwc-select__native-control "
+                tabindex="0"
+              >
+                <option
+                  disabled=""
+                  value=""
+                />
+                <option
+                  disabled=""
+                  value=""
+                />
+              </select>
             </div>
+          </div>
+        </div>
+        <div
+          class="formField"
+        >
+          <div
+            class="mdc-select mdc-select--outlined"
+            role="listbox"
+          >
             <div
-              class="mdc-ripple-surface mdc-chip"
-              id="task-3"
-              role="row"
+              class="mdc-select__anchor"
             >
-              <div
-                class="mdc-chip__ripple"
+              <i
+                class="mdc-select__dropdown-icon"
               />
-              <span
-                role="gridcell"
+              <div
+                aria-disabled="false"
+                aria-haspopup="listbox"
+                class="mdc-select__selected-text"
+                role="button"
+                tabindex="-1"
               >
-                <span
-                  class="mdc-chip__text__primary-action"
-                  role="button"
-                  tabindex="0"
+                 
+              </div>
+              <div
+                class="mdc-notched-outline mdc-notched-outline--upgraded"
+              >
+                <div
+                  class="mdc-notched-outline__leading"
+                />
+                <div
+                  class="mdc-notched-outline__notch"
                 >
                   <span
-                    class="mdc-chip__text"
+                    class="mdc-floating-label"
+                    for="client-collection"
+                    style="transition-duration: 0s;"
                   >
-                    Task 3
+                    Client
+                  </span>
+                </div>
+                <div
+                  class="mdc-notched-outline__trailing"
+                />
+              </div>
+              <select
+                class="rmwc-select__native-control "
+                id="client-collection"
+                tabindex="0"
+              >
+                <option
+                  disabled=""
+                  value=""
+                />
+              </select>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div
+        class="flex row horizontal"
+      >
+        <div
+          class="flex vertical"
+        >
+          <h3
+            class="mdc-typography--subtitle1"
+          >
+            Task
+          </h3>
+          <div
+            class="first formField"
+          >
+            <div
+              class="mdc-chip-set mdc-chip-set--choice"
+            >
+              <div
+                class="mdc-ripple-surface mdc-chip mdc-chip--selected"
+                id="task-1"
+                role="row"
+              >
+                <div
+                  class="mdc-chip__ripple"
+                />
+                <span
+                  role="gridcell"
+                >
+                  <span
+                    class="mdc-chip__text__primary-action"
+                    role="button"
+                    tabindex="0"
+                  >
+                    <span
+                      class="mdc-chip__text"
+                    >
+                      Task 1
+                    </span>
                   </span>
                 </span>
-              </span>
+              </div>
+              <div
+                class="mdc-ripple-surface mdc-chip"
+                id="task-3"
+                role="row"
+              >
+                <div
+                  class="mdc-chip__ripple"
+                />
+                <span
+                  role="gridcell"
+                >
+                  <span
+                    class="mdc-chip__text__primary-action"
+                    role="button"
+                    tabindex="0"
+                  >
+                    <span
+                      class="mdc-chip__text"
+                    >
+                      Task 3
+                    </span>
+                  </span>
+                </span>
+              </div>
             </div>
           </div>
         </div>
@@ -342,173 +346,34 @@ exports[`RegistrationDetail should only show user tasks instead of all tasks 1`]
 exports[`RegistrationDetail should render when there is a registration 1`] = `
 <DocumentFragment>
   <div
-    class="form"
+    class="box"
   >
     <div
-      class="flex row horizontal"
+      class="form"
     >
       <div
-        class="first formField"
-      >
-        <label
-          aria-labelledby="time-label"
-          class="mdc-text-field mdc-text-field--upgraded mdc-text-field--outlined mdc-text-field--focused"
-        >
-          <span
-            class="mdc-text-field__ripple"
-          />
-          <input
-            class="mdc-text-field__input"
-            id="time"
-            tabindex="0"
-            type="number"
-            value=""
-          />
-          <div
-            class="mdc-notched-outline mdc-notched-outline--upgraded"
-            notch="0"
-          >
-            <div
-              class="mdc-notched-outline__leading"
-            />
-            <div
-              class="mdc-notched-outline__notch"
-            >
-              <span
-                class="mdc-floating-label mdc-floating-label--float-above"
-                id="time-label"
-                style="transition-duration: 0s;"
-              >
-                Time
-              </span>
-            </div>
-            <div
-              class="mdc-notched-outline__trailing"
-            />
-          </div>
-        </label>
-      </div>
-      <div
-        class="formField"
-      >
-        <label
-          aria-labelledby="date-label"
-          class="mdc-text-field mdc-text-field--upgraded mdc-text-field--outlined mdc-text-field--disabled mdc-text-field--with-leading-icon"
-        >
-          <i
-            class="rmwc-icon rmwc-icon--ligature material-icons mdc-text-field__icon mdc-text-field__icon--leading"
-          >
-            event
-          </i>
-          <span
-            class="mdc-text-field__ripple"
-          />
-          <input
-            class="mdc-text-field__input"
-            disabled=""
-            id="date"
-            tabindex="-1"
-            value="2020-3-1"
-          />
-          <div
-            class="mdc-notched-outline mdc-notched-outline--upgraded"
-            notch="0"
-          >
-            <div
-              class="mdc-notched-outline__leading"
-            />
-            <div
-              class="mdc-notched-outline__notch"
-            >
-              <span
-                class="mdc-floating-label mdc-floating-label--float-above"
-                id="date-label"
-                style="transition-duration: 0s;"
-              >
-                Date
-              </span>
-            </div>
-            <div
-              class="mdc-notched-outline__trailing"
-            />
-          </div>
-        </label>
-      </div>
-    </div>
-    <div
-      class="flex row horizontal"
-    >
-      <div
-        class="first formField"
-      >
-        <label
-          aria-labelledby="description-label"
-          class="mdc-text-field mdc-text-field--upgraded mdc-text-field--textarea mdc-text-field--fullwidth mdc-text-field--outlined"
-        >
-          <span
-            class="mdc-text-field__ripple"
-          />
-          <textarea
-            class="mdc-text-field__input"
-            cols="250"
-            id="description"
-            rows="2"
-            tabindex="0"
-          >
-            Registration 1
-          </textarea>
-          <div
-            class="mdc-notched-outline mdc-notched-outline--upgraded"
-            notch="0"
-          >
-            <div
-              class="mdc-notched-outline__leading"
-            />
-            <div
-              class="mdc-notched-outline__notch"
-            >
-              <span
-                class="mdc-floating-label mdc-floating-label--float-above"
-                id="description-label"
-                style="transition-duration: 0s;"
-              >
-                Description
-              </span>
-            </div>
-            <div
-              class="mdc-notched-outline__trailing"
-            />
-          </div>
-        </label>
-      </div>
-    </div>
-    <div
-      class="flex horizontal"
-    >
-      <div
-        class="first formField"
+        class="flex row horizontal"
       >
         <div
-          class="mdc-select mdc-select--outlined"
-          role="listbox"
+          class="first formField"
         >
-          <div
-            class="mdc-select__anchor"
+          <label
+            aria-labelledby="time-label"
+            class="mdc-text-field mdc-text-field--upgraded mdc-text-field--outlined mdc-text-field--focused"
           >
-            <i
-              class="mdc-select__dropdown-icon"
+            <span
+              class="mdc-text-field__ripple"
+            />
+            <input
+              class="mdc-text-field__input"
+              id="time"
+              tabindex="0"
+              type="number"
+              value=""
             />
             <div
-              aria-disabled="false"
-              aria-haspopup="listbox"
-              class="mdc-select__selected-text"
-              role="button"
-              tabindex="-1"
-            >
-               
-            </div>
-            <div
               class="mdc-notched-outline mdc-notched-outline--upgraded"
+              notch="0"
             >
               <div
                 class="mdc-notched-outline__leading"
@@ -517,57 +382,44 @@ exports[`RegistrationDetail should render when there is a registration 1`] = `
                 class="mdc-notched-outline__notch"
               >
                 <span
-                  class="mdc-floating-label"
-                  for="select-Project"
+                  class="mdc-floating-label mdc-floating-label--float-above"
+                  id="time-label"
                   style="transition-duration: 0s;"
                 >
-                  Project
+                  Time
                 </span>
               </div>
               <div
                 class="mdc-notched-outline__trailing"
               />
             </div>
-            <select
-              class="rmwc-select__native-control "
-              tabindex="0"
-            >
-              <option
-                disabled=""
-                value=""
-              />
-              <option
-                disabled=""
-                value=""
-              />
-            </select>
-          </div>
+          </label>
         </div>
-      </div>
-      <div
-        class="formField"
-      >
         <div
-          class="mdc-select mdc-select--outlined"
-          role="listbox"
+          class="formField"
         >
-          <div
-            class="mdc-select__anchor"
+          <label
+            aria-labelledby="date-label"
+            class="mdc-text-field mdc-text-field--upgraded mdc-text-field--outlined mdc-text-field--disabled mdc-text-field--with-leading-icon"
           >
             <i
-              class="mdc-select__dropdown-icon"
+              class="rmwc-icon rmwc-icon--ligature material-icons mdc-text-field__icon mdc-text-field__icon--leading"
+            >
+              event
+            </i>
+            <span
+              class="mdc-text-field__ripple"
+            />
+            <input
+              class="mdc-text-field__input"
+              disabled=""
+              id="date"
+              tabindex="-1"
+              value="2020-3-1"
             />
             <div
-              aria-disabled="false"
-              aria-haspopup="listbox"
-              class="mdc-select__selected-text"
-              role="button"
-              tabindex="-1"
-            >
-               
-            </div>
-            <div
               class="mdc-notched-outline mdc-notched-outline--upgraded"
+              notch="0"
             >
               <div
                 class="mdc-notched-outline__leading"
@@ -576,71 +428,227 @@ exports[`RegistrationDetail should render when there is a registration 1`] = `
                 class="mdc-notched-outline__notch"
               >
                 <span
-                  class="mdc-floating-label"
-                  for="client-collection"
+                  class="mdc-floating-label mdc-floating-label--float-above"
+                  id="date-label"
                   style="transition-duration: 0s;"
                 >
-                  Client
+                  Date
                 </span>
               </div>
               <div
                 class="mdc-notched-outline__trailing"
               />
             </div>
-            <select
-              class="rmwc-select__native-control "
-              id="client-collection"
-              tabindex="0"
-            >
-              <option
-                disabled=""
-                value=""
-              />
-            </select>
-          </div>
+          </label>
         </div>
       </div>
-    </div>
-    <div
-      class="flex row horizontal"
-    >
       <div
-        class="flex vertical"
+        class="flex row horizontal"
       >
-        <h3
-          class="mdc-typography--subtitle1"
+        <div
+          class="first formField"
         >
-          Task
-        </h3>
+          <label
+            aria-labelledby="description-label"
+            class="mdc-text-field mdc-text-field--upgraded mdc-text-field--textarea mdc-text-field--fullwidth mdc-text-field--outlined"
+          >
+            <span
+              class="mdc-text-field__ripple"
+            />
+            <textarea
+              class="mdc-text-field__input"
+              cols="250"
+              id="description"
+              rows="2"
+              tabindex="0"
+            >
+              Registration 1
+            </textarea>
+            <div
+              class="mdc-notched-outline mdc-notched-outline--upgraded"
+              notch="0"
+            >
+              <div
+                class="mdc-notched-outline__leading"
+              />
+              <div
+                class="mdc-notched-outline__notch"
+              >
+                <span
+                  class="mdc-floating-label mdc-floating-label--float-above"
+                  id="description-label"
+                  style="transition-duration: 0s;"
+                >
+                  Description
+                </span>
+              </div>
+              <div
+                class="mdc-notched-outline__trailing"
+              />
+            </div>
+          </label>
+        </div>
+      </div>
+      <div
+        class="flex horizontal"
+      >
         <div
           class="first formField"
         >
           <div
-            class="mdc-chip-set mdc-chip-set--choice"
+            class="mdc-select mdc-select--outlined"
+            role="listbox"
           >
             <div
-              class="mdc-ripple-surface mdc-chip mdc-chip--selected"
-              id="task-1"
-              role="row"
+              class="mdc-select__anchor"
             >
-              <div
-                class="mdc-chip__ripple"
+              <i
+                class="mdc-select__dropdown-icon"
               />
-              <span
-                role="gridcell"
+              <div
+                aria-disabled="false"
+                aria-haspopup="listbox"
+                class="mdc-select__selected-text"
+                role="button"
+                tabindex="-1"
               >
-                <span
-                  class="mdc-chip__text__primary-action"
-                  role="button"
-                  tabindex="0"
+                 
+              </div>
+              <div
+                class="mdc-notched-outline mdc-notched-outline--upgraded"
+              >
+                <div
+                  class="mdc-notched-outline__leading"
+                />
+                <div
+                  class="mdc-notched-outline__notch"
                 >
                   <span
-                    class="mdc-chip__text"
+                    class="mdc-floating-label"
+                    for="select-Project"
+                    style="transition-duration: 0s;"
                   >
-                    Task 1
+                    Project
+                  </span>
+                </div>
+                <div
+                  class="mdc-notched-outline__trailing"
+                />
+              </div>
+              <select
+                class="rmwc-select__native-control "
+                tabindex="0"
+              >
+                <option
+                  disabled=""
+                  value=""
+                />
+                <option
+                  disabled=""
+                  value=""
+                />
+              </select>
+            </div>
+          </div>
+        </div>
+        <div
+          class="formField"
+        >
+          <div
+            class="mdc-select mdc-select--outlined"
+            role="listbox"
+          >
+            <div
+              class="mdc-select__anchor"
+            >
+              <i
+                class="mdc-select__dropdown-icon"
+              />
+              <div
+                aria-disabled="false"
+                aria-haspopup="listbox"
+                class="mdc-select__selected-text"
+                role="button"
+                tabindex="-1"
+              >
+                 
+              </div>
+              <div
+                class="mdc-notched-outline mdc-notched-outline--upgraded"
+              >
+                <div
+                  class="mdc-notched-outline__leading"
+                />
+                <div
+                  class="mdc-notched-outline__notch"
+                >
+                  <span
+                    class="mdc-floating-label"
+                    for="client-collection"
+                    style="transition-duration: 0s;"
+                  >
+                    Client
+                  </span>
+                </div>
+                <div
+                  class="mdc-notched-outline__trailing"
+                />
+              </div>
+              <select
+                class="rmwc-select__native-control "
+                id="client-collection"
+                tabindex="0"
+              >
+                <option
+                  disabled=""
+                  value=""
+                />
+              </select>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div
+        class="flex row horizontal"
+      >
+        <div
+          class="flex vertical"
+        >
+          <h3
+            class="mdc-typography--subtitle1"
+          >
+            Task
+          </h3>
+          <div
+            class="first formField"
+          >
+            <div
+              class="mdc-chip-set mdc-chip-set--choice"
+            >
+              <div
+                class="mdc-ripple-surface mdc-chip mdc-chip--selected"
+                id="task-1"
+                role="row"
+              >
+                <div
+                  class="mdc-chip__ripple"
+                />
+                <span
+                  role="gridcell"
+                >
+                  <span
+                    class="mdc-chip__text__primary-action"
+                    role="button"
+                    tabindex="0"
+                  >
+                    <span
+                      class="mdc-chip__text"
+                    >
+                      Task 1
+                    </span>
                   </span>
                 </span>
-              </span>
+              </div>
             </div>
           </div>
         </div>

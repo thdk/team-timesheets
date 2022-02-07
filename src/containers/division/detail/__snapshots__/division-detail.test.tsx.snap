@@ -3,90 +3,94 @@
 exports[`DivisionDetail should render without data 1`] = `
 <DocumentFragment>
   <div
-    class="form"
+    class="box"
   >
     <div
-      class="flex row horizontal"
+      class="form"
     >
       <div
-        class="first formField"
+        class="flex row horizontal"
       >
-        <label
-          aria-labelledby="textfield-Name-label"
-          class="division-detail__name mdc-text-field mdc-text-field--upgraded mdc-text-field--outlined"
+        <div
+          class="first formField"
         >
-          <span
-            class="mdc-text-field__ripple"
-          />
-          <input
-            class="mdc-text-field__input"
-            value=""
-          />
-          <div
-            class="mdc-notched-outline mdc-notched-outline--upgraded"
+          <label
+            aria-labelledby="textfield-Name-label"
+            class="division-detail__name mdc-text-field mdc-text-field--upgraded mdc-text-field--outlined"
           >
-            <div
-              class="mdc-notched-outline__leading"
+            <span
+              class="mdc-text-field__ripple"
+            />
+            <input
+              class="mdc-text-field__input"
+              value=""
             />
             <div
-              class="mdc-notched-outline__notch"
+              class="mdc-notched-outline mdc-notched-outline--upgraded"
             >
-              <span
-                class="mdc-floating-label"
-                id="textfield-Name-label"
-                style="transition-duration: 0s;"
+              <div
+                class="mdc-notched-outline__leading"
+              />
+              <div
+                class="mdc-notched-outline__notch"
               >
-                Name
-              </span>
+                <span
+                  class="mdc-floating-label"
+                  id="textfield-Name-label"
+                  style="transition-duration: 0s;"
+                >
+                  Name
+                </span>
+              </div>
+              <div
+                class="mdc-notched-outline__trailing"
+              />
             </div>
-            <div
-              class="mdc-notched-outline__trailing"
-            />
-          </div>
-        </label>
-      </div>
-      <div
-        class="formField"
-      >
-        <label
-          aria-labelledby="textfield-Icon-label"
-          class="mdc-text-field mdc-text-field--upgraded mdc-text-field--outlined mdc-text-field--with-trailing-icon"
+          </label>
+        </div>
+        <div
+          class="formField"
         >
-          <span
-            class="mdc-text-field__ripple"
-          />
-          <input
-            class="mdc-text-field__input"
-            value=""
-          />
-          <div
-            class="mdc-notched-outline mdc-notched-outline--upgraded"
+          <label
+            aria-labelledby="textfield-Icon-label"
+            class="mdc-text-field mdc-text-field--upgraded mdc-text-field--outlined mdc-text-field--with-trailing-icon"
           >
-            <div
-              class="mdc-notched-outline__leading"
+            <span
+              class="mdc-text-field__ripple"
+            />
+            <input
+              class="mdc-text-field__input"
+              value=""
             />
             <div
-              class="mdc-notched-outline__notch"
+              class="mdc-notched-outline mdc-notched-outline--upgraded"
             >
-              <span
-                class="mdc-floating-label"
-                id="textfield-Icon-label"
-                style="transition-duration: 0s;"
+              <div
+                class="mdc-notched-outline__leading"
+              />
+              <div
+                class="mdc-notched-outline__notch"
               >
-                Icon
-              </span>
+                <span
+                  class="mdc-floating-label"
+                  id="textfield-Icon-label"
+                  style="transition-duration: 0s;"
+                >
+                  Icon
+                </span>
+              </div>
+              <div
+                class="mdc-notched-outline__trailing"
+              />
             </div>
-            <div
-              class="mdc-notched-outline__trailing"
-            />
-          </div>
-          <i
-            class="rmwc-icon rmwc-icon--ligature material-icons mdc-text-field__icon mdc-text-field__icon--trailing"
-            tabindex="0"
-          >
-            edit
-          </i>
-        </label>
+            <i
+              class="rmwc-icon rmwc-icon--ligature material-icons mdc-text-field__icon mdc-text-field__icon--trailing"
+              tabindex="0"
+            >
+              edit
+            </i>
+          </label>
+        </div>
       </div>
     </div>
   </div>

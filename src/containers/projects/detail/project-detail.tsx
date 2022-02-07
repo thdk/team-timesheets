@@ -5,6 +5,7 @@ import { Form, FormField } from "../../../components/layout/form";
 import { FlexGroup } from "../../../components/layout/flex";
 import UserSelect from "../../users/select";
 import IconPicker from "../../../components/icon-picker";
+import { Box } from "../../../components/layout/box";
 
 type Props = {
     readonly onNameChanged: (name: string) => void;
@@ -34,36 +35,38 @@ const ProjectDetail = (props: Props) => {
         onIconChanged(icon);
     }, [onIconChanged]);
 
-    return <>
-        <Form>
-            <FlexGroup className="row">
-                <FormField>
-                    <TextField
-                        outlined
-                        label="Name"
-                        value={name}
-                        onChange={handleNameChanged}
-                    />
-                </FormField>
-                <FormField first={false}>
-                    <IconPicker
-                        onChange={handleIconChanged}
-                        value={icon}
-                        outlined
-                    />
-                </FormField>
-            </FlexGroup>
-            <FlexGroup className="row">
-                <FormField>
-                    <UserSelect
-                        label={"Project owner"}
-                        value={ownerId}
-                        onChange={onOwnerChanged}
-                    />
-                </FormField>
-            </FlexGroup>
-        </Form>
-    </>;
+    return (
+        <Box>
+            <Form>
+                <FlexGroup className="row">
+                    <FormField>
+                        <TextField
+                            outlined
+                            label="Name"
+                            value={name}
+                            onChange={handleNameChanged}
+                        />
+                    </FormField>
+                    <FormField first={false}>
+                        <IconPicker
+                            onChange={handleIconChanged}
+                            value={icon}
+                            outlined
+                        />
+                    </FormField>
+                </FlexGroup>
+                <FlexGroup className="row">
+                    <FormField>
+                        <UserSelect
+                            label={"Project owner"}
+                            value={ownerId}
+                            onChange={onOwnerChanged}
+                        />
+                    </FormField>
+                </FlexGroup>
+            </Form>
+        </Box>
+    );
 };
 
 export default ProjectDetail;

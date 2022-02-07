@@ -4,6 +4,7 @@ import { TextField } from "@rmwc/textfield";
 import { Form, FormField } from "../../../components/layout/form";
 import { FlexGroup } from "../../../components/layout/flex";
 import IconPicker from "../../../components/icon-picker";
+import { Box } from "../../../components/layout/box";
 
 type Props = {
     readonly onNameChanged: (name: string) => void;
@@ -28,27 +29,29 @@ export const DivisionDetail = (props: Props) => {
         onIconChanged(icon);
     }, [onIconChanged]);
 
-    return <>
-        <Form>
-            <FlexGroup className="row">
-                <FormField>
-                    <TextField
-                        outlined
-                        label="Name"
-                        value={name}
-                        className="division-detail__name"
-                        onChange={handleNameChanged}
-                    />
-                </FormField>
-                <FormField first={false}>
-                    <IconPicker
-                        onChange={handleIconChanged}
-                        value={icon}
-                        outlined
-                    />
-                </FormField>
-            </FlexGroup>
-        </Form>
-    </>;
+    return (
+        <Box>
+            <Form>
+                <FlexGroup className="row">
+                    <FormField>
+                        <TextField
+                            outlined
+                            label="Name"
+                            value={name}
+                            className="division-detail__name"
+                            onChange={handleNameChanged}
+                        />
+                    </FormField>
+                    <FormField first={false}>
+                        <IconPicker
+                            onChange={handleIconChanged}
+                            value={icon}
+                            outlined
+                        />
+                    </FormField>
+                </FlexGroup>
+            </Form>
+        </Box>
+    );
 };
 DivisionDetail.displayName = "DivisionDetail";

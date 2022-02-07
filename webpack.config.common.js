@@ -73,21 +73,26 @@ module.exports = {
     plugins: [
         new webpack.ProgressPlugin(),
         new CleanWebpackPlugin(),
+        new webpack.DefinePlugin({
+            'process.env.NODE_DEBUG': JSON.stringify(process.env.NODE_DEBUG)
+        }),
         new HtmlWebpackPlugin(
             {
                 template: 'src/index.html',
             }
         ),
         new Dotenv(),
-        new CopyPlugin([
-            {
-                from: path.resolve(__dirname, 'src/images'),
-                to: path.resolve(__dirname, 'dist/images'),
-            },
-            path.resolve(__dirname, 'src/manifest.json'),
-            path.resolve(__dirname, 'src/browserconfig.xml'),
-            path.resolve(__dirname, 'src/images/icons/safari-pinned-tab.svg'),
-            path.resolve(__dirname, 'src/images/icons/favicon.ico'),
-        ]),
+        new CopyPlugin({
+            patterns: [
+                {
+                    from: path.resolve(__dirname, 'src/images'),
+                    to: path.resolve(__dirname, 'dist/images'),
+                },
+                path.resolve(__dirname, 'src/manifest.json'),
+                path.resolve(__dirname, 'src/browserconfig.xml'),
+                path.resolve(__dirname, 'src/images/icons/safari-pinned-tab.svg'),
+                path.resolve(__dirname, 'src/images/icons/favicon.ico'),
+            ],
+        }),
     ],
 };

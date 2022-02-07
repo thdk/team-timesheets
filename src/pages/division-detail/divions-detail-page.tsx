@@ -1,7 +1,8 @@
 import * as React from "react";
 import copy from "copy-text-to-clipboard";
 import { v4 as uuidv4 } from 'uuid';
-import cryptoRandomString from 'crypto-random-string';
+import uuidAPIKey from 'uuid-apikey';
+
 
 import { queue } from "../../components/snackbar";
 import { withAuthentication } from "../../containers/users/with-authentication";
@@ -74,7 +75,7 @@ export const DivisionDetailPage = withAuthentication(
                                                 id: divisionId,
                                             }, divisionId),
                                             divisionStore.divisionCodesCollection.addAsync({
-                                                code: cryptoRandomString({ length: 6, type: 'distinguishable' }),
+                                                code: uuidAPIKey.create().apiKey,
                                                 divisionId,
                                             }),
                                             userStore.divisionUsersCollection.addAsync(

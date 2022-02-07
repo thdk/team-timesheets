@@ -3,6 +3,7 @@ import { useQuery } from "react-query";
 import { useRegistrationStore } from "../../../contexts/registration-context";
 import { useUserStore } from "../../../contexts/user-context";
 import { useViewStore } from "../../../contexts/view-context";
+import { useGithubOauth } from "../../../oauth-providers";
 
 const SOURCE_ID = "github-commits";
 
@@ -10,6 +11,8 @@ export function useGithubCommits() {
     const userStore = useUserStore();
     const view = useViewStore();
     const timesheets = useRegistrationStore();
+
+    const githubUserQuery = useGithubOauth();
 
     const excludedIds = timesheets.dayRegistrations.registrations
         .reduce<string[]>(
@@ -29,14 +32,20 @@ export function useGithubCommits() {
     const repoParts = repoName?.split("/");
     const owner = repoParts && repoParts.length ? repoParts[0] : undefined;
     const repo = repoParts && repoParts.length > 1 ? repoParts[1] : undefined;
-    const author = userStore.divisionUser?.githubUsername;
+    const author = githubUserQuery.data?.login;
+
+    console.log({
+        start: view.startOfDay,
+        repo,
+        author,
+    })
 
     const queryResult = useQuery(
         [
             "commits",
             view.startOfDay?.toISOString(),
             view.endOfDay?.toISOString(),
-            userStore.divisionUser?.githubUsername,
+            author,
             owner,
             repo,
         ],
@@ -46,9 +55,9 @@ export function useGithubCommits() {
             }
 
             const octokit = new Octokit(
-                userStore.divisionUser?.githubToken
+                githubUserQuery.oauth.accessToken
                     ? {
-                        auth: userStore.divisionUser?.githubToken,
+                        auth: githubUserQuery.oauth.accessToken,
                     }
                     : undefined,
             );

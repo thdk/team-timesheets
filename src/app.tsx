@@ -28,7 +28,8 @@ import { ThemeProvider } from "@rmwc/theme";
 import { IntlProvider } from 'react-intl';
 import { QueryClient, QueryClientProvider } from 'react-query';
 
-import { configure } from "mobx"
+import { configure } from "mobx";
+import { OauthProvider } from './oauth-providers';
 
 configure({
     enforceActions: "never",
@@ -55,9 +56,11 @@ render(
         >
             <QueryClientProvider client={queryClient}>
                 <FirebaseProvider>
-                    <StoreProvider>
-                        <Router />
-                    </StoreProvider>
+                    <OauthProvider>
+                        <StoreProvider>
+                            <Router />
+                        </StoreProvider>
+                    </OauthProvider>,
                 </FirebaseProvider>
             </QueryClientProvider>
         </ThemeProvider>

@@ -86,41 +86,25 @@ describe("ProjectsSelect", () => {
         let projectIds: string[];
         beforeEach(async () => {
             try {
-                const projectId1 = await store.projects.addDocument(
+                projectIds = await store.projects.addDocuments([
                     {
                         name: "Project 1",
                         createdBy: "user-1",
-                    }
-                )
-
-                const projectId2 = await store.projects.addDocument(
+                    },
                     {
                         name: "Project 2",
                         isArchived: true,
                         createdBy: "user-1",
                     },
-                )
-
-                const projectId3 = await store.projects.addDocument(
-
                     {
                         name: "Project 3",
                         createdBy: "user-1",
                     },
-                )
-
-                const projectId4 = await store.projects.addDocument(
                     {
                         name: "Project 4",
                         createdBy: "user-1",
                     },
-                );
-                projectIds = [
-                    projectId1,
-                    projectId2,
-                    projectId3,
-                    projectId4,
-                ];
+                ]);
             } catch (e) {
                 console.error(e);
                 throw e;

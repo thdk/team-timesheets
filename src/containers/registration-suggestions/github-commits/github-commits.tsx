@@ -6,7 +6,7 @@ import { DataRow, DataRowColumn, DataRowLine1, DataRowLine2 } from "../../../com
 import { useRegistrationStore } from "../../../contexts/registration-context";
 import { useTasks } from "../../../contexts/task-context";
 import { useViewStore } from "../../../contexts/view-context";
-import { useGithubCommits } from "./use-github-commits";
+import { useGithubCommits } from "../use-github-commits/use-github-commits";
 
 export const GithubCommits = observer(({
     onClick,
@@ -35,7 +35,7 @@ export const GithubCommits = observer(({
 
     const commitsQuery = useGithubCommits();
 
-    return (
+     return (
         <>
             {commitsQuery.data.map((commit) => {
                 const message = commit.commit.message.split("\n");
@@ -53,7 +53,7 @@ export const GithubCommits = observer(({
                             }}
                         >
                             <DataRowLine1>
-                                Github {subject}
+                                Github: {subject}
                             </DataRowLine1>
                             <DataRowLine2>
                                 {description}

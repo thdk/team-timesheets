@@ -16,7 +16,6 @@ export interface IUserData extends IPersistedEntity {
     numberOfRecentProjects?: number;
     githubRepos?: string[];
     githubUsername?: string;
-    githubToken?: string;
     jiraUsername?: string;
     jiraPassword?: string;
     defaultProjectId?: string;

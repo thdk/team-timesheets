@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React from 'react';
 
 export const Form = (props: React.HTMLProps<HTMLDivElement>) => {
     const {children, ...rest} = props;
@@ -9,18 +9,17 @@ export const Form = (props: React.HTMLProps<HTMLDivElement>) => {
     );
 }
 
-export interface IFormFieldProps extends React.HTMLProps<HTMLDivElement> {
+export const FormField = ({
+    children,
+    first = true,
+}: React.PropsWithChildren<{
     first?: boolean;
-}
-
-export const FormField = (props: IFormFieldProps) => {
-    const { first = true, ...rest } = props;
+}>) => {
     return (
         <div
             className={`${first ? "first " : ""}formField`}
-            {...rest}
         >
-            {props.children}
+            {children}
         </div>
     )
 };

@@ -9,13 +9,9 @@ import { watchForFilesToImportFrom } from './storage/imports';
 import { watchImportSessions } from './firestore/import';
 import { getAdminConfig } from './utils';
 import { parse as json2csv } from 'json2csv';
+import { db } from './firebase';
 
 const adminConfig = getAdminConfig();
-
-admin.initializeApp({ credential: admin.credential.applicationDefault() });
-
-// Reference report in Firestore
-const db = admin.firestore();
 
 const performChangeProjectOfRegistrations = (from: string, to: string, userId?: string) => changeProjectOfRegistrations(db, { from, to, userId });
 exports.changeProjectOfRegistrations = functions.https.onCall(data => performChangeProjectOfRegistrations(data.from, data.to, data.userId));
@@ -72,3 +68,5 @@ exports.watchImportSessions = watchImportSessions;
 export * from "./create-csv";
 
 export * from "./firestore/division";
+
+export * from "./oauth";

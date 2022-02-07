@@ -141,7 +141,7 @@ export function useJiraIssues() {
         );
     return {
         isLoading: queryResult.some((q) => q.isLoading),
-        hasData: filteredIssues.filter((q) => q.issues.length > 0),
+        hasData: filteredIssues.filter((q) => q.issues.length > 0).length > 0,
         data: filteredIssues,
     };
 }

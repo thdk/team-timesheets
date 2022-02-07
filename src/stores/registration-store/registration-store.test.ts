@@ -10,7 +10,8 @@ import { RulesTestEnvironment, initializeTestEnvironment } from "@firebase/rules
 import { User } from "firebase/auth";
 
 const projectId = "registration-store-test";
-
+let regId1: string | undefined = undefined;
+let regId2: string | undefined = undefined;
 
 let store: Store;
 const setupAsync = async () => {
@@ -18,7 +19,7 @@ const setupAsync = async () => {
         firestore,
     });
 
-    await Promise.all([
+    const [_, [reg1, reg2]] = await Promise.all([
         store.user.usersCollection.addAsync(
             {
                 name: "user 1",
@@ -32,35 +33,7 @@ const setupAsync = async () => {
             } as IUser,
             "user-1",
         ),
-        store.timesheets.addDocument(
-            {
-                userId: "user-1",
-                description: "desc 0",
-                date: new Date(2020, 3, 1),
-                time: 1,
-                created: new Date(2020, 3, 1, 15, 50, 0),
-            } as IRegistration),
-        store.timesheets.addDocument({
-            userId: "user-1",
-            description: "desc 1",
-            date: new Date(2020, 3, 4),
-            time: 3,
-            created: new Date(2020, 3, 4, 7, 50, 0),
-        } as IRegistration),
-        store.timesheets.addDocument({
-            userId: "user-1",
-            description: "desc 2",
-            date: new Date(2020, 3, 4),
-            time: 2.5,
-            created: new Date(2020, 3, 4, 7, 51, 0),
-        } as IRegistration),
-        store.timesheets.addDocument({
-            userId: "user-1",
-            description: "desc 3",
-            date: new Date(2020, 3, 7),
-            time: 2.5,
-        } as IRegistration),
-        store.timesheets.addDocument(
+        store.timesheets.addDocuments([
             {
                 userId: "user-1",
                 description: "desc 3",
@@ -68,9 +41,6 @@ const setupAsync = async () => {
                 time: 4.50,
                 created: new Date(2020, 3, 9, 17, 50, 0),
             } as IRegistration,
-            "reg-1",
-        ),
-        store.timesheets.addDocument(
             {
                 userId: "user-1",
                 description: "desc 4",
@@ -78,9 +48,38 @@ const setupAsync = async () => {
                 time: 4.50,
                 created: new Date(2020, 5, 9, 17, 50, 0),
             } as IRegistration,
-            "reg-2",
-        ),
+            {
+                userId: "user-1",
+                description: "desc 0",
+                date: new Date(2020, 3, 1),
+                time: 1,
+                created: new Date(2020, 3, 1, 15, 50, 0),
+            } as IRegistration,
+            {
+                userId: "user-1",
+                description: "desc 1",
+                date: new Date(2020, 3, 4),
+                time: 3,
+                created: new Date(2020, 3, 4, 7, 50, 0),
+            } as IRegistration,
+            {
+                userId: "user-1",
+                description: "desc 2",
+                date: new Date(2020, 3, 4),
+                time: 2.5,
+                created: new Date(2020, 3, 4, 7, 51, 0),
+            } as IRegistration,
+            {
+                userId: "user-1",
+                description: "desc 3",
+                date: new Date(2020, 3, 7),
+                time: 2.5,
+            } as IRegistration,
+        ]),
     ]);
+
+    regId1 = reg1;
+    regId2 = reg2;
 
     store.auth.setUser({
         uid: "user-1",
@@ -346,9 +345,9 @@ describe("RegistrationStore", () => {
                 await waitFor(() => expect(store.user.divisionUser).toBeDefined());
                 await waitFor(() => expect(store.timesheets.collection.isFetched).toBeTruthy());
 
-                store.timesheets.setActiveDocumentId("reg-1");
+                store.timesheets.setActiveDocumentId(regId1);
 
-                expect(store.timesheets.activeDocumentId).toBe("reg-1");
+                expect(store.timesheets.activeDocumentId).toBe(regId1);
                 expect(store.timesheets.activeDocument).toBeDefined();
                 expect(store.timesheets.activeDocument!.description).toBe("desc 3");
             });
@@ -359,10 +358,10 @@ describe("RegistrationStore", () => {
                 await waitFor(() => expect(store.user.divisionUser).toBeDefined());
                 await waitFor(() => expect(store.timesheets.collection.isFetched).toBeTruthy());
 
-                store.timesheets.setActiveDocumentId("reg-2");
+                store.timesheets.setActiveDocumentId(regId2);
 
                 await waitFor(() => {
-                    expect(store.timesheets.activeDocumentId).toBe("reg-2");
+                    expect(store.timesheets.activeDocumentId).toBe(regId2);
                     expect(store.timesheets.activeDocument).toBeDefined();
                     expect(store.timesheets.activeDocument!.description).toBe("desc 4");
                 });
@@ -377,13 +376,13 @@ describe("RegistrationStore", () => {
             await waitFor(() => expect(store.user.divisionUser).toBeDefined());
             await waitFor(() => expect(store.timesheets.collection.isFetched).toBeTruthy());
 
-            store.timesheets.setActiveDocumentId("reg-1");
+            store.timesheets.setActiveDocumentId(regId1);
 
             await waitFor(() => {
                 expect(store.timesheets.activeDocument).toBeDefined();
             })
 
-            expect(store.timesheets.activeDocumentId).toBe("reg-1");
+            expect(store.timesheets.activeDocumentId).toBe(regId1);
             expect(store.timesheets.activeDocument!.description).toBe("desc 3");
 
             store.timesheets.activeDocument!.description = "desc 3 a";
@@ -393,17 +392,15 @@ describe("RegistrationStore", () => {
 
             await store.timesheets.saveSelectedRegistration();
 
-            await waitFor<void>(async () => {
-                const reg = await store.timesheets.collection.getAsync("reg-1")
-                    .then(doc => doc.data);
+            const reg = regId1 && await store.timesheets.collection.getAsync(regId1)
+                .then(doc => doc.data);
 
-                return expect(reg).toEqual(
-                    expect.objectContaining({
-                        description: "desc 3 a",
-                        project: "project-1",
-                    })
-                );
-            });
+            expect(reg).toEqual(
+                expect.objectContaining({
+                    description: "desc 3 a",
+                    project: "project-1",
+                })
+            );
 
             // After saving the activeDocumentId and activeDocument should have been reset
             expect(store.timesheets.activeDocumentId).toBeUndefined();

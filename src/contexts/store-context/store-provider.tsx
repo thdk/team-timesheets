@@ -4,7 +4,7 @@ import { StoreContext } from "./store-context";
 import { Store, IRootStore } from "../../stores/root-store";
 import { getAuth } from "firebase/auth";
 import { getFirestore } from "firebase/firestore";
-import {getFunctions, httpsCallable} from "firebase/functions";
+import { getFunctions, httpsCallable } from "firebase/functions";
 
 
 

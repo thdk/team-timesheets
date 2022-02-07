@@ -41,46 +41,43 @@ describe("FavoriteStore", () => {
                 },
                 "user-1",
             ),
-            store.divisions.addDocument(
+            store.divisions.addDocuments([
                 {
                     name: "Division 1",
                     createdBy: "user-1",
                     icon: "business",
                     id: divisionId1
                 },
-            ),
-            store.divisions.addDocument(
                 {
                     name: "Division 2",
                     createdBy: "user-2",
                     icon: "house",
                     id: divisionId2
                 },
-            )
+            ]),
         ]);
 
-        const generatedDivisionUserId1 = await store.user.divisionUsersCollection.addAsync(
-            {
-                name: "Division User 1",
-                divisionId: divisionId1,
-                tasks: new Map<string, true>(),
-                recentProjects: [] as string[],
-                uid: "user-1",
-                roles: {},
-                githubRepos: [],
-            }
-        );
-
-        const generatedDivisionUserId2 = await store.user.divisionUsersCollection.addAsync(
-            {
-                name: "Division User 2",
-                divisionId: divisionId2,
-                tasks: new Map<string, true>(),
-                recentProjects: [] as string[],
-                uid: "user-1",
-                roles: {},
-                githubRepos: [],
-            },
+        const [generatedDivisionUserId1, generatedDivisionUserId2] = await store.user.divisionUsersCollection.addAsync(
+            [
+                {
+                    name: "Division User 1",
+                    divisionId: divisionId1,
+                    tasks: new Map<string, true>(),
+                    recentProjects: [] as string[],
+                    uid: "user-1",
+                    roles: {},
+                    githubRepos: [],
+                },
+                {
+                    name: "Division User 2",
+                    divisionId: divisionId2,
+                    tasks: new Map<string, true>(),
+                    recentProjects: [] as string[],
+                    uid: "user-1",
+                    roles: {},
+                    githubRepos: [],
+                },
+            ]
         );
 
         divisionUserId1 = generatedDivisionUserId1;
@@ -112,12 +109,12 @@ describe("FavoriteStore", () => {
     });
 
     beforeEach(async () => {
-        jest.clearAllMocks();
         await setupAsync().catch(e => { console.log(e); throw e; });
         (useStore as jest.Mock<ReturnType<typeof useStore>>).mockReturnValue(store);
     });
 
     afterEach(async () => {
+        jest.clearAllMocks();
         try {
             if (store) {
                 await store.dispose();
@@ -139,49 +136,35 @@ describe("FavoriteStore", () => {
 
         describe("when there are favorite groups", () => {
             beforeEach(async () => {
-                await Promise.all([
-                    store.favorites.addDocument(
-                        {
-                            name: "Fav group 1",
-                            userId: "user-1",
-                        },
-                    ),
-                    store.favorites.addDocument(
-                        {
-                            name: "Fav group 2",
-                            userId: "user-1",
-                        },
-                    ),
-                    store.favorites.addDocument(
-                        {
-                            name: "Fav group 3",
-                            userId: "user-1",
-                        },
-                    ),
-                    store.favorites.addDocument(
-                        {
-                            name: "Fav group 1",
-                            userId: "user-2",
-                        },
-                    ),
-                    store.favorites.addDocument(
-                        {
-                            name: "Fav group 1 - div 1",
-                            userId: divisionUserId1,
-                        },
-                    ),
-                    store.favorites.addDocument(
-                        {
-                            name: "Fav group 2 - div 1",
-                            userId: divisionUserId1,
-                        },
-                    ),
-                    store.favorites.addDocument(
-                        {
-                            name: "Fav group 1 - div 2",
-                            userId: divisionUserId2,
-                        },
-                    ),
+                await store.favorites.addDocuments([
+                    {
+                        name: "Fav group 1",
+                        userId: "user-1",
+                    },
+                    {
+                        name: "Fav group 2",
+                        userId: "user-1",
+                    },
+                    {
+                        name: "Fav group 3",
+                        userId: "user-1",
+                    },
+                    {
+                        name: "Fav group 1",
+                        userId: "user-2",
+                    },
+                    {
+                        name: "Fav group 1 - div 1",
+                        userId: divisionUserId1,
+                    },
+                    {
+                        name: "Fav group 2 - div 1",
+                        userId: divisionUserId1,
+                    },
+                    {
+                        name: "Fav group 1 - div 2",
+                        userId: divisionUserId2,
+                    },
                 ]);
             });
 

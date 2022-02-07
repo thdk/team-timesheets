@@ -19,6 +19,7 @@ export const useUserStoreMock = {
     divisionUsersCollection: {
         isFetched: true,
     },
+    updateDivisionUser: jest.fn(),
 } as ReturnType<typeof useUserStore>;
 
 export const useUserStore = jest.fn().mockReturnValue(useUserStoreMock);

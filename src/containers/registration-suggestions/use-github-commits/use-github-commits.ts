@@ -34,12 +34,6 @@ export function useGithubCommits() {
     const repo = repoParts && repoParts.length > 1 ? repoParts[1] : undefined;
     const author = githubUserQuery.data?.login;
 
-    console.log({
-        start: view.startOfDay,
-        repo,
-        author,
-    })
-
     const queryResult = useQuery(
         [
             "commits",

@@ -81,49 +81,46 @@ describe("DivisionStore", () => {
 
         describe("when there are division users", () => {
             beforeEach(async () => {
-                await Promise.all(
-                    [
-                        store.divisions.addDocument(
-                            {
-                                name: "Division 1",
-                                createdBy: "user-1",
-                                icon: "business",
-                                id: "div-1"
-                            },
-                            "div-1"
-                        ),
-                        store.divisions.addDocument(
-                            {
-                                name: "Division 2",
-                                createdBy: "user-2",
-                                icon: "house",
-                                id: "div-2"
-                            },
-                            "div-2",
-                        )]).then(async () => Promise.all([
-                                store.user.divisionUsersCollection.addAsync(
-                                {
-                                    name: "User 1",
-                                    divisionId: "div-1",
-                                    tasks: new Map<string, true>(),
-                                    recentProjects: [] as string[],
-                                    uid: "user-1",
-                                    roles: {},
-                                    githubRepos: [],
-                                },
-                                ),
-                                store.user.divisionUsersCollection.addAsync(
-                                {
-                                    name: "User 1",
-                                    divisionId: "div-2",
-                                    tasks: new Map<string, true>(),
-                                    recentProjects: [] as string[],
-                                    uid: "user-1",
-                                    roles: {},
-                                    githubRepos: [],
-                                },
-                                )
-                            ]));
+                const divId1 = await store.divisions.addDocument(
+                    {
+                        name: "Division 1",
+                        createdBy: "user-1",
+                        icon: "business",
+                        id: "div-1"
+                    },
+                    "div-1"
+                );
+
+                const divId2 = await store.divisions.addDocument(
+                    {
+                        name: "Division 2",
+                        createdBy: "user-2",
+                        icon: "house",
+                        id: "div-2"
+                    },
+                    "div-2"
+                );
+
+                await store.user.divisionUsersCollection.addAsync([
+                    {
+                        name: "User 1",
+                        divisionId: divId1,
+                        tasks: new Map<string, true>(),
+                        recentProjects: [] as string[],
+                        uid: "user-1",
+                        roles: {},
+                        githubRepos: [],
+                    },
+                    {
+                        name: "User 1",
+                        divisionId: divId2,
+                        tasks: new Map<string, true>(),
+                        recentProjects: [] as string[],
+                        uid: "user-1",
+                        roles: {},
+                        githubRepos: [],
+                    },
+                ]);
 
             });
 

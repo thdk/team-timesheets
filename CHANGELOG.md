@@ -5,7 +5,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [v2.5.1](https://github.com/thdk/team-timesheets/compare/v2.5.0...v2.5.1)
+## [v2.5.2](https://github.com/thdk/team-timesheets/compare/v2.5.1...v2.5.2)
+
+### Commits
+
+- fix: adjust width of header when drawer is open [`2de34d7`](https://github.com/thdk/team-timesheets/commit/2de34d743889c643636cc9b13164dd4ba91d5185)
+
+## [v2.5.1](https://github.com/thdk/team-timesheets/compare/v2.5.0...v2.5.1) - 2022-02-08
 
 ### Commits
 

@@ -9,7 +9,7 @@
     "build:refs": "tsc -p common",
     "build": "webpack",
     "start": "webpack -w",
-    "build:production": "webpack --env=prod",
+    "build:production": "webpack --mode=production",
     "tsc": "tsc -p common && tsc --noEmit",
     "test": "jest",
     "test:cloudbuild": "firebase emulators:exec --only firestore \"jest --coverage --maxWorkers=1\"",

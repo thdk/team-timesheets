@@ -5,7 +5,19 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [v2.4.1](https://github.com/thdk/team-timesheets/compare/v2.4.0...v2.4.1)
+## [v2.5.0](https://github.com/thdk/team-timesheets/compare/v2.4.1...v2.5.0)
+
+### Fixed
+
+- feat: add checkbox to explicitly provide repo scope when connecting with github account [`#241`](https://github.com/thdk/team-timesheets/issues/241)
+
+### Commits
+
+- deps: upgrade to webpack 5 [`a5803c5`](https://github.com/thdk/team-timesheets/commit/a5803c5cd602596859c64cfe2acaa7092e1ec16f)
+- fix: don't rerender suggestions when one provider is refetching to prevent flickr [`3fe9949`](https://github.com/thdk/team-timesheets/commit/3fe99491fa282b586f6e14482e23d208b7d7d0a5)
+- style: remove console.log [`5ce027c`](https://github.com/thdk/team-timesheets/commit/5ce027c2e04c431b67fd487e72bd0c0eb651150d)
+
+## [v2.4.1](https://github.com/thdk/team-timesheets/compare/v2.4.0...v2.4.1) - 2022-02-07
 
 ### Commits
 

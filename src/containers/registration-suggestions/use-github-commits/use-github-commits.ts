@@ -45,7 +45,7 @@ export function useGithubCommits() {
         ],
         async () => {
             if (!(view.startOfDay && repo && author)) {
-                return Promise.reject();
+                throw new Error("Cannot fetch github commits without repo, author and date");
             }
 
             const octokit = new Octokit(

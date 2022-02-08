@@ -1,5 +1,4 @@
 import { ListDivider } from "@rmwc/list";
-import { observer } from "mobx-react-lite";
 import React from "react";
 import { GoogleCalendarEvents } from "./google-calendar";
 import { useRegistrationStore } from "../../contexts/registration-context";
@@ -43,7 +42,7 @@ export const useSuggestionsQuery = () => {
     };
 }
 
-export const RegistrationSuggestions = observer(() => {
+export const RegistrationSuggestions = () => {
     const timesheets = useRegistrationStore();
     const router = useRouterStore();
 
@@ -53,11 +52,10 @@ export const RegistrationSuggestions = observer(() => {
     };
 
     const {
-        isLoading,
         hasData,
     } = useSuggestionsQuery();
 
-    return isLoading || !hasData
+    return !hasData
         ? null
         : (
             <div style={{
@@ -80,4 +78,4 @@ export const RegistrationSuggestions = observer(() => {
                 }
             </div>
         );
-});
+};

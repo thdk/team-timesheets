@@ -5,7 +5,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [v2.5.0](https://github.com/thdk/team-timesheets/compare/v2.4.1...v2.5.0)
+## [v2.5.1](https://github.com/thdk/team-timesheets/compare/v2.5.0...v2.5.1)
+
+### Commits
+
+- fix: production build not used for deploy [`1338b61`](https://github.com/thdk/team-timesheets/commit/1338b61260af50d967c20b2202fce5648767289e)
+
+## [v2.5.0](https://github.com/thdk/team-timesheets/compare/v2.4.1...v2.5.0) - 2022-02-08
 
 ### Fixed
 

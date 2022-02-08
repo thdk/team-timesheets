@@ -4,6 +4,10 @@
   width: 100%;
 }
 
+.top-app-bar--with-open-drawer {
+  max-width: calc(100% - 16rem);
+}
+
 .mdc-drawer {
   .mdc-drawer__header {
     border-bottom: solid 1px lightgrey;

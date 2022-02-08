@@ -45,9 +45,6 @@ module.exports = {
     plugins: [
         new webpack.ProgressPlugin(),
         new CleanWebpackPlugin(),
-        new webpack.DefinePlugin({
-            'process.env.NODE_DEBUG': JSON.stringify(process.env.NODE_DEBUG)
-        }),
         new HtmlWebpackPlugin(
             {
                 template: 'src/index.html',

@@ -5,6 +5,7 @@ import { TextField } from "@rmwc/textfield";
 import { IFavoriteRegistrationGroup } from "../../../../common";
 import { FavoriteGroupSelect } from "../select";
 import { Checkbox } from "@rmwc/checkbox";
+import { Box } from "../../../components/layout/box";
 
 export const FavoriteGroupDetailForm = ({
     groups,
@@ -31,41 +32,43 @@ export const FavoriteGroupDetailForm = ({
     }, [groups]);
 
     return (
-        <Form style={{ paddingBottom: 0, paddingTop: "1em" }}>
-            <FlexGroup className="row">
-                <FormField>
-                    {groups && overwriteExistingGroup
-                        ? (
-                            <FavoriteGroupSelect
-                                onChange={handleIdChanged}
-                                value={newId}
-                            />
-                        ) : (
-                            <TextField
-                                autoFocus={true}
-                                outlined
-                                label="Name"
-                                value={name}
-                                onChange={(e: React.ChangeEvent<HTMLInputElement>) => onNameChanged(e.target.value)}
-                            />
+        <Box>
+            <Form>
+                <FlexGroup>
+                    <FormField>
+                        {groups && overwriteExistingGroup
+                            ? (
+                                <FavoriteGroupSelect
+                                    onChange={handleIdChanged}
+                                    value={newId}
+                                />
+                            ) : (
+                                <TextField
+                                    autoFocus={true}
+                                    outlined
+                                    label="Name"
+                                    value={name}
+                                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => onNameChanged(e.target.value)}
+                                />
 
-                        )}
-                </FormField>
-                <FormField
-                    first={false}
-                >
-                    <Checkbox
-                        label="Overwrite existing"
-                        checked={overwriteExistingGroup}
-                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                            setOverwriteExistingGroup(e.target.checked);
-                        }}
+                            )}
+                    </FormField>
+                    <FormField
+                        first={false}
                     >
+                        <Checkbox
+                            label="Overwrite existing"
+                            checked={overwriteExistingGroup}
+                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                                setOverwriteExistingGroup(e.target.checked);
+                            }}
+                        >
 
-                    </Checkbox>
-                </FormField>
+                        </Checkbox>
+                    </FormField>
 
-            </FlexGroup>
-        </Form>
+                </FlexGroup>
+            </Form>
+        </Box>
     );
 };

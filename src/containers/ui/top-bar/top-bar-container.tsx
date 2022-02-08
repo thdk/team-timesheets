@@ -7,6 +7,7 @@ import { TopBarActions } from './top-bar-actions-container';
 import { useViewStore } from '../../../contexts/view-context';
 
 import '@rmwc/top-app-bar/styles';
+import classNames from 'classnames';
 
 export const TopBar = observer(() => {
     const view = useViewStore();
@@ -33,9 +34,15 @@ export const TopBar = observer(() => {
         ? `${selectionLength} selected`
         : view.title;
 
+        const styles = classNames([
+            {
+                "top-app-bar--with-open-drawer": view.isDrawerOpen,
+                contextual,
+            }
+        ])
     return (
         <>
-            <TopAppBar className={contextual ? "contextual" : undefined}>
+            <TopAppBar fixed className={styles}>
                 <TopAppBarRow>
                     <TopAppBarSection alignStart>
                         {primaryAction}

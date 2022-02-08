@@ -1,4 +1,5 @@
 import { Button } from "@rmwc/button";
+import { Checkbox } from "@rmwc/checkbox";
 import { TextField } from "@rmwc/textfield";
 import React, { useEffect, useState } from "react";
 import { FlexGroup } from "../../components/layout/flex";
@@ -9,8 +10,11 @@ import { useGithubOauth } from "../../oauth-providers/use-github-oauth";
 export function GithubSettings() {
     const userStore = useUserStore();
     const [githubRepo, setGithubRepo] = useState<string>(userStore.divisionUser?.githubRepos[0] || "");
+    const [authorizePrivateRepos, setAuthorizePrivateRepos] = useState(false);
 
-    const oauthGithubResult = useGithubOauth();
+    const oauthGithubResult = useGithubOauth({
+        scope: authorizePrivateRepos ? "repo" : null,
+    });
 
     const repo = userStore.divisionUser?.githubRepos[0] || "";
     useEffect(
@@ -52,7 +56,7 @@ export function GithubSettings() {
                 {oauthGithubResult.data
                     ? (
                         <>
-                            <FlexGroup className="row">
+                            <FlexGroup>
                                 <FormField first>
                                     <TextField
                                         disabled={loading}
@@ -66,7 +70,7 @@ export function GithubSettings() {
                                     />
                                 </FormField>
                             </FlexGroup>
-                            <FlexGroup className="row">
+                            <FlexGroup>
                                 <FormField
                                     first
                                 >
@@ -92,16 +96,26 @@ export function GithubSettings() {
                         </>
                     )
                     : (
-                        <FlexGroup className="row">
-                            <FormField>
-                                <Button
-                                    disabled={loading}
-                                    onClick={() => oauthGithubResult.oauth.login()}
-                                    outlined
-                                >
-                                    Connect with Github
-                                </Button>
-                            </FormField>
+                        <FlexGroup column>
+                            <FlexGroup>
+                                <FormField>
+                                    <Checkbox 
+                                        onChange={() => setAuthorizePrivateRepos(!authorizePrivateRepos)}
+                                        label="Authorize private repos"
+                                    />
+                                </FormField>
+                            </FlexGroup>
+                            <FlexGroup>
+                                <FormField>
+                                    <Button
+                                        disabled={loading}
+                                        onClick={() => oauthGithubResult.oauth.login()}
+                                        outlined
+                                    >
+                                        Connect with Github
+                                    </Button>
+                                </FormField>
+                            </FlexGroup>
                         </FlexGroup>
                     )
                 }

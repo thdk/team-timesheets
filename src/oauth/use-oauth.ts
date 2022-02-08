@@ -9,6 +9,7 @@ export const useOAuth = (
         getAccessToken,
         revokeAccessToken,
         initialAccessToken,
+        scope,
     }: {
         initialAccessToken?: string;
         getAccessToken: (request: {
@@ -19,15 +20,18 @@ export const useOAuth = (
             accessToken: string;
             clientId: string;
         }) => Promise<void>;
+        scope?: string | null | undefined,
     }
 ) => {
     const {
         clientId,
         authorizeUrl,
-        redirectUrl = window.location.href
+        redirectUrl = window.location.href,
+        scope: defaultScope,
     } = useOAuthProvider(providerId);
 
     const [accessToken, setAccessToken] = useState<string | undefined | null>(initialAccessToken || null);
+    const [oauthScope, setOauthScope] = useState<string | undefined | null>(scope === undefined ? defaultScope : scope);
 
     const urlSearchParams = new URLSearchParams(window.location.search);
     const initialAthorizationCode = urlSearchParams.get("provider") === providerId
@@ -67,18 +71,28 @@ export const useOAuth = (
         ],
     );
 
+    useEffect(
+        () => {
+            setOauthScope(scope);
+        },
+        [
+            scope,
+        ],
+    );
+
     const oauthRedirectUri = `${redirectUrl.indexOf('?') > -1 ? "&" : "?"}provider=${encodeURIComponent(providerId)}`
 
     const login = useCallback(
         () => {
             window.location.replace(
-                `${authorizeUrl}?client_id=${clientId}&redirect_uri=${oauthRedirectUri}`
+                `${authorizeUrl}?client_id=${clientId}&redirect_uri=${oauthRedirectUri}${oauthScope ? `&scope=${oauthScope}` : ""}`
             );
         },
         [
             authorizeUrl,
             clientId,
             oauthRedirectUri,
+            oauthScope,
         ],
     );
 

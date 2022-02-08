@@ -13,6 +13,7 @@ export const OauthProvider = ({
             id: "github",
             authorizeUrl: "https://github.com/login/oauth/authorize",
             redirectUrl: `${window.location.protocol}//${window.location.host}/profile?tab=connections`,
+            scope: "repo",
         }
     ];
 

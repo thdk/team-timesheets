@@ -10,7 +10,11 @@ function isToken(result: { error: string, error_description: string, error_uri: 
     return !(result as any).error;
 }
 
-export function useGithubOauth() {
+export function useGithubOauth({
+    scope,
+}: {
+    scope?: string | null;
+} = {}) {
     const firebase = useFirebase();
     const functions = getFunctions(firebase);
 
@@ -38,6 +42,7 @@ export function useGithubOauth() {
         , []
     );
     const result = useOAuthUser({
+        scope,
         providerId: "github",
         getAccessToken,
         revokeAccessToken: async ({ accessToken }) => {

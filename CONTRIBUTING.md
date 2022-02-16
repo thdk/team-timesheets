@@ -60,12 +60,6 @@ Install dependencies
     npm install
 ```
 
-Start the firebase emulators, they must run in the background.
-
-```sh
-npm run emulators
-```
-
 Build common package (only needed once)
 
 ```sh

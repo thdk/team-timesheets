@@ -6,11 +6,6 @@ module.exports = merge(common, {
     mode: "development",
     // Enable sourcemaps for debugging webpack's output.
     devtool: "inline-source-map",
-    devServer: {
-        contentBase: path.join(__dirname, 'dist'),
-        compress: true,
-        port: 9000
-    },
     module: {
         rules: [
             {

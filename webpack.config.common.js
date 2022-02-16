@@ -5,6 +5,8 @@ const Dotenv = require('dotenv-webpack');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 const CopyPlugin = require('copy-webpack-plugin');
+const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin');
+
 
 module.exports = {
     mode: "production",
@@ -24,26 +26,29 @@ module.exports = {
         publicPath: '/',
     },
     devServer: {
-        contentBase: path.join(__dirname, 'dist'),
+        static: {
+            directory: path.join(__dirname, 'dist'),
+        },
         compress: true,
-        port: 9000,
+        port: 5000,
+        hot: true,
+        historyApiFallback: true,
     },
     module: {
         rules: [
             {
-                test: /\.ts(x?)$/,
+                test: /\.tsx?$/,
+                loader: 'ts-loader',
                 exclude: /node_modules/,
-                use: [
-                    {
-                        loader: "ts-loader"
-                    }
-                ]
-            },
-        ]
+                options: {
+                    transpileOnly: true,
+                }
+            }
+        ],
     },
 
     plugins: [
-        new webpack.ProgressPlugin(),
+        new ForkTsCheckerWebpackPlugin(),
         new CleanWebpackPlugin(),
         new HtmlWebpackPlugin(
             {

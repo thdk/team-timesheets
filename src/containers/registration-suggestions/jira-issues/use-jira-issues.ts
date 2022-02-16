@@ -126,7 +126,6 @@ export function useJiraIssues() {
                     ...meta
                 } = c.data;
 
-
                 const newIssues = issues.filter((issue) => excludedIds.indexOf(`${meta.id}-${issue.id}`) === -1);
 
                 if (newIssues.length) {

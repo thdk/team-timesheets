@@ -2,10 +2,11 @@ import { Icon } from "@rmwc/icon";
 import { observer } from "mobx-react-lite";
 import React, { useCallback } from "react";
 import { IRegistration } from "../../../../common";
-import { DataRow, DataRowColumn, DataRowLine1 } from "../../../components/data-row";
+import { DataRow, DataRowColumn, DataRowLine1, DataRowLine2 } from "../../../components/data-row";
 import { useRegistrationStore } from "../../../contexts/registration-context";
 import { useTasks } from "../../../contexts/task-context";
 import { useViewStore } from "../../../contexts/view-context";
+import { useConfigs } from "../../configs/use-configs";
 import { useJiraIssues } from "./use-jira-issues";
 
 export const JiraIssues = observer(({
@@ -18,6 +19,7 @@ export const JiraIssues = observer(({
     const timesheets = useRegistrationStore();
 
     const tasks = useTasks();
+    const { getConfigValue } = useConfigs();
 
     const handleIssueClick = useCallback(
         (subject: string, id: string, { taskId }: { taskId?: string }) => {
@@ -33,13 +35,13 @@ export const JiraIssues = observer(({
         [tasks, timesheets],
     );
 
+    const host = getConfigValue("jira-host-url", false);
     const issuesQuery = useJiraIssues();
 
     return (
         <>
             {issuesQuery.data.flatMap(({ issues, taskId, id }) => {
                 const task = tasks.tasks.find((task) => task.id === taskId);
-
                 return issues.map((issue) => {
                     const subject = issue.fields.summary || "";
                     return (
@@ -54,8 +56,16 @@ export const JiraIssues = observer(({
                                 }}
                             >
                                 <DataRowLine1>
-                                    Jira: {subject}
+                                    {subject}
                                 </DataRowLine1>
+                                <DataRowLine2>
+                                    <a
+                                        href={`${host}/browse/${issue.key}`}
+                                        onClick={(e) => e.stopPropagation()}
+                                    >
+                                        {issue.key}
+                                    </a>
+                                </DataRowLine2>
                             </DataRowColumn>
                         </DataRow>
                     );

@@ -8,6 +8,10 @@
 @import '../containers/timesheet-calendar/timesheet-calendar';
 @import './chart';
 
+html {
+  overflow: hidden;
+}
+
 body {
     font: 100% $font-stack;
 

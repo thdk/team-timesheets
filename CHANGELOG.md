@@ -5,7 +5,18 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [v2.5.2](https://github.com/thdk/team-timesheets/compare/v2.5.1...v2.5.2)
+## [v2.6.0](https://github.com/thdk/team-timesheets/compare/v2.5.2...v2.6.0)
+
+### Fixed
+
+- feat: add jira link to jira timesheet suggestions [`#245`](https://github.com/thdk/team-timesheets/issues/245)
+
+### Commits
+
+- chore: use webpack dev server without firestore emulators [`7b7d546`](https://github.com/thdk/team-timesheets/commit/7b7d546a36e8aa4225ba8dc887466579628a7e9b)
+- fix: remove permanent scrollbar [`be01aa2`](https://github.com/thdk/team-timesheets/commit/be01aa2f21bb34ccbc5c7daec1f010352a1ec0aa)
+
+## [v2.5.2](https://github.com/thdk/team-timesheets/compare/v2.5.1...v2.5.2) - 2022-02-08
 
 ### Commits
 

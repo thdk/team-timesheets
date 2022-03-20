@@ -7,6 +7,7 @@ import Registration from '../../pages/registration-detail';
 import { setTitleForRoute } from '../actions';
 import { IRootStore } from '../../stores/root-store';
 import { IViewAction, ViewStore } from '../../stores/view-store';
+import { getRegistrationErrors } from '../../stores/registration-store';
 
 const path = "/timesheetsdetail";
 
@@ -77,9 +78,14 @@ const onEnter = (route: RegistrationsDetailRoute, params: RouteParams, s: IRootS
     }
 
     const saveAction: IViewAction = {
-        action: () => {
-            s.timesheets.saveSelectedRegistration();
-            goToOverview(s);
+        action: async () => {
+            const error = getRegistrationErrors(s.timesheets.activeDocument);
+            if (!error) {
+                await s.timesheets.saveSelectedRegistration();
+                goToOverview(s);
+            } else {
+                alert(error);
+            }
         },
         icon: { label: "Save", content: "save" },
         shortKey: { key: "s", ctrlKey: true }
@@ -108,18 +114,18 @@ const beforeExit = (_route: RegistrationsDetailRoute, _params: RouteParams, s: I
 const routes = {
     newRegistration: new Route({
         path,
-        component: <App><Registration></Registration></App>,
+        component: <App><Registration /></App>,
         title: "New registration",
         onEnter,
         beforeExit,
     }),
     registrationDetail: new Route({
         path: path + '/:id',
-        component: <App><Registration></Registration></App>,
+        component: <App><Registration /></App>,
         title: "Edit registration",
         onEnter,
         beforeExit,
-    })
+    }),
 };
 
 export default routes;

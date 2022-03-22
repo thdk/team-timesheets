@@ -43,6 +43,21 @@ const createQuery = (
     }
 };
 
+export function getRegistrationErrors(registration?: Partial<IRegistration>) {
+    if (!registration) {
+        return "No registration";
+    }
+
+    return (
+        registration.project
+        && registration.description
+        && registration.task
+        && registration.time
+    )
+        ? undefined
+        : "Some fields are missing in current registration.";
+}
+
 export class RegistrationStore extends CrudStore<IRegistration, IRegistrationData> implements IRegistrationsStore {
     private rootStore: IRootStore;
     readonly clipboard = observable(new Map<string, IRegistration>());
@@ -158,6 +173,7 @@ export class RegistrationStore extends CrudStore<IRegistration, IRegistrationDat
             description: "",
         };
     }
+
     public get registrationsGroupedByDaySortOrder() {
         return this.registrationsGroupedByDaySortOrderField;
     }
@@ -269,7 +285,7 @@ export class RegistrationStore extends CrudStore<IRegistration, IRegistrationDat
                     : this.addDocument(registration as IRegistration); // TODO: unsafe typing!
             };
 
-            await saveOrUpdateAsync(activeDocument, this.activeDocumentId)
+            return saveOrUpdateAsync(activeDocument, this.activeDocumentId)
                 .then(() => {
                     const { project = undefined } = activeDocument || {};
                     // TODO: move set recent project to firebase function
@@ -295,12 +311,11 @@ export class RegistrationStore extends CrudStore<IRegistration, IRegistrationDat
                             this.rootStore.user.updateDivisionUser({ recentProjects });
                         }
                     }
+                    this.setActiveDocumentId(undefined);
                 });
-
-            this.setActiveDocumentId(undefined);
         }
         else {
-            await Promise.reject("No registration selected to save");
+            return Promise.reject("No registration selected to save");
         }
     }
 

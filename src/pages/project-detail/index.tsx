@@ -27,6 +27,7 @@ function setHeaderActions(s: IRootStore) {
                 : s.projects.addDocument(s.projects.activeDocument);
         }
     };
+
     const deleteAction: IViewAction = {
         action: () => {
             if (!s.projects.activeDocumentId) {
@@ -38,7 +39,7 @@ function setHeaderActions(s: IRootStore) {
         },
         icon: { label: "Delete", content: "delete" },
         shortKey: { key: "Delete", ctrlKey: true }
-    }
+    };
 
     const saveAction: IViewAction = {
         action: () => {
@@ -47,7 +48,7 @@ function setHeaderActions(s: IRootStore) {
         },
         icon: { label: "Save", content: "save" },
         shortKey: { key: "s", ctrlKey: true }
-    }
+    };
 
     if (s.projects.activeDocumentId) {
         s.timesheets.collection.queryAsync(

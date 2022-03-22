@@ -109,7 +109,7 @@ describe("JiraIssues", () => {
                 </QueryClientProvider>,
             );
 
-            await screen.findByText(content => content === "Jira: My first issue");
+            await screen.findByText(content => content === "My first issue");
         });
 
         it("calls onClick prop with data for a new registrations when clicked", async () => {
@@ -119,7 +119,7 @@ describe("JiraIssues", () => {
                 </QueryClientProvider>,
             );
 
-            let issueEl = await screen.findByText(content => content === "Jira: My first issue");
+            let issueEl = await screen.findByText(content => content === "My first issue");
 
             issueEl.click();
 
@@ -132,7 +132,7 @@ describe("JiraIssues", () => {
                 time: 1,
             });
 
-            issueEl = await screen.findByText(content => content === "Jira: My other issue");
+            issueEl = await screen.findByText(content => content === "My other issue");
 
             issueEl.click();
 
@@ -187,9 +187,9 @@ describe("JiraIssues", () => {
                 </QueryClientProvider>,
             );
 
-            await screen.findByText(content => content === "Jira: My first issue");
+            await screen.findByText(content => content === "My first issue");
 
-            expect(screen.queryByText(content => content === "Jira: My other issue")).toBeFalsy();
+            expect(screen.queryByText(content => content === "My other issue")).toBeFalsy();
         });
 
         it("still shows results when one of the queries has failed", async () => {
@@ -201,9 +201,9 @@ describe("JiraIssues", () => {
                 </QueryClientProvider>,
             );
 
-            await screen.findByText(content => content === "Jira: My first issue");
+            await screen.findByText(content => content === "My first issue");
 
-            expect(screen.queryByText(content => content === "Jira: My other issue")).toBeFalsy();
+            expect(screen.queryByText(content => content === "My other issue")).toBeFalsy();
         });
 
         it("still shows results when one of the queries has no results", async () => {
@@ -217,9 +217,9 @@ describe("JiraIssues", () => {
                 </QueryClientProvider>,
             );
 
-            await screen.findByText(content => content === "Jira: My first issue");
+            await screen.findByText(content => content === "My first issue");
 
-            expect(screen.queryByText(content => content === "Jira: My other issue")).toBeFalsy();
+            expect(screen.queryByText(content => content === "My other issue")).toBeFalsy();
         });
 
         it("does not try to fetch jira issues when requested date is in the future", () => {

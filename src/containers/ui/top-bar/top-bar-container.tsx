@@ -39,7 +39,7 @@ export const TopBar = observer(() => {
                 "top-app-bar--with-open-drawer": view.isDrawerOpen,
                 contextual,
             }
-        ])
+        ]);
     return (
         <>
             <TopAppBar fixed className={styles}>

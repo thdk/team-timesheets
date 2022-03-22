@@ -16,7 +16,7 @@ import { createQueryClientWrapper } from "../../../__test-utils__/query-client-p
 
 jest.mock("../../../rules");
 jest.mock("../../../routes/registrations/detail");
-jest.mock("../../registration-suggestions");
+jest.mock("../../registration-suggestions", () => ({ RegistrationSuggestions: () => null }));
 
 jest.mock("../../../contexts/store-context");
 

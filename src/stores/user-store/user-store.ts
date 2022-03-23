@@ -65,8 +65,8 @@ export class UserStore implements IUserStore {
             , {
                 realtimeMode: RealtimeMode.on,
                 fetchMode: FetchMode.manual,
-                serialize: serializer.convertUser,
-                deserialize: deserializer.convertUser,
+                serialize: serializer.serializeUser,
+                deserialize: deserializer.deserializeUser,
                 query: null,
                 defaultSetOptions: {
                     merge: true
@@ -83,8 +83,8 @@ export class UserStore implements IUserStore {
             {
                 realtimeMode: RealtimeMode.on,
                 fetchMode: FetchMode.auto,
-                serialize: serializer.convertUser,
-                deserialize: deserializer.convertUser,
+                serialize: serializer.serializeUser,
+                deserialize: deserializer.deserializeUser,
                 query: null,
                 defaultSetOptions: {
                     merge: true
@@ -101,8 +101,8 @@ export class UserStore implements IUserStore {
             {
                 realtimeMode: RealtimeMode.on,
                 fetchMode: FetchMode.auto,
-                serialize: serializer.convertUser,
-                deserialize: deserializer.convertUser,
+                serialize: serializer.serializeUser,
+                deserialize: deserializer.deserializeUser,
                 query: (ref) => query(ref,
                     where("divisionId", "==", (this.divisionUser?.divisionId || "")),
                     where("deleted", "==", false)

@@ -37,7 +37,7 @@ export const convertFavoriteRegistration = (firestoreData: IFavoriteRegistration
     return favorite;
 }
 
-export const convertUser = (firestoreData: IUserData) => {
+export const deserializeUser = (firestoreData: IUserData) => {
     const user: IUser = {
         ...firestoreData,
         tasks: firestoreData.tasks ? new Map(firestoreData.tasks.map((t): [string, true] => [t, true])) : new Map<string, true>(),

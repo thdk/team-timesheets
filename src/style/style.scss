@@ -54,3 +54,9 @@ body {
       height: calc(100% - 64px);
     }
   }
+
+  /* data-table fixes */ 
+
+  .mdc-data-table__cell {
+    color: var(--mdc-theme-text-primary-on-background, rgba(0,0,0,0.54));
+  }

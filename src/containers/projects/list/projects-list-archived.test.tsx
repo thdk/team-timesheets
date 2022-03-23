@@ -6,7 +6,7 @@ import path from "path";
 
 import { Store } from "../../../stores/root-store";
 import { ArchivedProjectList } from ".";
-import { render, waitFor, fireEvent } from "@testing-library/react";
+import { render, waitFor, fireEvent, screen } from "@testing-library/react";
 import { canManageProjects } from "../../../rules";
 import { act } from "react-dom/test-utils";
 import { StoreContext } from "../../../contexts/store-context";
@@ -14,6 +14,10 @@ import { RulesTestEnvironment, initializeTestEnvironment } from "@firebase/rules
 import { User } from "firebase/auth";
 
 jest.mock("../../../rules");
+
+jest.mock('../../users/user-name', () => ({
+    UserName: jest.fn().mockReturnValue("UserName"),
+}))
 
 const projectId = "project-list-archived-test";
 
@@ -146,21 +150,15 @@ describe("ProjectListArchived", () => {
                 <ArchivedProjectList />
             </StoreContext.Provider>
         );
-
-        let items: HTMLElement[];
-        await waitFor(() => {
-            items = Array.from(
-                container.querySelectorAll<HTMLElement>(".settings-list-item"),
-            );
-            expect(items.length).toBe(2);
-        });
+        const item1 = await screen.findByText("Project 1");
+        await screen.findByText("Project 2");
 
         const checkboxes = container.querySelectorAll("input[type=checkbox]");
         expect(checkboxes.length).toBe(2);
 
         act(() => {
             fireEvent.click(checkboxes[1]);
-            fireEvent.click(items[0]);
+            fireEvent.click(item1);
         });
 
         expect(store.view.selection.size).toBe(2);
@@ -189,17 +187,13 @@ describe("ProjectListArchived", () => {
             },
         );
 
-        const { container, unmount } = render(
+        const { unmount } = render(
             <StoreContext.Provider value={store}>
                 <ArchivedProjectList />
             </StoreContext.Provider>
         );
 
-        let item: HTMLElement;
-        await waitFor(() => {
-            item = container.querySelector<HTMLElement>(".settings-list-item")!;
-            expect(item).not.toBeNull();
-        });
+        const item = await screen.findByText("Project 1");
 
         act(() => {
             fireEvent.click(item!);

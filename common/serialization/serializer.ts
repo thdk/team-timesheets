@@ -85,7 +85,7 @@ export const convertFavoriteRegistration = (appData: Partial<IFavoriteRegistrati
     return favorite;
 }
 
-export const convertUser = (appData: Partial<IUser> | null) => {
+export const serializeUser = (appData: Partial<IUser> | null) => {
     let user: Partial<Omit<IDivisionUserData, "divisionId" | "divisionUserId" | "defaultProjectId">>
         & Partial<{
             divisionId: string | FieldValue;

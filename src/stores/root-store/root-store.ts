@@ -52,8 +52,8 @@ export class Store implements IRootStore {
             {
                 collection: collection(firestore, "users") as CollectionReference<IUserData>,
                 collectionOptions: {
-                    deserialize: deserializer.convertUser,
-                    serialize: serializer.convertUser,
+                    deserialize: deserializer.deserializeUser,
+                    serialize: serializer.serializeUser,
                     fetchMode: FetchMode.manual,
                     realtimeMode: RealtimeMode.on,
                     defaultSetOptions: {

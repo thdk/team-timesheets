@@ -1,9 +1,3 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`ProjectListActive renders without projects 1`] = `
-<DocumentFragment>
-  <div
-    class="settings-list"
-  />
-</DocumentFragment>
-`;
+exports[`ProjectListActive renders without projects 1`] = `<DocumentFragment />`;

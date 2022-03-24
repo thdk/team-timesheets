@@ -23,42 +23,37 @@ export interface ITimePeriodSelectProps {
     value: TimePeriod;
 }
 
-export class TimePeriodSelect extends React.Component<ITimePeriodSelectProps> {
-    render() {
-        const {
-            periods = [
-                TimePeriod.ThisWeek,
-                TimePeriod.ThisMonth,
-                TimePeriod.LastMonth,
-                TimePeriod.ThisYear,
-                TimePeriod.LastYear,
-            ],
-            value
-        } = this.props;
+export const TimePeriodSelect = (props: ITimePeriodSelectProps) => {
+    const {
+        periods = [
+            TimePeriod.ThisWeek,
+            TimePeriod.ThisMonth,
+            TimePeriod.LastMonth,
+            TimePeriod.ThisYear,
+            TimePeriod.LastYear,
+        ],
+        value
+    } = props;
 
-        const periodSelectOptions = periods.map(p =>
-            <option value={p.toString()} key={p}>{timePeriodLabels[p]}</option>
-        );
+    const periodSelectOptions = periods.map(p =>
+        <option value={p.toString()} key={p}>{timePeriodLabels[p]}</option>
+    );
 
-        const selectProps = {
-            onChange: this.onChange.bind(this),
-            label: "Time period"
-        };
-
-        return (
-            <Select
-                id="time-period-select"
-                value={value.toString()}
-                outlined={true}
-                {...selectProps}>
-                {periodSelectOptions}
-            </Select>
-        );
-    }
-
-    onChange(event: React.ChangeEvent<HTMLSelectElement>) {
+    const onChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
         const value = event.currentTarget.value;
         const timePeriod = (+value) as TimePeriod;
-        this.props.onChange(timePeriod);
+        props.onChange(timePeriod);
     }
-}
+
+    return (
+        <Select
+            id="time-period-select"
+            value={value.toString()}
+            outlined={true}
+            onChange={onChange}
+            label={"Time period"}
+        >
+            {periodSelectOptions}
+        </Select>
+    );
+};

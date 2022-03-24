@@ -47,7 +47,7 @@ Alternatively, see how you can help out by fixing one of the [good first issues]
 
 ## License
 
-No license yet. See [no permission](https://choosealicense.com/no-permission/).
+GNU General public license. See [license file](LICENSE).
 
 ## Spam
 This app is build using [Firestorable](https://github.com/thdk/firestorable). Have a look, it's great! (I made it :))

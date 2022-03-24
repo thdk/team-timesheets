@@ -6,7 +6,7 @@ import React from "react";
 
 import { Store } from "../../../stores/root-store";
 import { ActiveProjectList } from ".";
-import { render, waitFor, fireEvent } from "@testing-library/react";
+import { render, waitFor, fireEvent, screen } from "@testing-library/react";
 import { canEditProject } from "../../../rules";
 import { act } from "react-dom/test-utils";
 import { StoreContext } from "../../../contexts/store-context";
@@ -16,6 +16,10 @@ import { User } from "firebase/auth";
 jest.mock("../../../internal", () => ({
     GoToProject: () => "GoToProject",
 }));
+
+jest.mock('../../users/user-name', () => ({
+    UserName: jest.fn().mockReturnValue("UserName"),
+}))
 
 jest.mock("../../../rules");
 
@@ -140,18 +144,15 @@ describe("ProjectListActive", () => {
             </StoreContext.Provider>
         );
 
-        let items: HTMLElement[];
-        await waitFor(() => {
-            items = Array.from(container.querySelectorAll<HTMLElement>(".settings-list-item"));
-            expect(items.length).toBe(2);
-        });
+        const item1 = await screen.findByText("Project 1");
+        await screen.findByText("Project 2");
 
         const checkboxes = container.querySelectorAll("input[type=checkbox]");
         expect(checkboxes.length).toBe(2);
 
         act(() => {
             fireEvent.click(checkboxes[1]);
-            fireEvent.click(items[0]);
+            fireEvent.click(item1);
         });
 
         expect(store.view.selection.size).toBe(2);
@@ -176,8 +177,8 @@ describe("ProjectListActive", () => {
 
         await waitFor(
             () => expect(
-                container.querySelectorAll(".settings-list-item").length
-            ).toBe(0)
+                screen.queryByText("Project 1")
+            ).toBeNull(),
         );
 
         unmount();
@@ -193,17 +194,13 @@ describe("ProjectListActive", () => {
             },
         );
 
-        const { getByText, container, } = render(
+        const { getByText, } = render(
             <StoreContext.Provider value={store}>
                 <ActiveProjectList />
             </StoreContext.Provider>
         );
 
-        let item: HTMLElement;
-        await waitFor(() => {
-            item = container.querySelector<HTMLElement>(".settings-list-item")!;
-            expect(item).not.toBeNull();
-        });
+        const item = await screen.findByText("Project 1");
 
         act(() => {
             fireEvent.click(item!);
@@ -225,17 +222,13 @@ describe("ProjectListActive", () => {
             },
         );
 
-        const { queryByText, container } = render(
+        const { queryByText } = render(
             <StoreContext.Provider value={store}>
                 <ActiveProjectList />
             </StoreContext.Provider>
         );
 
-        let item: HTMLElement;
-        await waitFor(() => {
-            item = container.querySelector<HTMLElement>(".settings-list-item")!;
-            expect(item).not.toBeNull();
-        });
+        const item = await screen.findByText("Project 1");
 
         act(() => {
             fireEvent.click(item!);

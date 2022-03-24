@@ -61,7 +61,7 @@ beforeEach(async () => {
 afterEach(async () => {
     store.dispose();
     jest.clearAllMocks();
-    await testEnv.unauthenticatedContext();
+    await testEnv.clearFirestore();
 });
 
 afterAll(() => testEnv.cleanup());
@@ -264,7 +264,7 @@ describe("ProjectsPage", () => {
             queryParams: {
                 tab: "archived",
             },
-            
+
         });
 
         await waitFor(() => !!store.user.authenticatedUser);

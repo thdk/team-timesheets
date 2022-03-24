@@ -8,7 +8,7 @@ import { where, limit } from 'firebase/firestore';
 import { transaction } from 'mobx';
 import { IRootStore } from '../../stores/root-store';
 import { IViewAction } from '../../stores/view-store';
-import { goToNewProject, goToProjects, ProjectRouteQueryParams, ProjectsTab} from '../../internal';
+import { goToNewProject, goToProjects, ProjectRouteQueryParams, ProjectsTab } from '../../internal';
 import { useEffect } from 'react';
 import { useProjectStore } from '../../contexts/project-context';
 import { useRegistrationStore } from '../../contexts/registration-context';
@@ -130,12 +130,13 @@ export const ProjectsPage = observer(() => {
                 await Promise.resolve();
                 transaction(() => {
                     viewStore.setActions(
-                        getActions(activeTabId, {
-                            projects: projectsStore,
-                            timesheets: timesheetsStore,
-                            view: viewStore,
-                            router: router,
-                        })
+                        getActions(activeTabId,
+                            {
+                                projects: projectsStore,
+                                timesheets: timesheetsStore,
+                                view: viewStore,
+                                router: router,
+                            })
                     );
                     viewStore.setFabs([{
                         action: () => {
@@ -160,6 +161,7 @@ export const ProjectsPage = observer(() => {
             })();
         },
         [
+            activeTabId,
             viewStore,
         ],
     );

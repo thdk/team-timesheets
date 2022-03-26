@@ -15,7 +15,7 @@ exports[`should display favorite groups 1`] = `
         role="menu"
       >
         <li
-          class="mdc-list-item"
+          class="mdc-theme--on-surface mdc-list-item"
           role="menuitem"
           tabindex="0"
         >
@@ -24,7 +24,7 @@ exports[`should display favorite groups 1`] = `
           </div>
         </li>
         <li
-          class="mdc-list-item"
+          class="mdc-theme--on-surface mdc-list-item"
           role="menuitem"
           tabindex="0"
         >
@@ -33,11 +33,11 @@ exports[`should display favorite groups 1`] = `
           </div>
         </li>
         <li
-          class="mdc-list-divider"
+          class="mdc-theme--on-surface mdc-list-divider"
           role="separator"
         />
         <li
-          class="mdc-list-item"
+          class="mdc-theme--on-surface mdc-list-item"
           role="menuitem"
           tabindex="0"
         >
@@ -46,7 +46,7 @@ exports[`should display favorite groups 1`] = `
       </ul>
     </div>
     <button
-      class="grouped-registration-header-add-button prevent-propagation mdc-button mdc-button--dense"
+      class="grouped-registration-header-add-button prevent-propagation mdc-theme--on-primary mdc-theme--primary-bg mdc-button mdc-button--dense"
     >
       <div
         class="mdc-button__ripple"
@@ -76,11 +76,11 @@ exports[`should not crash without favorite groups 1`] = `
         role="menu"
       >
         <li
-          class="mdc-list-divider"
+          class="mdc-theme--on-surface mdc-list-divider"
           role="separator"
         />
         <li
-          class="mdc-list-item"
+          class="mdc-theme--on-surface mdc-list-item"
           role="menuitem"
           tabindex="0"
         >
@@ -89,7 +89,7 @@ exports[`should not crash without favorite groups 1`] = `
       </ul>
     </div>
     <button
-      class="grouped-registration-header-add-button prevent-propagation mdc-button mdc-button--dense"
+      class="grouped-registration-header-add-button prevent-propagation mdc-theme--on-primary mdc-theme--primary-bg mdc-button mdc-button--dense"
     >
       <div
         class="mdc-button__ripple"

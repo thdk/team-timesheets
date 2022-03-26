@@ -46,7 +46,7 @@ exports[`TaskPreferences should render tasks 1`] = `
     class="mdc-chip-set mdc-chip-set--filter"
   >
     <div
-      class="mdc-ripple-surface mdc-chip"
+      class="mdc-ripple-surface mdc-theme--on-surface mdc-chip"
       id="task-1"
       role="row"
     >
@@ -85,7 +85,7 @@ exports[`TaskPreferences should render tasks 1`] = `
       </span>
     </div>
     <div
-      class="mdc-ripple-surface mdc-chip"
+      class="mdc-ripple-surface mdc-theme--on-surface mdc-chip"
       id="task-2"
       role="row"
     >
@@ -141,7 +141,7 @@ exports[`TaskPreferences should show default task 1`] = `
     class="mdc-chip-set mdc-chip-set--filter"
   >
     <div
-      class="mdc-ripple-surface mdc-chip mdc-chip--selected"
+      class="mdc-ripple-surface mdc-theme--on-surface mdc-chip mdc-chip--selected"
       id="task-1"
       role="row"
     >
@@ -180,7 +180,7 @@ exports[`TaskPreferences should show default task 1`] = `
       </span>
     </div>
     <div
-      class="mdc-ripple-surface mdc-chip mdc-chip--selected"
+      class="mdc-ripple-surface mdc-theme--on-surface mdc-chip mdc-chip--selected"
       id="task-2"
       role="row"
     >
@@ -231,7 +231,7 @@ exports[`TaskPreferences should show default task 1`] = `
     class="mdc-chip-set mdc-chip-set--choice"
   >
     <div
-      class="mdc-ripple-surface mdc-chip mdc-chip--selected"
+      class="mdc-ripple-surface mdc-theme--on-surface mdc-chip mdc-chip--selected"
       id="task-1"
       role="row"
     >
@@ -255,7 +255,7 @@ exports[`TaskPreferences should show default task 1`] = `
       </span>
     </div>
     <div
-      class="mdc-ripple-surface mdc-chip"
+      class="mdc-ripple-surface mdc-theme--on-surface mdc-chip"
       id="task-2"
       role="row"
     >

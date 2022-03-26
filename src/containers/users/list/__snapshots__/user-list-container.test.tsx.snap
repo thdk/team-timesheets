@@ -19,7 +19,7 @@ exports[`UserListContainer when logged in user is admin should render users 1`] 
     >
       <i
         aria-hidden="true"
-        class="rmwc-icon rmwc-icon--ligature material-icons mdc-list-item__graphic"
+        class="rmwc-icon rmwc-icon--ligature material-icons mdc-theme--text-primary-on-background mdc-list-item__graphic"
       >
         person_outline
       </i>
@@ -44,7 +44,7 @@ exports[`UserListContainer when logged in user is admin should render users 1`] 
     >
       <i
         aria-hidden="true"
-        class="rmwc-icon rmwc-icon--ligature material-icons mdc-list-item__graphic"
+        class="rmwc-icon rmwc-icon--ligature material-icons mdc-theme--text-primary-on-background mdc-list-item__graphic"
       >
         person_outline
       </i>
@@ -69,7 +69,7 @@ exports[`UserListContainer when logged in user is admin should render users 1`] 
     >
       <i
         aria-hidden="true"
-        class="rmwc-icon rmwc-icon--ligature material-icons mdc-list-item__graphic"
+        class="rmwc-icon rmwc-icon--ligature material-icons mdc-theme--text-primary-on-background mdc-list-item__graphic"
       >
         person_outline
       </i>
@@ -94,7 +94,7 @@ exports[`UserListContainer when logged in user is admin should render users 1`] 
     >
       <i
         aria-hidden="true"
-        class="rmwc-icon rmwc-icon--ligature material-icons mdc-list-item__graphic"
+        class="rmwc-icon rmwc-icon--ligature material-icons mdc-theme--text-primary-on-background mdc-list-item__graphic"
       >
         person_outline
       </i>

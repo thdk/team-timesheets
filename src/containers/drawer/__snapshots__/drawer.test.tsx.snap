@@ -40,7 +40,7 @@ exports[`Drawer should render 1`] = `
             >
               <i
                 aria-hidden="true"
-                class="rmwc-icon rmwc-icon--ligature material-icons mdc-list-item__graphic"
+                class="rmwc-icon rmwc-icon--ligature material-icons mdc-theme--on-surface mdc-list-item__graphic"
               >
                 perm_identity
               </i>
@@ -705,7 +705,7 @@ exports[`Drawer should render 1`] = `
         >
           <i
             aria-hidden="true"
-            class="rmwc-icon rmwc-icon--ligature material-icons mdc-list-item__graphic"
+            class="rmwc-icon rmwc-icon--ligature material-icons mdc-theme--text-primary-on-background mdc-list-item__graphic"
           >
             today
           </i>
@@ -721,7 +721,7 @@ exports[`Drawer should render 1`] = `
         >
           <i
             aria-hidden="true"
-            class="rmwc-icon rmwc-icon--ligature material-icons mdc-list-item__graphic"
+            class="rmwc-icon rmwc-icon--ligature material-icons mdc-theme--text-primary-on-background mdc-list-item__graphic"
           >
             calendar_today
           </i>
@@ -737,7 +737,7 @@ exports[`Drawer should render 1`] = `
         >
           <i
             aria-hidden="true"
-            class="rmwc-icon rmwc-icon--ligature material-icons mdc-list-item__graphic"
+            class="rmwc-icon rmwc-icon--ligature material-icons mdc-theme--text-primary-on-background mdc-list-item__graphic"
           >
             favorite
           </i>
@@ -757,7 +757,7 @@ exports[`Drawer should render 1`] = `
         >
           <i
             aria-hidden="true"
-            class="rmwc-icon rmwc-icon--ligature material-icons mdc-list-item__graphic"
+            class="rmwc-icon rmwc-icon--ligature material-icons mdc-theme--text-primary-on-background mdc-list-item__graphic"
           >
             list
           </i>
@@ -773,7 +773,7 @@ exports[`Drawer should render 1`] = `
         >
           <i
             aria-hidden="true"
-            class="rmwc-icon rmwc-icon--ligature material-icons mdc-list-item__graphic"
+            class="rmwc-icon rmwc-icon--ligature material-icons mdc-theme--text-primary-on-background mdc-list-item__graphic"
           >
             bar_chart
           </i>
@@ -793,7 +793,7 @@ exports[`Drawer should render 1`] = `
         >
           <i
             aria-hidden="true"
-            class="rmwc-icon rmwc-icon--ligature material-icons mdc-list-item__graphic"
+            class="rmwc-icon rmwc-icon--ligature material-icons mdc-theme--text-primary-on-background mdc-list-item__graphic"
           >
             star_border
           </i>
@@ -809,7 +809,7 @@ exports[`Drawer should render 1`] = `
         >
           <i
             aria-hidden="true"
-            class="rmwc-icon rmwc-icon--ligature material-icons mdc-list-item__graphic"
+            class="rmwc-icon rmwc-icon--ligature material-icons mdc-theme--text-primary-on-background mdc-list-item__graphic"
           >
             settings
           </i>

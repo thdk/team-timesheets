@@ -20,6 +20,56 @@ exports[`Preferences should display client preferences 1`] = `
     class="box"
   >
     TaskPreferencesClientPreferencesProjectPreferences
+    <h3
+      class="mdc-typography--subtitle1"
+    >
+      Theme preferences
+    </h3>
+    <span
+      class="mdc-theme--surface"
+    >
+      <div
+        class="mdc-form-field"
+      >
+        <div
+          class="mdc-ripple-upgraded--unbounded mdc-checkbox--upgraded mdc-checkbox"
+          data-mdc-ripple-is-unbounded="true"
+        >
+          <input
+            class="mdc-checkbox__native-control"
+            id="toggle--Darkmode"
+            type="checkbox"
+          />
+          <div
+            class="mdc-checkbox__background"
+          >
+            <svg
+              class="mdc-checkbox__checkmark"
+              viewBox="0 0 24 24"
+            >
+              <path
+                class="mdc-checkbox__checkmark-path"
+                d="M1.73,12.91 8.1,19.28 22.79,4.59"
+                fill="none"
+                stroke="white"
+              />
+            </svg>
+            <div
+              class="mdc-checkbox__mixedmark"
+            />
+          </div>
+          <div
+            class="mdc-checkbox__ripple"
+          />
+        </div>
+        <label
+          for="toggle--Darkmode"
+          id="toggle--Darkmodelabel"
+        >
+          Darkmode
+        </label>
+      </div>
+    </span>
   </div>
 </DocumentFragment>
 `;
@@ -30,6 +80,56 @@ exports[`Preferences should display task preferences 1`] = `
     class="box"
   >
     TaskPreferencesClientPreferencesProjectPreferences
+    <h3
+      class="mdc-typography--subtitle1"
+    >
+      Theme preferences
+    </h3>
+    <span
+      class="mdc-theme--surface"
+    >
+      <div
+        class="mdc-form-field"
+      >
+        <div
+          class="mdc-ripple-upgraded--unbounded mdc-checkbox--upgraded mdc-checkbox"
+          data-mdc-ripple-is-unbounded="true"
+        >
+          <input
+            class="mdc-checkbox__native-control"
+            id="toggle--Darkmode"
+            type="checkbox"
+          />
+          <div
+            class="mdc-checkbox__background"
+          >
+            <svg
+              class="mdc-checkbox__checkmark"
+              viewBox="0 0 24 24"
+            >
+              <path
+                class="mdc-checkbox__checkmark-path"
+                d="M1.73,12.91 8.1,19.28 22.79,4.59"
+                fill="none"
+                stroke="white"
+              />
+            </svg>
+            <div
+              class="mdc-checkbox__mixedmark"
+            />
+          </div>
+          <div
+            class="mdc-checkbox__ripple"
+          />
+        </div>
+        <label
+          for="toggle--Darkmode"
+          id="toggle--Darkmodelabel"
+        >
+          Darkmode
+        </label>
+      </div>
+    </span>
   </div>
 </DocumentFragment>
 `;

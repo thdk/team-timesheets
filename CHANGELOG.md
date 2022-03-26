@@ -5,7 +5,28 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [v2.6.0](https://github.com/thdk/team-timesheets/compare/v2.5.2...v2.6.0)
+## [v2.7.0](https://github.com/thdk/team-timesheets/compare/v2.6.0...v2.7.0)
+
+### Merged
+
+- feat: add dark mode [`#258`](https://github.com/thdk/team-timesheets/pull/258)
+- chore: add licence file [`#256`](https://github.com/thdk/team-timesheets/pull/256)
+- feat: show project owner in active project list [`#253`](https://github.com/thdk/team-timesheets/pull/253)
+- feat: validate registrations on save [`#249`](https://github.com/thdk/team-timesheets/pull/249)
+
+### Fixed
+
+- feat: add dark mode [`#254`](https://github.com/thdk/team-timesheets/issues/254)
+- feat: show project owner in active project list [`#102`](https://github.com/thdk/team-timesheets/issues/102)
+- feat: validate registrations on save [`#248`](https://github.com/thdk/team-timesheets/issues/248)
+
+### Commits
+
+- chore: upgrade rmwc packages [`c5ba160`](https://github.com/thdk/team-timesheets/commit/c5ba1600acd015479906150749db067a90f7ca11)
+- feat: show project owner in archived project list [`1ae11c0`](https://github.com/thdk/team-timesheets/commit/1ae11c08e0832106229b174347a6d5d92c232384)
+- test: update snapshots [`9736e70`](https://github.com/thdk/team-timesheets/commit/9736e703c0d4f6a5d49d0f5202917ca561811bd4)
+
+## [v2.6.0](https://github.com/thdk/team-timesheets/compare/v2.5.2...v2.6.0) - 2022-02-17
 
 ### Fixed
 

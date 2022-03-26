@@ -13,6 +13,7 @@ import { useEffect } from 'react';
 import { useProjectStore } from '../../contexts/project-context';
 import { useRegistrationStore } from '../../contexts/registration-context';
 import { useViewStore } from '../../contexts/view-context';
+import { Theme } from '@rmwc/theme';
 
 interface ITabData {
     id: ProjectsTab;
@@ -168,11 +169,17 @@ export const ProjectsPage = observer(() => {
 
     return (
         <>
-            <TabBar
-                activeTabIndex={activeTabIndex}
+            <Theme
+                use={["secondaryBg"]} 
+                wrap
             >
-                {tabs}
-            </TabBar>
+
+                <TabBar
+                    activeTabIndex={activeTabIndex}
+                >
+                    {tabs}
+                </TabBar>
+            </Theme>
             {tabData[activeTabIndex].tabContent}
         </>
     );

@@ -85,7 +85,8 @@ export const ProjectSelect = observer(({
             value={value || ""}
             outlined={true}
             label={label || "Project"}
-            onChange={onProjectChange}>
+            onChange={onProjectChange}
+        >
             {projects}
         </Select>
     );

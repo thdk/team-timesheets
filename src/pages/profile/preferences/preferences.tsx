@@ -10,7 +10,7 @@ import { ProjectPreferences } from './project-preferences';
 import { useTasks } from '../../../contexts/task-context';
 import { useClients } from '../../../contexts/client-context';
 import { useProjectStore } from '../../../contexts/project-context';
-
+import { ThemePreferences } from './theme-preferences';
 
 export const Preferences = observer(() => {
     const userStore = useUserStore();
@@ -42,6 +42,7 @@ export const Preferences = observer(() => {
                 <TaskPreferences />
                 <ClientPreferences />
                 <ProjectPreferences />
+                <ThemePreferences />
             </Box>
         </>
     );

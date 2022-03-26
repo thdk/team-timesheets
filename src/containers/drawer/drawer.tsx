@@ -42,22 +42,25 @@ export const Drawer = observer(
         }, [view, mobile]);
 
         return (
-            <RMWCDrawer
-                modal={mobile}
-                dismissible={mobile ? undefined : true}
-                open={view.isDrawerOpen}
-                onClose={() => view.setIsDrawerOpen(false)}>
-                <DrawerHeader>
-                    <DivisionUsersMenu
-                        onAction={handleOnDrawerAction}
-                    />
-                </DrawerHeader>
-                <DrawerContent>
-                    <DrawerMenu
-                        onAction={handleOnDrawerAction}
-                    />
-                </DrawerContent>
-            </RMWCDrawer>
+                <RMWCDrawer
+                    style={{
+                       backgroundColor: "var(--mdc-theme-background, #fff)",
+                    }}
+                    modal={mobile}
+                    dismissible={mobile ? undefined : true}
+                    open={view.isDrawerOpen}
+                    onClose={() => view.setIsDrawerOpen(false)}>
+                    <DrawerHeader>
+                        <DivisionUsersMenu
+                            onAction={handleOnDrawerAction}
+                        />
+                    </DrawerHeader>
+                    <DrawerContent>
+                        <DrawerMenu
+                            onAction={handleOnDrawerAction}
+                        />
+                    </DrawerContent>
+                </RMWCDrawer>
         );
     }
 );

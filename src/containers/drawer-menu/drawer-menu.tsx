@@ -73,7 +73,7 @@ const AuthenticatedMenu = withAuthentication(
     }) => {
         return (
             <>
-                <TimesheetCalendar 
+                <TimesheetCalendar
                     onAction={onAction}
                 />
                 <List
@@ -116,12 +116,14 @@ export const DrawerMenu = (
     }
 ) => {
     return (
-        <>
-            <AuthenticatedMenu
-                onAction={onAction}
-            />
-            <WelcomeRecruit />
-        </>
+        
+            <>
+                <AuthenticatedMenu
+                    onAction={onAction}
+                />
+                <WelcomeRecruit />
+
+            </>
     );
 };
 DrawerMenu.displayName = "DrawerMenu";

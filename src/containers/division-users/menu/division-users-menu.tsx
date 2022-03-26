@@ -90,7 +90,10 @@ export const DivisionUsersMenu = observer(({
                                                 key={division.divisionUserId}
                                                 onClick={() => handleSelect(division)}
                                             >
-                                                <ListItemGraphic icon={division.icon} />
+                                                <ListItemGraphic
+                                                    icon={division.icon}
+                                                    theme={["onSurface"]}
+                                                />
                                                 <ListItemText>
                                                     {division.name}
                                                 </ListItemText>
@@ -107,6 +110,7 @@ export const DivisionUsersMenu = observer(({
                                                     onClick={() => handleSelect(undefined)}>
                                                     <ListItemGraphic
                                                         icon={"all_inclusive"}
+                                                        theme={["onSurface"]}
                                                     />
                                                     <ListItemText>
                                                         {user.authenticatedUser?.name}
@@ -149,6 +153,7 @@ export const DivisionUsersMenu = observer(({
                     >
                         <ListItemGraphic
                             icon={"perm_identity"}
+                            theme={["onSurface"]}
                         />
                         <ListItemText>
                             Logout

@@ -5,6 +5,7 @@ import { Checkbox } from '@rmwc/checkbox';
 import { useState } from 'react';
 import TextField, { Input } from '@material/react-text-field';
 import { observer } from 'mobx-react-lite';
+import { Icon } from '@rmwc/icon';
 
 export interface ISettingsItemProps extends Omit<React.HTMLProps<HTMLDivElement>, "onChange"> {
     readonly itemData: Partial<INameWithIcon> & { id?: string };
@@ -53,7 +54,7 @@ export const SettingsListItem = observer((props: ISettingsItemProps) => {
     };
 
     const cssClasses = classNames("settings-list-item", className, { "settings-list-item--selected": edit });
-    const iconJSX = icon ? <i className="icon material-icons">{icon}</i> : undefined;
+    const iconJSX = icon ? <Icon icon={icon} theme={["textPrimaryOnBackground"]}/> : undefined;
 
     // Warning: manually edited @material/react-text-field/dist/Input.d.ts to make below compile
     // See: https://github.com/material-components/material-components-web-react/issues/965

@@ -287,7 +287,7 @@ exports[`RegistrationDetail should only show user tasks instead of all tasks 1`]
               class="mdc-chip-set mdc-chip-set--choice"
             >
               <div
-                class="mdc-ripple-surface mdc-chip mdc-chip--selected"
+                class="mdc-ripple-surface mdc-theme--on-surface mdc-chip mdc-chip--selected"
                 id="task-1"
                 role="row"
               >
@@ -311,7 +311,7 @@ exports[`RegistrationDetail should only show user tasks instead of all tasks 1`]
                 </span>
               </div>
               <div
-                class="mdc-ripple-surface mdc-chip"
+                class="mdc-ripple-surface mdc-theme--on-surface mdc-chip"
                 id="task-3"
                 role="row"
               >
@@ -626,7 +626,7 @@ exports[`RegistrationDetail should render when there is a registration 1`] = `
               class="mdc-chip-set mdc-chip-set--choice"
             >
               <div
-                class="mdc-ripple-surface mdc-chip mdc-chip--selected"
+                class="mdc-ripple-surface mdc-theme--on-surface mdc-chip mdc-chip--selected"
                 id="task-1"
                 role="row"
               >

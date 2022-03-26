@@ -6,7 +6,6 @@ import { TopAppBar, TopAppBarRow, TopAppBarSection, TopAppBarNavigationIcon, Top
 import { TopBarActions } from './top-bar-actions-container';
 import { useViewStore } from '../../../contexts/view-context';
 
-import '@rmwc/top-app-bar/styles';
 import classNames from 'classnames';
 
 export const TopBar = observer(() => {

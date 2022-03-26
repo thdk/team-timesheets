@@ -24,7 +24,7 @@ const TabButtons = <T extends string>({
                 <Tab
                     onClick={() => onClick(id)}
                     key={id}
-                    icon={icon}
+                    icon={icon}                    
                 >
                     {text}
                 </Tab>

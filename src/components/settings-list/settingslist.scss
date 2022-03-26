@@ -9,7 +9,7 @@
         color: var(--mdc-theme-text-secondary-on-background, rgba(0, 0, 0, 0.54));
 
         &:not(.new-item):hover {
-            background-color: #ededed;
+            background-color: var(--mdc-theme-text-hint-on-background, rgba(0, 0, 0, 0.54));
             cursor: pointer;
         }
 
@@ -24,6 +24,7 @@
                 flex-shrink: 0;
                 justify-content: center;
                 align-items: center;
+                color: var(--mdc-theme-text-primary-on-background);
             }
 
             .item-name {

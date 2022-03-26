@@ -21,14 +21,18 @@ export const TasksChips = ({
             {
                 tasks.map((t) => {
                     const { id: taskId, name: taskName, icon: taskIcon = undefined } = t;
+                    const selected = selectedTaskIds?.indexOf(taskId) !== -1;
                     const leadingIcon = taskIcon
-                        ? <Icon icon={taskIcon} />
+                        ? <Icon icon={selected ? "check" : taskIcon}
+
+                            theme={["onSurface"]}
+                        />
                         : undefined;
 
-                        const selected = selectedTaskIds?.indexOf(taskId) !== -1;
 
                     return (
                         <Chip
+                            theme={["onSurface"]}
                             checkmark={filter}
                             icon={leadingIcon}
                             selected={selected}

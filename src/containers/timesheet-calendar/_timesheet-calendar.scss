@@ -3,7 +3,7 @@
 .react-calendar {
   border-top: none;
   border-right: none;
-  border-color: rgba(0, 0, 0, 0.12);
+  border-color: var(--mdc-theme-text-hint-on-background);
 
   .react-calendar__navigation {
     margin-bottom: 0;

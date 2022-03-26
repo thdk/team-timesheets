@@ -18,6 +18,7 @@ const GoogleButton = observer(
         if (!!user) {
             return (
                 <Button
+                    theme={"textPrimaryOnBackground"}
                     onClick={signOut}
                 >
                     Disconnect from google
@@ -28,6 +29,7 @@ const GoogleButton = observer(
                 <Button
                     onClick={signIn}
                     disabled={!isGapiLoaded}
+                    theme={"textPrimaryOnBackground"}
                 >
                     Connect with google
                 </Button>

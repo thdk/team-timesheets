@@ -48,16 +48,24 @@ export const FavoriteGroupsMenu = (props: FavoriteGroupsMenuProps) => {
                 role="menuitem"
                 tabIndex={0}
                 key={group.id}
+                theme={["onSurface"]}
             >
                 <div>{group.name}</div>
             </ListItem>)}
-            <ListDivider></ListDivider>
-            <MenuItem>New</MenuItem>
+            <ListDivider
+                theme={["onSurface"]}
+            />
+            <MenuItem
+                theme={["onSurface"]}
+            >
+                New
+            </MenuItem>
         </Menu>
         <Button
             onClick={handleOpen}
             dense
             className="grouped-registration-header-add-button prevent-propagation"
+            theme={["onPrimary", "primaryBg"]}
         >+</Button>
     </MenuSurfaceAnchor>;
 };

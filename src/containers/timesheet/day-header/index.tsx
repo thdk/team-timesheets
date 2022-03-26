@@ -58,9 +58,9 @@ export const GroupedRegistrationHeader = observer(
 
             const displayJSX = !isMonthView
                 ? <>
-                    <div className="grouped-registration-header-label">
+                    <h3 className="mdc-typography--subtitle1 grouped-registration-header-label">
                         Total time: {parseFloat(totalTime.toFixed(2))} hours
-                    </div>
+                    </h3>
                 </>
                 : <>
                     <a href="#"

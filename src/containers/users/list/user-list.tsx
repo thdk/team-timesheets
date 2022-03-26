@@ -27,7 +27,7 @@ export const UserList = ({
                 key={id}
                 onClick={onUserSelect.bind(null, id)}
             >
-                <ListItemGraphic icon="person_outline" />
+                <ListItemGraphic icon="person_outline" theme={["textPrimaryOnBackground"]} />
                 <ListItemText>
                     <ListItemPrimaryText>
                         {name}

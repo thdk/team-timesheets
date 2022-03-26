@@ -30,7 +30,7 @@ export const DrawerMenuGroup = ({
                             onClick={action}
                             key={key}
                         >
-                            <ListItemGraphic icon={icon} />
+                            <ListItemGraphic icon={icon} theme={["textPrimaryOnBackground"]} />
                             <ListItemText>
                                 {text}
                             </ListItemText>

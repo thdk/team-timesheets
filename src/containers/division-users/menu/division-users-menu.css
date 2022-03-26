@@ -1,4 +1,9 @@
 .division-users-menu.mdc-menu-surface {
     width: 220px;
     top: 62px !important;
+    background-color: var(--mdc-theme-surface, red);
+}
+
+.division-users-menu {
+    border: solid 1px var(--mdc-theme-text-hint-on-background);
 }

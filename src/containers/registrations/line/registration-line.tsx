@@ -12,6 +12,7 @@ import { DataRow, DataRowColumn, DataRowLine1, DataRowLine2 } from '../../../com
 
 import "./registration-line.scss";
 import { transaction } from 'mobx';
+import { Theme } from '@rmwc/theme';
 
 export interface IRegistrationLineProps extends React.HTMLProps<HTMLDivElement> {
     readonly line1: string;
@@ -93,7 +94,7 @@ export const RegistrationLine = observer(({
         <DataRow
             allowEmptyHeader
             className={styles}
-            icon={icon ? <Icon title={icon.title} icon={icon.icon} /> : null}
+            icon={icon ? <Icon theme={["textIconOnBackground"]} title={icon.title} icon={icon.icon} /> : null}
             {...restProps}
         >
             {timeJSX2}
@@ -101,7 +102,9 @@ export const RegistrationLine = observer(({
                 className="registration-line__content"
             >
                 <DataRowLine1>
-                    {line1}
+                    <Theme use={["textSecondaryOnBackground"]}>
+                        {line1}
+                    </Theme>
                 </DataRowLine1>
                 <DataRowLine2>
                     {line2}

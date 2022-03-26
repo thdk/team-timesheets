@@ -1,3 +1,41 @@
+.mdc-chip.mdc-chip--selected .mdc-chip__icon--leading {
+    color: var(--mdc-theme-secondary, #6200ee);
+}
+
+.mdc-chip.mdc-chip .mdc-chip__icon--leading {
+    color: var(--mdc-theme-on-surface, #6200ee);
+}
+
+.mdc-chip {
+    color: var(--mdc-theme-on-surface);
+    background-color: var(--mdc-theme-surface);
+    border: solid 1px var(--mdc-theme-text-hint-on-background)
+}
+
+.dark-mode .mdc-chip.mdc-chip.mdc-chip--selected {
+    border: solid 1px var(--mdc-theme-text-secondary-on-background, red)
+}
+
+.mdc-chip-set--filter .mdc-chip__icon--leading-hidden.mdc-chip__icon--leading {
+    opacity: 1;
+}
+
+.mdc-chip.mdc-chip--selected .mdc-chip__checkmark, .mdc-chip .mdc-chip__icon--leading.mdc-chip__icon--leading-hidden {
+    margin-left: -4px;
+    margin-right: 4px;
+}
+
+.mdc-chip__icon.mdc-chip__icon--leading.mdc-chip__icon--leading-hidden {
+    width: 20px;
+    height: 20px;
+    font-size: 20px;
+}
+
+.mdc-chip-set--filter .mdc-chip__icon--leading-hidden.mdc-chip__icon--leading + .mdc-chip__checkmark {
+    width: 0px;
+    display: none;
+}
+
 .mdc-chip-set--choice .mdc-chip.mdc-chip--selected .mdc-chip__icon--leading {
-    color: var(--mdc-theme-primary, #6200ee);
+    color: var(--mdc-theme-on-surface);
 }

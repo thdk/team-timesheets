@@ -51,6 +51,7 @@ export const ActiveProjectList = observer(() => {
                     borderLeft: "0",
                     borderRight: "0",
                 }}
+                theme={["textPrimaryOnBackground"]}
             >
                 <DataTableContent>
                     <DataTableHead>

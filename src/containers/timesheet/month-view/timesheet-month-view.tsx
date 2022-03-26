@@ -37,8 +37,7 @@ export const TimesheetMonthView = observer(({
                     style={{
                         justifyContent: "space-between"
                     }}>
-                    <div
-                        className="timesheets-header-label"
+                    <h3 className="mdc-typography--subtitle1 timesheets-header-label"
                         style={{
                             display: "flex",
                             alignSelf: "flex-end",
@@ -46,7 +45,7 @@ export const TimesheetMonthView = observer(({
                         }}
                         key={`total-month`}>
                         {totalLabel}
-                    </div>
+                    </h3>
                     <TimesheetDefaults />
 
                 </FlexGroup>

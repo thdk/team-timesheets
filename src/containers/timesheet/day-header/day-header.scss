@@ -1,7 +1,7 @@
 @import '../../../style/vars';
 
 .grouped-registration-header {
-        color: var(--mdc-theme-text-secondary-on-surface, rgba(0, 0, 0, 0.54));
+        color: var(--mdc-theme-on-surface, rgba(231, 31, 31, 0.54));
         display: flex;
         align-items: center;
         height: 41px;
@@ -18,7 +18,7 @@
 
         .grouped-registration-header-total {
             padding-left: 1em;
-            width: 85px;
+            width: 120px;
             display: flex;
         }
 

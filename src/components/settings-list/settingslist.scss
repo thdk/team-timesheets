@@ -13,6 +13,10 @@
             cursor: pointer;
         }
 
+        .icon-picker input {
+            color: var(--mdc-theme-text-primary-on-light);
+        }
+
         .list-item-props {
             display: flex;
             align-items: center;

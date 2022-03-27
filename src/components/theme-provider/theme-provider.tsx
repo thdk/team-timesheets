@@ -53,7 +53,7 @@ export const ThemeProvider = ({ children }: PropsWithChildren<unknown>) => {
             textHintOnBackground: 'rgba(0, 0, 0, 0.12)',
             textDisabledOnBackground: 'rgba(0, 0, 0, 0.38)',
             textIconOnBackground: 'rgba(0, 0, 0, 0.38)',
-            textPrimaryOnLight: 'rgba(0, 0, 0, 0.87)',
+            textPrimaryOnLight: 'rgba(0, 0, 0, 0.54)',
             textSecondaryOnLight: 'rgba(0, 0, 0, 0.54)',
             textHintOnLight: 'rgba(0, 0, 0, 0.38)',
             textDisabledOnLight: 'rgba(0, 0, 0, 0.38)',

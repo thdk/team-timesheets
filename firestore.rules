@@ -77,12 +77,7 @@ service cloud.firestore {
         }
 
         match /users/{userId} {
-            allow read: if
-                request.auth != null
-                && (
-                    request.auth.uid == userId
-                    || isAuthorised(getAuthUser(resource.data), 'admin')
-                );
+            allow read: if request.auth != null;
             allow list: if
                 request.auth != null
                 && isAuthorised(getAuthUser2(), 'admin');
@@ -102,11 +97,7 @@ service cloud.firestore {
         }
 
         match /division-users/{divisionUserId} {
-            allow get: if
-                request.auth != null
-                && (
-                    request.auth.uid == resource.data.uid
-                );
+            allow get: if request.auth != null;
             allow list: if request.auth != null
                 && (
                     isAuthorised(getAuthUser2(), 'admin')

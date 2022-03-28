@@ -5,7 +5,14 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [v2.7.1](https://github.com/thdk/team-timesheets/compare/v2.7.0...v2.7.1)
+## [v2.7.2](https://github.com/thdk/team-timesheets/compare/v2.7.1...v2.7.2)
+
+### Commits
+
+- fix: allow single get requests on users and division-user collection [`39f3c34`](https://github.com/thdk/team-timesheets/commit/39f3c3482d7b9c74ff4968d4913d1972091a6d62)
+- chore: remove cloud-build-monitor [`b3e9bd3`](https://github.com/thdk/team-timesheets/commit/b3e9bd3972375a5ecb79c3fcab90bbfd57a80c1d)
+
+## [v2.7.1](https://github.com/thdk/team-timesheets/compare/v2.7.0...v2.7.1) - 2022-03-27
 
 ### Commits
 

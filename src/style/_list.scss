@@ -3,5 +3,9 @@
 }
 
 .mdc-list-divider {
+    border-bottom-color: var(--line-color);
+}
+
+.dark-mode .mdc-list-divider {
     border-bottom-color: var(--mdc-theme-text-hint-on-background);
 }

@@ -7,6 +7,9 @@
 
 @import '../containers/timesheet-calendar/timesheet-calendar';
 @import './chart';
+:root {
+  --line-color: rgba(0, 0, 0, 0.12);
+}
 
 /* menu */
 .mdc-menu-surface--open {
@@ -14,7 +17,7 @@
 }
 
 .mdc-drawer {
-  border-color: var(--mdc-theme-text-hint-on-background);
+  border-color: var(--line-color);
 }
 
 /* checkbox */
@@ -88,7 +91,7 @@ body .mdc-select:not(.mdc-select--disabled):not(.mdc-select--invalid).mdc-select
 /* data table */
 
 .mdc-data-table {
-  border-color: var(--mdc-theme-text-hint-on-background);
+  border-color: var(--line-color);
 }
 
 .mdc-data-table__header-cell {
@@ -96,13 +99,18 @@ body .mdc-select:not(.mdc-select--disabled):not(.mdc-select--invalid).mdc-select
 }
 
 .mdc-data-table__row {
-  border-top-color: var(--mdc-theme-text-hint-on-background);
+  border-top-color: var(--line-color);
 }
 
 /* text input */
 
+.mdc-text-field:not(.mdc-text-field--disabled) .mdc-text-field__icon--leading {
+  color: var(--mdc-theme-text-primary-on-background);
+}
+.mdc-text-field--disabled .mdc-text-field__icon--leading {
+  color: var(--mdc-theme-text-disabled-on-background);
+}
 .mdc-text-field:not(.mdc-text-field--disabled) {
-  background-color: var(--mdc-theme-surface);
   color: var(--mdc-theme-on-surface);
 }
 

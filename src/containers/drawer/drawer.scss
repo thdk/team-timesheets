@@ -4,11 +4,17 @@
   width: 100%;
 }
 
-.mdc-drawer {
-  .mdc-drawer__header {
+.dark-mode .mdc-drawer {
+ .mdc-drawer__header {
     border-bottom: solid 1px var(--mdc-theme-text-hint-on-background, red);
   }
 }
+
+.mdc-drawer {
+  .mdc-drawer__header {
+     border-bottom: solid 1px rgba(0, 0, 0, 0.12)
+   }
+ }
 
 @media (max-width: 599px) {
   .mdc-drawer {

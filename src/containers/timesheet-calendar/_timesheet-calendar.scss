@@ -24,9 +24,8 @@
     }
 
     &.react-calendar__tile--now {
-      color: var(--mdc-theme-on-secondary, #ff9900);
-      &:hover {
-        color: var(--mdc-theme-text-primary-on-background)
+      &:not(.react-calendar__tile--active) {
+        text-decoration: underline;
       }
     }
   }
@@ -34,9 +33,5 @@
   .react-calendar__tile--active {
     background-color: var(--mdc-theme-secondary, #009fdc);
     color: var(--mdc-theme-on-secondary);
-  }
-
-  .react-calendar__tile--now {
-    color: var(--mdc-theme-on-secondary, #ffffff);
   }
 }

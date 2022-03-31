@@ -47,7 +47,7 @@
 .dark-mode .mdc-select--outlined:not(.mdc-select--disabled).mdc-select--focused .mdc-notched-outline__leading,
 .dark-mode .mdc-select--outlined:not(.mdc-select--disabled).mdc-select--focused .mdc-notched-outline__notch,
 .dark-mode .mdc-select--outlined:not(.mdc-select--disabled).mdc-select--focused .mdc-notched-outline__trailing {
-  border-color: var(--mdc-theme-secondary);
+  border-color: var(--mdc-theme-text-secondary-on-background);
 }
 
 .mdc-select--outlined:not(.mdc-select--disabled):hover .mdc-notched-outline__leading,
@@ -59,7 +59,7 @@
 .dark-mode .mdc-select--outlined:not(.mdc-select--disabled):hover .mdc-notched-outline__leading,
 .dark-mode .mdc-select--outlined:not(.mdc-select--disabled):hover .mdc-notched-outline__notch,
 .dark-mode .mdc-select--outlined:not(.mdc-select--disabled):hover .mdc-notched-outline__trailing {
-  border-color: var(--mdc-theme-secondary);
+  border-color: var(--mdc-theme-text-secondary-on-background);
 }
 
 select {

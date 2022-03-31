@@ -32,9 +32,6 @@
 }
 
 /* select */
-.mdc-select:not(.mdc-select--disabled) .mdc-select__anchor {
-  // background-color: var(--mdc-theme-surface);
-}
 
 .mdc-select:not(.mdc-select--disabled) .mdc-select__selected-text {
   color: var(--mdc-theme-text-primary-on-background);
@@ -131,8 +128,7 @@ body .mdc-select:not(.mdc-select--disabled):not(.mdc-select--invalid).mdc-select
 }
 
 .mdc-text-field:not(.mdc-text-field--disabled) {
-  color: var(--mdc-theme-on-surface);
-  background-color: var(--mdc-theme-surface);
+  color: var(--mdc-theme-text-primary-on-background);
 }
 
 .mdc-text-field:not(.mdc-text-field--disabled) .mdc-text-field__input {
@@ -159,13 +155,13 @@ body .mdc-select:not(.mdc-select--disabled):not(.mdc-select--invalid).mdc-select
 .dark-mode .mdc-text-field:not(.mdc-text-field--disabled):not(.mdc-text-field--focused):hover .mdc-notched-outline .mdc-notched-outline__leading,
 .dark-mode .mdc-text-field:not(.mdc-text-field--disabled):not(.mdc-text-field--focused):hover .mdc-notched-outline .mdc-notched-outline__notch,
 .dark-mode .mdc-text-field:not(.mdc-text-field--disabled):not(.mdc-text-field--focused):hover .mdc-notched-outline .mdc-notched-outline__trailing {
-  border-color: var(--mdc-theme-secondary);
+  border-color: var(--mdc-theme-text-secondary-on-background);
 }
 
 .dark-mode .mdc-text-field.mdc-text-field--outlined.mdc-text-field--focused .mdc-notched-outline__leading,
 .dark-mode .mdc-text-field.mdc-text-field--outlined.mdc-text-field--focused .mdc-notched-outline__notch,
 .dark-mode .mdc-text-field.mdc-text-field--outlined.mdc-text-field--focused .mdc-notched-outline__trailing {
-  border-color: var(--mdc-theme-secondary);
+  border-color: var(--mdc-theme-text-secondary-on-background);
 }
 
 .mdc-text-field--outlined:not(.mdc-text-field--disabled):not(.mdc-text-field--focused):hover .mdc-notched-outline .mdc-notched-outline__leading,

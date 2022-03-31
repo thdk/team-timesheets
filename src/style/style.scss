@@ -132,16 +132,16 @@ body .mdc-select:not(.mdc-select--disabled):not(.mdc-select--invalid).mdc-select
 
 .mdc-text-field:not(.mdc-text-field--disabled) {
   color: var(--mdc-theme-on-surface);
+  background-color: var(--mdc-theme-surface);
 }
 
 .mdc-text-field:not(.mdc-text-field--disabled) .mdc-text-field__input {
-  color: var(--mdc-theme-text-primary-on-background);
-  // background-color: var(--mdc-theme-surface);
+  color: var(--mdc-theme-on-surface);
+  caret-color: var(--mdc-theme-on-surface);
 }
 
 .mdc-text-field.mdc-text-field--disabled .mdc-text-field__input {
   color: var(--mdc-theme-text-disabled-on-background);
-  // background-color: var(--mdc-theme-surface);
 }
 
 .mdc-text-field:not(.mdc-text-field--disabled) .mdc-notched-outline__leading,

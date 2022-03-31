@@ -1,6 +1,7 @@
 .react-calendar {
     border-top: none;
     border-right: none;
+    border-left: none;
     border-color: rgba(0, 0, 0, 0.12);
 
     .react-calendar__navigation {
@@ -16,7 +17,7 @@
             color: var(--mdc-theme-primary, #6200ee);
 
             &.react-calendar__tile--now {
-                color: var(--mdc-theme-on-primary, #6200ee);
+                color: var(--mdc-theme-on-secondary, #6200ee);
             }
         }
 

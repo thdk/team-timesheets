@@ -1,4 +1,3 @@
-import { ListDivider } from "@rmwc/list";
 import React from "react";
 import { GoogleCalendarEvents } from "./google-calendar";
 import { useRegistrationStore } from "../../contexts/registration-context";
@@ -73,7 +72,6 @@ export const RegistrationSuggestions = () => {
                         <GithubCommits
                             onClick={addRegistration}
                         />
-                        <ListDivider />
                     </>
                 }
             </div>

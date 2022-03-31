@@ -3,7 +3,12 @@
 .react-calendar {
   border-top: none;
   border-right: none;
+  border-left: none;
   border-color: var(--line-color);
+
+  .dark-mode & {
+    border-color: var(--mdc-theme-text-hint-on-background);
+  }
 
   .react-calendar__navigation {
     margin-bottom: 0;
@@ -14,23 +19,24 @@
   }
 
   .react-calendar__tile {
-    &.react-calendar__tile--active {
-     background-color: var(--mdc-theme-secondary, #009fdc);
-
-      &.react-calendar__tile--now {
-        color: var(--mdc-theme-on-primary, #ffffff);
-      }
-    }
-
     &.has-data {
       font-weight: bold;
     }
 
     &.react-calendar__tile--now {
-      color: var(--mdc-theme-secondary, #ff9900);
+      color: var(--mdc-theme-on-secondary, #ff9900);
       &:hover {
         color: var(--mdc-theme-text-primary-on-background)
       }
     }
+  }
+
+  .react-calendar__tile--active {
+    background-color: var(--mdc-theme-secondary, #009fdc);
+    color: var(--mdc-theme-on-secondary);
+  }
+
+  .react-calendar__tile--now {
+    color: var(--mdc-theme-on-secondary, #ffffff);
   }
 }

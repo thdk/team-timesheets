@@ -5,7 +5,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [v2.7.5](https://github.com/thdk/team-timesheets/compare/v2.7.4...v2.7.5)
+## [v2.7.6](https://github.com/thdk/team-timesheets/compare/v2.7.5...v2.7.6)
+
+### Commits
+
+- fix: improve theme colors [`e3eae46`](https://github.com/thdk/team-timesheets/commit/e3eae4622c35eebfec84b08b15998d10c37e0b9b)
+
+## [v2.7.5](https://github.com/thdk/team-timesheets/compare/v2.7.4...v2.7.5) - 2022-03-31
 
 ### Commits
 

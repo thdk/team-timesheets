@@ -4,7 +4,7 @@ import * as admin from "firebase-admin";
 import { BigQuery } from '@google-cloud/bigquery';
 
 import { exportToBigQuery, ExportToBigQueryTask } from './bigquery/export';
-import { initTimestamps, initNamesInsensitive, changeProjectOfRegistrations, projectsByName, projectsAll } from './tools/firestore';
+import { initTimestamps, initNamesInsensitive, changeProjectOfRegistrations, projectsByName, projectsAll, changeDivisionId } from './tools/firestore';
 import { watchForFilesToImportFrom } from './storage/imports';
 import { watchImportSessions } from './firestore/import';
 import { getAdminConfig } from './utils';
@@ -17,15 +17,26 @@ const performChangeProjectOfRegistrations = (from: string, to: string, userId?: 
 exports.changeProjectOfRegistrations = functions.https.onCall(data => performChangeProjectOfRegistrations(data.from, data.to, data.userId));
 
 exports.changeProjectOfRegistrationsRequest = functions.https.onRequest((req, res) => {
-    return performChangeProjectOfRegistrations(req.query.from, req.query.to).then(result => {
+    return performChangeProjectOfRegistrations(req.query.from, req.query.to)
+        .then(result => {
+            res.send(result);
+        });
+});
+
+exports.setDivisionId = functions.https.onRequest((req, res) => {
+    return changeDivisionId(db, {
+        collection: req.query.collection,
+        to: req.query.to,
+    }).then(result => {
         res.send(result);
     });
 });
 
 exports.projectsByName = functions.https.onRequest((req, res) => {
-    return projectsByName(db, decodeURI(req.query.name)).then(result => {
-        res.send(result);
-    })
+    return projectsByName(db, decodeURI(req.query.name))
+        .then(result => {
+            res.send(result);
+        })
 });
 
 exports.projects = functions.https.onRequest((req, res) => {
@@ -47,13 +58,14 @@ const exportTasks: ExportToBigQueryTask[] = [
     },
     {
         collection: "users",
-    }
-]
+    },
+];
+
 const performExportToBigQuery = () => exportToBigQuery(exportTasks, new BigQuery({ projectId: adminConfig.projectId }), db);
 exports.exportToBigQuery = functions.https.onCall(performExportToBigQuery);
 
 exports.scheduledExportToBigQuery = functions.pubsub.schedule('every day 00:00')
-.timeZone('Europe/Brussels')
+    .timeZone('Europe/Brussels')
     .onRun(() => performExportToBigQuery());
 
 // Temporary function to add timestamps to data already in database

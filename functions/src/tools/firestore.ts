@@ -85,6 +85,35 @@ export const changeProjectOfRegistrations = (db: FirebaseFirestore.Firestore, { 
     });
 };
 
+export interface IChangeDivisionOptions { to: string, collection: string };
+
+export const changeDivisionId = (db: FirebaseFirestore.Firestore, { collection, to }: IChangeDivisionOptions): Promise<string> => {
+    if (!collection) throw new Error("Missing required option 'collection'");
+    if (!to) throw new Error("Missing required options: 'to'");
+    const query = db.collection(collection);
+
+    return query.limit(200).get().then(snapshot => {
+        if (snapshot.empty) return new Promise<string>(resolve => resolve(`No documents found found in collection ${collection}`));
+
+        console.log({
+            size: snapshot.size,
+        });
+
+        const batch = db.batch();
+        snapshot.forEach(doc => batch.update(
+            doc.ref,
+            {
+                divisionId: to,
+                modified: admin.firestore.FieldValue.serverTimestamp()
+            }
+            ));
+
+        return batch.commit()
+            .then(() => query.get()
+                .then(finalSnapshot => `${snapshot.size} registrations updated.\n ${finalSnapshot.size} remaining.`));
+    });
+};
+
 export const projectsAll = (db: FirebaseFirestore.Firestore) => {
     return db.collection("projects").orderBy("name_insensitive").get().then(snapshot => {
         return snapshot.size === 0

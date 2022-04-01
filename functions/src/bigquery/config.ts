@@ -228,5 +228,5 @@ export const firestoreBigQueryMap: { [collection: string]: { convert: (change: F
         convert: convertUser,
         schema: bigQuerySchemes["users"],
         dateField: "created",
-    }
+    },
 }

@@ -1,17 +1,50 @@
-import React, { PropsWithChildren, useContext, useState } from "react";
+import React, { PropsWithChildren, useContext, useEffect, useState } from "react";
 import { ThemeProvider as RMWCThemeProvider } from "@rmwc/theme";
 import classNames from "classnames";
+import { useUserStore } from "../../contexts/user-context";
+import { observer } from "mobx-react-lite";
+import { IUser } from "../../../common";
+import Cookies from "js-cookie";
 
 export const ThemeContext = React.createContext({} as {
-    setDarkMode: (on: boolean) => void;
-    darkMode: boolean;
+    setTheme: (name: string) => void;
+    theme: string;
 });
 
-export const ThemeProvider = ({ children }: PropsWithChildren<unknown>) => {
+const autoTheme = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches
+    ? "dark"
+    : "light";
 
-    const [darkMode, setDarkMode] = useState(window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches);
+const getThemeFromUser = (user?: IUser) => {
+    if (!user && Cookies.get("theme")) {
+        return Cookies.get("theme") as string;
+    }
 
-    const themeOptions = darkMode
+    return (!user?.theme || user.theme === "auto")
+        ? autoTheme
+        : user.theme
+}
+
+export const ThemeProvider = observer(({ children }: PropsWithChildren<unknown>) => {
+
+    const user = useUserStore();
+
+    const [theme, setTheme] = useState(getThemeFromUser(user.divisionUser));
+
+    const isDarkTheme = theme === "dark" || (theme === "auto" && window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches);
+
+    useEffect(
+        () => {
+            const newTheme = getThemeFromUser(user.divisionUser);
+            setTheme(newTheme);
+            Cookies.set("theme", newTheme);            
+        },
+        [
+            user.divisionUser,
+        ]
+    );
+
+    const themeOptions = isDarkTheme
         ? {
             primary: '#1f2428',
             secondary: '#cc7752',
@@ -69,12 +102,12 @@ export const ThemeProvider = ({ children }: PropsWithChildren<unknown>) => {
         "mdc-theme--background",
         "mdc-theme--text-primary-on-background",
         {
-            "dark-mode": darkMode
+            "dark-mode": isDarkTheme,
         }
     ]);
 
     return (
-        <ThemeContext.Provider value={{ setDarkMode, darkMode }}>
+        <ThemeContext.Provider value={{ setTheme, theme }}>
             <RMWCThemeProvider
                 options={themeOptions}
             >
@@ -86,6 +119,6 @@ export const ThemeProvider = ({ children }: PropsWithChildren<unknown>) => {
             </RMWCThemeProvider>
         </ThemeContext.Provider>
     )
-};
+});
 
 export const useTheme = () => useContext(ThemeContext);

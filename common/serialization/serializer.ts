@@ -118,6 +118,7 @@ export const serializeUser = (appData: Partial<IUser> | null) => {
         if (!user.tasks) delete user.tasks;
         if (!user.recentProjects) delete user.recentProjects;
         if (!user.email) delete user.email;
+        if (!user.theme) delete user.theme;
 
         Object.keys(user).
             forEach((key) => (user as any)[key] === undefined && delete (user as any)[key]);

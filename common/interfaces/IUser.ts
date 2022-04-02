@@ -26,4 +26,5 @@ export interface IUser {
     jiraUsername?: string;
     jiraPassword?: string;
     defaultProjectId?: string;
+    theme?: string;
 }

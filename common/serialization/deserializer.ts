@@ -3,7 +3,6 @@ import { INameWithIconData } from "../interfaces/base";
 import { IDivisionData } from "../interfaces/IOrganisationData";
 import { IDivision } from "../interfaces/IOrganisation";
 
-
 export const convertRegistration = (firestoreData: IRegistrationData) => {
     const registration: IRegistration = {
         date: firestoreData.date.toDate(),

@@ -1,24 +1,47 @@
-import { Checkbox } from '@rmwc/checkbox';
+import { Select } from '@rmwc/select';
 import React from 'react';
 import { useTheme } from '../../../components/theme-provider';
+import { useUserStore } from '../../../contexts/user-context';
 
-export function ThemePreferences() {
+export const ThemePreferences = () => {
 
     const {
-        darkMode,
-        setDarkMode,
+        setTheme,
     } = useTheme();
+
+    const user = useUserStore();
 
     return (
         <>
             <h3 className="mdc-typography--subtitle1">
                 Theme preferences
             </h3>
-            <Checkbox
-                checked={darkMode}
-                label={"Dark mode"}
-                onChange={(e: React.ChangeEvent) => setDarkMode((e.currentTarget as HTMLInputElement).checked)}
-            />
+            <Select
+                outlined
+                value={user.divisionUser?.theme || "auto"}
+                onChange={(e) => {
+                    setTheme(e.currentTarget.value);
+                    user.updateDivisionUser({
+                        theme: e.currentTarget.value,
+                    });
+                }}
+            >
+                <option
+                    value={"auto"}
+                >
+                    Auto
+                </option>
+                <option
+                    value={"light"}
+                >
+                    Light
+                </option>
+                <option
+                    value={"dark"}
+                >
+                    Dark
+                </option>
+            </Select>
         </>
     )
 }

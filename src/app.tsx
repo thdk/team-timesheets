@@ -60,17 +60,17 @@ render(
                 )
             }}
         >
-            <ThemeProvider>
-                <QueryClientProvider client={queryClient}>
-                    <FirebaseProvider>
-                        <OauthProvider>
-                            <StoreProvider>
+            <QueryClientProvider client={queryClient}>
+                <FirebaseProvider>
+                    <OauthProvider>
+                        <StoreProvider>
+                            <ThemeProvider>
                                 <Router />
-                            </StoreProvider>
-                        </OauthProvider>
-                    </FirebaseProvider>
-                </QueryClientProvider>
-            </ThemeProvider>
+                            </ThemeProvider>
+                        </StoreProvider>
+                    </OauthProvider>
+                </FirebaseProvider>
+            </QueryClientProvider>
         </RMWCProvider>
     </IntlProvider >,
     document.getElementById("root")

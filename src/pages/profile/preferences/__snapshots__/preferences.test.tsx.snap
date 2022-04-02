@@ -25,51 +25,66 @@ exports[`Preferences should display client preferences 1`] = `
     >
       Theme preferences
     </h3>
-    <span
-      class="mdc-theme--surface"
+    <div
+      class="mdc-select mdc-select--outlined mdc-select--no-label"
+      role="listbox"
     >
       <div
-        class="mdc-form-field"
+        class="mdc-select__anchor"
       >
+        <i
+          class="mdc-select__dropdown-icon"
+        />
         <div
-          class="mdc-ripple-upgraded--unbounded mdc-checkbox--upgraded mdc-checkbox"
-          data-mdc-ripple-is-unbounded="true"
+          aria-disabled="false"
+          aria-haspopup="listbox"
+          class="mdc-select__selected-text"
+          role="button"
+          tabindex="-1"
         >
-          <input
-            class="mdc-checkbox__native-control"
-            id="toggle--Darkmode"
-            type="checkbox"
+          Auto
+        </div>
+        <div
+          class="mdc-notched-outline mdc-notched-outline--upgraded"
+        >
+          <div
+            class="mdc-notched-outline__leading"
           />
           <div
-            class="mdc-checkbox__background"
+            class="mdc-notched-outline__notch"
           >
-            <svg
-              class="mdc-checkbox__checkmark"
-              viewBox="0 0 24 24"
-            >
-              <path
-                class="mdc-checkbox__checkmark-path"
-                d="M1.73,12.91 8.1,19.28 22.79,4.59"
-                fill="none"
-                stroke="white"
-              />
-            </svg>
-            <div
-              class="mdc-checkbox__mixedmark"
+            <span
+              class="mdc-floating-label"
+              for="select-test"
+              style="transition-duration: 0s;"
             />
           </div>
           <div
-            class="mdc-checkbox__ripple"
+            class="mdc-notched-outline__trailing"
           />
         </div>
-        <label
-          for="toggle--Darkmode"
-          id="toggle--Darkmodelabel"
+        <select
+          class="rmwc-select__native-control "
+          tabindex="0"
         >
-          Darkmode
-        </label>
+          <option
+            value="auto"
+          >
+            Auto
+          </option>
+          <option
+            value="light"
+          >
+            Light
+          </option>
+          <option
+            value="dark"
+          >
+            Dark
+          </option>
+        </select>
       </div>
-    </span>
+    </div>
   </div>
 </DocumentFragment>
 `;
@@ -85,51 +100,66 @@ exports[`Preferences should display task preferences 1`] = `
     >
       Theme preferences
     </h3>
-    <span
-      class="mdc-theme--surface"
+    <div
+      class="mdc-select mdc-select--outlined mdc-select--no-label"
+      role="listbox"
     >
       <div
-        class="mdc-form-field"
+        class="mdc-select__anchor"
       >
+        <i
+          class="mdc-select__dropdown-icon"
+        />
         <div
-          class="mdc-ripple-upgraded--unbounded mdc-checkbox--upgraded mdc-checkbox"
-          data-mdc-ripple-is-unbounded="true"
+          aria-disabled="false"
+          aria-haspopup="listbox"
+          class="mdc-select__selected-text"
+          role="button"
+          tabindex="-1"
         >
-          <input
-            class="mdc-checkbox__native-control"
-            id="toggle--Darkmode"
-            type="checkbox"
+          Auto
+        </div>
+        <div
+          class="mdc-notched-outline mdc-notched-outline--upgraded"
+        >
+          <div
+            class="mdc-notched-outline__leading"
           />
           <div
-            class="mdc-checkbox__background"
+            class="mdc-notched-outline__notch"
           >
-            <svg
-              class="mdc-checkbox__checkmark"
-              viewBox="0 0 24 24"
-            >
-              <path
-                class="mdc-checkbox__checkmark-path"
-                d="M1.73,12.91 8.1,19.28 22.79,4.59"
-                fill="none"
-                stroke="white"
-              />
-            </svg>
-            <div
-              class="mdc-checkbox__mixedmark"
+            <span
+              class="mdc-floating-label"
+              for="select-test"
+              style="transition-duration: 0s;"
             />
           </div>
           <div
-            class="mdc-checkbox__ripple"
+            class="mdc-notched-outline__trailing"
           />
         </div>
-        <label
-          for="toggle--Darkmode"
-          id="toggle--Darkmodelabel"
+        <select
+          class="rmwc-select__native-control "
+          tabindex="0"
         >
-          Darkmode
-        </label>
+          <option
+            value="auto"
+          >
+            Auto
+          </option>
+          <option
+            value="light"
+          >
+            Light
+          </option>
+          <option
+            value="dark"
+          >
+            Dark
+          </option>
+        </select>
       </div>
-    </span>
+    </div>
   </div>
 </DocumentFragment>
 `;

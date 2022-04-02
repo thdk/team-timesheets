@@ -19,6 +19,7 @@ export interface IUserData extends IPersistedEntity {
     jiraUsername?: string;
     jiraPassword?: string;
     defaultProjectId?: string;
+    theme?: string;
 }
 
 export interface IDivisionUserData extends IUserData {

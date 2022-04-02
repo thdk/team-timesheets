@@ -4,12 +4,11 @@ import { IRootStore } from "../root-store";
 import { IFavoriteRegistrationGroup, IFavoriteRegistration, IFavoriteRegistrationGroupData } from "../../../common";
 import * as serializer from '../../../common/serialization/serializer';
 import * as deserializer from '../../../common/serialization/deserializer';
-import { IUserStore } from "../user-store";
 import { CollectionReference, Firestore, orderBy, query, where } from "firebase/firestore";
 
-const createQuery = (userStore: IUserStore) =>
-    userStore.divisionUser
-        ? (ref: CollectionReference<IFavoriteRegistrationGroupData>) => query(ref, where("userId", "==", userStore.divisionUser?.id), orderBy("name"))
+const createQuery = (divisionUserId?: string) =>
+    divisionUserId
+        ? (ref: CollectionReference<IFavoriteRegistrationGroupData>) => query(ref, where("userId", "==", divisionUserId), orderBy("name"))
         : null;
 
 export class FavoriteStore extends CrudStore<IFavoriteRegistrationGroup, IFavoriteRegistrationGroupData> {
@@ -29,7 +28,7 @@ export class FavoriteStore extends CrudStore<IFavoriteRegistrationGroup, IFavori
             collectionOptions: {
                 fetchMode: FetchMode.once,
                 name: "Favorite groups",
-                query: createQuery(rootStore.user),
+                query: createQuery(rootStore.user?.divisionUser?.id),
                 deserialize: (data) => ({ name: "Default", ...data }),
             },
         }, {
@@ -58,8 +57,11 @@ export class FavoriteStore extends CrudStore<IFavoriteRegistrationGroup, IFavori
         )
 
         this.disposables.push(
-            reaction(() => rootStore.user.divisionUser, () => {
-                this.collection.query = createQuery(rootStore.user);
+            reaction(() => rootStore.user.divisionUser?.id, () => {
+                console.log({
+                    user: rootStore.user.divisionUser,
+                });
+                this.collection.query = createQuery(rootStore.user.divisionUser?.id);
             })
         );
     }

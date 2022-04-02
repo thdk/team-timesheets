@@ -9,11 +9,11 @@
 .mdc-chip {
     color: var(--mdc-theme-on-surface);
     background-color: var(--mdc-theme-surface);
-    border: solid 1px var(--mdc-theme-text-hint-on-background)
+    border: solid 1px var(--mdc-theme-surface)
 }
 
-.dark-mode .mdc-chip.mdc-chip.mdc-chip--selected {
-    border: solid 1px var(--mdc-theme-text-secondary-on-background, red)
+.mdc-chip:hover {
+    border: solid 1px var(--mdc-theme-text-hint-on-background)
 }
 
 .mdc-chip-set--filter .mdc-chip__icon--leading-hidden.mdc-chip__icon--leading {

@@ -132,8 +132,8 @@ body .mdc-select:not(.mdc-select--disabled):not(.mdc-select--invalid).mdc-select
 }
 
 .mdc-text-field:not(.mdc-text-field--disabled) .mdc-text-field__input {
-  color: var(--mdc-theme-on-surface);
-  caret-color: var(--mdc-theme-on-surface);
+  color: var(--mdc-theme-text-primary-on-background);
+  caret-color: var(--mdc-theme-text-primary-on-background);
 }
 
 .mdc-text-field.mdc-text-field--disabled .mdc-text-field__input {

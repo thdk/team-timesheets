@@ -5,7 +5,20 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [v2.7.7](https://github.com/thdk/team-timesheets/compare/v2.7.6...v2.7.7)
+## [v2.8.0](https://github.com/thdk/team-timesheets/compare/v2.7.7...v2.8.0)
+
+### Fixed
+
+- feat: sync tasks collection to bigquery [`#126`](https://github.com/thdk/team-timesheets/issues/126)
+- fix: update favorites when switching between divisions [`#263`](https://github.com/thdk/team-timesheets/issues/263)
+- feat: save theme on user preferences [`#260`](https://github.com/thdk/team-timesheets/issues/260)
+
+### Commits
+
+- fix: improve theme colors [`8b4a4a7`](https://github.com/thdk/team-timesheets/commit/8b4a4a761b1788092da7bbb8e2d80380c0e28034)
+- fix: remove border from account badge [`8b14f8f`](https://github.com/thdk/team-timesheets/commit/8b14f8f335c0c9d1ce18d3ea1ae45cac754d7f2e)
+
+## [v2.7.7](https://github.com/thdk/team-timesheets/compare/v2.7.6...v2.7.7) - 2022-04-01
 
 ### Commits
 

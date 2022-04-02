@@ -3,6 +3,7 @@ import { IProjectData, IBigQueryProjectData } from "../interfaces/IProjectData";
 import { IRegistrationData, IBigQueryRegistrationData } from "../interfaces/IRegistrationData";
 import * as admin from 'firebase-admin';
 import { IUserData } from "../interfaces/IUserData";
+import { ITaskData } from "../interfaces/ITaskData";
 
 export const convertRegistration = (firebaseChange: FirebaseFirestore.DocumentSnapshot) => {
     const reg = firebaseChange.data() as unknown as IRegistrationData;
@@ -35,6 +36,20 @@ export const convertProject = (firebaseChange: FirebaseFirestore.DocumentSnapsho
         modified: project.modified ? project.modified.toDate().toISOString().replace('Z', '') : null,
         deleted: project.deleted,
         divisionId: project.divisionId,
+    };
+}
+
+export const convertTask = (firebaseChange: FirebaseFirestore.DocumentSnapshot) => {
+    const task = firebaseChange.data() as unknown as ITaskData;
+
+    return {
+        id: firebaseChange.id,
+        name: task.name,
+        icon: task.icon,
+        created: task.created ? task.created.toDate().toISOString().replace('Z', '') : null,
+        modified: task.modified ? task.modified.toDate().toISOString().replace('Z', '') : null,
+        deleted: task.deleted,
+        divisionId: task.divisionId,
     };
 }
 
@@ -183,6 +198,16 @@ export const projectSchema: BigQueryField[] = [
     { "name": "importId", "type": "STRING" },
 ];
 
+export const taskSchema: BigQueryField[] = [
+    { "name": "icon", "type": "STRING" },
+    { "name": "name", "type": "STRING" },
+    { "name": "divisionId", "type": "STRING" },
+    { "name": "deleted", "type": "BOOLEAN" },
+    { "name": "created", "type": "TIMESTAMP" },
+    { "name": "modified", "type": "TIMESTAMP" },
+    { "name": "id", "type": "STRING" },
+];
+
 export const registrationSchema: BigQueryField[] = [
     { "name": "id", "type": "STRING" },
     { "name": "divisionId", "type": "STRING" },
@@ -213,6 +238,7 @@ export const bigQuerySchemes: BigQueryTableSchemes = {
     "registrations": registrationSchema,
     "projects": projectSchema,
     "users": userSchema,
+    "tasks": taskSchema,
 };
 
 export const firestoreBigQueryMap: { [collection: string]: { convert: (change: FirebaseFirestore.DocumentSnapshot) => any, schema: BigQueryField[], dateField?: string } } = {
@@ -228,5 +254,9 @@ export const firestoreBigQueryMap: { [collection: string]: { convert: (change: F
         convert: convertUser,
         schema: bigQuerySchemes["users"],
         dateField: "created",
+    },
+    tasks: {
+        convert: convertTask,
+        schema: bigQuerySchemes["tasks"],
     },
 }

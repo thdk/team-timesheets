@@ -104,7 +104,7 @@
     "@rmwc/typography": "^7.0.3",
     "@types/md5": "^2.2.0",
     "@types/throttle-debounce": "^2.1.0",
-    "chart.js": "^2.7.3",
+    "chart.js": "^2.9.4",
     "classnames": "^2.2.6",
     "copy-text-to-clipboard": "^2.2.0",
     "firebase": "^9.1.2",

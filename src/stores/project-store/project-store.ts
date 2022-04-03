@@ -17,7 +17,7 @@ const createQuery = (user: IUser | undefined) => {
             query(
                 ref,
                 orderBy("name_insensitive"),
-                where("divisionId", "==", user.divisionId || ""),
+                where("divisionId", "==", user.divisionId),
             );
     }
 }

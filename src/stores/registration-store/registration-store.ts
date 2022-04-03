@@ -245,7 +245,7 @@ export class RegistrationStore extends CrudStore<IRegistration, IRegistrationDat
             }, []);
     }
 
-    public copyRegistrationToDate(source: Omit<IRegistration, "date" | "isPersisted">, newDate: Date) {
+    public copyRegistrationToDate(source: Omit<IRegistration, "date" | "isPersisted">, newDate: Date): IRegistration {
         const date = newDate;
 
         const sourceJs = toJS(source);
@@ -255,7 +255,13 @@ export class RegistrationStore extends CrudStore<IRegistration, IRegistrationDat
             forEach((key) => (sourceJs as any)[key] === undefined && delete (sourceJs as any)[key]);
 
         // set created to undefined so a new timestamp will be set when saving it
-        return { ...this.defaults, ...sourceJs, created: undefined, date, isPersisted: true };
+        return { 
+            ...this.defaults, 
+            ...sourceJs, 
+            created: undefined, 
+            date, isPersisted: true,
+            userId: this.rootStore.user.divisionUser?.id || this.rootStore.user.authenticatedUserId!,
+        };
     }
 
     public toggleSelectedRegistrationDay(date: string, force = false) {

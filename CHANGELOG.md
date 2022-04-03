@@ -5,7 +5,15 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [v2.9.0](https://github.com/thdk/team-timesheets/compare/v2.8.0...v2.9.0)
+## [v2.9.1](https://github.com/thdk/team-timesheets/compare/v2.9.0...v2.9.1)
+
+### Commits
+
+- fix: add registration validation when pressing back button [`493581e`](https://github.com/thdk/team-timesheets/commit/493581e2a30561af344b49439092c53527eb1602)
+- feat: allow to copy paste registrations across divisions [`d6a4621`](https://github.com/thdk/team-timesheets/commit/d6a46218b1a5d6698a22c01231c3f5654903adfd)
+- fix: improve theme colors [`48f508c`](https://github.com/thdk/team-timesheets/commit/48f508c70e1f77cdc7b5e737bc16579f2b184ec5)
+
+## [v2.9.0](https://github.com/thdk/team-timesheets/compare/v2.8.0...v2.9.0) - 2022-04-03
 
 ### Merged
 

@@ -23,12 +23,10 @@ exports.changeProjectOfRegistrationsRequest = functions.https.onRequest((req, re
         });
 });
 
-exports.setDivisionId = functions.https.onRequest((req, res) => {
+exports.setDivisionId = functions.https.onCall((data) => {
     return changeDivisionId(db, {
-        collection: req.query.collection,
-        to: req.query.to,
-    }).then(result => {
-        res.send(result);
+        collection: data.collection,
+        to: data.to,
     });
 });
 

@@ -85,9 +85,15 @@ export class ConfigStore implements IConfigStore {
                     this.clientsCollection.query = null;
                 }
                 else {
-                    const q = (ref: CollectionReference<INameWithIconData & IWithDivision>) =>
-                        query(ref, orderBy("name_insensitive"),
-                            where("divisionId", "==", user.divisionId || ""));
+                    const q = user.divisionId
+                        ? (ref: CollectionReference<INameWithIconData & IWithDivision>) =>
+                            query(ref, orderBy("name_insensitive"),
+                                where("divisionId", "==", user.divisionId),
+                            )
+                        : (ref: CollectionReference<INameWithIconData & IWithDivision>) =>
+                            query(ref, orderBy("name_insensitive"),
+                            )
+                        ;
 
                     this.teamsCollection.query = q;
                     this.clientsCollection.query = q;

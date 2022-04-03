@@ -117,6 +117,10 @@ body .mdc-select:not(.mdc-select--disabled):not(.mdc-select--invalid).mdc-select
   border-top-color: var(--line-color);
 }
 
+/* dialog */
+.mdc-dialog .mdc-dialog__content, .mdc-dialog .mdc-dialog__title {
+  color: var(--mdc-theme-on-surface);
+}
 /* text input */
 
 .mdc-text-field:not(.mdc-text-field--disabled) .mdc-text-field__icon--leading {
@@ -182,8 +186,14 @@ body .mdc-select:not(.mdc-select--disabled):not(.mdc-select--invalid).mdc-select
   color: var(--mdc-theme-text-primary-on-background);
 }
 
+/* button */
+
 .mdc-button--outlined:not(:disabled) {
   border-color: var(--mdc-theme-text-primary-on-background);
+  color: var(--mdc-theme-text-primary-on-background);
+}
+
+.mdc-button:not(:disabled) {
   color: var(--mdc-theme-text-primary-on-background);
 }
 

@@ -5,7 +5,24 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [v2.8.0](https://github.com/thdk/team-timesheets/compare/v2.7.7...v2.8.0)
+## [v2.9.0](https://github.com/thdk/team-timesheets/compare/v2.8.0...v2.9.0)
+
+### Merged
+
+- chore(deps): bump browserslist from 4.12.0 to 4.20.2 [`#251`](https://github.com/thdk/team-timesheets/pull/251)
+- chore(deps): bump vm2 from 3.9.5 to 3.9.9 [`#252`](https://github.com/thdk/team-timesheets/pull/252)
+- chore(deps): bump minimist from 1.2.5 to 1.2.6 [`#255`](https://github.com/thdk/team-timesheets/pull/255)
+- feat: do not filter data when user has no division set [`#265`](https://github.com/thdk/team-timesheets/pull/265)
+
+### Fixed
+
+- feat: sync clients collection to bigquery [`#264`](https://github.com/thdk/team-timesheets/issues/264)
+
+### Commits
+
+- feat: add tool to update the divisionId of all documents in a collection [`38a7d74`](https://github.com/thdk/team-timesheets/commit/38a7d747f340c69cc75188f9520230fa1a5a107a)
+
+## [v2.8.0](https://github.com/thdk/team-timesheets/compare/v2.7.7...v2.8.0) - 2022-04-02
 
 ### Fixed
 

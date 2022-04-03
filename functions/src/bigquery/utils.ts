@@ -21,7 +21,7 @@ function validateTableSchemaAsync(table: any, schema: BigQueryField[]) {
 
         console.log(`Required schema of table ${table.id} is ${JSON.stringify(schema)}`);
 
-        if (!isEqualSchema(metadata.schema.fields, schema)) {
+        if (!isEqualSchema(metadata.schema?.fields, schema)) {
             console.log(`Updating schema of table ${table.id}...`);
             return table.setMetadata(Object.assign(metadata, { schema }))
                 .then(() => {
@@ -38,7 +38,10 @@ function validateTableSchemaAsync(table: any, schema: BigQueryField[]) {
     });
 }
 
-function isEqualSchema(schema1: BigQueryField[], schema2: BigQueryField[]) {
+function isEqualSchema(schema1?: BigQueryField[], schema2?: BigQueryField[]) {
+    if (!schema1 || !schema2) {
+        return false;
+    }
     console.log(`Comparing fields length... ${schema1.length} <> ${schema2.length}`);
     if (schema1.length !== schema2.length) return false;
 

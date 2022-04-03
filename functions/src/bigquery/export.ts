@@ -9,7 +9,12 @@ export type ExportToBigQueryTask = {
     collection: string;
 }
 
-export const exportToBigQuery = (tasks: ExportToBigQueryTask[], bigquery: BigQuery, db: FirebaseFirestore.Firestore) => {
+export const exportToBigQuery = (
+    tasks: ExportToBigQueryTask[],
+    bigquery: BigQuery,
+    db: FirebaseFirestore.Firestore,
+    updatesOnly = true,
+) => {
     // TODO: use config/env variable for dataSetId and tableId/table prefix?
     const dataSetId = "timesheets";
 
@@ -18,6 +23,9 @@ export const exportToBigQuery = (tasks: ExportToBigQueryTask[], bigquery: BigQue
     return db.collection("exports").orderBy("timestamp", "desc").limit(1).get()
         .then(data => {
             // insert new export record
+            if (!updatesOnly) {
+                return undefined;
+            }
             return db.collection("exports").doc().set({ timestamp: firestore.FieldValue.serverTimestamp() })
                 .then(() => {
                     // Resolve with last export timestamp if any

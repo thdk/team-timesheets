@@ -61,17 +61,25 @@ const exportTasks: ExportToBigQueryTask[] = [
     {
         collection: "tasks",
     },
+    {
+        collection: "clients",
+    },
 ];
 
 const performExportToBigQuery = () => exportToBigQuery(exportTasks, new BigQuery({ projectId: adminConfig.projectId }), db);
 exports.exportToBigQuery = functions.https.onCall(performExportToBigQuery);
 
-const performExportTasksToBigQuery = () => exportToBigQuery([
-    {
-        collection: "tasks",
-    },
-], new BigQuery({ projectId: adminConfig.projectId }), db);
-exports.performExportTasksToBigQuery = functions.https.onCall(performExportTasksToBigQuery);
+const performExportCollectionToBigQuery = (data) => exportToBigQuery(
+    [
+        {
+            collection: data.collection,
+        },
+    ],
+    new BigQuery({ projectId: adminConfig.projectId }),
+    db,
+    false,
+);
+exports.performExportCollectionToBigQuery = functions.https.onCall(performExportCollectionToBigQuery);
 
 exports.scheduledExportToBigQuery = functions.pubsub.schedule('every day 00:00')
     .timeZone('Europe/Brussels')

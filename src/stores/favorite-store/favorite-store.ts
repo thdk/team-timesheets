@@ -8,7 +8,11 @@ import { CollectionReference, Firestore, orderBy, query, where } from "firebase/
 
 const createQuery = (divisionUserId?: string) =>
     divisionUserId
-        ? (ref: CollectionReference<IFavoriteRegistrationGroupData>) => query(ref, where("userId", "==", divisionUserId), orderBy("name"))
+        ? (ref: CollectionReference<IFavoriteRegistrationGroupData>) => query(
+            ref,
+            where("userId", "==", divisionUserId),
+            orderBy("name"),
+        )
         : null;
 
 export class FavoriteStore extends CrudStore<IFavoriteRegistrationGroup, IFavoriteRegistrationGroupData> {

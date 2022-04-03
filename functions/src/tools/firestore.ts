@@ -90,7 +90,8 @@ export interface IChangeDivisionOptions { to: string, collection: string };
 export const changeDivisionId = (db: FirebaseFirestore.Firestore, { collection, to }: IChangeDivisionOptions): Promise<string> => {
     if (!collection) throw new Error("Missing required option 'collection'");
     if (!to) throw new Error("Missing required options: 'to'");
-    const query = db.collection(collection);
+    const query = db.collection(collection)
+        .where("divisionId", "==", "");
 
     return query.limit(200).get().then(snapshot => {
         if (snapshot.empty) return new Promise<string>(resolve => resolve(`No documents found found in collection ${collection}`));

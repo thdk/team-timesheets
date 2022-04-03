@@ -170,13 +170,13 @@ describe("ProjectStore", () => {
 
             it("should return an array of active projects", async () => {
                 await waitFor(() => expect(store.user.divisionUser).toBeDefined());
-                await waitFor(() => expect(store.projects.activeProjects.length).toBe(3));
+                await waitFor(() => expect(store.projects.activeProjects.length).toBe(6));
             });
 
             it("should return only projects of the current division user", async () => {
                 await waitFor(() => expect(store.user.divisionUser).toBeDefined());
 
-                await waitFor(() => expect(store.projects.activeProjects.length).toBe(3));
+                await waitFor(() => expect(store.projects.activeProjects.length).toBe(6));
 
                 store.auth.updateActiveDocument({
                     divisionUserId: divisionUserId1,
@@ -197,7 +197,7 @@ describe("ProjectStore", () => {
                     divisionId: undefined,
                 });
 
-                await waitFor(() => expect(store.projects.activeProjects.length).toBe(3));
+                await waitFor(() => expect(store.projects.activeProjects.length).toBe(6));
             });
         });
     });

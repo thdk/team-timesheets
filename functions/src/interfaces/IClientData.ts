@@ -1,6 +1,6 @@
 import * as admin from 'firebase-admin';
 
-export interface ITaskData {
+export interface IClientData {
     name: string;
     created?: admin.firestore.Timestamp;
     modified?: admin.firestore.Timestamp;
@@ -8,7 +8,7 @@ export interface ITaskData {
     divisionId: string;
 }
 
-export interface IBigQueryTaskData extends Omit<ITaskData, "created" | "modified"> {
+export interface IBigQueryClientData extends Omit<IClientData, "created" | "modified"> {
     created: string;
     modified: string;
 }

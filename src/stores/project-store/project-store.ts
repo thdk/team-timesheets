@@ -13,12 +13,18 @@ const createQuery = (user: IUser | undefined) => {
         return null;
     }
     else {
-        return (ref: CollectionReference<IProjectData>) =>
-            query(
-                ref,
-                orderBy("name_insensitive"),
-                where("divisionId", "==", user.divisionId || ""),
-            );
+        return user.divisionId
+            ? (ref: CollectionReference<IProjectData>) =>
+                query(
+                    ref,
+                    orderBy("name_insensitive"),
+                    where("divisionId", "==", user.divisionId),
+                )
+            : (ref: CollectionReference<IProjectData>) =>
+                query(
+                    ref,
+                    orderBy("name_insensitive"),
+                );
     }
 }
 

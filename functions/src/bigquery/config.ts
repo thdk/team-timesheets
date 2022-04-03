@@ -4,6 +4,7 @@ import { IRegistrationData, IBigQueryRegistrationData } from "../interfaces/IReg
 import * as admin from 'firebase-admin';
 import { IUserData } from "../interfaces/IUserData";
 import { ITaskData } from "../interfaces/ITaskData";
+import { IClientData } from "../interfaces/IClientData";
 
 export const convertRegistration = (firebaseChange: FirebaseFirestore.DocumentSnapshot) => {
     const reg = firebaseChange.data() as unknown as IRegistrationData;
@@ -45,11 +46,23 @@ export const convertTask = (firebaseChange: FirebaseFirestore.DocumentSnapshot) 
     return {
         id: firebaseChange.id,
         name: task.name,
-        icon: task.icon,
         created: task.created ? task.created.toDate().toISOString().replace('Z', '') : null,
         modified: task.modified ? task.modified.toDate().toISOString().replace('Z', '') : null,
         deleted: task.deleted,
         divisionId: task.divisionId,
+    };
+}
+
+export const convertClient = (firebaseChange: FirebaseFirestore.DocumentSnapshot) => {
+    const client = firebaseChange.data() as unknown as IClientData;
+
+    return {
+        id: firebaseChange.id,
+        name: client.name,
+        created: client.created ? client.created.toDate().toISOString().replace('Z', '') : null,
+        modified: client.modified ? client.modified.toDate().toISOString().replace('Z', '') : null,
+        deleted: client.deleted,
+        divisionId: client.divisionId,
     };
 }
 
@@ -199,7 +212,15 @@ export const projectSchema: BigQueryField[] = [
 ];
 
 export const taskSchema: BigQueryField[] = [
-    { "name": "icon", "type": "STRING" },
+    { "name": "name", "type": "STRING" },
+    { "name": "divisionId", "type": "STRING" },
+    { "name": "deleted", "type": "BOOLEAN" },
+    { "name": "created", "type": "TIMESTAMP" },
+    { "name": "modified", "type": "TIMESTAMP" },
+    { "name": "id", "type": "STRING" },
+];
+
+export const clientSchema: BigQueryField[] = [
     { "name": "name", "type": "STRING" },
     { "name": "divisionId", "type": "STRING" },
     { "name": "deleted", "type": "BOOLEAN" },
@@ -239,6 +260,7 @@ export const bigQuerySchemes: BigQueryTableSchemes = {
     "projects": projectSchema,
     "users": userSchema,
     "tasks": taskSchema,
+    "clients": clientSchema,
 };
 
 export const firestoreBigQueryMap: { [collection: string]: { convert: (change: FirebaseFirestore.DocumentSnapshot) => any, schema: BigQueryField[], dateField?: string } } = {
@@ -258,5 +280,9 @@ export const firestoreBigQueryMap: { [collection: string]: { convert: (change: F
     tasks: {
         convert: convertTask,
         schema: bigQuerySchemes["tasks"],
+    },
+    clients: {
+        convert: convertClient,
+        schema: bigQuerySchemes["clients"],
     },
 }

@@ -51,12 +51,18 @@ export class TaskStore extends CrudStore<ITask, ITaskData> {
                     this.collection.query = null;
                 }
                 else {
-                    const q = (ref: CollectionReference<ITaskData>) =>
-                        query(
-                            ref,
-                            orderBy("name_insensitive"),
-                            where("divisionId", "==", user.divisionId || ""),
-                        );
+                    const q = user.divisionId
+                        ? (ref: CollectionReference<ITaskData>) =>
+                            query(
+                                ref,
+                                orderBy("name_insensitive"),
+                                where("divisionId", "==", user.divisionId),
+                            )
+                        : (ref: CollectionReference<ITaskData>) =>
+                            query(
+                                ref,
+                                orderBy("name_insensitive"),
+                            );
 
                     this.collection.query = q;
 

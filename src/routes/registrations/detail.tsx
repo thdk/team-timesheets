@@ -28,18 +28,20 @@ export const goToNewRegistration = (router: RouterStore<IRootStore>) => {
 
 export const setBackToOverview = (
     store: Pick<IRootStore, "view" | "router">,
-    action?: () => void, currentDate?: number,
+    action?: () => Promise<undefined | boolean>,
+    currentDate?: number,
     targetDate?: DateObject,
     navigate?: () => void,
 ) => {
     store.view.setNavigation({
-        action: () => {
-            action && action();
-            if (navigate) {
-                navigate();
-            } else {
-                goToOverview(store, targetDate, { track: store.view.track, currentDate });
-            }
+        action: async() => {
+           if (!action || await action() !== false) {
+               if (navigate) {
+                   navigate();
+               } else {
+                   goToOverview(store, targetDate, { track: store.view.track, currentDate });
+               }
+           }
         },
         icon: { label: "Back", content: "arrow_back" }
     });
@@ -99,7 +101,18 @@ const onEnter = (route: RegistrationsDetailRoute, params: RouteParams, s: IRootS
 
         setBackToOverview(
             s,
-            () => s.timesheets.saveSelectedRegistration(),
+            async () => {
+                const error = getRegistrationErrors(s.timesheets.activeDocument);
+                if (!error) {
+                    await s.timesheets.saveSelectedRegistration();
+                    goToOverview(s);
+                } else {
+                    alert(error);
+                    return false;
+                }
+
+                return true;
+            },
             s.timesheets.activeDocument && s.timesheets.activeDocument.date!.getDate(),
         );
         setTitleForRoute(s, route);

@@ -12,6 +12,10 @@
     border: solid 1px var(--mdc-theme-surface)
 }
 
+.dark-mode .mdc-chip.mdc-chip.mdc-chip--selected {
+    background-color: var(--mdc-theme-background);
+}
+
 .mdc-chip:hover {
     border: solid 1px var(--mdc-theme-text-hint-on-background)
 }

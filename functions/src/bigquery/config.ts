@@ -2,7 +2,7 @@ import { BigQueryField } from "./utils";
 import { IProjectData, IBigQueryProjectData } from "../interfaces/IProjectData";
 import { IRegistrationData, IBigQueryRegistrationData } from "../interfaces/IRegistrationData";
 import * as admin from 'firebase-admin';
-import { IUserData } from "../interfaces/IUserData";
+import { IDivisionUserData, IUserData } from "../interfaces/IUserData";
 import { ITaskData } from "../interfaces/ITaskData";
 import { IClientData } from "../interfaces/IClientData";
 
@@ -68,6 +68,18 @@ export const convertClient = (firebaseChange: FirebaseFirestore.DocumentSnapshot
 
 export const convertUser = (firebaseChange: FirebaseFirestore.DocumentSnapshot) => {
     const user = firebaseChange.data() as unknown as IUserData;
+
+    return {
+        id: firebaseChange.id,
+        name: user.name,
+        created: user.created ? user.created.toDate().toISOString().replace('Z', '') : null,
+        modified: user.modified ? user.modified.toDate().toISOString().replace('Z', '') : null,
+        deleted: user.deleted
+    };
+}
+
+export const convertDivisionUser = (firebaseChange: FirebaseFirestore.DocumentSnapshot) => {
+    const user = firebaseChange.data() as unknown as IDivisionUserData;
 
     return {
         id: firebaseChange.id,
@@ -254,11 +266,21 @@ export const userSchema: BigQueryField[] = [
     { "name": "importId", "type": "STRING" },
 ];
 
+export const divisionUsersSchema: BigQueryField[] = [
+    { "name": "name", "type": "STRING" },
+    { "name": "deleted", "type": "BOOLEAN" },
+    { "name": "created", "type": "TIMESTAMP" },
+    { "name": "modified", "type": "TIMESTAMP" },
+    { "name": "id", "type": "STRING" },
+    { "name": "importId", "type": "STRING" },
+];
+
 export type BigQueryTableSchemes = { [collection: string]: BigQueryField[] };
 export const bigQuerySchemes: BigQueryTableSchemes = {
     "registrations": registrationSchema,
     "projects": projectSchema,
     "users": userSchema,
+    "division-users": divisionUsersSchema,
     "tasks": taskSchema,
     "clients": clientSchema,
 };
@@ -285,4 +307,8 @@ export const firestoreBigQueryMap: { [collection: string]: { convert: (change: F
         convert: convertClient,
         schema: bigQuerySchemes["clients"],
     },
-}
+    "division-users": {
+        convert: convertDivisionUser,
+        schema: bigQuerySchemes["division-users"],
+    },
+};

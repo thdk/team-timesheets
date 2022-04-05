@@ -6,3 +6,10 @@ export interface IUserData {
     modified?: admin.firestore.Timestamp;
     deleted?: boolean;
 }
+
+export interface IDivisionUserData {
+    name: string;
+    created?: admin.firestore.Timestamp;
+    modified?: admin.firestore.Timestamp;
+    deleted?: boolean;
+}

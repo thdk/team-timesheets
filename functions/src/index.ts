@@ -62,6 +62,9 @@ const exportTasks: ExportToBigQueryTask[] = [
     {
         collection: "clients",
     },
+    {
+        collection: "division-users",
+    },
 ];
 
 const performExportToBigQuery = () => exportToBigQuery(exportTasks, new BigQuery({ projectId: adminConfig.projectId }), db);

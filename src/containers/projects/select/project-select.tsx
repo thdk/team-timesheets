@@ -41,6 +41,7 @@ export const ProjectSelect = observer(({
 
 
     const recentProjectItems = recentProjects.length
+        // eslint-disable-next-line no-useless-escape
         ? ["\/ Recent projects \/", ...recentProjects, "", "\/ More projects \/"]
         : [""];
 
@@ -63,11 +64,11 @@ export const ProjectSelect = observer(({
         }
     }
 
-    const projects = allProjects.reduce((p, c, i) => {
+    const projects = allProjects.reduce<React.ReactNode[]>((p, c, i) => {
         if (typeof c === "string") {
-            p.push([
+            p.push(
                 <option key={i.toString()} value="" disabled={true}>{c}</option>
-            ]);
+            );
         }
         else {
             const { id, name } = c;
@@ -77,7 +78,7 @@ export const ProjectSelect = observer(({
         }
 
         return p;
-    }, new Array());
+    }, []);
 
     return (
         <Select

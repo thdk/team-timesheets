@@ -1,8 +1,11 @@
+/* eslint-env node */
+
 // __test-utils__/custom-jest-environment.js
 // Stolen from: https://github.com/ipfs/jest-environment-aegir/blob/master/src/index.js
 // Overcomes error from jest internals.. this thing: https://github.com/facebook/jest/issues/6248
 "use strict";
 
+// eslint-disable-next-line @typescript-eslint/no-var-requires
 const JSDOMENV = require("jest-environment-jsdom");
 
 class MyEnvironment extends JSDOMENV {

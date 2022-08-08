@@ -19,7 +19,7 @@ const setupAsync = async () => {
         firestore,
     });
 
-    const [_, [reg1, reg2]] = await Promise.all([
+    const [, [reg1, reg2]] = await Promise.all([
         store.user.usersCollection.addAsync(
             {
                 name: "user 1",

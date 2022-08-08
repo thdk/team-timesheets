@@ -80,3 +80,6 @@ coverage/
 *.service-account.json
 
 .env
+
+# tsc incremental build info
+.tsbuildinfo

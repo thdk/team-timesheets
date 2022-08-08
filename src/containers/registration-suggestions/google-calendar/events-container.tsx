@@ -20,7 +20,7 @@ export const GoogleCalendarEvents = observer(({
     const handleEventClick = useCallback(
         (event: gapi.client.calendar.Event) => {
             const start = new Date((event.start?.date || event.start?.dateTime) as string);
-            const end = event.start?.date ? undefined : new Date(event.end?.dateTime!);
+            const end = event.start?.date || !event.end?.dateTime ? undefined : new Date(event.end.dateTime);
             onClick({
                 date: start,
                 description: event.summary,

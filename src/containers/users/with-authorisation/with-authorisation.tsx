@@ -5,7 +5,7 @@ import { useUserStore } from "../../../contexts/user-context";
 import { IUser } from '../../../../common';
 import { useAuthStore } from '../../../contexts/auth-context';
 
-export const withAuthorisation = <T extends {}>(
+export const withAuthorisation = <T extends Record<string, unknown>>(
     WrappedComponent: React.ComponentType<T>,
     condition: (user: IUser) => boolean,
     placeholder?: React.ReactNode,

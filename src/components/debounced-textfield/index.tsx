@@ -38,7 +38,7 @@ const DebouncedTextfield = (props: Props) => {
             event.currentTarget.select();
             throttler(query);
             onKeyDown && onKeyDown(event);
-        };
+        }
     }, []);
 
     return <TextField

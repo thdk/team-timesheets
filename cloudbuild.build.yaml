@@ -11,6 +11,9 @@ steps:
   - name: node:16
     entrypoint: npm
     args: ["run", "build:production"]
+  - name: node:16
+    entrypoint: npm
+    args: ["run", "lint"]
   - name: "gcr.io/$PROJECT_ID/builder"
     entrypoint: bash
     args:

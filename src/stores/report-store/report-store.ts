@@ -55,7 +55,7 @@ export class ReportStore implements IReportStore {
                     limit(1),
                     orderBy("created", "desc"),
                 );
-            };
+            }
         };
 
         reaction(() => rootStore.view.monthMoment, updateReportsQuery);

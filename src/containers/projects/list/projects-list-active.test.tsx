@@ -203,7 +203,7 @@ describe("ProjectListActive", () => {
         const item = await screen.findByText("Project 1");
 
         act(() => {
-            fireEvent.click(item!);
+            fireEvent.click(item);
         });
 
         await waitFor(() => expect(getByText("GoToProject")));
@@ -231,7 +231,7 @@ describe("ProjectListActive", () => {
         const item = await screen.findByText("Project 1");
 
         act(() => {
-            fireEvent.click(item!);
+            fireEvent.click(item);
         });
 
         await waitFor(() => expect(queryByText("GoToProject")).toBeNull());

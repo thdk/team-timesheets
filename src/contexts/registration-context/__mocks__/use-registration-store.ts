@@ -4,5 +4,5 @@ export const useRegistrationStore = jest.fn().mockReturnValue({
     dayRegistrations: {
         groupKey: "2022-01-01",
         registrations: [],
-    } as IGroupedRegistrations<string>
+    } as unknown as IGroupedRegistrations<string>
 });

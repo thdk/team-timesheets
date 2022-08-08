@@ -16,7 +16,6 @@ import { useConfigs } from "../../configs/use-configs";
 import { useAuthStore } from "../../../contexts/auth-context";
 
 export const DivisionUsersMenu = observer(({
-    children,
     onAction,
     ...menuProps
 }: MenuHTMLProps & {

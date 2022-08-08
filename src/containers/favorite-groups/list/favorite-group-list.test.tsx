@@ -17,7 +17,7 @@ const projectId = "favorite-group-list";
 
 let store: Store;
 const userId = "user-1";
-let favoriteGroupIds: string[] = ["fav-1", "fav-2", "fav-3"];
+const favoriteGroupIds: string[] = ["fav-1", "fav-2", "fav-3"];
 
 const setupAsync = async () => {
     store = new Store({

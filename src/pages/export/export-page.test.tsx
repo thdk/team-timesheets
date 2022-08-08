@@ -154,7 +154,7 @@ describe("Export Page", () => {
 
         await waitFor(() => expect(getByText("Foobar 5")));
 
-        let items = container.querySelectorAll(".grouped-registration-header-date");
+        const items = container.querySelectorAll(".grouped-registration-header-date");
         expect(
             items.length
         ).toBe(3);

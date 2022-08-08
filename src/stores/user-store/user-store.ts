@@ -8,7 +8,7 @@ import { IUser, IUserData } from "../../../common/dist";
 import { canReadUsers } from "../../rules";
 import { CollectionReference, Firestore, orderBy, Query, query, where } from "firebase/firestore";
 
-export interface IUserStore extends UserStore { }
+export type IUserStore = UserStore
 
 export class UserStore implements IUserStore {
 
@@ -201,7 +201,7 @@ export class UserStore implements IUserStore {
                 return (a.name || "") > (b.name || "")
                     ? 1
                     : -1;
-            });;
+            });
     }
 
     private setSelectedUserObservable(userDoc: Doc<IUser, IUserData> | undefined): void {
@@ -226,7 +226,7 @@ export class UserStore implements IUserStore {
         }
 
         const user = this.rootStore.auth.activeDocument as IUser;
-        return user ? { ...user!, id: user.uid } : user;
+        return user ? { ...user, id: user.uid } : user;
     }
 
     get authenticatedUserId(): string | undefined {

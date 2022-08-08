@@ -21,4 +21,4 @@ export function withAuthentication<T extends object>(
 
 
     return observer(WithAuthenticationComponent);
-};
+}

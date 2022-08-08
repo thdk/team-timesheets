@@ -34,7 +34,7 @@ export const Preferences = observer(() => {
                 </h3>
             </Box>
         );
-    };
+    }
 
     return (
         <>

@@ -36,9 +36,9 @@ export const TasksChips = ({
                             checkmark={filter}
                             icon={leadingIcon}
                             selected={selected}
-                            onInteraction={() => onTaskInteraction(taskId, selected!)}
+                            onInteraction={() => onTaskInteraction(taskId, selected)}
                             id={taskId}
-                            label={taskName!}
+                            label={taskName}
                             key={taskId}
                         />
                     );

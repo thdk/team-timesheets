@@ -88,4 +88,4 @@ export const ExportPage = withAuthentication(
         );
     }),
     <RedirectToLogin />,
-);;
+);

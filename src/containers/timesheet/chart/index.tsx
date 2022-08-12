@@ -58,7 +58,7 @@ export class RegistrationsChart<T, K> extends React.Component<IRegistrationsChar
     componentDidUpdate() {
         if (this.ref.current
             && this.legendRef.current) {
-            this.legendRef.current!.innerHTML = this.ref.current.chartInstance.generateLegend();
+            this.legendRef.current.innerHTML = this.ref.current.chartInstance.generateLegend();
         }
 
         const { labelCollection, data, getLabel } = this.props;

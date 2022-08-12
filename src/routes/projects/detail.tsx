@@ -1,5 +1,5 @@
 import { transaction } from 'mobx';
-import { Route, RouterStore } from 'mobx-router';
+import { QueryParams, Route, RouterStore } from 'mobx-router';
 import * as React from 'react';
 
 import { IRootStore } from '../../stores/root-store';
@@ -12,7 +12,7 @@ const path = "/projectdetail";
 
 type Params = { id?: string };
 
-type ProjectDetailRoute = Route<IRootStore, Params, {}>;
+type ProjectDetailRoute = Route<IRootStore, Params, QueryParams>;
 
 export const GoToProject = ({
     id,

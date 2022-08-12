@@ -22,9 +22,9 @@ const RegistrationSuggestionsHeader = () => {
 }
 
 export const useSuggestionsQuery = () => {
-    const { data: eventsData, ...eventsQuery } = useGoogleCalendarEvents();
-    const { data: commitsData, ...commitsQuery } = useGithubCommits();
-    const { data: issuesData, ...jiraQuery } = useJiraIssues();
+    const eventsQuery = useGoogleCalendarEvents();
+    const commitsQuery = useGithubCommits();
+    const jiraQuery = useJiraIssues();
 
     const queries = [
         eventsQuery,
@@ -35,9 +35,6 @@ export const useSuggestionsQuery = () => {
     return {
         isLoading: queries.some((q) => q.isLoading),
         hasData: queries.some((q) => q.hasData),
-        eventsQuery,
-        commitsQuery,
-        jiraQuery,
     };
 }
 

@@ -40,10 +40,11 @@ export const SettingsListItem = observer((props: ISettingsItemProps) => {
         e.stopPropagation();
 
         switch (e.key) {
-            case "Enter":
+            case "Enter": {
                 const iconValue = iconElRef.current && iconElRef.current.inputElement ? iconElRef.current.inputElement.value : "";
                 const nameValue = nameElRef.current && nameElRef.current.inputElement ? nameElRef.current.inputElement.value : "";
                 onChangeItem && onChangeItem({ icon: iconValue, name: nameValue });
+            }
                 break;
             case "Escape":
                 onCancel && onCancel();
@@ -54,7 +55,7 @@ export const SettingsListItem = observer((props: ISettingsItemProps) => {
     };
 
     const cssClasses = classNames("settings-list-item", className, { "settings-list-item--selected": edit });
-    const iconJSX = icon ? <Icon icon={icon} theme={["textPrimaryOnBackground"]}/> : undefined;
+    const iconJSX = icon ? <Icon icon={icon} theme={["textPrimaryOnBackground"]} /> : undefined;
 
     // Warning: manually edited @material/react-text-field/dist/Input.d.ts to make below compile
     // See: https://github.com/material-components/material-components-web-react/issues/965

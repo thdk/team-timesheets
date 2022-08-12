@@ -1,4 +1,4 @@
-import { Route, RouterStore } from "mobx-router";
+import { QueryParams, Route, RouterStore } from "mobx-router";
 import * as React from 'react';
 import { transaction } from "mobx";
 
@@ -16,7 +16,7 @@ export type ProjectsTab = "active" | "archived";
 
 const path = '/projects'
 export type ProjectRouteQueryParams = { tab: ProjectsTab };
-type ProjectRoute = Route<IRootStore, {}, ProjectRouteQueryParams>;
+type ProjectRoute = Route<IRootStore, QueryParams, ProjectRouteQueryParams>;
 
 export const projectListRoute = {
     projects: new Route({

@@ -55,7 +55,7 @@ const routeChanged = (route: RegistrationsOverviewRoute, params: DateObject, s: 
 };
 
 const setActions = (s: IRootStore, alowInserts = false) => {
-    const actions: IViewAction[] = [
+    const actions: IViewAction<IRegistration>[] = [
         {
             action: selection => {
                 if (!selection) return;

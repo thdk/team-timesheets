@@ -55,7 +55,7 @@ export const getActions = (tab: ProjectsTab, store: Pick<IRootStore, "view" | "r
     ];
 
     switch (tab) {
-        case "active":
+        case "active": {
             const archiveAction: IViewAction = {
                 action: () => {
                     store.projects.archiveProjects(...store.view.selection.keys());
@@ -68,22 +68,24 @@ export const getActions = (tab: ProjectsTab, store: Pick<IRootStore, "view" | "r
             };
 
             actions.push(archiveAction);
-
+        }
             break;
 
         case "archived":
-            const unarchiveAction: IViewAction = {
-                action: () => {
-                    store.projects.unarchiveProjects(...store.view.selection.keys());
-                    store.view.selection.clear();
-                },
-                icon: { label: "Unarchive", content: "unarchive" },
-                contextual: true,
-                shortKey: { key: "e" },
-                selection: store.view.selection,
-            };
+            {
+                const unarchiveAction: IViewAction = {
+                    action: () => {
+                        store.projects.unarchiveProjects(...store.view.selection.keys());
+                        store.view.selection.clear();
+                    },
+                    icon: { label: "Unarchive", content: "unarchive" },
+                    contextual: true,
+                    shortKey: { key: "e" },
+                    selection: store.view.selection,
+                };
+                actions.push(unarchiveAction);
+            }
 
-            actions.push(unarchiveAction);
 
             break;
     }
@@ -170,7 +172,7 @@ export const ProjectsPage = observer(() => {
     return (
         <>
             <Theme
-                use={["secondaryBg"]} 
+                use={["secondaryBg"]}
                 wrap
             >
 

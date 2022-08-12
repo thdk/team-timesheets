@@ -4,7 +4,7 @@ export const Form = (props: React.HTMLProps<HTMLDivElement>) => {
     const {children, ...rest} = props;
     return (
         <div className="form" {...rest}>
-            {props.children}
+            {children}
         </div>
     );
 }

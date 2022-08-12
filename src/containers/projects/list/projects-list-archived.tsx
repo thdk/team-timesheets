@@ -19,7 +19,7 @@ import { canManageProjects } from '../../../rules';
 import { useUserStore } from '../../../contexts/user-context';
 import { UserName } from '../../users/user-name';
 
-export const ArchivedProjectList = observer((_props: React.HTMLProps<HTMLDivElement>) => {
+export const ArchivedProjectList = observer(() => {
     const store = useStore();
 
     const user = useUserStore();

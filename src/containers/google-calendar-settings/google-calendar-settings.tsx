@@ -15,7 +15,7 @@ const GoogleButton = observer(
             user,
         } = useGapiAuth(config);
 
-        if (!!user) {
+        if (user) {
             return (
                 <Button
                     theme={"textPrimaryOnBackground"}

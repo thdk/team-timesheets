@@ -13,7 +13,7 @@ export const UserSelect = observer((props: Props) => {
     return (
         <CollectionSelect
             id={"users-collection"}
-            items={props.users.map(({ id, name }) => ({ label: name, value: id }))}
+            items={users.map(({ id, name }) => ({ label: name, value: id }))}
             label={"User"}
             {...rest} />
     );

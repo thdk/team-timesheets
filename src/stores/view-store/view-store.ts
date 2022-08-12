@@ -11,6 +11,7 @@ export interface IShortKey {
 }
 
 export const isActionWithSelection = (action: IViewAction | IFab): action is IViewAction & { selection: string[] } => {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   return !!(action as any).selection;
 };
 
@@ -43,7 +44,7 @@ export interface INavigationViewAction extends IViewAction {
   icon: { label: "Menu", content: "menu" } | { label: "Back", content: "arrow_back" } | { label: "Up", content: "arrow_upward" };
 }
 
-export interface IViewStore extends ViewStore { };
+export type IViewStore = ViewStore;
 
 export class ViewStore implements IViewStore {
   private readonly _actions = observable<IViewAction>([]);

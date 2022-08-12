@@ -59,7 +59,7 @@ export function useGithubCommits() {
             return octokit.repos.listCommits({
                 sort: "author-date",
                 owner: owner!,
-                repo: repo!,
+                repo,
                 since: view.startOfDay?.toISOString(),
                 until: view.endOfDay?.toISOString(),
                 author,
@@ -71,7 +71,7 @@ export function useGithubCommits() {
     );
 
     const filteredCommits = queryResult.isSuccess
-        ? (queryResult.data?.data || []).filter((event) => excludedIds.indexOf(event.sha!) === -1)
+        ? (queryResult.data?.data || []).filter((event) => excludedIds.indexOf(event.sha) === -1)
         : [];
 
     return {

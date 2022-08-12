@@ -18,7 +18,7 @@ import { collection, CollectionReference, Firestore } from "firebase/firestore";
 import { Auth } from "firebase/auth";
 import { HttpsCallable } from "firebase/functions";
 
-export interface IRootStore extends Store { };
+export type IRootStore = Store;
 
 export class Store implements IRootStore {
     public readonly timesheets: IRegistrationsStore;
@@ -172,4 +172,4 @@ export class Store implements IRootStore {
         this.user.dispose();
         this.view.dispose();
     }
-};
+}

@@ -64,4 +64,4 @@ export function Redirect<T extends RouteParams, K extends QueryParams>({
     }, []);
 
     return React.createElement(React.Fragment);
-};
+}

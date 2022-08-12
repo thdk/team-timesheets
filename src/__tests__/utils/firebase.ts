@@ -1,4 +1,4 @@
-const fs = require("fs");
+import fs from "fs";
 import path from "path";
 
 import { initializeTestEnvironment } from "@firebase/rules-unit-testing";

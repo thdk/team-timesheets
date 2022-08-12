@@ -10,7 +10,7 @@ import "./icon-picker.scss";
 export interface IIconPickerProps {
     editIcon?: string;
     onChange: (icon: string) => void;
-};
+}
 
 type Props = IIconPickerProps
     & Omit<TextFieldProps, "icon" | "trailingIcon" | "onKeyDown">;
@@ -37,7 +37,7 @@ const IconPicker = (props: Props) => {
     const handleTrailingIconKeyDown = useCallback((e: React.KeyboardEvent<typeof TextField>) => {
         if (e.key === "Enter") {
             setIsOpen(true);
-        };
+        }
     }, []);
 
     const handleTrailingIconClick = useCallback(() => {

@@ -139,7 +139,7 @@ export class DashboardStore implements IDashboardStore {
         if (this.registrations.length === 0) return [];
 
         return this.createRegistrationsGroup(reg => reg.project || "")
-            .sort((a, b) => b.totalTime - a.totalTime);;
+            .sort((a, b) => b.totalTime - a.totalTime);
     }
 
     get registrationsGroupedByTask() {

@@ -9,7 +9,7 @@ import { CollectionReference, Firestore, orderBy } from '@firebase/firestore';
 import { query, where } from 'firebase/firestore';
 import { IWithDivision } from '../../../common/interfaces/IWithDivision';
 
-export interface IConfigStore extends ConfigStore { };
+export type IConfigStore = ConfigStore;
 
 export class ConfigStore implements IConfigStore {
     readonly clientsCollection: ICollection<IClient, IClientData>;

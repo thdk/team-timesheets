@@ -16,7 +16,7 @@ export interface IGroupedRegistrations<T> {
     isCollapsed: boolean;
 }
 
-export interface IRegistrationsStore extends RegistrationStore { };
+export type IRegistrationsStore = RegistrationStore;
 
 const createQuery = (
     userId: string | undefined,
@@ -26,7 +26,7 @@ const createQuery = (
         const endDate = moment.clone().endOf("month").toDate();
         const startDate = moment.clone().startOf("month").toDate();
         const queryFn = (ref: CollectionReference<IRegistrationData>) => {
-            let q = query(
+            const q = query(
                 ref,
                 where("date", ">=", startDate),
                 where("date", "<=", endDate),

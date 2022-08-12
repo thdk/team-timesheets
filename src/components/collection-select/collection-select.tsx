@@ -5,7 +5,7 @@ import { useCallback } from 'react';
 export interface ICollectionSelectItem {
     value: string,
     label: string,
-};
+}
 
 export interface ICollectionListProps {
     readonly label: string;

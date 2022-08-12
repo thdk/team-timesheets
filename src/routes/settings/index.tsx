@@ -1,4 +1,4 @@
-import { Route, RouterStore } from "mobx-router";
+import { QueryParams, Route, RouterStore } from "mobx-router";
 import * as React from 'react';
 import { transaction, when } from "mobx";
 import { IRootStore } from "../../stores/root-store";
@@ -9,7 +9,7 @@ import SettingsPage from "../../pages/settings/settings-page-container";
 import { setNavigationContent } from "../actions";
 
 export type SettingsRouteQueryParams = { tab: SettingsTab };
-type SettingsRoute = Route<IRootStore, {}, SettingsRouteQueryParams>;
+type SettingsRoute = Route<IRootStore, QueryParams, SettingsRouteQueryParams>;
 
 export const goToSettings = (router: RouterStore<IRootStore>, tab: SettingsTab = "tasks") => {
     router.goTo(routes.preferences, {}, { tab });
@@ -66,7 +66,7 @@ const setActions = (tab: SettingsTab, store: IRootStore) => {
 
 const path = '/settings'
 const routes = {
-    preferences: new Route<IRootStore, {}, SettingsRouteQueryParams>({
+    preferences: new Route<IRootStore, QueryParams, SettingsRouteQueryParams>({
         path,
         component: <App><SettingsPage /></App>,
         onEnter: (route: SettingsRoute, _params, s: IRootStore, queryParams: SettingsRouteQueryParams) => {

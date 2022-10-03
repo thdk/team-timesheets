@@ -112,7 +112,7 @@
     "classnames": "^2.2.6",
     "copy-text-to-clipboard": "^2.2.0",
     "firebase": "^9.1.2",
-    "firestorable": "^2.2.0",
+    "firestorable": "^2.2.1",
     "js-base64": "^3.7.2",
     "js-cookie": "^3.0.1",
     "md5": "^2.3.0",

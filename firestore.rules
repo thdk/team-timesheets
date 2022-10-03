@@ -1,14 +1,14 @@
 rules_version = '2';
 service cloud.firestore {
     match /databases/{database}/documents {
-        function getAuthUser2() {
+        function getAuthenticatedDivisionUser() {
             let user = get(/databases/$(database)/documents/users/$(request.auth.uid));
             let authUser = user.data.keys().hasAny(["divisionUserId"])
                     ? get(/databases/$(database)/documents/division-users/$(user.data.divisionUserId))
                     : user;
             return authUser;
         }
-        function getAuthUser(data) {
+        function getDivisionUserForRequest(data) {
             let user = get(/databases/$(database)/documents/users/$(request.auth.uid));
             let authUser = (
                             data.keys().hasAny(["divisionId"]) 
@@ -44,7 +44,7 @@ service cloud.firestore {
 
         match /registrations/{registrationId} {
             allow read, create: if request.auth != null;
-            allow update: if request.resource.data.userId == getAuthUser2().id;
+            allow update: if request.resource.data.userId == getAuthenticatedDivisionUser().id;
             allow delete: if get(/databases/$(database)/documents/registrations/$(registrationId)).data.userId == request.auth.uid;
         }
 
@@ -54,35 +54,35 @@ service cloud.firestore {
 
         match /projects/{documentId} {
             allow read;
-            allow create: if isAuthorised(getAuthUser(request.resource.data), 'editor') == true || isAuthorised(getAuthUser(request.resource.data), 'admin') == true;
-            allow update, delete: if (isAuthorised(getAuthUser(request.resource.data), 'editor') == true && resource.data.createdBy == request.auth.uid) || isAuthorised(getAuthUser(request.resource.data), 'admin') == true;
+            allow create: if isAuthorised(getDivisionUserForRequest(request.resource.data), 'editor') == true || isAuthorised(getDivisionUserForRequest(request.resource.data), 'admin') == true;
+            allow update, delete: if (isAuthorised(getDivisionUserForRequest(request.resource.data), 'editor') == true && resource.data.createdBy == request.auth.uid) || isAuthorised(getDivisionUserForRequest(request.resource.data), 'admin') == true;
         }
 
         match /clients/{document} {
             allow read;
-            allow create: if isAuthorised(getAuthUser(request.resource.data), 'admin') == true;
-            allow update, delete: if isAuthorised(getAuthUser(resource.data), 'admin') == true;
+            allow create: if isAuthorised(getDivisionUserForRequest(request.resource.data), 'admin') == true;
+            allow update, delete: if isAuthorised(getDivisionUserForRequest(resource.data), 'admin') == true;
         }
 
         match /teams/{document} {
             allow read;
-            allow create: if isAuthorised(getAuthUser(request.resource.data), 'admin') == true;
-            allow update, delete: if isAuthorised(getAuthUser(resource.data), 'admin') == true;
+            allow create: if isAuthorised(getDivisionUserForRequest(request.resource.data), 'admin') == true;
+            allow update, delete: if isAuthorised(getDivisionUserForRequest(resource.data), 'admin') == true;
         }
 
         match /tasks/{document} {
             allow read;
-            allow create: if isAuthorised(getAuthUser(request.resource.data), 'admin') == true;
-            allow update, delete: if isAuthorised(getAuthUser(resource.data), 'admin') == true;
+            allow create: if isAuthorised(getDivisionUserForRequest(request.resource.data), 'admin') == true;
+            allow update, delete: if isAuthorised(getDivisionUserForRequest(resource.data), 'admin') == true;
         }
 
         match /users/{userId} {
             allow read: if request.auth != null;
             allow list: if
                 request.auth != null
-                && isAuthorised(getAuthUser2(), 'admin');
+                && isAuthorised(getAuthenticatedDivisionUser(), 'admin');
             allow update: if
-                isAuthorised(getAuthUser(request.resource.data), 'admin') == true
+                isAuthorised(getDivisionUserForRequest(request.resource.data), 'admin') == true
                 || (
                     (
                         userId == request.auth.uid
@@ -93,14 +93,14 @@ service cloud.firestore {
             allow create: if (
                 request.auth != null && request.resource.data.uid == request.auth.uid && request.resource.data.roles.keys().hasOnly(["recruit"])
             ) || isPowerUser(request.resource.data);
-            allow delete: if isAuthorised(getAuthUser(request.resource.data), 'admin') == true;
+            allow delete: if isAuthorised(getDivisionUserForRequest(request.resource.data), 'admin') == true;
         }
 
         match /division-users/{divisionUserId} {
             allow get: if request.auth != null;
             allow list: if request.auth != null
                 && (
-                    isAuthorised(getAuthUser2(), 'admin')
+                    isAuthorised(getAuthenticatedDivisionUser(), 'admin')
                     || resource.data.uid == request.auth.uid
                 )
             allow create;
@@ -109,7 +109,7 @@ service cloud.firestore {
                     request.resource.data.uid == request.auth.uid
                     && !isUpdateToField('roles')
                 )
-                || isAuthorised(getAuthUser(request.resource.data), 'admin');
+                || isAuthorised(getDivisionUserForRequest(request.resource.data), 'admin');
             allow delete: if false;
         }
 

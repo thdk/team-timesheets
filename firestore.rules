@@ -55,7 +55,7 @@ service cloud.firestore {
         match /projects/{documentId} {
             allow read;
             allow create: if isAuthorised(getDivisionUserForRequest(request.resource.data), 'editor') == true || isAuthorised(getDivisionUserForRequest(request.resource.data), 'admin') == true;
-            allow update, delete: if (isAuthorised(getDivisionUserForRequest(request.resource.data), 'editor') == true && resource.data.createdBy == request.auth.uid) || isAuthorised(getDivisionUserForRequest(request.resource.data), 'admin') == true;
+            allow update, delete: if (isAuthorised(getDivisionUserForRequest(request.resource.data), 'editor') == true && resource.data.createdBy == getDivisionUserForRequest(request.resource.data).id) || isAuthorised(getDivisionUserForRequest(request.resource.data), 'admin') == true;
         }
 
         match /clients/{document} {

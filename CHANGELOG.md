@@ -5,7 +5,25 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [v2.9.2](https://github.com/thdk/team-timesheets/compare/v2.9.1...v2.9.2)
+## [v2.10.0](https://github.com/thdk/team-timesheets/compare/v2.9.2...v2.10.0)
+
+### Merged
+
+- Add linter and activate recommended rules [`#278`](https://github.com/thdk/team-timesheets/pull/278)
+
+### Fixed
+
+- feat: add link to report issues on github [`#270`](https://github.com/thdk/team-timesheets/issues/270)
+- chore: update to latest firestorable version [`#274`](https://github.com/thdk/team-timesheets/issues/274)
+- fix: project owner should be able to delete / archive projects [`#282`](https://github.com/thdk/team-timesheets/issues/282)
+
+### Commits
+
+- chore: upgrade to node +v16 [`310f82d`](https://github.com/thdk/team-timesheets/commit/310f82da20248909643662c9f3a35b337e716bf1)
+- ci: add eslint [`176f142`](https://github.com/thdk/team-timesheets/commit/176f14262694543826fe054b52583db697d90aee)
+- feat: sync division-users collection to bigquery [`c142291`](https://github.com/thdk/team-timesheets/commit/c1422917f5fa31033d6408e3235475205fe3c195)
+
+## [v2.9.2](https://github.com/thdk/team-timesheets/compare/v2.9.1...v2.9.2) - 2022-04-04
 
 ### Commits
 

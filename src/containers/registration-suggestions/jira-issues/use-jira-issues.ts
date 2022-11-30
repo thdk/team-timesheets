@@ -117,7 +117,7 @@ export function useJiraIssues() {
             id: string;
         }[]>(
             (p, c) => {
-                if (!c.data) {
+                if (!c.data || c.isError) {
                     return p;
                 }
 

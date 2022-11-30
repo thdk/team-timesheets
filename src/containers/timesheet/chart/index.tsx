@@ -12,22 +12,41 @@ export enum ChartType {
 }
 
 export const chartColors = {
-    blue: "rgb(54, 162, 235)",
-    green: "rgb(75, 192, 192)",
-    grey: "rgb(201, 203, 207)",
-    orange: "rgb(255, 159, 64)",
-    purple: "rgb(153, 102, 255)",
-    red: "rgb(255, 99, 132)",
-    yellow: "rgb(255, 205, 86)"
+    lightBlue: "rgb(124,159,176)",
+    darkBlue: "rgb(86,152,196)",
+    darkGreen: "rgb(68,124,105)",
+    lightGreen: "rgb(116,196,147",
+    brown: "rgb(142,140,109)",
+    lightYellow: "rgb(233,215,142)",
+    darkYellow: "rgb(226,151,93)",
+    lightOrange: "rgb(225,101,82)",
+    darkOrange: "rgb(201,74,83)",
+    red: "rgb(190,81,104)",
+    lightMagenta: "rgb(163,73,116)",
+    darkMagenta: "rgb(153,55,103)",
+    lightViolet: "rgb(101,56,125)",
+    darkViolet: "rgb(78,36,114)",
+    lightPink: "rgb(226,121,163)",
+    darkPink: "rgb(224,89,139)"
 }
 
 export const chartColorsArray = [
+    chartColors.lightBlue,
+    chartColors.darkBlue,
+    chartColors.darkGreen,
+    chartColors.lightGreen,
+    chartColors.brown,
+    chartColors.lightYellow,
+    chartColors.darkYellow,
+    chartColors.lightOrange,
+    chartColors.lightOrange,
     chartColors.red,
-    chartColors.orange,
-    chartColors.yellow,
-    chartColors.green,
-    chartColors.blue,
-    chartColors.purple
+    chartColors.lightMagenta,
+    chartColors.darkMagenta,
+    chartColors.lightViolet,
+    chartColors.darkViolet,
+    chartColors.lightPink,
+    chartColors.darkPink
 ];
 
 export interface IRegistrationsChartProps<T, K = T> {

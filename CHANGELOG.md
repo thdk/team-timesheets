@@ -5,7 +5,19 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [v2.10.0](https://github.com/thdk/team-timesheets/compare/v2.9.2...v2.10.0)
+## [v2.11.0](https://github.com/thdk/team-timesheets/compare/v2.10.0...v2.11.0)
+
+### Merged
+
+- feat: add more colours to chart [`#289`](https://github.com/thdk/team-timesheets/pull/289)
+
+### Commits
+
+- test: fix failing drawer test [`7fcf12f`](https://github.com/thdk/team-timesheets/commit/7fcf12f9ec2778e26c9fed8890aa2ee76c9cbc95)
+- style: fix whitespace in color string [`03ad02e`](https://github.com/thdk/team-timesheets/commit/03ad02ee6480700026ae4f8799338aba3f1b020a)
+- fix: don't crash when a one of the jira queries failed to fetch suggestions from jira [`1ab7f31`](https://github.com/thdk/team-timesheets/commit/1ab7f31bf1eaed090118fe0362e1f37185253f3f)
+
+## [v2.10.0](https://github.com/thdk/team-timesheets/compare/v2.9.2...v2.10.0) - 2022-10-04
 
 ### Merged
 

@@ -13,7 +13,7 @@ export enum ChartType {
 
 export const chartColors = {
     lightBlue: "rgb(124,159,176)",
-    darkBlue: "rgb (86,152,196)",
+    darkBlue: "rgb(86,152,196)",
     darkGreen: "rgb(68,124,105)",
     lightGreen: "rgb(116,196,147",
     brown: "rgb(142,140,109)",

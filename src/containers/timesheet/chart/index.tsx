@@ -39,7 +39,7 @@ export const chartColorsArray = [
     chartColors.lightYellow,
     chartColors.darkYellow,
     chartColors.lightOrange,
-    chartColors.lightOrange,
+    chartColors.darkOrange,
     chartColors.red,
     chartColors.lightMagenta,
     chartColors.darkMagenta,

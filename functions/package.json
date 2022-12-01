@@ -21,7 +21,7 @@
     "fs-extra": "^7.0.1",
     "json2csv": "^4.3.2",
     "moment-es6": "^1.0.0",
-    "moment-timezone": "^0.5.28",
+    "moment-timezone": "^0.5.35",
     "os": "^0.1.1",
     "path": "^0.12.7",
     "xlsx": "^0.14.3"

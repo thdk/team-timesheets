@@ -119,7 +119,7 @@
     "mobx": "^6.3.3",
     "mobx-react-lite": "^3.2.1",
     "mobx-router": "^1.0.0",
-    "moment": "^2.24.0",
+    "moment": "^2.29.4",
     "mustache": "^4.2.0",
     "react": "^16.8.6",
     "react-calendar": "^2.17.5",

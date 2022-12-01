@@ -5,7 +5,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [v2.11.1](https://github.com/thdk/team-timesheets/compare/v2.11.0...v2.11.1)
+## [v2.11.2](https://github.com/thdk/team-timesheets/compare/v2.11.1...v2.11.2)
+
+### Commits
+
+- fix: replace duplicate light orange with dark orange in charts [`318bd01`](https://github.com/thdk/team-timesheets/commit/318bd0182894f3e9204eb69e597b22f5b30535c3)
+
+## [v2.11.1](https://github.com/thdk/team-timesheets/compare/v2.11.0...v2.11.1) - 2022-11-30
 
 ### Commits
 

@@ -31,8 +31,8 @@ export const chartColors = {
 }
 
 export const chartColorsArray = [
-    chartColors.lightBlue,
     chartColors.darkBlue,
+    chartColors.lightBlue,
     chartColors.darkGreen,
     chartColors.lightGreen,
     chartColors.brown,

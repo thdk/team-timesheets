@@ -59,7 +59,7 @@
     "dotenv-webpack": "^7.1.0",
     "eslint": "^8.21.0",
     "firebase-admin": "^10.0.0",
-    "firebase-tools": "^9.20.0",
+    "firebase-tools": "^11.22.0",
     "fork-ts-checker-webpack-plugin": "^7.2.1",
     "html-webpack-plugin": "^5.5.0",
     "jest": "^26.4.2",
